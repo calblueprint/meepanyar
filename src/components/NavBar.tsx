@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const topBarS = {
-    background: 'cyan',
+    background: 'orange',
     height: '50px',
     width: '100%%',
 };

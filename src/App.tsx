@@ -1,27 +1,34 @@
 import React from 'react';
 //import logo from './logo.svg';
 import './App.css';
-import NavBar from './components/NavBar';
-//import About from './About';
-import Other from './Other';
-import Home from './Home';
-import { BrowserRouter, Route } from 'react-router-dom';
+//import NavBar from './components/NavBar';
+import Navigation from './components/Navigation';
+import User from './screens/User';
+import Shopping from './screens/Shopping';
+import Home from './screens/Home';
+import Errors from './screens/Errors';
+import Tools from './screens/Tools';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 //import NavbarContent from './components/NavBarContent';
 //import NavbarIcon from './components/NavBarIcon';
 //import Navbar from 'react-material-navbar';
 
-var About = require('./About');
+//var About = require('./About');
 
 function App() {
   return (
-    <BrowserRouter>
-        <div className="App">
-          <NavBar />
-            <Route name="home" exact path="/" component={Home}/>
-            <Route name="about" exact path="/about" component={About}/>
-            <Route name="other" exact path="/other" component={Other}/>
-        </div>
-    </BrowserRouter>
+    <div className="App">
+      <BrowserRouter>
+        <Navigation />
+        <Switch>
+          <Route path="/home" component={Home}/>
+          <Route path="/user" component={User}/>
+          <Route path="/shopping" component={Shopping}/>
+          <Route path="/tools" component={Tools}/>
+          <Route path="/errors" component={Errors}/>
+        </Switch>
+      </BrowserRouter>
+    </div>
   );
 }
 
