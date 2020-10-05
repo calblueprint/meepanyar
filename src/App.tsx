@@ -2,13 +2,15 @@ import React from 'react';
 //import logo from './logo.svg';
 import './App.css';
 import NavBar from './components/NavBar';
-import About from './screens/About';
-import Other from './screens/Other';
-import Home from './screens/Home';
+//import About from './About';
+import Other from './Other';
+import Home from './Home';
 import { BrowserRouter, Route } from 'react-router-dom';
 //import NavbarContent from './components/NavBarContent';
 //import NavbarIcon from './components/NavBarIcon';
 //import Navbar from 'react-material-navbar';
+
+var About = require('./About');
 
 function App() {
   return (

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 
 const topBarS = {
     background: 'cyan',
@@ -23,8 +22,8 @@ class Navbar extends React.Component {
                     </Link>
                 </div>
                 <div>
-                    <Link to="/about" className="item">
-                        About
+                    <Link to="/other" className="item">
+                        Other
                     </Link>
                 </div>
             </div>
