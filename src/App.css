@@ -17,7 +17,7 @@
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
@@ -48,8 +48,17 @@
   color: #55575b;
 }
 .bottom-nav-link.active {
-  color: #922c88;
+  color: #fc6f03;
 }
 .bottom-tab-label {
   font-size: 12px;
+}
+
+.home-header {
+  background: '#fc6f03';
+  height: '70px';
+  width: '100%%';
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

@@ -9,11 +9,8 @@ import Home from './screens/Home';
 import Errors from './screens/Errors';
 import Tools from './screens/Tools';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-//import NavbarContent from './components/NavBarContent';
-//import NavbarIcon from './components/NavBarIcon';
+//import Menu from './components/HamburgerMenu'
 //import Navbar from 'react-material-navbar';
-
-//var About = require('./About');
 
 function App() {
   return (
