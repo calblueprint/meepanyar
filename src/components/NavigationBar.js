@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import NavbarContent from './NavBarContent'
 import NavbarIcon from './NavBarIcon'
 
+
 export default class Navbar extends Component {
   state = {
     isOpen: true

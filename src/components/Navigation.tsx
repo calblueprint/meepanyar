@@ -22,10 +22,10 @@ const tabs = [{
   icon: faWrench,
   label: "Tools"
 },{
-    route: "/error",
+    route: "/errors",
     icon: faExclamationTriangle,
-    label: "Error"
-  }]
+    label: "Errors"
+}]
 
 class Navigation extends React.Component {
     render() {

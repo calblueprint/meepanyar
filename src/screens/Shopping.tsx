@@ -1,9 +1,9 @@
 import React from "react";
 
-class Other extends React.Component {
+class Shopping extends React.Component {
     render() {
-        return (<h4>This is a miscellaneous screen</h4>)
+        return (<h4>This is a shopping screen</h4>)
     }
 };
 
-export default Other;
+export default Shopping;
