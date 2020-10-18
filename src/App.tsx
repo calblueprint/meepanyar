@@ -10,6 +10,7 @@ import Tools from './screens/Tools';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import SearchNavBar from './components/SearchNavBar';
 import LabelBottomNavigation from './components/BottomNav';
+import TestButton from './components/TestButton';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/incidents" component={Errors}/>
         </Switch>
       </BrowserRouter>
+      <TestButton />
     </div>
   );
 }
