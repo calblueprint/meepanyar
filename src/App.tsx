@@ -8,6 +8,7 @@ import Shopping from './screens/Shopping';
 import Home from './screens/Home';
 import Errors from './screens/Errors';
 import Tools from './screens/Tools';
+import Login from './screens/Login';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 //import Menu from './components/HamburgerMenu'
 //import Navbar from 'react-material-navbar';
@@ -23,6 +24,7 @@ function App() {
           <Route path="/shopping" component={Shopping}/>
           <Route path="/tools" component={Tools}/>
           <Route path="/errors" component={Errors}/>
+          <Route path="/login" component={Login}/>
         </Switch>
       </BrowserRouter>
     </div>
