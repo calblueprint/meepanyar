@@ -1,7 +1,5 @@
 import React from 'react';
-//import logo from './logo.svg';
 import './App.css';
-// import Navigation from './components/Navigation';
 import User from './screens/User';
 import Shopping from './screens/Shopping';
 import Home from './screens/Home';
