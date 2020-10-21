@@ -1,7 +1,5 @@
 import React from 'react';
-//import logo from './logo.svg';
 import './App.css';
-//import NavBar from './components/NavBar';
 import Navigation from './components/Navigation';
 import User from './screens/User';
 import Shopping from './screens/Shopping';
@@ -10,12 +8,13 @@ import Errors from './screens/Errors';
 import Tools from './screens/Tools';
 import Login from './screens/Login';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-//import Menu from './components/HamburgerMenu'
-//import Navbar from 'react-material-navbar';
+import { ThemeProvider } from "@material-ui/core/styles";
+import { theme } from './styles/ThemeStyles'
 
 function App() {
   return (
     <div className="App">
+      <ThemeProvider theme={theme}>
       <BrowserRouter>
         <Navigation />
         <Switch>
@@ -27,6 +26,7 @@ function App() {
           <Route path="/login" component={Login}/>
         </Switch>
       </BrowserRouter>
+      </ThemeProvider>
     </div>
   );
 }
