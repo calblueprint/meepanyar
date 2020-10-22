@@ -1,9 +1,9 @@
 import React from "react";
 
-class Shopping extends React.Component {
+class Inventory extends React.Component {
     render() {
         return (<h4>This is a shopping screen</h4>)
     }
 };
 
-export default Shopping;
+export default Inventory;
