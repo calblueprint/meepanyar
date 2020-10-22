@@ -17,8 +17,7 @@ import { Root, Bar, MenuButton, AccountButton, ListStyle, ToolBar, Typograph } f
 
 type Anchor = 'left';
 
-export default function SearchNavBar() {
-    // const classes = useStyles();
+export default function HomeNavBar() {
     const [state, setState] = React.useState({
         left: false,
     });
