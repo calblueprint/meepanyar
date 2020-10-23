@@ -1,10 +1,9 @@
-import React from "react";
-import HomeNavBar from '../components/HomeNavBar';
+import React from 'react';
 
 class Home extends React.Component {
-    render() {
-        return (<HomeNavBar />)
-    }
-};
+  render() {
+    return <h4>This is the home screen</h4>;
+  }
+}
 
 export default Home;
