@@ -6,18 +6,20 @@ class Login extends React.Component {
   render() {
     return (
       <Container component="main" maxWidth="xs">
+        <Styles.MainDiv>
           <form noValidate>
-            <Styles.Label>Email</Styles.Label>
-            <Styles.Field
-              id='standard-secondary'
-              InputProps={{ disableUnderline: true }}
-              InputLabelProps={{ shrink: true }}
-              color="primary"
-              autoComplete="email"
-            />
-            <br></br>
-            <br></br>
-            <Styles.Label>Password</Styles.Label>
+            <Styles.FieldDiv>
+              <Styles.Label>Email</Styles.Label>
+              <Styles.Field
+                id='standard-secondary'
+                InputProps={{ disableUnderline: true }}
+                InputLabelProps={{ shrink: true }}
+                color="primary"
+                autoComplete="email"
+              />
+            </Styles.FieldDiv>
+            <Styles.FieldDiv>
+            <Styles.Label style={{ marginLeft: '-75%' }}>Password</Styles.Label>
             <Styles.Field
               id='standard-secondary'
               InputProps={{ disableUnderline: true }}
@@ -25,8 +27,7 @@ class Login extends React.Component {
               color="primary"
               type="password"
             />
-            <br></br>
-            <br></br>
+            </Styles.FieldDiv>
             <Styles.LoginButton
               type="submit"
               variant="contained"
@@ -34,7 +35,6 @@ class Login extends React.Component {
             >
               Login
             </Styles.LoginButton>
-            <br></br>
             <Styles.LoginButton
               type="submit"
               variant="contained"
@@ -42,9 +42,9 @@ class Login extends React.Component {
             >
               Create Account
             </Styles.LoginButton>
-            <br></br>
             <Styles.SignUpLink href="#">Forgot Password ?</Styles.SignUpLink>
           </form>
+          </Styles.MainDiv>
         </Container>
     );
   }
