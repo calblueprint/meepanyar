@@ -14,7 +14,7 @@ export const Label = styled(Typography)`
     margin-left: 8%;
     display: block;
 `;
-  
+
 export const Field = styled(TextField)`
     background-color: #F8F8F8;
     outlined: false;
@@ -23,7 +23,7 @@ export const Field = styled(TextField)`
     height: 69px;
     padding: 18px 20px;
 `;
-  
+
 export const LoginButton = styled(Button)`
     color: #828282;
     font-size: 12px;
@@ -35,7 +35,7 @@ export const LoginButton = styled(Button)`
     margin: 8px 0px;
     text-transform: none;
 `;
-  
+
 export const SignUpLink = styled(Link)`
     color: #828282;
     font-size: 12px;
