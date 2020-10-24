@@ -6,24 +6,27 @@ export const MainDiv = styled('div')`
 `;
 
 export const FieldDiv = styled('div')`
-
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 95%;
+    margin: auto;
 `;
 
 export const Label = styled(Typography)`
     color: #828282;
     font-size: 12px;
     font-weight: bold;
-    margin-top: -20px;
-    margin-left: -83%;
 `;
 
 export const Field = styled(TextField)`
     background-color: #F8F8F8;
     outlined: false;
     border-radius: 15px;
-    width: 95%;
+    width: 100%;
     height: 69px;
     margin-bottom: 25px;
+    padding: 18px 20px;
 `;
 
 export const LoginButton = styled(Button)`
@@ -35,8 +38,7 @@ export const LoginButton = styled(Button)`
     width: 187px;
     height: 48px;
     text-transform: none;
-    display: flex;
-    justify-content: center;
+    display: block;
     margin: 0 auto;
     margin-bottom: 20px;
 `;

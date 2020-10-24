@@ -11,7 +11,7 @@ class Login extends React.Component {
             <Styles.FieldDiv>
               <Styles.Label>Email</Styles.Label>
               <Styles.Field
-                id='standard-secondary'
+                id='screen-reader-accessible'
                 InputProps={{ disableUnderline: true }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
@@ -19,14 +19,14 @@ class Login extends React.Component {
               />
             </Styles.FieldDiv>
             <Styles.FieldDiv>
-            <Styles.Label style={{ marginLeft: '-75%' }}>Password</Styles.Label>
-            <Styles.Field
-              id='standard-secondary'
-              InputProps={{ disableUnderline: true }}
-              InputLabelProps={{ shrink: true }}
-              color="primary"
-              type="password"
-            />
+              <Styles.Label>Password</Styles.Label>
+              <Styles.Field
+                id='screen-reader-accessible'
+                InputProps={{ disableUnderline: true }}
+                InputLabelProps={{ shrink: true }}
+                color="primary"
+                type="password"
+              />
             </Styles.FieldDiv>
             <Styles.LoginButton
               type="submit"
