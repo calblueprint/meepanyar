@@ -1,31 +1,31 @@
 import React from 'react';
 import './App.css';
-import Navigation from './components/Navigation';
 import User from './screens/User';
-import Shopping from './screens/Shopping';
+import Inventory from './screens/Inventory';
 import Home from './screens/Home';
-import Errors from './screens/Errors';
-import Tools from './screens/Tools';
-import Login from './screens/Login';
+import Incidents from './screens/Incidents';
+import Maintenance from './screens/Maintenance';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { ThemeProvider } from "@material-ui/core/styles";
-import { theme } from './styles/ThemeStyles'
+import LabelBottomNavigation from './components/BottomNav';
+import Login from './screens/Login';
+import { ThemeProvider } from '@material-ui/core/styles';
+import { theme } from './styles/ThemeStyles';
 
 function App() {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Navigation />
-        <Switch>
-          <Route path="/home" component={Home}/>
-          <Route path="/user" component={User}/>
-          <Route path="/shopping" component={Shopping}/>
-          <Route path="/tools" component={Tools}/>
-          <Route path="/errors" component={Errors}/>
-          <Route path="/login" component={Login}/>
-        </Switch>
-      </BrowserRouter>
+        <BrowserRouter>
+          <LabelBottomNavigation />
+          <Switch>
+            <Route path="/home" component={Home} />
+            <Route path="/user" component={User} />
+            <Route path="/inventory" component={Inventory} />
+            <Route path="/maintenance" component={Maintenance} />
+            <Route path="/incidents" component={Incidents} />
+            <Route path="/login" component={Login} />
+          </Switch>
+        </BrowserRouter>
       </ThemeProvider>
     </div>
   );

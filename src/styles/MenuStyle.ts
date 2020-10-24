@@ -1,12 +1,12 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const colors = {
-    yellowmellow: "#fbe69b",
-    lightbrown: "#be8b7b",
-    pearl: "#fdf2e9",
-    lightblue: "#93CEF0",
-    orange: '#fc6f03',
-    paleorange: 'orange'
+  yellowmellow: '#fbe69b',
+  lightbrown: '#be8b7b',
+  pearl: '#fdf2e9',
+  lightblue: '#93CEF0',
+  orange: '#fc6f03',
+  paleorange: 'orange',
 };
 
 export const StyledMenu = styled.nav<{ open: boolean }>`
@@ -23,7 +23,7 @@ export const StyledMenu = styled.nav<{ open: boolean }>`
   padding: 10rem 0;
 
   transition: transform 0.3s ease-in-out;
-  transform: ${({ open }) => (open ? "translateX(0)" : "translateX(-100%)")};
+  transform: ${({ open }) => (open ? 'translateX(0)' : 'translateX(-100%)')};
 
   @media (max-width: 600px) {
     width: 100%;

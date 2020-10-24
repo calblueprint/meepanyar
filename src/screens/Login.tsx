@@ -1,5 +1,5 @@
-import React from "react";
-import * as Styles from "../styles/LoginStyles";
+import React from 'react';
+import * as Styles from '../styles/LoginStyles';
 import Container from '@material-ui/core/Container';
 
 class Login extends React.Component {
@@ -11,7 +11,7 @@ class Login extends React.Component {
             <Styles.FieldDiv>
               <Styles.Label>Email</Styles.Label>
               <Styles.Field
-                id='screen-reader-accessible'
+                id="email"
                 InputProps={{ disableUnderline: true }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
@@ -21,31 +21,23 @@ class Login extends React.Component {
             <Styles.FieldDiv>
               <Styles.Label>Password</Styles.Label>
               <Styles.Field
-                id='screen-reader-accessible'
+                id="password"
                 InputProps={{ disableUnderline: true }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
                 type="password"
               />
             </Styles.FieldDiv>
-            <Styles.LoginButton
-              type="submit"
-              variant="contained"
-              color="primary"
-            >
+            <Styles.LoginButton type="submit" variant="contained" color="primary">
               Login
             </Styles.LoginButton>
-            <Styles.LoginButton
-              type="submit"
-              variant="contained"
-              color="secondary"
-            >
+            <Styles.LoginButton type="submit" variant="contained" color="secondary">
               Create Account
             </Styles.LoginButton>
             <Styles.SignUpLink href="#">Forgot Password ?</Styles.SignUpLink>
           </form>
-          </Styles.MainDiv>
-        </Container>
+        </Styles.MainDiv>
+      </Container>
     );
   }
 }
