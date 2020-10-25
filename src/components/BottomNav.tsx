@@ -1,6 +1,6 @@
 import React from 'react';
 import BottomNavigationAction from '@material-ui/core/BottomNavigationAction';
-import { BottomNav } from '../styles/BottomNavStyles'
+import { BottomNav } from '../styles/BottomNavStyles';
 import { Link } from 'react-router-dom';
 import HomeIcon from '@material-ui/icons/Home';
 import PersonIcon from '@material-ui/icons/Person';
