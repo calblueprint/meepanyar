@@ -20,6 +20,7 @@ class AddCustomer extends React.Component {
               InputProps={{ style: {fontSize: 14}, disableUnderline: true }}
               InputLabelProps={{ shrink: true }}
               color="primary"
+              type="name"
             />
             <br />
             <Styles.CheckDiv>
@@ -47,6 +48,7 @@ class AddCustomer extends React.Component {
                 InputProps={{ style: {fontSize: 14}, disableUnderline: true }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
+                type="meter"
               />
             </Styles.CheckDiv>
             <br /><br />
@@ -56,6 +58,7 @@ class AddCustomer extends React.Component {
               InputProps={{ style: {fontSize: 14}, disableUnderline: true }}
               InputLabelProps={{ shrink: true }}
               color="primary"
+              type="tariff-plan"
             />
             <br></br>
             <br></br>
