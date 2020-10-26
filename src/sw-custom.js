@@ -6,7 +6,7 @@ if ("function" === typeof importScripts) {
     // Global workbox
     if (workbox) {
         console.log("Workbox loaded");
-        workbox.setConfig({debug: false});
+        workbox.setConfig({ debug: false });
 
         // `generateSW` provides option to force
         // update an exiting service worker. Since we're
@@ -28,20 +28,20 @@ if ("function" === typeof importScripts) {
         workbox.routing.registerRoute(
             new RegExp("https://fonts.(?:.googlepis|gstatic).com/(.*)"),
             workbox.strategies.cacheFirst({
-            cacheName: "googleapis",
-            plugins: [
-                new workbox.expiration.Plugin({
-                maxEntries: 30,
-                }),
-            ],
+                cacheName: "googleapis",
+                plugins: [
+                    new workbox.expiration.Plugin({
+                        maxEntries: 30,
+                    }),
+                ],
             })
         );
 
         // Route will catch all failed POST requests to route.
         // Will add to bgSyncPlugin queue and will resend when network reconnect
-        // TODO: Harded for now since it's for testing. Need to change.
+        // TODO: Change to know routes once we know the routes needed to catch
         workbox.routing.registerRoute(
-            "http://127.0.0.1:9090/submit",
+            "",
             new workbox.strategies.NetworkOnly({
                 plugins: [bgSyncPlugin]
             }),
@@ -75,7 +75,7 @@ if ("function" === typeof importScripts) {
                 ],
             })
         );
-    }  else {
+    } else {
         console.log("Workbox couldn't be loaded. No offline support");
     }
 }

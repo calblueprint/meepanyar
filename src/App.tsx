@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import TestButton from './components/TestButton';
 import User from './screens/User';
 import Inventory from './screens/Inventory';
 import Home from './screens/Home';
@@ -28,7 +27,6 @@ function App() {
               <Route path="/incidents" component={Incidents} />
               <Route path="/login" component={Login} />
             </Switch>
-            <TestButton />
           </BrowserRouter>
         </ThemeProvider>
       </StylesProvider>
