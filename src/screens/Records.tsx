@@ -3,17 +3,13 @@ import * as Styles from "../styles/RecordsStyles";
 import Container from "@material-ui/core/Container";
 import { AppBar, Tabs, Tab } from "@material-ui/core";
 import { TabContext, TabPanel } from "@material-ui/lab";
-
-interface RecordsProps {
-
-}
 ​
 interface RecordsState {
   value: string;
 }
 ​
-export default class Records extends React.Component<RecordsProps, RecordsState> {
-  constructor(props: RecordsProps) {
+export default class Records extends React.Component<{}, RecordsState> {
+  constructor(props: {}) {
     super(props);
     this.state = {
       value: "0",
