@@ -3,11 +3,11 @@ import * as Styles from "../styles/RecordsStyles";
 import Container from "@material-ui/core/Container";
 import { AppBar, Tabs, Tab } from "@material-ui/core";
 import { TabContext, TabPanel } from "@material-ui/lab";
-​
+
 interface RecordsState {
   value: string;
 }
-​
+
 export default class Records extends React.Component<{}, RecordsState> {
   constructor(props: {}) {
     super(props);
@@ -15,13 +15,13 @@ export default class Records extends React.Component<{}, RecordsState> {
       value: "0",
     };
   }
-​
+
   changeTab = (event: any, newValue: string): void => {
     this.setState({
       value: newValue,
     });
   };
-​
+  
   render() {
     return (
       <Container component="main" maxWidth="xs">
