@@ -9,12 +9,15 @@
   If you're adding a new function: make sure you add a corresponding test (at least 1) for it in airtable.spec.js
 */
 import Airtable from 'airtable';
+// import Airtable from '@calblueprint/airlock';
 import { Columns } from './schema';
 
 const BASE_ID = process.env.REACT_APP_AIRTABLE_BASE_ID;
 
 const API_KEY = process.env.REACT_APP_AIRTABLE_API_KEY;
 const ENDPOINT_URL = 'https://api.airtable.com';
+// const API_KEY = 'airlock';
+// const ENDPOINT_URL = process.env.REACT_APP_AIRTABLE_ENDPOINT_URL;
 const VIEW = 'Grid view';
 
 Airtable.configure({
@@ -26,7 +29,7 @@ const base = Airtable.base(BASE_ID);
 
 // Transformation Utilities
 
-const fromAirtableFormat = (record, table) => {
+function fromAirtableFormat<T>(record: T, table: string) {
   const columns = Columns[table];
   if (!columns) {
     throw new Error(
@@ -67,7 +70,7 @@ const fromAirtableFormat = (record, table) => {
   }, {});
 };
 
-const toAirtableFormat = (record, table) => {
+function toAirtableFormat<T>(record: T, table: string) {
   const columns = Columns[table];
   if (!columns) {
     throw new Error(
@@ -95,7 +98,7 @@ const toAirtableFormat = (record, table) => {
 
 // ******** CRUD ******** //
 // Given a table and a record object, create a record on Airtable.
-function createRecord(table, record) {
+function createRecord<T>(table: string, record: T) {
   const transformedRecord = toAirtableFormat(record, table);
   return base(table)
     .create([{ fields: transformedRecord }])
@@ -107,7 +110,7 @@ function createRecord(table, record) {
     });
 }
 
-function createRecords(table, records) {
+function createRecords<T>(table: string, records: T[]) {
   const transformedRecords = records.map((record) => ({
     fields: toAirtableFormat(record, table),
   }));
@@ -123,7 +126,7 @@ function createRecords(table, records) {
 
 // Given a table, get all records from Airtable
 
-function getAllRecords(table, filterByFormula = '', sort = []) {
+function getAllRecords(table: string, filterByFormula = '', sort = []) {
   return base(table)
     .select({
       view: VIEW,
@@ -144,7 +147,7 @@ function getAllRecords(table, filterByFormula = '', sort = []) {
 }
 
 // Given a table and record ID, return the associated record object using a Promise.
-function getRecordById(table, id) {
+function getRecordById(table: string, id: string) {
   return base(table)
     .find(id)
     .then((record) => {
@@ -166,9 +169,9 @@ function getRecordById(table, id) {
     - getStoresByOpen('TRUE()') --> `{Open} = TRUE()`
 */
 function getRecordsByAttribute(
-  table,
+  table: string,
   fieldType,
-  fieldValue,
+  fieldValue: unknown,
   filterByFormula = '',
   sort = []
 ) {
@@ -195,7 +198,7 @@ function getRecordsByAttribute(
 }
 
 // Given a table, a record ID, and an object of fields to update, update a record on Airtable.
-function updateRecord(table, id, updatedRecord) {
+function updateRecord(table: string, id: string, updatedRecord) {
   const transformedRecord = toAirtableFormat(updatedRecord, table);
   return base(table)
     .update([
@@ -213,7 +216,7 @@ function updateRecord(table, id, updatedRecord) {
 }
 
 // Given a table, an array of record IDs, and an array of objects of fields to update, update records on Airtable.
-function updateRecords(table, updatedRecords) {
+function updateRecords(table: string, updatedRecords) {
   const transformedRecords = updatedRecords.map((updatedRecord) => ({
     id: updatedRecord.id,
     fields: toAirtableFormat(updatedRecord.fields, table),
@@ -229,7 +232,7 @@ function updateRecords(table, updatedRecords) {
 }
 
 // Given a table and a record ID, delete a record on Airtable.
-function deleteRecord(table, id) {
+function deleteRecord(table: string, id: string) {
   return base(table)
     .destroy([id])
     .then((records) => {

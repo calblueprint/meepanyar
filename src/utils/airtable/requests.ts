@@ -23,16 +23,32 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
+import {
+  UserRecord,
+  CustomerRecord,
+  SiteRecord,
+  InvoiceRecord,
+  PaymentRecord,
+  CustomerUpdateRecord,
+  MeterReadingRecord,
+  TariffPlanRecord,
+  InventoryRecord,
+  InventoryUpdateRecord,
+  IncidentRecord,
+  IncidentUpdateRecord,
+  MaintenanceRecord,
+  FinancialReportRecord
+} from './interface';
 
 /*
  ******* CREATE RECORDS *******
  */
 
-export const createUser = async (record) => {
+export const createUser = async (record: UserRecord) => {
   return createRecord(Tables.Users, record);
 };
 
-export const createManyUsers = async (records) => {
+export const createManyUsers = async (records: UserRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -43,11 +59,11 @@ export const createManyUsers = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createCustomer = async (record) => {
+export const createCustomer = async (record: CustomerRecord) => {
   return createRecord(Tables.Customers, record);
 };
 
-export const createManyCustomers = async (records) => {
+export const createManyCustomers = async (records: CustomerRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -58,11 +74,11 @@ export const createManyCustomers = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createInvoice = async (record) => {
+export const createInvoice = async (record: InvoiceRecord) => {
   return createRecord(Tables.Invoices, record);
 };
 
-export const createManyInvoices = async (records) => {
+export const createManyInvoices = async (records: InvoiceRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -73,11 +89,11 @@ export const createManyInvoices = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createPayment = async (record) => {
+export const createPayment = async (record: PaymentRecord) => {
   return createRecord(Tables.Payments, record);
 };
 
-export const createManyPayments = async (records) => {
+export const createManyPayments = async (records: PaymentRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -88,11 +104,11 @@ export const createManyPayments = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createCustomerUpdate = async (record) => {
+export const createCustomerUpdate = async (record: CustomerUpdateRecord) => {
   return createRecord(Tables.CustomerUpdates, record);
 };
 
-export const createManyCustomerUpdates = async (records) => {
+export const createManyCustomerUpdates = async (records: CustomerUpdateRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -103,11 +119,11 @@ export const createManyCustomerUpdates = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createMeterReading = async (record) => {
+export const createMeterReading = async (record: MeterReadingRecord) => {
   return createRecord(Tables.MeterReadings, record);
 };
 
-export const createManyMeterReadings = async (records) => {
+export const createManyMeterReadings = async (records: MeterReadingRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -118,11 +134,11 @@ export const createManyMeterReadings = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createSite = async (record) => {
+export const createSite = async (record: SiteRecord) => {
   return createRecord(Tables.Sites, record);
 };
 
-export const createManySites = async (records) => {
+export const createManySites = async (records: SiteRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -133,11 +149,11 @@ export const createManySites = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createTariffPlan = async (record) => {
+export const createTariffPlan = async (record: TariffPlanRecord) => {
   return createRecord(Tables.TariffPlans, record);
 };
 
-export const createManyTariffPlans = async (records) => {
+export const createManyTariffPlans = async (records: TariffPlanRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -148,11 +164,11 @@ export const createManyTariffPlans = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createInventory = async (record) => {
+export const createInventory = async (record: InventoryRecord) => {
   return createRecord(Tables.Inventory, record);
 };
 
-export const createManyInventorys = async (records) => {
+export const createManyInventorys = async (records: InventoryRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -163,11 +179,11 @@ export const createManyInventorys = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createInventoryUpdate = async (record) => {
+export const createInventoryUpdate = async (record: InventoryUpdateRecord) => {
   return createRecord(Tables.InventoryUpdates, record);
 };
 
-export const createManyInventoryUpdates = async (records) => {
+export const createManyInventoryUpdates = async (records: InventoryUpdateRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -178,11 +194,11 @@ export const createManyInventoryUpdates = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createIncident = async (record) => {
+export const createIncident = async (record: IncidentRecord) => {
   return createRecord(Tables.Incidents, record);
 };
 
-export const createManyIncidents = async (records) => {
+export const createManyIncidents = async (records: IncidentRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -193,11 +209,11 @@ export const createManyIncidents = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createIncidentUpdate = async (record) => {
+export const createIncidentUpdate = async (record: IncidentUpdateRecord) => {
   return createRecord(Tables.IncidentUpdates, record);
 };
 
-export const createManyIncidentUpdates = async (records) => {
+export const createManyIncidentUpdates = async (records: IncidentUpdateRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -208,11 +224,11 @@ export const createManyIncidentUpdates = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createMaintenance = async (record) => {
+export const createMaintenance = async (record: MaintenanceRecord) => {
   return createRecord(Tables.Maintenance, record);
 };
 
-export const createManyMaintenances = async (records) => {
+export const createManyMaintenances = async (records: MaintenanceRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -223,11 +239,11 @@ export const createManyMaintenances = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createFinancialReport = async (record) => {
+export const createFinancialReport = async (record: FinancialReportRecord) => {
   return createRecord(Tables.FinancialReport, record);
 };
 
-export const createManyFinancialReports = async (records) => {
+export const createManyFinancialReports = async (records: FinancialReportRecord[]) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -242,11 +258,11 @@ export const createManyFinancialReports = async (records) => {
  ******* READ RECORDS *******
  */
 
-export const getUserById = async (id) => {
+export const getUserById = async (id: string) => {
   return getRecordById(Tables.Users, id);
 };
 
-export const getUsersByIds = async ( ids, filterByFormula = '', sort = []
+export const getUsersByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -260,11 +276,11 @@ export const getAllUsers = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Users, filterByFormula, sort);
 };
 
-export const getCustomerById = async (id) => {
+export const getCustomerById = async (id : string) => {
   return getRecordById(Tables.Customers, id);
 };
 
-export const getCustomersByIds = async ( ids, filterByFormula = '', sort = []
+export const getCustomersByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -278,11 +294,11 @@ export const getAllCustomers = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Customers, filterByFormula, sort);
 };
 
-export const getInvoiceById = async (id) => {
+export const getInvoiceById = async (id: string) => {
   return getRecordById(Tables.Invoices, id);
 };
 
-export const getInvoicesByIds = async ( ids, filterByFormula = '', sort = []
+export const getInvoicesByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -296,11 +312,11 @@ export const getAllInvoices = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Invoices, filterByFormula, sort);
 };
 
-export const getPaymentById = async (id) => {
+export const getPaymentById = async (id: string) => {
   return getRecordById(Tables.Payments, id);
 };
 
-export const getPaymentsByIds = async ( ids, filterByFormula = '', sort = []
+export const getPaymentsByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -314,11 +330,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Payments, filterByFormula, sort);
 };
 
-export const getCustomerUpdateById = async (id) => {
+export const getCustomerUpdateById = async (id: string) => {
   return getRecordById(Tables.CustomerUpdates, id);
 };
 
-export const getCustomerUpdatesByIds = async ( ids, filterByFormula = '', sort = []
+export const getCustomerUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -332,11 +348,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) => 
   return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
 };
 
-export const getMeterReadingById = async (id) => {
+export const getMeterReadingById = async (id: string) => {
   return getRecordById(Tables.MeterReadings, id);
 };
 
-export const getMeterReadingsByIds = async ( ids, filterByFormula = '', sort = []
+export const getMeterReadingsByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -350,11 +366,11 @@ export const getAllMeterReadings = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.MeterReadings, filterByFormula, sort);
 };
 
-export const getSiteById = async (id) => {
+export const getSiteById = async (id: string) => {
   return getRecordById(Tables.Sites, id);
 };
 
-export const getSitesByIds = async ( ids, filterByFormula = '', sort = []
+export const getSitesByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -368,11 +384,11 @@ export const getAllSites = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Sites, filterByFormula, sort);
 };
 
-export const getTariffPlanById = async (id) => {
+export const getTariffPlanById = async (id: string) => {
   return getRecordById(Tables.TariffPlans, id);
 };
 
-export const getTariffPlansByIds = async ( ids, filterByFormula = '', sort = []
+export const getTariffPlansByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -386,11 +402,11 @@ export const getAllTariffPlans = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.TariffPlans, filterByFormula, sort);
 };
 
-export const getInventoryById = async (id) => {
+export const getInventoryById = async (id: string) => {
   return getRecordById(Tables.Inventory, id);
 };
 
-export const getInventorysByIds = async ( ids, filterByFormula = '', sort = []
+export const getInventorysByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -404,11 +420,11 @@ export const getAllInventorys = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Inventory, filterByFormula, sort);
 };
 
-export const getInventoryUpdateById = async (id) => {
+export const getInventoryUpdateById = async (id: string) => {
   return getRecordById(Tables.InventoryUpdates, id);
 };
 
-export const getInventoryUpdatesByIds = async ( ids, filterByFormula = '', sort = []
+export const getInventoryUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -422,11 +438,11 @@ export const getAllInventoryUpdates = async (filterByFormula = '', sort = []) =>
   return getAllRecords(Tables.InventoryUpdates, filterByFormula, sort);
 };
 
-export const getIncidentById = async (id) => {
+export const getIncidentById = async (id: string) => {
   return getRecordById(Tables.Incidents, id);
 };
 
-export const getIncidentsByIds = async ( ids, filterByFormula = '', sort = []
+export const getIncidentsByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -440,11 +456,11 @@ export const getAllIncidents = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Incidents, filterByFormula, sort);
 };
 
-export const getIncidentUpdateById = async (id) => {
+export const getIncidentUpdateById = async (id: string) => {
   return getRecordById(Tables.IncidentUpdates, id);
 };
 
-export const getIncidentUpdatesByIds = async ( ids, filterByFormula = '', sort = []
+export const getIncidentUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -458,11 +474,11 @@ export const getAllIncidentUpdates = async (filterByFormula = '', sort = []) => 
   return getAllRecords(Tables.IncidentUpdates, filterByFormula, sort);
 };
 
-export const getMaintenanceById = async (id) => {
+export const getMaintenanceById = async (id: string) => {
   return getRecordById(Tables.Maintenance, id);
 };
 
-export const getMaintenancesByIds = async ( ids, filterByFormula = '', sort = []
+export const getMaintenancesByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -476,11 +492,11 @@ export const getAllMaintenances = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Maintenance, filterByFormula, sort);
 };
 
-export const getFinancialReportById = async (id) => {
+export const getFinancialReportById = async (id: string) => {
   return getRecordById(Tables.FinancialReport, id);
 };
 
-export const getFinancialReportsByIds = async ( ids, filterByFormula = '', sort = []
+export const getFinancialReportsByIds = async (ids: string[], filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -498,11 +514,11 @@ export const getAllFinancialReports = async (filterByFormula = '', sort = []) =>
  ******* UPDATE RECORDS *******
  */
 
-export const updateUser = async (id, recordUpdates) => {
+export const updateUser = async (id: string, recordUpdates: UserRecord) => {
   return updateRecord(Tables.Users, id, recordUpdates);
 };
 
-export const updateManyUsers = async (recordUpdates) => {
+export const updateManyUsers = async (recordUpdates: UserRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -513,11 +529,11 @@ export const updateManyUsers = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateCustomer = async (id, recordUpdates) => {
+export const updateCustomer = async (id: string, recordUpdates: CustomerRecord) => {
   return updateRecord(Tables.Customers, id, recordUpdates);
 };
 
-export const updateManyCustomers = async (recordUpdates) => {
+export const updateManyCustomers = async (recordUpdates: CustomerRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -528,11 +544,11 @@ export const updateManyCustomers = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateInvoice = async (id, recordUpdates) => {
+export const updateInvoice = async (id: string, recordUpdates: InvoiceRecord) => {
   return updateRecord(Tables.Invoices, id, recordUpdates);
 };
 
-export const updateManyInvoices = async (recordUpdates) => {
+export const updateManyInvoices = async (recordUpdates: InvoiceRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -543,11 +559,11 @@ export const updateManyInvoices = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updatePayment = async (id, recordUpdates) => {
+export const updatePayment = async (id: string, recordUpdates: PaymentRecord) => {
   return updateRecord(Tables.Payments, id, recordUpdates);
 };
 
-export const updateManyPayments = async (recordUpdates) => {
+export const updateManyPayments = async (recordUpdates: PaymentRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -558,11 +574,11 @@ export const updateManyPayments = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateCustomerUpdate = async (id, recordUpdates) => {
+export const updateCustomerUpdate = async (id: string, recordUpdates: CustomerUpdateRecord) => {
   return updateRecord(Tables.CustomerUpdates, id, recordUpdates);
 };
 
-export const updateManyCustomerUpdates = async (recordUpdates) => {
+export const updateManyCustomerUpdates = async (recordUpdates: CustomerUpdateRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -573,11 +589,11 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateMeterReading = async (id, recordUpdates) => {
+export const updateMeterReading = async (id: string, recordUpdates: MeterReadingRecord) => {
   return updateRecord(Tables.MeterReadings, id, recordUpdates);
 };
 
-export const updateManyMeterReadings = async (recordUpdates) => {
+export const updateManyMeterReadings = async (recordUpdates: MeterReadingRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -588,11 +604,11 @@ export const updateManyMeterReadings = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateSite = async (id, recordUpdates) => {
+export const updateSite = async (id: string, recordUpdates: SiteRecord) => {
   return updateRecord(Tables.Sites, id, recordUpdates);
 };
 
-export const updateManySites = async (recordUpdates) => {
+export const updateManySites = async (recordUpdates: SiteRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -603,11 +619,11 @@ export const updateManySites = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateTariffPlan = async (id, recordUpdates) => {
+export const updateTariffPlan = async (id: string, recordUpdates: TariffPlanRecord) => {
   return updateRecord(Tables.TariffPlans, id, recordUpdates);
 };
 
-export const updateManyTariffPlans = async (recordUpdates) => {
+export const updateManyTariffPlans = async (recordUpdates: TariffPlanRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -618,11 +634,11 @@ export const updateManyTariffPlans = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateInventory = async (id, recordUpdates) => {
+export const updateInventory = async (id: string, recordUpdates: InventoryRecord) => {
   return updateRecord(Tables.Inventory, id, recordUpdates);
 };
 
-export const updateManyInventorys = async (recordUpdates) => {
+export const updateManyInventorys = async (recordUpdates: InventoryRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -633,11 +649,11 @@ export const updateManyInventorys = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateInventoryUpdate = async (id, recordUpdates) => {
+export const updateInventoryUpdate = async (id: string, recordUpdates: InventoryUpdateRecord) => {
   return updateRecord(Tables.InventoryUpdates, id, recordUpdates);
 };
 
-export const updateManyInventoryUpdates = async (recordUpdates) => {
+export const updateManyInventoryUpdates = async (recordUpdates: InventoryUpdateRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -648,11 +664,11 @@ export const updateManyInventoryUpdates = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateIncident = async (id, recordUpdates) => {
+export const updateIncident = async (id: string, recordUpdates: IncidentRecord) => {
   return updateRecord(Tables.Incidents, id, recordUpdates);
 };
 
-export const updateManyIncidents = async (recordUpdates) => {
+export const updateManyIncidents = async (recordUpdates: IncidentRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -663,11 +679,11 @@ export const updateManyIncidents = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateIncidentUpdate = async (id, recordUpdates) => {
+export const updateIncidentUpdate = async (id: string, recordUpdates: IncidentUpdateRecord) => {
   return updateRecord(Tables.IncidentUpdates, id, recordUpdates);
 };
 
-export const updateManyIncidentUpdates = async (recordUpdates) => {
+export const updateManyIncidentUpdates = async (recordUpdates: IncidentUpdateRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -678,11 +694,11 @@ export const updateManyIncidentUpdates = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateMaintenance = async (id, recordUpdates) => {
+export const updateMaintenance = async (id: string, recordUpdates: MaintenanceRecord) => {
   return updateRecord(Tables.Maintenance, id, recordUpdates);
 };
 
-export const updateManyMaintenances = async (recordUpdates) => {
+export const updateManyMaintenances = async (recordUpdates: MaintenanceRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -693,11 +709,11 @@ export const updateManyMaintenances = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateFinancialReport = async (id, recordUpdates) => {
+export const updateFinancialReport = async (id: string, recordUpdates: FinancialReportRecord) => {
   return updateRecord(Tables.FinancialReport, id, recordUpdates);
 };
 
-export const updateManyFinancialReports = async (recordUpdates) => {
+export const updateManyFinancialReports = async (recordUpdates: FinancialReportRecord[]) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
@@ -712,45 +728,45 @@ export const updateManyFinancialReports = async (recordUpdates) => {
  ******* DELETE RECORDS *******
  */
 
-export const deleteUser = async (id) => {
+export const deleteUser = async (id: string) => {
   return deleteRecord(Tables.Users, id);
 };
-export const deleteCustomer = async (id) => {
+export const deleteCustomer = async (id: string) => {
   return deleteRecord(Tables.Customers, id);
 };
-export const deleteInvoice = async (id) => {
+export const deleteInvoice = async (id: string) => {
   return deleteRecord(Tables.Invoices, id);
 };
-export const deletePayment = async (id) => {
+export const deletePayment = async (id: string) => {
   return deleteRecord(Tables.Payments, id);
 };
-export const deleteCustomerUpdate = async (id) => {
+export const deleteCustomerUpdate = async (id: string) => {
   return deleteRecord(Tables.CustomerUpdates, id);
 };
-export const deleteMeterReading = async (id) => {
+export const deleteMeterReading = async (id: string) => {
   return deleteRecord(Tables.MeterReadings, id);
 };
-export const deleteSite = async (id) => {
+export const deleteSite = async (id: string) => {
   return deleteRecord(Tables.Sites, id);
 };
-export const deleteTariffPlan = async (id) => {
+export const deleteTariffPlan = async (id: string) => {
   return deleteRecord(Tables.TariffPlans, id);
 };
-export const deleteInventory = async (id) => {
+export const deleteInventory = async (id: string) => {
   return deleteRecord(Tables.Inventory, id);
 };
-export const deleteInventoryUpdate = async (id) => {
+export const deleteInventoryUpdate = async (id: string) => {
   return deleteRecord(Tables.InventoryUpdates, id);
 };
-export const deleteIncident = async (id) => {
+export const deleteIncident = async (id: string) => {
   return deleteRecord(Tables.Incidents, id);
 };
-export const deleteIncidentUpdate = async (id) => {
+export const deleteIncidentUpdate = async (id: string) => {
   return deleteRecord(Tables.IncidentUpdates, id);
 };
-export const deleteMaintenance = async (id) => {
+export const deleteMaintenance = async (id: string) => {
   return deleteRecord(Tables.Maintenance, id);
 };
-export const deleteFinancialReport = async (id) => {
+export const deleteFinancialReport = async (id: string) => {
   return deleteRecord(Tables.FinancialReport, id);
 };
