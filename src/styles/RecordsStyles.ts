@@ -42,14 +42,14 @@ export const MainDiv = styled('div')`
     margin-top: 20px;
 `;
 
-export const RecordsAppBar = styled(AppBar)`
+export const RecordAppBar = styled(AppBar)`
+    box-shadow: none;
 `;
 
-export const RecordsTabs = styled(Tabs)`
+export const RecordTabs = styled(Tabs)`
+    background: white;
 `;
 
 export const RecordTab = styled(Tab)`
-`;
-
-export const RecordsTabPanel = styled(TabPanel)`
+    box-shadow: none;
 `;

@@ -33,7 +33,7 @@ export const HeaderText = styled(Typography)`
 
 export const HeaderDiv = styled('div')`
     display: flex;
-    margin-top: 30px;
+    margin-top: 15px;
     margin-left: 20px;
 `;
 
