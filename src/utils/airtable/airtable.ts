@@ -22,7 +22,7 @@ const VIEW = 'Grid view';
 
 Airtable.configure({
   endpointUrl: ENDPOINT_URL,
-  apiKey: API_KEY
+  apiKey: API_KEY,
 });
 
 const base = Airtable.base(BASE_ID as string);
@@ -88,7 +88,7 @@ function getRecordsByAttribute<T>(
   fieldValue: unknown,
   filterByFormula = '',
   sort = [],
-  format: (row: Row) => T
+  format: (row: Row) => T,
 ): Promise<T[]> {
   const transformedRecords: T[] = [];
 
@@ -130,10 +130,4 @@ function deleteRecord(table: string, id: string) {
     });
 }
 
-export {
-  base,
-  getAllRecords,
-  getRecordById,
-  getRecordsByAttribute,
-  deleteRecord
-};
+export { base, getAllRecords, getRecordById, getRecordsByAttribute, deleteRecord };

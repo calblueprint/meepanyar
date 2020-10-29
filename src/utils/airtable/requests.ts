@@ -12,291 +12,235 @@
 
 */
 
-import { 
-    Tables,
-    formatUser,
-    formatCustomer,
-    formatInvoice,
-    formatPayment,
-    formatCustomerUpdate,
-    formatMeterReading,
-    formatSite,
-    formatTariffPlan,
-    formatInventory,
-    formatInventoryUpdate,
-    formatIncident,
-    formatIncidentUpdate,
-    formatMaintenance,
-    formatFinancialReport
-  } from './schema';
-  import {
-    // createRecord,
-    // createRecords,
-    // updateRecord,
-    // updateRecords,
-    getAllRecords,
-    getRecordsByAttribute,
-    getRecordById,
-    deleteRecord,
-  } from './airtable';
-  
-  /*
-   ******* READ RECORDS *******
-   */
-  
-  export const getUserById = async (id: string) => {
-    return getRecordById(Tables.Users, id, formatUser);
-  };
-  
-  export const getUsersByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.Users, formula, sort, formatUser);
-  };
-  
-  export const getAllUsers = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.Users, filterByFormula, sort, formatUser);
-  };
-  
-  export const getCustomerById = async (id : string) => {
-    return getRecordById(Tables.Customers, id, formatCustomer);
-  };
-  
-  export const getCustomersByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.Customers, formula, sort, formatCustomer);
-  };
-  
-  export const getAllCustomers = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.Customers, filterByFormula, sort, formatCustomer);
-  };
-  
-  export const getInvoiceById = async (id: string) => {
-    return getRecordById(Tables.Invoices, id, formatInvoice);
-  };
-  
-  export const getInvoicesByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.Invoices, formula, sort, formatInvoice);
-  };
-  
-  export const getAllInvoices = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.Invoices, filterByFormula, sort, formatInvoice);
-  };
-  
-  export const getPaymentById = async (id: string) => {
-    return getRecordById(Tables.Payments, id, formatPayment);
-  };
-  
-  export const getPaymentsByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.Payments, formula, sort, formatPayment);
-  };
-  
-  export const getAllPayments = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.Payments, filterByFormula, sort, formatPayment);
-  };
-  
-  export const getCustomerUpdateById = async (id: string) => {
-    return getRecordById(Tables.CustomerUpdates, id, formatCustomerUpdate);
-  };
-  
-  export const getCustomerUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.CustomerUpdates, formula, sort, formatCustomerUpdate);
-  };
-  
-  export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort, formatCustomerUpdate);
-  };
-  
-  export const getMeterReadingById = async (id: string) => {
-    return getRecordById(Tables.MeterReadings, id, formatMeterReading);
-  };
-  
-  export const getMeterReadingsByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.MeterReadings, formula, sort, formatMeterReading);
-  };
-  
-  export const getAllMeterReadings = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.MeterReadings, filterByFormula, sort, formatMeterReading);
-  };
-  
-  export const getSiteById = async (id: string) => {
-    return getRecordById(Tables.Sites, id, formatSite);
-  };
-  
-  export const getSitesByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.Sites, formula, sort, formatSite);
-  };
-  
-  export const getAllSites = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.Sites, filterByFormula, sort, formatSite);
-  };
-  
-  export const getTariffPlanById = async (id: string) => {
-    return getRecordById(Tables.TariffPlans, id, formatTariffPlan);
-  };
-  
-  export const getTariffPlansByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.TariffPlans, formula, sort, formatTariffPlan);
-  };
-  
-  export const getAllTariffPlans = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.TariffPlans, filterByFormula, sort, formatTariffPlan);
-  };
-  
-  export const getInventoryById = async (id: string) => {
-    return getRecordById(Tables.Inventory, id, formatInventory);
-  };
-  
-  export const getInventorysByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.Inventory, formula, sort, formatInventory);
-  };
-  
-  export const getAllInventorys = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.Inventory, filterByFormula, sort, formatInventory);
-  };
-  
-  export const getInventoryUpdateById = async (id: string) => {
-    return getRecordById(Tables.InventoryUpdates, id, formatInventoryUpdate);
-  };
-  
-  export const getInventoryUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.InventoryUpdates, formula, sort, formatInventoryUpdate);
-  };
-  
-  export const getAllInventoryUpdates = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.InventoryUpdates, filterByFormula, sort, formatInventoryUpdate);
-  };
-  
-  export const getIncidentById = async (id: string) => {
-    return getRecordById(Tables.Incidents, id, formatIncident);
-  };
-  
-  export const getIncidentsByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.Incidents, formula, sort, formatIncident);
-  };
-  
-  export const getAllIncidents = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.Incidents, filterByFormula, sort, formatIncident);
-  };
-  
-  export const getIncidentUpdateById = async (id: string) => {
-    return getRecordById(Tables.IncidentUpdates, id, formatIncidentUpdate);
-  };
-  
-  export const getIncidentUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.IncidentUpdates, formula, sort, formatIncidentUpdate);
-  };
-  
-  export const getAllIncidentUpdates = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.IncidentUpdates, filterByFormula, sort, formatIncidentUpdate);
-  };
-  
-  export const getMaintenanceById = async (id: string) => {
-    return getRecordById(Tables.Maintenance, id, formatMaintenance);
-  };
-  
-  export const getMaintenancesByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.Maintenance, formula, sort, formatMaintenance);
-  };
-  
-  export const getAllMaintenances = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.Maintenance, filterByFormula, sort, formatMaintenance);
-  };
-  
-  export const getFinancialReportById = async (id: string) => {
-    return getRecordById(Tables.FinancialReport, id, formatFinancialReport);
-  };
-  
-  export const getFinancialReportsByIds = async (ids: string[], filterByFormula = '', sort = []
-  ) => {
-    let formula = `OR(${ids.reduce(
-      (f, id) => `${f} {ID}='${id}',`,
-      ''
-    )} 1 < 0)`;
-    formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-    return getAllRecords(Tables.FinancialReport, formula, sort, formatFinancialReport);
-  };
-  
-  export const getAllFinancialReports = async (filterByFormula = '', sort = []) => {
-    return getAllRecords(Tables.FinancialReport, filterByFormula, sort, formatFinancialReport);
-  };
+import {
+  Tables,
+  formatUser,
+  formatCustomer,
+  formatInvoice,
+  formatPayment,
+  formatCustomerUpdate,
+  formatMeterReading,
+  formatSite,
+  formatTariffPlan,
+  formatInventory,
+  formatInventoryUpdate,
+  formatIncident,
+  formatIncidentUpdate,
+  formatMaintenance,
+  formatFinancialReport,
+} from './schema';
+import {
+  // createRecord,
+  // createRecords,
+  // updateRecord,
+  // updateRecords,
+  getAllRecords,
+  getRecordsByAttribute,
+  getRecordById,
+  deleteRecord,
+} from './airtable';
 
-  /*
+/*
+ ******* READ RECORDS *******
+ */
+
+export const getUserById = async (id: string) => {
+  return getRecordById(Tables.Users, id, formatUser);
+};
+
+export const getUsersByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Users, formula, sort, formatUser);
+};
+
+export const getAllUsers = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Users, filterByFormula, sort, formatUser);
+};
+
+export const getCustomerById = async (id: string) => {
+  return getRecordById(Tables.Customers, id, formatCustomer);
+};
+
+export const getCustomersByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Customers, formula, sort, formatCustomer);
+};
+
+export const getAllCustomers = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Customers, filterByFormula, sort, formatCustomer);
+};
+
+export const getInvoiceById = async (id: string) => {
+  return getRecordById(Tables.Invoices, id, formatInvoice);
+};
+
+export const getInvoicesByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Invoices, formula, sort, formatInvoice);
+};
+
+export const getAllInvoices = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Invoices, filterByFormula, sort, formatInvoice);
+};
+
+export const getPaymentById = async (id: string) => {
+  return getRecordById(Tables.Payments, id, formatPayment);
+};
+
+export const getPaymentsByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Payments, formula, sort, formatPayment);
+};
+
+export const getAllPayments = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Payments, filterByFormula, sort, formatPayment);
+};
+
+export const getCustomerUpdateById = async (id: string) => {
+  return getRecordById(Tables.CustomerUpdates, id, formatCustomerUpdate);
+};
+
+export const getCustomerUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.CustomerUpdates, formula, sort, formatCustomerUpdate);
+};
+
+export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort, formatCustomerUpdate);
+};
+
+export const getMeterReadingById = async (id: string) => {
+  return getRecordById(Tables.MeterReadings, id, formatMeterReading);
+};
+
+export const getMeterReadingsByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.MeterReadings, formula, sort, formatMeterReading);
+};
+
+export const getAllMeterReadings = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.MeterReadings, filterByFormula, sort, formatMeterReading);
+};
+
+export const getSiteById = async (id: string) => {
+  return getRecordById(Tables.Sites, id, formatSite);
+};
+
+export const getSitesByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Sites, formula, sort, formatSite);
+};
+
+export const getAllSites = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Sites, filterByFormula, sort, formatSite);
+};
+
+export const getTariffPlanById = async (id: string) => {
+  return getRecordById(Tables.TariffPlans, id, formatTariffPlan);
+};
+
+export const getTariffPlansByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.TariffPlans, formula, sort, formatTariffPlan);
+};
+
+export const getAllTariffPlans = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.TariffPlans, filterByFormula, sort, formatTariffPlan);
+};
+
+export const getInventoryById = async (id: string) => {
+  return getRecordById(Tables.Inventory, id, formatInventory);
+};
+
+export const getInventorysByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Inventory, formula, sort, formatInventory);
+};
+
+export const getAllInventorys = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Inventory, filterByFormula, sort, formatInventory);
+};
+
+export const getInventoryUpdateById = async (id: string) => {
+  return getRecordById(Tables.InventoryUpdates, id, formatInventoryUpdate);
+};
+
+export const getInventoryUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.InventoryUpdates, formula, sort, formatInventoryUpdate);
+};
+
+export const getAllInventoryUpdates = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.InventoryUpdates, filterByFormula, sort, formatInventoryUpdate);
+};
+
+export const getIncidentById = async (id: string) => {
+  return getRecordById(Tables.Incidents, id, formatIncident);
+};
+
+export const getIncidentsByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Incidents, formula, sort, formatIncident);
+};
+
+export const getAllIncidents = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Incidents, filterByFormula, sort, formatIncident);
+};
+
+export const getIncidentUpdateById = async (id: string) => {
+  return getRecordById(Tables.IncidentUpdates, id, formatIncidentUpdate);
+};
+
+export const getIncidentUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.IncidentUpdates, formula, sort, formatIncidentUpdate);
+};
+
+export const getAllIncidentUpdates = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.IncidentUpdates, filterByFormula, sort, formatIncidentUpdate);
+};
+
+export const getMaintenanceById = async (id: string) => {
+  return getRecordById(Tables.Maintenance, id, formatMaintenance);
+};
+
+export const getMaintenancesByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Maintenance, formula, sort, formatMaintenance);
+};
+
+export const getAllMaintenances = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Maintenance, filterByFormula, sort, formatMaintenance);
+};
+
+export const getFinancialReportById = async (id: string) => {
+  return getRecordById(Tables.FinancialReport, id, formatFinancialReport);
+};
+
+export const getFinancialReportsByIds = async (ids: string[], filterByFormula = '', sort = []) => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.FinancialReport, formula, sort, formatFinancialReport);
+};
+
+export const getAllFinancialReports = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.FinancialReport, filterByFormula, sort, formatFinancialReport);
+};
+
+/*
  ******* DELETE RECORDS *******
  */
 

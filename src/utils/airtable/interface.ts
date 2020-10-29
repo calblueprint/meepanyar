@@ -30,9 +30,9 @@ export interface UserRecord extends Record {
   username: string;
   email: string;
   password: string;
-	photo?: Airtable.Attachment[];
-	incidentIds: IncidentRecord[];
-	siteIds: SiteRecord[];
+  photo?: Airtable.Attachment[];
+  incidentIds: IncidentRecord[];
+  siteIds: SiteRecord[];
   customers: CustomerRecord[];
 }
 
@@ -47,68 +47,68 @@ export interface CustomerRecord extends Record {
   hasmeter: boolean;
   invoiceIds: InvoiceRecord[];
   paymentIds: PaymentRecord[];
-	meterReadingIds: MeterReadingRecord[];
-	haspaid: boolean;
-	isbilled: boolean;
+  meterReadingIds: MeterReadingRecord[];
+  haspaid: boolean;
+  isbilled: boolean;
   needsReading: boolean;
 }
 
 export interface SiteRecord extends Record {
-  name: string
-	incidentIds: IncidentRecord[];
-	inventoryIds: InventoryRecord[];
-	inventoryUpdateIds: InventoryUpdateRecord[];
-	tariffPlanIds: TariffPlanRecord[];
-	userIds: UserRecord[];
-	customerIds: CustomerRecord[];
-	currentPeriod: number;
-	financialReportIds: FinancialReportRecord[];
-	periodStartDate: string;
-	periodEndDate: string;
+  name: string;
+  incidentIds: IncidentRecord[];
+  inventoryIds: InventoryRecord[];
+  inventoryUpdateIds: InventoryUpdateRecord[];
+  tariffPlanIds: TariffPlanRecord[];
+  userIds: UserRecord[];
+  customerIds: CustomerRecord[];
+  currentPeriod: number;
+  financialReportIds: FinancialReportRecord[];
+  periodStartDate: string;
+  periodEndDate: string;
   numNeedsReading: number;
   numCustomersNeedPay: number;
 }
 
 export interface InvoiceRecord extends Record {
-	amount: number;
-	date: string;
+  amount: number;
+  date: string;
   customerId: CustomerRecord[];
 }
 
 export interface PaymentRecord extends Record {
-	amount: number;
-	date: string;
+  amount: number;
+  date: string;
   customerId: CustomerRecord[];
 }
 
 export interface CustomerUpdateRecord extends Record {
-	explanation: string;
-	dateUpdated: string;
+  explanation: string;
+  dateUpdated: string;
   customerId: CustomerRecord[];
 }
 
 export interface MeterReadingRecord extends Record {
-	date: string;
-	reading: number;
-	period: number;
+  date: string;
+  reading: number;
+  period: number;
   customerId: CustomerRecord[];
 }
 
 export interface TariffPlanRecord extends Record {
   name: string;
-	fixedTariff: number;
-	tariffByUnit: number;
-	minUnits: number;
-	siteIds: SiteRecord[];
+  fixedTariff: number;
+  tariffByUnit: number;
+  minUnits: number;
+  siteIds: SiteRecord[];
   customerIds: CustomerRecord[];
 }
 
 export interface InventoryRecord extends Record {
   name: string;
-	quantity: number;
-	siteId: SiteRecord[];
-	quantityUnit: string;
-	inventoryUpdateIds: InventoryUpdateRecord[];
+  quantity: number;
+  siteId: SiteRecord[];
+  quantityUnit: string;
+  inventoryUpdateIds: InventoryUpdateRecord[];
   lastUpdatedDatefromInventoryUpdates: string;
 }
 
