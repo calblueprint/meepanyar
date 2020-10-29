@@ -10,7 +10,7 @@
 */
 import Airtable from 'airtable';
 // import Airtable from '@calblueprint/airlock';
-import { Columns } from './schema';
+import { Row } from './interface';
 
 const BASE_ID = process.env.REACT_APP_AIRTABLE_BASE_ID;
 
@@ -22,111 +22,18 @@ const VIEW = 'Grid view';
 
 Airtable.configure({
   endpointUrl: ENDPOINT_URL,
-  apiKey: API_KEY,
+  apiKey: API_KEY
 });
 
-const base = Airtable.base(BASE_ID);
-
-// Transformation Utilities
-
-function fromAirtableFormat<T>(record: T, table: string) {
-  const columns = Columns[table];
-  if (!columns) {
-    throw new Error(
-      `Error converting record from Airtable. Could not find table: ${table}`
-    );
-  }
-
-  // Invert columns object
-  const invertedColumns = Object.keys(columns).reduce(
-    (obj, key) => ({
-      ...obj,
-      [columns[key].name]: { name: key, type: columns[key].type },
-    }),
-    {}
-  );
-
-  // Create a new object mapping each record attribute
-  return Object.keys(record).reduce((obj, origColumn) => {
-    const jsFormattedName = invertedColumns[origColumn];
-
-    if (!jsFormattedName) {
-      throw new Error(
-        `Error converting ${table} record from Airtable. Could not find column of name "${origColumn}" in local copy of schema.js. Please run the schema generator again to get updates`
-      );
-    }
-
-    let value = record[origColumn];
-
-    // Unwrap array if it's a single foreign key relationship
-    if (jsFormattedName.type === 'foreignKey-one') {
-      [value] = value; // Array Destructuring
-    }
-
-    return {
-      ...obj,
-      [jsFormattedName.name]: value,
-    };
-  }, {});
-};
-
-function toAirtableFormat<T>(record: T, table: string) {
-  const columns = Columns[table];
-  if (!columns) {
-    throw new Error(
-      `Error converting record for Airtable. Could not find table: ${table}`
-    );
-  }
-
-  return Object.keys(record).reduce((obj, jsFormattedColumnName) => {
-    const origColumn = columns[jsFormattedColumnName];
-
-    if (!origColumn) {
-      throw new Error(
-        `Error converting ${table} record from Airtable. Could not find column of name "${jsFormattedColumnName}" in local copy of schema.js. Please check your "update" and "create" calls and ensure that your column names exist. If that doesn't work, run the schema generator again to get updates.`
-      );
-    }
-
-    let value = record[jsFormattedColumnName];
-    if (origColumn.type === 'foreignKey-one') {
-      value = [value]; // rewrap array if it's a single foreign key relationship
-    }
-
-    return { ...obj, [origColumn.name]: value };
-  }, {});
-};
+const base = Airtable.base(BASE_ID as string);
 
 // ******** CRUD ******** //
-// Given a table and a record object, create a record on Airtable.
-function createRecord<T>(table: string, record: T) {
-  const transformedRecord = toAirtableFormat(record, table);
-  return base(table)
-    .create([{ fields: transformedRecord }])
-    .then((records) => {
-      return records[0].getId();
-    })
-    .catch((err) => {
-      throw err;
-    });
-}
-
-function createRecords<T>(table: string, records: T[]) {
-  const transformedRecords = records.map((record) => ({
-    fields: toAirtableFormat(record, table),
-  }));
-  return base(table)
-    .create(transformedRecords)
-    .then((newRecords) => {
-      return newRecords.map((newRecord) => newRecord.getId());
-    })
-    .catch((err) => {
-      throw err;
-    });
-}
 
 // Given a table, get all records from Airtable
 
-function getAllRecords(table: string, filterByFormula = '', sort = []) {
+function getAllRecords<T>(table: string, filterByFormula = '', sort = [], format: (row: Row) => T): Promise<T[]> {
+  const transformedRecords: T[] = [];
+
   return base(table)
     .select({
       view: VIEW,
@@ -138,8 +45,14 @@ function getAllRecords(table: string, filterByFormula = '', sort = []) {
       if (records === null || records.length < 1) {
         return [];
       }
-
-      return records.map((record) => fromAirtableFormat(record.fields, table));
+      console.log(records);
+      records.forEach((record: unknown) => {
+        const row: unknown = record;
+        const formatted = format(row as Row);
+        transformedRecords.push(formatted);
+      });
+      console.log(transformedRecords);
+      return transformedRecords;
     })
     .catch((err) => {
       throw err;
@@ -147,11 +60,12 @@ function getAllRecords(table: string, filterByFormula = '', sort = []) {
 }
 
 // Given a table and record ID, return the associated record object using a Promise.
-function getRecordById(table: string, id: string) {
+function getRecordById<T>(table: string, id: string, format: (row: Row) => T): Promise<T> {
   return base(table)
     .find(id)
     .then((record) => {
-      return fromAirtableFormat(record.fields, table);
+      const row: unknown = record;
+      return format(row as Row);
     })
     .catch((err) => {
       throw err;
@@ -168,13 +82,16 @@ function getRecordById(table: string, id: string) {
     - getProductsByPoints(325) --> `{Points} = 325`
     - getStoresByOpen('TRUE()') --> `{Open} = TRUE()`
 */
-function getRecordsByAttribute(
+function getRecordsByAttribute<T>(
   table: string,
-  fieldType,
+  fieldType: string,
   fieldValue: unknown,
   filterByFormula = '',
-  sort = []
-) {
+  sort = [],
+  format: (row: Row) => T
+): Promise<T[]> {
+  const transformedRecords: T[] = [];
+
   return base(table)
     .select({
       view: VIEW,
@@ -189,42 +106,12 @@ function getRecordsByAttribute(
         // No need for this to throw an error, sometimes there're just no values
         return [];
       }
-
-      return records.map((record) => fromAirtableFormat(record.fields, table));
-    })
-    .catch((err) => {
-      throw err;
-    });
-}
-
-// Given a table, a record ID, and an object of fields to update, update a record on Airtable.
-function updateRecord(table: string, id: string, updatedRecord) {
-  const transformedRecord = toAirtableFormat(updatedRecord, table);
-  return base(table)
-    .update([
-      {
-        id,
-        fields: transformedRecord,
-      },
-    ])
-    .then((records) => {
-      return records[0].id;
-    })
-    .catch((err) => {
-      throw err;
-    });
-}
-
-// Given a table, an array of record IDs, and an array of objects of fields to update, update records on Airtable.
-function updateRecords(table: string, updatedRecords) {
-  const transformedRecords = updatedRecords.map((updatedRecord) => ({
-    id: updatedRecord.id,
-    fields: toAirtableFormat(updatedRecord.fields, table),
-  }));
-  return base(table)
-    .update(transformedRecords)
-    .then((records) => {
-      return records[0].id;
+      records.forEach((record: unknown) => {
+        const row: unknown = record;
+        const formatted = format(row as Row);
+        transformedRecords.push(formatted);
+      });
+      return transformedRecords;
     })
     .catch((err) => {
       throw err;
@@ -245,14 +132,8 @@ function deleteRecord(table: string, id: string) {
 
 export {
   base,
-  fromAirtableFormat,
-  toAirtableFormat,
-  createRecord,
-  createRecords,
   getAllRecords,
   getRecordById,
   getRecordsByAttribute,
-  updateRecord,
-  updateRecords,
-  deleteRecord,
+  deleteRecord
 };

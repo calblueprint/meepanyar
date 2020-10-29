@@ -1,4 +1,4 @@
-export type TableValues = string | boolean | number | Array<unknown> | Attachment;
+export type TableValues = string | boolean | number | Array<unknown> | Airtable.Attachment;
 export type TableRecord =
   | UserRecord
   | CustomerRecord
@@ -20,26 +20,6 @@ export type Row = {
   getId: () => string;
 };
 
-export type Attachment = {
-  id: string;
-  size?: number;
-  url: string;
-  type?: string;
-  filename: string;
-  thumbnails?: {
-      small?: {
-           url?: string;
-           width?: number;
-           height?: number;
-       },
-      large?: {
-           url?: string;
-           width?: number;
-           height?: number;
-       }
-   }
-}
-
 interface Record {
   rid: string;
 }
@@ -50,7 +30,7 @@ export interface UserRecord extends Record {
   username: string;
   email: string;
   password: string;
-	photo?: Attachment[];
+	photo?: Airtable.Attachment[];
 	incidentIds: IncidentRecord[];
 	siteIds: SiteRecord[];
   customers: CustomerRecord[];
@@ -134,7 +114,7 @@ export interface InventoryRecord extends Record {
 
 export interface InventoryUpdateRecord extends Record {
   quantity: number;
-  receiptPhoto: Attachment[];
+  receiptPhoto: Airtable.Attachment[];
   inventoryItemId: InventoryRecord[];
   adminApproved: boolean;
   siteId: SiteRecord[];
@@ -146,13 +126,13 @@ export interface InventoryUpdateRecord extends Record {
 export interface IncidentRecord extends Record {
   name: string;
   description: string;
-  incidentPhotos: Attachment[];
+  incidentPhotos: Airtable.Attachment[];
   status: string;
   incidentUpdateIds: IncidentUpdateRecord[];
   isResolved: boolean;
   resolutionDate: string;
   resolutionDescription: string;
-  resolutionPhoto: Attachment[];
+  resolutionPhoto: Airtable.Attachment[];
   dateRecorded: string;
   siteId: SiteRecord[];
   userId: UserRecord[];
@@ -161,7 +141,7 @@ export interface IncidentRecord extends Record {
 
 export interface IncidentUpdateRecord extends Record {
   description: string;
-  photos?: Attachment[];
+  photos?: Airtable.Attachment[];
   dateRecorded: string;
   incidentId: IncidentRecord[];
 }
@@ -180,7 +160,7 @@ export interface FinancialReportRecord extends Record {
   totalProfit: number;
   lastUpdated: string;
   period: number;
-  bankSlip: Attachment[];
+  bankSlip: Airtable.Attachment[];
   paymentApproved: boolean;
   reportApproved: boolean;
   sitesId: SiteRecord[];

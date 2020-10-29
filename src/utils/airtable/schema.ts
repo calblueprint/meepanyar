@@ -2,8 +2,45 @@
     THIS IS A GENERATED FILE
     Changes might be overwritten in the future, edit with caution!
 */
+import {
+	TableRecord,
+	UserRecord,
+	CustomerRecord,
+	SiteRecord,
+	InvoiceRecord,
+	PaymentRecord,
+	CustomerUpdateRecord,
+	MeterReadingRecord,
+	TariffPlanRecord,
+	InventoryRecord,
+	InventoryUpdateRecord,
+	IncidentRecord,
+	IncidentUpdateRecord,
+	MaintenanceRecord,
+	FinancialReportRecord,
+	Row,
+	TableValues
+  } from './interface';
 
-export const Tables = {
+type Tables = string & ('Users' | 'Customers' | 'Invoices' | 'Payments' | 'Customer Updates' | 'Meter Readings' | 'Sites' | 'Tariff Plans' | 'Inventory' | 'Inventory Updates' | 'Incidents' | 'Incident Updates' | 'Maintenance' | 'Financial Report');
+
+export type Map<T> = {
+	[k: string]: T;
+};
+
+type Column = {
+	[column: string]: any;
+};
+
+type Schema = {
+	[table: string]: Column;
+}
+
+type NewSchema<T> = {
+	[key in keyof T]: string;
+};
+
+export const Tables: Map<Tables> = {
 	Users: 'Users',
 	Customers: 'Customers',
 	Invoices: 'Invoices',
@@ -17,10 +54,11 @@ export const Tables = {
 	Incidents: 'Incidents',
 	IncidentUpdates: 'Incident Updates',
 	Maintenance: 'Maintenance',
-	FinancialReport: 'Financial Report',
+	FinancialReport: 'Financial Report'
 };
 
-export const Columns = {
+
+export const OldColumns: Schema = {
 	"Users": {
 		အမည်: {name:`အမည်`, type:`text`},
 		email: {name:`Email`, type:`text`},
@@ -202,3 +240,301 @@ export const Columns = {
 		numCustomersNeedPay: {name:`Num Customers Need Pay`, type:`lookup`},
 	},
 };
+
+export const Columns: Schema = {
+	"Users": {
+		အမည်: 'အမည်',
+		email: 'Email',
+		photo: 'Photo',
+		incidentIds: 'Incidents',
+		siteIds: 'Site',
+		password: 'Password',
+		name: 'Name',
+		username: 'Username',
+		customers: 'Customers'
+	},
+	"Customers": {
+		အမည်: 'အမည်',
+		name: 'Name',
+		meterNumber: 'Meter Number',
+		tariffPlansId: 'Tariff Plans',
+		customerUpdateIds: 'Customer Updates',
+		sitesId: 'Sites',
+		isactive: 'IsActive',
+		hasmeter: 'HasMeter',
+		invoiceIds: 'Invoices',
+		paymentIds: 'Payments',
+		outstandingPayment: 'Outstanding Payment',
+		meterReadingIds: 'Meter Readings',
+		startingDate: 'Starting Date',
+		amountfromInvoices: 'Amount (from Invoices)',
+		amountfromPayments: 'Amount (from Payments)',
+		currentPeriodfromSites: 'Current Period (from Sites)',
+		haspaid: 'HasPaid',
+		latestMeterReadingDate: 'Latest Meter Reading Date',
+		latestPaymentDate: 'Latest Payment Date',
+		latestInvoiceDate: 'Latest Invoice Date',
+		periodStartDate: 'Period Start Date',
+		periodEndDate: 'Period End Date',
+		isbilled: 'IsBilled',
+		previousMeterReadingDate: 'Previous Meter Reading Date',
+		latestMeterReading: 'Latest Meter Reading',
+		previousMeterReading: 'Previous Meter Reading',
+		electricityUsage: 'Electricity Usage',
+		needsReading: 'Needs Reading'
+	},
+	"Invoices": {
+		name: 'Name',
+		amount: 'Amount',
+		date: 'Date',
+		period: 'Period',
+		customerId: 'Customer',
+		currentPeriodfromSitesfromCustomers: 'Current Period (from Sites) (from Customers)',
+		isCurrentPeriod: 'Is Current Period'
+	},
+	"Payments": {
+		name: 'Name',
+		amount: 'Amount',
+		period: 'Period',
+		date: 'Date',
+		customerId: 'Customer',
+		isCurrentPeriod: 'Is Current Period',
+		currentPeriodfromSitesfromCustomers: 'Current Period (from Sites) (from Customers)'
+	},
+	"Customer Updates": {
+		updateId: 'Update Id',
+		explanation: 'Explanation',
+		dateUpdated: 'Date Updated',
+		customerId: 'Customer'
+	},
+	"Meter Readings": {
+		name: 'Name',
+		date: 'Date',
+		reading: 'Reading',
+		period: 'Period',
+		customerId: 'Customer',
+		latestMeterReadingDate: 'Latest Meter Reading Date',
+		isLatestMeterReading: 'Is Latest Meter Reading',
+		isOldMeterReading: 'Is Old Meter Reading',
+		previousMeterReadingDate: 'Previous Meter Reading Date',
+		isPreviousMeterReading: 'Is Previous Meter Reading'
+	},
+	"Sites": {
+		name: 'Name',
+		incidentIds: 'Incidents',
+		inventoryIds: 'Inventory',
+		inventoryUpdateIds: 'Inventory Updates',
+		tariffPlanIds: 'Tariff Plans',
+		userIds: 'Users',
+		customerIds: 'Customers',
+		currentPeriod: 'Current Period',
+		financialReportIds: 'Financial Report',
+		totalNumCustomers: 'Total Num Customers',
+		totalOutstandingPayments: 'Total Outstanding Payments',
+		numActiveCustomers: 'Num Active Customers',
+		periodStartDate: 'Period Start Date',
+		periodEndDate: 'Period End Date',
+		expenses: 'Expenses',
+		numPaidCustomers: 'Num Paid Customers',
+		amountCollected: 'Amount Collected',
+		numBilledCustomers: 'Num Billed Customers',
+		totalElectricityUsage: 'Total Electricity Usage',
+		totalTariffsCharged: 'Total Tariffs Charged',
+		numNeedsReading: 'Num Needs Reading',
+		numCustomersNeedPay: 'Num Customers Need Pay'
+	},
+	"Tariff Plans": {
+		name: 'Name',
+		fixedTariff: 'Fixed Tariff',
+		tariffByUnit: 'Tariff By Unit',
+		minUnits: 'Min Units',
+		siteIds: 'Site',
+		customerIds: 'Customer'
+	},
+	"Inventory": {
+		name: 'Name',
+		quantity: 'Quantity',
+		siteId: 'Site',
+		quantityUnit: 'Quantity Unit',
+		inventoryUpdateIds: 'Inventory Updates',
+		lastUpdatedDatefromInventoryUpdates: 'Last Updated Date(from Inventory Updates)'
+	},
+	"Inventory Updates": {
+		name: 'Name',
+		quantity: 'Quantity',
+		receiptPhoto: 'Receipt Photo',
+		inventoryItemId: 'Inventory Item',
+		adminApproved: 'Admin Approved',
+		siteId: 'Site',
+		amountPaid: 'Amount Paid',
+		notes: 'Notes',
+		dateRecorded: 'Date Recorded',
+		isInCurrentPeriod: 'Is In Current Period',
+		periodStartDate: 'Period Start Date',
+		periodEndDate: 'Period End Date'
+	},
+	"Incidents": {
+		incidentId: 'Incident Id',
+		description: 'Description',
+		incidentPhotos: 'Incident Photos',
+		status: 'Status',
+		incidentUpdateIds: 'Incident Updates',
+		isResolved: 'Is Resolved',
+		resolutionDate: 'Resolution Date',
+		resolutionDescription: 'Resolution Description',
+		resolutionPhoto: 'Resolution Photo',
+		dateRecorded: 'Date Recorded',
+		siteId: 'Site',
+		userId: 'User',
+		category: 'Category',
+		name: 'Name'
+	},
+	"Incident Updates": {
+		updateId: 'Update Id',
+		description: 'Description',
+		photos: 'Photos',
+		dateRecorded: 'Date Recorded',
+		incidentId: 'Incident'
+	},
+	"Maintenance": {
+		taskDescription: 'Task Description',
+		frequency: 'Frequency',
+		equipment: 'Equipment'
+	},
+	"Financial Report": {
+		name: 'Name',
+		electricityUsage: 'Electricity Usage',
+		tariffsCharged: 'Tariffs Charged',
+		numBilledCustomers: 'Num Billed Customers',
+		totalProfit: 'Total Profit',
+		lastUpdated: 'Last Updated',
+		period: 'Period',
+		bankSlip: 'Bank Slip',
+		paymentApproved: 'Payment Approved',
+		reportApproved: 'Report Approved',
+		sitesId: 'Sites',
+		numTotalCustomers: 'Num Total Customers',
+		totalOutstandingPayments: 'Total Outstanding Payments',
+		numActiveCustomers: 'Num Active Customers',
+		totalExpenses: 'Total Expenses',
+		numPaidCustomers: 'Num Paid Customers',
+		amountCollected: 'Amount Collected',
+		numNeedsReading: 'Num Needs Reading',
+		numCustomersNeedPay: 'Num Customers Need Pay'
+	},
+};
+
+const UserSchema: NewSchema<UserRecord> = {
+	rid: 'rid',
+	အမည်: 'အမည်',
+	name: 'name',
+	username: 'username',
+	email: 'email',
+	password: 'password',
+	photo: 'photo',
+	incidentIds: 'incidentIds',
+	siteIds: 'siteIds',
+	customers: 'customers'
+}
+
+const CustomerSchema: NewSchema<CustomerRecord> = {
+	rid: 'rid',
+	အမည်: 'အမည်',
+	name: 'name',
+	meterNumber: 'meterNumber',
+	tariffPlansId: 'tariffPlansId',
+	customerUpdateIds: 'customerUpdateIds',
+	sitesId: 'sitesId',
+	isactive: 'isactive',
+	hasmeter: 'hasmeter',
+	invoiceIds: 'invoiceIds',
+	paymentIds: 'paymentIds',
+	meterReadingIds: 'meterReadingIds',
+	haspaid: 'haspaid',
+	isbilled: 'isbilled',
+	needsReading: 'needsReading'
+  }
+
+function transformRecord<T extends TableRecord>(row: Row, schema: any): T {
+	const tRecord: any = {};
+	Object.keys(schema).forEach(key => {
+		const k = key as keyof T;
+		const value = row.get(schema[k]) as unknown as T[keyof T];
+	  	if (typeof value !== 'undefined') tRecord[key] = value;
+	});
+	tRecord.rid = row.getId();
+	return tRecord as T;
+}
+
+function formatRecord<T extends TableRecord>(row: Row, table: string): T {
+	const schema = Columns[table];
+	return transformRecord(row, schema);
+}
+
+export function formatUser(row: Row): UserRecord {
+	const user = formatRecord<UserRecord>(row, Tables['Users']);
+	return user;
+}
+
+export function formatCustomer(row: Row): CustomerRecord {
+	const customer = formatRecord<CustomerRecord>(row, Tables['Customers']);
+	customer.haspaid = !!customer.haspaid;
+	customer.isactive = !!customer.isactive;
+	customer.isbilled = !!customer.isbilled;
+	customer.needsReading = !!customer.needsReading;
+	return customer;
+}
+
+export function formatInvoice(row: Row): InvoiceRecord {
+	return formatRecord<InvoiceRecord>(row, Tables['Invoices']);
+}
+
+export function formatPayment(row: Row): PaymentRecord {
+	return formatRecord<PaymentRecord>(row, Tables['Payments']);
+}
+
+export function formatCustomerUpdate(row: Row): CustomerUpdateRecord {
+	return formatRecord<CustomerUpdateRecord>(row, Tables['CustomerUpdates']);
+}
+
+export function formatMeterReading(row: Row): MeterReadingRecord {
+	return formatRecord<MeterReadingRecord>(row, Tables['MeterReadings']);
+}
+
+export function formatSite(row: Row): SiteRecord {
+	return formatRecord<SiteRecord>(row, Tables['Sites']);
+}
+
+export function formatTariffPlan(row: Row): TariffPlanRecord {
+	return formatRecord<TariffPlanRecord>(row, Tables['TariffPlans']);
+}
+
+export function formatInventory(row: Row): InventoryRecord {
+	return formatRecord<InventoryRecord>(row, Tables['Inventory']);
+}
+
+export function formatInventoryUpdate(row: Row): InventoryUpdateRecord {
+	return formatRecord<InventoryUpdateRecord>(row, Tables['InventoryUpdates']);
+}
+
+export function formatIncident(row: Row): IncidentRecord {
+	return formatRecord<IncidentRecord>(row, Tables['Incidents']);
+}
+
+export function formatIncidentUpdate(row: Row): IncidentUpdateRecord {
+	return formatRecord<IncidentUpdateRecord>(row, Tables['IncidentUpdates']);
+}
+
+export function formatMaintenance(row: Row): MaintenanceRecord {
+	return formatRecord<MaintenanceRecord>(row, Tables['Maintenance']);
+}
+
+export function formatFinancialReport(row: Row): FinancialReportRecord {
+	return formatRecord<FinancialReportRecord>(row, Tables['FinancialReport']);
+}
+
+//   export function formatPOC(row: Row): ContactRecord {
+// 	const poc = formatRecord<ContactRecord>(row, Tables.POC);
+// 	poc.image = typeof poc.imageRef[0].thumbnails != 'undefined' ? poc.imageRef[0].thumbnails.large.url : '';
+// 	return poc;
+//   }
