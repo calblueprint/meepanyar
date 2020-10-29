@@ -36,3 +36,29 @@
     transform: rotate(360deg);
   }
 }
+
+.navbar {
+  border-bottom: solid 1px #ebebeb;
+}
+.bottom-tab-nav {
+  border-top: solid 1px #ebebeb;
+}
+.nav-link,
+.bottom-nav-link {
+  color: #55575b;
+}
+.bottom-nav-link.active {
+  color: #fc6f03;
+}
+.bottom-tab-label {
+  font-size: 12px;
+}
+
+.home-header {
+  background: '#fc6f03';
+  height: '70px';
+  width: '100%%';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
