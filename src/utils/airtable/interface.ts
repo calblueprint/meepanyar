@@ -32,7 +32,6 @@ export interface UserRecord extends Record {
   password: string;
   photo?: Airtable.Attachment[];
   incidentIds: string[];
-  incidents: IncidentRecord[];
   siteIds: string[];
   sites: SiteRecord[];
   customerIds: string[];
@@ -48,7 +47,6 @@ export interface CustomerRecord extends Record {
   customerUpdateIds: string[];
   customerUpdates: CustomerUpdateRecord[];
   sitesId: string[];
-  sites: SiteRecord[];
   isactive: boolean;
   hasmeter: boolean;
   invoiceIds: string[];
@@ -68,14 +66,9 @@ export interface SiteRecord extends Record {
   incidents: IncidentRecord[];
   inventoryIds: string[];
   inventory: InventoryRecord[];
-  inventoryUpdateIds: string[];
-  inventoryUpdates: InventoryUpdateRecord[];
   tariffPlanIds: string[];
   tariffPlans: TariffPlanRecord[];
-  userIds: string[];
-  users: UserRecord[];
   customerIds: string[];
-  customers: CustomerRecord[];
   currentPeriod: number;
   financialReportIds: string[];
   financialReports: FinancialReportRecord[];
@@ -89,29 +82,24 @@ export interface InvoiceRecord extends Record {
   amount: number;
   date: string;
   customerId: string[];
-  customer: CustomerRecord[];
 }
 
 export interface PaymentRecord extends Record {
   amount: number;
   date: string;
   customerId: string[];
-  customer: CustomerRecord[];
 }
 
 export interface CustomerUpdateRecord extends Record {
   explanation: string;
   dateUpdated: string;
   customerId: string[];
-  customer: CustomerRecord[];
 }
 
 export interface MeterReadingRecord extends Record {
   date: string;
   reading: number;
-  period: number;
   customerId: string[];
-  customer: CustomerRecord[];
 }
 
 export interface TariffPlanRecord extends Record {
@@ -119,17 +107,12 @@ export interface TariffPlanRecord extends Record {
   fixedTariff: number;
   tariffByUnit: number;
   minUnits: number;
-  siteIds: string[];
-  sites: SiteRecord[];
-  customerIds: string[];
-  customers: CustomerRecord[];
 }
 
 export interface InventoryRecord extends Record {
   name: string;
   quantity: number;
   siteId: string[];
-  site: SiteRecord[];
   quantityUnit: string;
   inventoryUpdateIds: string[];
   inventoryUpdates: InventoryUpdateRecord[];
@@ -140,10 +123,8 @@ export interface InventoryUpdateRecord extends Record {
   quantity: number;
   receiptPhoto: Airtable.Attachment[];
   inventoryItemId: string[];
-  inventoryItem: InventoryRecord[];
   adminApproved: boolean;
   siteId: string[];
-  site: SiteRecord[];
   amountPaid: number;
   notes: string;
   dateRecorded: string;
@@ -162,9 +143,7 @@ export interface IncidentRecord extends Record {
   resolutionPhoto: Airtable.Attachment[];
   dateRecorded: string;
   siteId: string[];
-  site: SiteRecord[];
   userId: string[];
-  user: UserRecord[];
   category: string[];
 }
 
@@ -173,7 +152,6 @@ export interface IncidentUpdateRecord extends Record {
   photos?: Airtable.Attachment[];
   dateRecorded: string;
   incidentId: string[];
-  incident: IncidentRecord[];
 }
 
 export interface MaintenanceRecord extends Record {
@@ -194,7 +172,6 @@ export interface FinancialReportRecord extends Record {
   paymentApproved: boolean;
   reportApproved: boolean;
   sitesId: string[];
-  site: SiteRecord[];
   numTotalCustomers: number;
   totalOutstandingPayments: number;
   numActiveCustomers: number;

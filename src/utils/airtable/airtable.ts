@@ -117,12 +117,10 @@ function getRecordsByAttribute<T>(
 }
 
 // Given a table and a record ID, delete a record on Airtable.
-function deleteRecord(table: string, id: string) {
+function deleteRecord(table: string, id: string): Promise<void> {
   return base(table)
     .destroy([id])
-    .then((records) => {
-      return records[0].fields;
-    })
+    .then(() => {return;})
     .catch((err) => {
       throw err;
     });
