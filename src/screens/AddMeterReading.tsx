@@ -14,7 +14,7 @@ class AddMeterReading extends React.Component {
         </Styles.HeaderDiv>
         <Styles.MainDiv>
           <form noValidate>
-            <Styles.MeterDiv>
+            <Styles.MeterDiv style={{marginTop: -20}}>
               <Styles.MeterLabel>Date Recorded</Styles.MeterLabel>
               <Styles.MeterLabel>00.00.0000</Styles.MeterLabel>
               <Styles.MeterLabel style={{marginTop: 10}}>Current Reading</Styles.MeterLabel>

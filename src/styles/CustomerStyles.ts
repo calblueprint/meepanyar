@@ -38,7 +38,7 @@ export const HeaderDiv = styled('div')`
 `;
 
 export const MainDiv = styled('div')`
-  margin-top: -10px;
+  margin-top: 5px;
 `;
 
 export const FieldDiv = styled('div')`
