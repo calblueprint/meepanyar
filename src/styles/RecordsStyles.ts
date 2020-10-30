@@ -4,42 +4,19 @@ import { TabPanel } from '@material-ui/lab';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 
-export const Label = styled(Typography)`
-    color: #828282;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: left;
-    padding: 6px 0px;
-    margin-left: 11%;
-`;
-
-export const BackButton = styled(Button)`
-    border-radius: 60px;
-    width: 60px;
-    height: 60px;
-`;
-
-export const BackArrow = styled(ArrowBackIosIcon)`
-    color: #FF922E;
-    margin-left: 5px;
-`;
-
 export const HeaderText = styled(Typography)`
-    font-size: 18px;
-    align-self: center;
-    margin-left: 8%;
-    font-weight: bold;
+    font-size: 30px;
+    width: 100%;
     color: #828282;
-`;
-
-export const HeaderDiv = styled('div')`
     display: flex;
-    margin-top: 30px;
-    margin-left: 20px;
+    padding: 20px;
+    margin-top: 45px;
+    margin-left: -5px;
 `;
 
 export const MainDiv = styled('div')`
-    margin-top: 20px;
+    padding: 0px 8px;
+    margin-top: -14px;
 `;
 
 export const RecordAppBar = styled(AppBar)`
@@ -48,8 +25,14 @@ export const RecordAppBar = styled(AppBar)`
 
 export const RecordTabs = styled(Tabs)`
     background: white;
+    outline: 3px solid white;
+    border: 1px solid white;
 `;
 
 export const RecordTab = styled(Tab)`
-    box-shadow: none;
+    color: #E5E5E5;
+    font-size: 12px;
+    &:focus {
+      outline: none;
+    }
 `;

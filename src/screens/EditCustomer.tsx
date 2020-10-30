@@ -1,5 +1,5 @@
 import React from "react";
-import * as Styles from "../styles/AddCustomerStyles";
+import * as Styles from "../styles/CustomerStyles";
 import Container from '@material-ui/core/Container';
 
 class EditCustomer extends React.Component {
@@ -14,14 +14,15 @@ class EditCustomer extends React.Component {
         </Styles.HeaderDiv>
         <Styles.MainDiv>
           <form noValidate>
-            <Styles.Label>Name</Styles.Label>
-            <Styles.Field
-              id='standard-secondary'
-              InputProps={{ style: {fontSize: 14}, disableUnderline: true }}
-              InputLabelProps={{ shrink: true }}
-              color="primary"
-            />
-            <br />
+            <Styles.FieldDiv>
+              <Styles.Label>Name</Styles.Label>
+              <Styles.Field
+                id='namey'
+                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off'}}
+                InputLabelProps={{ shrink: true }}
+                color="primary"
+              />
+            </Styles.FieldDiv>
             <Styles.CheckDiv>
               <Styles.Check
                 value="checkedA"
@@ -32,7 +33,6 @@ class EditCustomer extends React.Component {
               />
               <Styles.CheckLabel>Select if customer is inactive</Styles.CheckLabel>
             </Styles.CheckDiv>
-            <br /><br />
             <Styles.CheckDiv>
               <Styles.Check
                 value="checkedA"
@@ -43,30 +43,30 @@ class EditCustomer extends React.Component {
               />
               <Styles.CheckLabel>Select if customer has meter</Styles.CheckLabel>
             </Styles.CheckDiv>
-            <br /><br />
-            <Styles.Label>Tariff Plan</Styles.Label>
-            <Styles.Field
-              id='standard-secondary'
-              InputProps={{ style: {fontSize: 14}, disableUnderline: true }}
-              InputLabelProps={{ shrink: true }}
-              color="primary"
-            />
-            <br /><br />
-            <Styles.Label>Reason</Styles.Label>
-            <Styles.Field
-              id='standard-secondary'
-              InputProps={{ style: {fontSize: 14}, disableUnderline: true }}
-              InputLabelProps={{ shrink: true }}
-              color="primary"
-            />
-            <br></br>
-            <br></br>
+            <Styles.FieldDiv>
+              <Styles.Label>Tariff Plan</Styles.Label>
+              <Styles.Field
+                id='tarrif-plan'
+                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off'}}
+                InputLabelProps={{ shrink: true }}
+                color="primary"
+              />
+            </Styles.FieldDiv>
+            <Styles.FieldDiv>
+              <Styles.Label>Reason</Styles.Label>
+              <Styles.Field
+                id='reason'
+                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off'}}
+                InputLabelProps={{ shrink: true }}
+                color="primary"
+              />
+            </Styles.FieldDiv>
             <Styles.AddButton
               type="submit"
               variant="contained"
               color="primary"
             >
-              Edit
+              SAVE
             </Styles.AddButton>
           </form>
         </Styles.MainDiv>

@@ -26,6 +26,7 @@ class Login extends React.Component {
                 InputLabelProps={{ shrink: true }}
                 color="primary"
                 type="password"
+                autoComplete='off'
               />
             </Styles.FieldDiv>
             <Styles.LoginButton type="submit" variant="contained" color="primary">

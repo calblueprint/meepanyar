@@ -1,5 +1,5 @@
 import React from "react";
-import * as Styles from "../styles/AddCustomerStyles";
+import * as Styles from "../styles/CustomerStyles";
 import Container from '@material-ui/core/Container';
 
 class AddCustomer extends React.Component {
@@ -14,15 +14,16 @@ class AddCustomer extends React.Component {
         </Styles.HeaderDiv>
         <Styles.MainDiv>
           <form noValidate>
-            <Styles.Label>Name</Styles.Label>
-            <Styles.Field
-              id='standard-secondary'
-              InputProps={{ style: {fontSize: 14}, disableUnderline: true }}
-              InputLabelProps={{ shrink: true }}
-              color="primary"
-              type="name"
-            />
-            <br />
+            <Styles.FieldDiv>
+              <Styles.Label>Name</Styles.Label>
+              <Styles.Field
+                id='name'
+                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off' }}
+                InputLabelProps={{ shrink: true }}
+                color="primary"
+                type="name"
+              />
+            </Styles.FieldDiv>
             <Styles.CheckDiv>
               <Styles.Check
                 value="checkedA"
@@ -33,7 +34,6 @@ class AddCustomer extends React.Component {
               />
               <Styles.CheckLabel>Select if customer is inactive</Styles.CheckLabel>
             </Styles.CheckDiv>
-            <br /><br />
             <Styles.CheckDiv>
               <Styles.Check
                 value="checkedA"
@@ -44,30 +44,31 @@ class AddCustomer extends React.Component {
               />
               <Styles.CheckLabel>Meter:</Styles.CheckLabel>
               <Styles.CheckField
-                id='standard-secondary'
-                InputProps={{ style: {fontSize: 14}, disableUnderline: true }}
+                id='meter'
+                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off' }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
                 type="meter"
               />
             </Styles.CheckDiv>
-            <br /><br />
+            <Styles.FieldDiv
+              style={{marginTop: 30}}
+            >
             <Styles.Label>Tariff Plan</Styles.Label>
             <Styles.Field
-              id='standard-secondary'
-              InputProps={{ style: {fontSize: 14}, disableUnderline: true }}
+              id='tarrif-plan'
+              InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off'}}
               InputLabelProps={{ shrink: true }}
               color="primary"
               type="tariff-plan"
             />
-            <br></br>
-            <br></br>
+            </Styles.FieldDiv>
             <Styles.AddButton
               type="submit"
               variant="contained"
               color="primary"
             >
-              Add
+              ADD
             </Styles.AddButton>
           </form>
         </Styles.MainDiv>
