@@ -120,7 +120,9 @@ function getRecordsByAttribute<T>(
 function deleteRecord(table: string, id: string): Promise<void> {
   return base(table)
     .destroy([id])
-    .then(() => {return;})
+    .then(() => {
+      return;
+    })
     .catch((err) => {
       throw err;
     });

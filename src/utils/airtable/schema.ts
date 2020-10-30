@@ -219,12 +219,14 @@ function formatLinkedRecords<T>(table: string, ids: string[], format: (row: Row)
 export function formatUser(row: Row): UserRecord {
   const user = formatRecord<UserRecord>(row, Tables.Users);
   if (user.siteIds !== undefined) {
-    formatLinkedRecords<SiteRecord>(Tables.Sites, user.siteIds, formatSite)
-      .then((sites) => {user.sites = sites});
+    formatLinkedRecords<SiteRecord>(Tables.Sites, user.siteIds, formatSite).then((sites) => {
+      user.sites = sites;
+    });
   }
   if (user.customerIds !== undefined) {
-    formatLinkedRecords<CustomerRecord>(Tables.Customers, user.customerIds, formatCustomer)
-      .then((customers) => {user.customers = customers});
+    formatLinkedRecords<CustomerRecord>(Tables.Customers, user.customerIds, formatCustomer).then((customers) => {
+      user.customers = customers;
+    });
   }
   return user;
 }
@@ -236,24 +238,37 @@ export function formatCustomer(row: Row): CustomerRecord {
   customer.isbilled = !!customer.isbilled;
   customer.needsReading = !!customer.needsReading;
   if (customer.customerUpdateIds !== undefined) {
-    formatLinkedRecords<CustomerUpdateRecord>(Tables.CustomerUpdates, customer.customerUpdateIds, formatCustomerUpdate)
-      .then((customerUpdates) => {customer.customerUpdates = customerUpdates});
+    formatLinkedRecords<CustomerUpdateRecord>(
+      Tables.CustomerUpdates,
+      customer.customerUpdateIds,
+      formatCustomerUpdate,
+    ).then((customerUpdates) => {
+      customer.customerUpdates = customerUpdates;
+    });
   }
   if (customer.tariffPlansId !== undefined) {
-    formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan)
-      .then((tariffPlans) => {customer.tariffPlans = tariffPlans});
+    formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan).then(
+      (tariffPlans) => {
+        customer.tariffPlans = tariffPlans;
+      },
+    );
   }
   if (customer.invoiceIds !== undefined) {
-    formatLinkedRecords<InvoiceRecord>(Tables.Invoices, customer.invoiceIds, formatInvoice)
-      .then((invoices) => {customer.invoices = invoices});
+    formatLinkedRecords<InvoiceRecord>(Tables.Invoices, customer.invoiceIds, formatInvoice).then((invoices) => {
+      customer.invoices = invoices;
+    });
   }
   if (customer.paymentIds !== undefined) {
-    formatLinkedRecords<PaymentRecord>(Tables.Payments, customer.paymentIds, formatPayment)
-      .then((payments) => {customer.payments = payments});
+    formatLinkedRecords<PaymentRecord>(Tables.Payments, customer.paymentIds, formatPayment).then((payments) => {
+      customer.payments = payments;
+    });
   }
   if (customer.meterReadingIds !== undefined) {
-    formatLinkedRecords<MeterReadingRecord>(Tables.MeterReadings, customer.meterReadingIds, formatMeterReading)
-      .then((meterReadings) => {customer.meterReadings = meterReadings});
+    formatLinkedRecords<MeterReadingRecord>(Tables.MeterReadings, customer.meterReadingIds, formatMeterReading).then(
+      (meterReadings) => {
+        customer.meterReadings = meterReadings;
+      },
+    );
   }
   return customer;
 }
@@ -277,20 +292,30 @@ export function formatMeterReading(row: Row): MeterReadingRecord {
 export function formatSite(row: Row): SiteRecord {
   const site = formatRecord<SiteRecord>(row, Tables.Sites);
   if (site.incidentIds !== undefined) {
-    formatLinkedRecords<IncidentRecord>(Tables.Incidents, site.incidentIds, formatIncident)
-      .then((incidents) => {site.incidents = incidents});
+    formatLinkedRecords<IncidentRecord>(Tables.Incidents, site.incidentIds, formatIncident).then((incidents) => {
+      site.incidents = incidents;
+    });
   }
   if (site.tariffPlanIds !== undefined) {
-    formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, site.tariffPlanIds, formatTariffPlan)
-      .then((tariffPlans) => {site.tariffPlans = tariffPlans});
+    formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, site.tariffPlanIds, formatTariffPlan).then(
+      (tariffPlans) => {
+        site.tariffPlans = tariffPlans;
+      },
+    );
   }
   if (site.inventoryIds !== undefined) {
-    formatLinkedRecords<InventoryRecord>(Tables.Inventory, site.inventoryIds, formatInventory)
-      .then((inventory) => {site.inventory = inventory});
+    formatLinkedRecords<InventoryRecord>(Tables.Inventory, site.inventoryIds, formatInventory).then((inventory) => {
+      site.inventory = inventory;
+    });
   }
   if (site.financialReportIds !== undefined) {
-    formatLinkedRecords<FinancialReportRecord>(Tables.FinancialReport, site.financialReportIds, formatFinancialReport)
-      .then((financialReports) => {site.financialReports = financialReports});
+    formatLinkedRecords<FinancialReportRecord>(
+      Tables.FinancialReport,
+      site.financialReportIds,
+      formatFinancialReport,
+    ).then((financialReports) => {
+      site.financialReports = financialReports;
+    });
   }
   return site;
 }
@@ -302,8 +327,13 @@ export function formatTariffPlan(row: Row): TariffPlanRecord {
 export function formatInventory(row: Row): InventoryRecord {
   const inventory = formatRecord<InventoryRecord>(row, Tables.Inventory);
   if (inventory.inventoryUpdateIds !== undefined) {
-    formatLinkedRecords<InventoryUpdateRecord>(Tables.InventoryUpdates, inventory.inventoryUpdateIds, formatInventoryUpdate)
-      .then((inventoryUpdates) => {inventory.inventoryUpdates = inventoryUpdates});
+    formatLinkedRecords<InventoryUpdateRecord>(
+      Tables.InventoryUpdates,
+      inventory.inventoryUpdateIds,
+      formatInventoryUpdate,
+    ).then((inventoryUpdates) => {
+      inventory.inventoryUpdates = inventoryUpdates;
+    });
   }
   return inventory;
 }
@@ -315,8 +345,13 @@ export function formatInventoryUpdate(row: Row): InventoryUpdateRecord {
 export function formatIncident(row: Row): IncidentRecord {
   const incident = formatRecord<IncidentRecord>(row, Tables.Incidents);
   if (incident.incidentUpdateIds !== undefined) {
-    formatLinkedRecords<IncidentUpdateRecord>(Tables.IncidentUpdates, incident.incidentUpdateIds, formatIncidentUpdate)
-      .then((incidentUpdates) => {incident.incidentUpdates = incidentUpdates});
+    formatLinkedRecords<IncidentUpdateRecord>(
+      Tables.IncidentUpdates,
+      incident.incidentUpdateIds,
+      formatIncidentUpdate,
+    ).then((incidentUpdates) => {
+      incident.incidentUpdates = incidentUpdates;
+    });
   }
   return incident;
 }

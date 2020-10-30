@@ -111,7 +111,11 @@ export const getCustomerUpdateById = async (id: string): Promise<CustomerUpdateR
   return getRecordById(Tables.CustomerUpdates, id, formatCustomerUpdate);
 };
 
-export const getCustomerUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<CustomerUpdateRecord[]> => {
+export const getCustomerUpdatesByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<CustomerUpdateRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.CustomerUpdates, formula, sort, formatCustomerUpdate);
@@ -125,13 +129,17 @@ export const getMeterReadingById = async (id: string): Promise<MeterReadingRecor
   return getRecordById(Tables.MeterReadings, id, formatMeterReading);
 };
 
-export const getMeterReadingsByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<MeterReadingRecord[]> => {
+export const getMeterReadingsByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<MeterReadingRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.MeterReadings, formula, sort, formatMeterReading);
 };
 
-export const getAllMeterReadings = async (filterByFormula = '', sort = []): Promise<MeterReadingRecord[]>  => {
+export const getAllMeterReadings = async (filterByFormula = '', sort = []): Promise<MeterReadingRecord[]> => {
   return getAllRecords(Tables.MeterReadings, filterByFormula, sort, formatMeterReading);
 };
 
@@ -153,7 +161,11 @@ export const getTariffPlanById = async (id: string): Promise<TariffPlanRecord> =
   return getRecordById(Tables.TariffPlans, id, formatTariffPlan);
 };
 
-export const getTariffPlansByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<TariffPlanRecord[]> => {
+export const getTariffPlansByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<TariffPlanRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.TariffPlans, formula, sort, formatTariffPlan);
@@ -167,7 +179,11 @@ export const getInventoryById = async (id: string): Promise<InventoryRecord> => 
   return getRecordById(Tables.Inventory, id, formatInventory);
 };
 
-export const getInventorysByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<InventoryRecord[]> => {
+export const getInventorysByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<InventoryRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.Inventory, formula, sort, formatInventory);
@@ -181,7 +197,11 @@ export const getInventoryUpdateById = async (id: string): Promise<InventoryUpdat
   return getRecordById(Tables.InventoryUpdates, id, formatInventoryUpdate);
 };
 
-export const getInventoryUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<InventoryUpdateRecord[]> => {
+export const getInventoryUpdatesByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<InventoryUpdateRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.InventoryUpdates, formula, sort, formatInventoryUpdate);
@@ -209,7 +229,11 @@ export const getIncidentUpdateById = async (id: string): Promise<IncidentUpdateR
   return getRecordById(Tables.IncidentUpdates, id, formatIncidentUpdate);
 };
 
-export const getIncidentUpdatesByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<IncidentUpdateRecord[]> => {
+export const getIncidentUpdatesByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<IncidentUpdateRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.IncidentUpdates, formula, sort, formatIncidentUpdate);
@@ -223,7 +247,11 @@ export const getMaintenanceById = async (id: string): Promise<MaintenanceRecord>
   return getRecordById(Tables.Maintenance, id, formatMaintenance);
 };
 
-export const getMaintenancesByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<MaintenanceRecord[]> => {
+export const getMaintenancesByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<MaintenanceRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.Maintenance, formula, sort, formatMaintenance);
@@ -237,7 +265,11 @@ export const getFinancialReportById = async (id: string): Promise<FinancialRepor
   return getRecordById(Tables.FinancialReport, id, formatFinancialReport);
 };
 
-export const getFinancialReportsByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<FinancialReportRecord[]> => {
+export const getFinancialReportsByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<FinancialReportRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.FinancialReport, formula, sort, formatFinancialReport);
