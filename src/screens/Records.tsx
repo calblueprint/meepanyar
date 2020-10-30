@@ -3,6 +3,7 @@ import * as Styles from "../styles/RecordsStyles";
 import * as BaseStyles from "../styles/CustomerStyles";
 import Container from "@material-ui/core/Container";
 import { TabContext, TabPanel } from "@material-ui/lab";
+import Paper from '@material-ui/core/Paper';
 import Invoice from '../components/Invoice';
 import Payment from '../components/Payment';
 import createMuiTheme from '@material-ui/styles'
@@ -47,17 +48,49 @@ export default class Records extends React.Component<{}, RecordsState> {
                 <Styles.RecordTab label="Payment" value="1" />
               </Styles.RecordTabs>
             </Styles.RecordAppBar>
+            <Styles.ScrollDiv>
             <TabPanel value="0" id="invoices">
-              <Invoice
-                date={"10.29.2020"}
-                used_kwh={123}
-                amount_ks={456}
-              />
-              <Invoice
-                date={"10.28.2020"}
-                used_kwh={789}
-                amount_ks={123}
-              />
+                <Invoice
+                  date={"10.29.2020"}
+                  used_kwh={123}
+                  amount_ks={456}
+                />
+                <Invoice
+                  date={"10.28.2020"}
+                  used_kwh={789}
+                  amount_ks={123}
+                />
+                <Invoice
+                  date={"10.28.2020"}
+                  used_kwh={789}
+                  amount_ks={123}
+                />
+                <Invoice
+                  date={"10.28.2020"}
+                  used_kwh={789}
+                  amount_ks={123}
+                />
+                <Invoice
+                  date={"10.28.2020"}
+                  used_kwh={789}
+                  amount_ks={123}
+                />
+                <Invoice
+                  date={"10.28.2020"}
+                  used_kwh={789}
+                  amount_ks={123}
+                />
+                <Invoice
+                  date={"10.28.2020"}
+                  used_kwh={789}
+                  amount_ks={123}
+                />
+                <Invoice
+                  date={"10.28.2020"}
+                  used_kwh={789}
+                  amount_ks={123}
+                />
+
             </TabPanel>
             <TabPanel value="1" id="payments">
               <Payment
@@ -69,6 +102,7 @@ export default class Records extends React.Component<{}, RecordsState> {
                 amount_ks={3434}
               />
             </TabPanel>
+            </Styles.ScrollDiv>
           </TabContext>
         </Styles.MainDiv>
       </Container>
