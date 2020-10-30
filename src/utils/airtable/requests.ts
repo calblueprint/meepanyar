@@ -30,12 +30,7 @@ import {
   formatFinancialReport,
 } from './schema';
 import {
-  // createRecord,
-  // createRecords,
-  // updateRecord,
-  // updateRecords,
   getAllRecords,
-  getRecordsByAttribute,
   getRecordById,
   deleteRecord,
 } from './airtable';

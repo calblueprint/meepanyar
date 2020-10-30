@@ -3,6 +3,21 @@
     Changes might be overwritten in the future, edit with caution!
 */
 import {
+  getCustomerById,
+  getSiteById,
+  getIncidentById,
+  getInventoryUpdateById,
+  getInventoryById,
+  getUserById,
+  getIncidentUpdateById,
+  getTariffPlanById,
+  getFinancialReportById,
+  getCustomerUpdateById,
+  getInvoiceById,
+  getPaymentById,
+  getMeterReadingById
+} from './requests';
+import {
   TableRecord,
   UserRecord,
   CustomerRecord,
@@ -19,10 +34,14 @@ import {
   MaintenanceRecord,
   FinancialReportRecord,
   Row,
-  TableValues,
 } from './interface';
+import {
+  getAllRecords,
+  getRecordById,
+  deleteRecord,
+} from './airtable';
 
-type Tables = string &
+type TableNames = string &
   (
     | 'Users'
     | 'Customers'
@@ -44,6 +63,10 @@ export type Map<T> = {
   [k: string]: T;
 };
 
+export type NewMap = {
+  [k: string]: string;
+};
+
 type Column = {
   [column: string]: any;
 };
@@ -52,11 +75,7 @@ type Schema = {
   [table: string]: Column;
 };
 
-type NewSchema<T> = {
-  [key in keyof T]: string;
-};
-
-export const Tables: Map<Tables> = {
+export const Tables: NewMap = {
   Users: 'Users',
   Customers: 'Customers',
   Invoices: 'Invoices',
@@ -266,7 +285,7 @@ export const Columns: Schema = {
     password: 'Password',
     name: 'Name',
     username: 'Username',
-    customers: 'Customers',
+    customerIds: 'Customers',
   },
   Customers: {
     အမည်: 'အမည်',
@@ -279,60 +298,31 @@ export const Columns: Schema = {
     hasmeter: 'HasMeter',
     invoiceIds: 'Invoices',
     paymentIds: 'Payments',
-    outstandingPayment: 'Outstanding Payment',
     meterReadingIds: 'Meter Readings',
-    startingDate: 'Starting Date',
-    amountfromInvoices: 'Amount (from Invoices)',
-    amountfromPayments: 'Amount (from Payments)',
-    currentPeriodfromSites: 'Current Period (from Sites)',
     haspaid: 'HasPaid',
-    latestMeterReadingDate: 'Latest Meter Reading Date',
-    latestPaymentDate: 'Latest Payment Date',
-    latestInvoiceDate: 'Latest Invoice Date',
-    periodStartDate: 'Period Start Date',
-    periodEndDate: 'Period End Date',
     isbilled: 'IsBilled',
-    previousMeterReadingDate: 'Previous Meter Reading Date',
-    latestMeterReading: 'Latest Meter Reading',
-    previousMeterReading: 'Previous Meter Reading',
-    electricityUsage: 'Electricity Usage',
     needsReading: 'Needs Reading',
   },
   Invoices: {
-    name: 'Name',
     amount: 'Amount',
     date: 'Date',
-    period: 'Period',
     customerId: 'Customer',
-    currentPeriodfromSitesfromCustomers: 'Current Period (from Sites) (from Customers)',
-    isCurrentPeriod: 'Is Current Period',
   },
   Payments: {
-    name: 'Name',
     amount: 'Amount',
-    period: 'Period',
     date: 'Date',
     customerId: 'Customer',
-    isCurrentPeriod: 'Is Current Period',
-    currentPeriodfromSitesfromCustomers: 'Current Period (from Sites) (from Customers)',
   },
   'Customer Updates': {
-    updateId: 'Update Id',
     explanation: 'Explanation',
     dateUpdated: 'Date Updated',
     customerId: 'Customer',
   },
   'Meter Readings': {
-    name: 'Name',
     date: 'Date',
     reading: 'Reading',
     period: 'Period',
     customerId: 'Customer',
-    latestMeterReadingDate: 'Latest Meter Reading Date',
-    isLatestMeterReading: 'Is Latest Meter Reading',
-    isOldMeterReading: 'Is Old Meter Reading',
-    previousMeterReadingDate: 'Previous Meter Reading Date',
-    isPreviousMeterReading: 'Is Previous Meter Reading',
   },
   Sites: {
     name: 'Name',
@@ -344,17 +334,8 @@ export const Columns: Schema = {
     customerIds: 'Customers',
     currentPeriod: 'Current Period',
     financialReportIds: 'Financial Report',
-    totalNumCustomers: 'Total Num Customers',
-    totalOutstandingPayments: 'Total Outstanding Payments',
-    numActiveCustomers: 'Num Active Customers',
     periodStartDate: 'Period Start Date',
     periodEndDate: 'Period End Date',
-    expenses: 'Expenses',
-    numPaidCustomers: 'Num Paid Customers',
-    amountCollected: 'Amount Collected',
-    numBilledCustomers: 'Num Billed Customers',
-    totalElectricityUsage: 'Total Electricity Usage',
-    totalTariffsCharged: 'Total Tariffs Charged',
     numNeedsReading: 'Num Needs Reading',
     numCustomersNeedPay: 'Num Customers Need Pay',
   },
@@ -375,7 +356,6 @@ export const Columns: Schema = {
     lastUpdatedDatefromInventoryUpdates: 'Last Updated Date(from Inventory Updates)',
   },
   'Inventory Updates': {
-    name: 'Name',
     quantity: 'Quantity',
     receiptPhoto: 'Receipt Photo',
     inventoryItemId: 'Inventory Item',
@@ -384,12 +364,8 @@ export const Columns: Schema = {
     amountPaid: 'Amount Paid',
     notes: 'Notes',
     dateRecorded: 'Date Recorded',
-    isInCurrentPeriod: 'Is In Current Period',
-    periodStartDate: 'Period Start Date',
-    periodEndDate: 'Period End Date',
   },
   Incidents: {
-    incidentId: 'Incident Id',
     description: 'Description',
     incidentPhotos: 'Incident Photos',
     status: 'Status',
@@ -405,7 +381,6 @@ export const Columns: Schema = {
     name: 'Name',
   },
   'Incident Updates': {
-    updateId: 'Update Id',
     description: 'Description',
     photos: 'Photos',
     dateRecorded: 'Date Recorded',
@@ -439,42 +414,10 @@ export const Columns: Schema = {
   },
 };
 
-const UserSchema: NewSchema<UserRecord> = {
-  rid: 'rid',
-  အမည်: 'အမည်',
-  name: 'name',
-  username: 'username',
-  email: 'email',
-  password: 'password',
-  photo: 'photo',
-  incidentIds: 'incidentIds',
-  siteIds: 'siteIds',
-  customers: 'customers',
-};
-
-const CustomerSchema: NewSchema<CustomerRecord> = {
-  rid: 'rid',
-  အမည်: 'အမည်',
-  name: 'name',
-  meterNumber: 'meterNumber',
-  tariffPlansId: 'tariffPlansId',
-  customerUpdateIds: 'customerUpdateIds',
-  sitesId: 'sitesId',
-  isactive: 'isactive',
-  hasmeter: 'hasmeter',
-  invoiceIds: 'invoiceIds',
-  paymentIds: 'paymentIds',
-  meterReadingIds: 'meterReadingIds',
-  haspaid: 'haspaid',
-  isbilled: 'isbilled',
-  needsReading: 'needsReading',
-};
-
-function transformRecord<T extends TableRecord>(row: Row, schema: any): T {
+function transformRecord<T extends TableRecord>(row: Row, schema: Column): T {
   const tRecord: any = {};
   Object.keys(schema).forEach((key) => {
-    const k = key as keyof T;
-    const value = (row.get(schema[k]) as unknown) as T[keyof T];
+    const value = (row.get(schema[key]) as unknown) as T[keyof T];
     if (typeof value !== 'undefined') tRecord[key] = value;
   });
   tRecord.rid = row.getId();
@@ -487,69 +430,155 @@ function formatRecord<T extends TableRecord>(row: Row, table: string): T {
 }
 
 export function formatUser(row: Row): UserRecord {
-  const user = formatRecord<UserRecord>(row, Tables['Users']);
+  const user = formatRecord<UserRecord>(row, Tables.Users);
+  // const incidentPromises = user.incidentIds.map(async id => await getIncidentById(id));
+  // const incidents = await Promise.all(incidentPromises);
+  // const sitePromises = user.siteIds.map(async id => await getSiteById(id));
+  // const sites = await Promise.all(sitePromises);
+  // const customerPromises = user.customerIds.map(async id => await getCustomerById(id));
+  // const customers = await Promise.all(customerPromises);
+  // return {...user, customers, sites, incidents};
   return user;
 }
 
-export function formatCustomer(row: Row): CustomerRecord {
-  const customer = formatRecord<CustomerRecord>(row, Tables['Customers']);
+export async function formatCustomer(row: Row): Promise<CustomerRecord> {
+  const customer = formatRecord<CustomerRecord>(row, Tables.Customers);
   customer.haspaid = !!customer.haspaid;
   customer.isactive = !!customer.isactive;
   customer.isbilled = !!customer.isbilled;
   customer.needsReading = !!customer.needsReading;
-  return customer;
+  const sitePromises = customer.sitesId.map(async id => await getSiteById(id));
+  const sites = await Promise.all(sitePromises);
+  const customerUpdatePromises = customer.customerUpdateIds.map(async id => await getCustomerUpdateById(id));
+  const customerUpdates = await Promise.all(customerUpdatePromises);
+  const tariffPlanPromises = customer.tariffPlansId.map(async id => await getTariffPlanById(id));
+  const tariffPlans = await Promise.all(tariffPlanPromises);
+  const invoicePromises = customer.invoiceIds.map(async id => await getInvoiceById(id));
+  const invoices = await Promise.all(invoicePromises);
+  const paymentPromises = customer.paymentIds.map(async id => getPaymentById(id));
+  const payments = await Promise.all(paymentPromises);
+  const meterReadingPromises = customer.meterReadingIds.map(async id => getMeterReadingById(id));
+  const meterReadings = await Promise.all(meterReadingPromises);
+  return {...customer, customerUpdates, sites, tariffPlans, invoices, payments, meterReadings};
 }
 
-export function formatInvoice(row: Row): InvoiceRecord {
-  return formatRecord<InvoiceRecord>(row, Tables['Invoices']);
+export async function formatInvoice(row: Row): Promise<InvoiceRecord> {
+  const invoice = formatRecord<InvoiceRecord>(row, Tables.Invoices);
+  const promises = invoice.customerId.map(async id => await getCustomerById(id));
+  const customer = await Promise.all(promises);
+  return {...invoice, customer};
 }
 
-export function formatPayment(row: Row): PaymentRecord {
-  return formatRecord<PaymentRecord>(row, Tables['Payments']);
+export async function formatPayment(row: Row): Promise<PaymentRecord> {
+  const payment = formatRecord<PaymentRecord>(row, Tables.Payments);
+  const promises = payment.customerId.map(async id => await getCustomerById(id));
+  const customer = await Promise.all(promises);
+  return {...payment, customer};
 }
 
-export function formatCustomerUpdate(row: Row): CustomerUpdateRecord {
-  return formatRecord<CustomerUpdateRecord>(row, Tables['CustomerUpdates']);
+export async function formatCustomerUpdate(row: Row): Promise<CustomerUpdateRecord> {
+  const customerUpdate = formatRecord<CustomerUpdateRecord>(row, Tables.CustomerUpdates);
+  const promises = customerUpdate.customerId.map(async id => await getCustomerById(id));
+  const customer = await Promise.all(promises);
+  return {...customerUpdate, customer};
 }
 
-export function formatMeterReading(row: Row): MeterReadingRecord {
-  return formatRecord<MeterReadingRecord>(row, Tables['MeterReadings']);
+export async function formatMeterReading(row: Row): Promise<MeterReadingRecord> {
+  const meterReading = formatRecord<MeterReadingRecord>(row, Tables.MeterReadings);
+  const promises = meterReading.customerId.map(async id => await getCustomerById(id));
+  const customer = await Promise.all(promises);
+  return {...meterReading, customer};
 }
 
-export function formatSite(row: Row): SiteRecord {
-  return formatRecord<SiteRecord>(row, Tables['Sites']);
+export async function formatSite(row: Row): Promise<SiteRecord> {
+  const site = formatRecord<SiteRecord>(row, Tables.Sites);
+  const incidentPromises = site.incidentIds.map(async id => await getIncidentById(id));
+  const incidents = await Promise.all(incidentPromises);
+  const customerPromises = site.customerIds.map(async id => await getCustomerById(id));
+  const customers = await Promise.all(customerPromises);
+  const userPromises = site.userIds.map(async id => await getUserById(id));
+  const users = await Promise.all(userPromises);
+  const tariffPlanPromises = site.tariffPlanIds.map(async id => await getTariffPlanById(id));
+  const tariffPlans = await Promise.all(tariffPlanPromises);
+  const inventoryPromises = site.inventoryIds.map(async id => await getInventoryById(id));
+  const inventory = await Promise.all(inventoryPromises);
+  const inventoryUpdatePromises = site.inventoryUpdateIds.map(async id => await getInventoryUpdateById(id));
+  const inventoryUpdates = await Promise.all(inventoryUpdatePromises);
+  const financialReportPromises = site.financialReportIds.map(async id => getFinancialReportById(id));
+  const financialReports = await Promise.all(financialReportPromises);
+  return {...site, incidents, customers, users, tariffPlans, inventory, inventoryUpdates, financialReports};
 }
 
-export function formatTariffPlan(row: Row): TariffPlanRecord {
-  return formatRecord<TariffPlanRecord>(row, Tables['TariffPlans']);
+export async function formatTariffPlan(row: Row): Promise<TariffPlanRecord> {
+  const tariffPlan = formatRecord<TariffPlanRecord>(row, Tables.TariffPlans);
+  const sitePromises = tariffPlan.siteIds.map(async id => await getSiteById(id));
+  const customerPromises = tariffPlan.customerIds.map(async id => await getCustomerById(id));
+  const sites = await Promise.all(sitePromises);
+  const customers = await Promise.all(customerPromises);
+  return {...tariffPlan, customers, sites};
 }
 
-export function formatInventory(row: Row): InventoryRecord {
-  return formatRecord<InventoryRecord>(row, Tables['Inventory']);
+export async function formatInventory(row: Row): Promise<InventoryRecord> {
+  const inventory = formatRecord<InventoryRecord>(row, Tables.Inventory);
+  const sitePromises = inventory.siteId.map(async id => await getSiteById(id));
+  const site = await Promise.all(sitePromises);
+  const inventoryUpdatePromises = inventory.inventoryUpdateIds.map(async id => await getInventoryUpdateById(id));
+  const inventoryUpdates = await Promise.all(inventoryUpdatePromises);
+  return {...inventory, site, inventoryUpdates};
 }
 
-export function formatInventoryUpdate(row: Row): InventoryUpdateRecord {
-  return formatRecord<InventoryUpdateRecord>(row, Tables['InventoryUpdates']);
+export async function formatInventoryUpdate(row: Row): Promise<InventoryUpdateRecord> {
+  const inventoryUpdate = formatRecord<InventoryUpdateRecord>(row, Tables.InventoryUpdates);
+  const sitePromises = inventoryUpdate.siteId.map(async id => await getSiteById(id));
+  const site = await Promise.all(sitePromises);
+  const inventoryItemPromise = inventoryUpdate.inventoryItemId.map(async id => await getInventoryById(id));
+  const inventoryItem = await Promise.all(inventoryItemPromise);
+  return {...inventoryUpdate, site, inventoryItem};
 }
 
-export function formatIncident(row: Row): IncidentRecord {
-  return formatRecord<IncidentRecord>(row, Tables['Incidents']);
+export async function formatIncident(row: Row): Promise<IncidentRecord> {
+  const incident = formatRecord<IncidentRecord>(row, Tables.Incidents);
+  const sitePromise = incident.siteId.map(async id => await getSiteById(id));
+  const site = await Promise.all(sitePromise);
+  const userPromise = incident.userId.map(async id => await getUserById(id));
+  const user = await Promise.all(userPromise);
+  const incidentUpdatePromises = incident.incidentUpdateIds.map(async id => await getIncidentUpdateById(id));
+  const incidentUpdates = await Promise.all(incidentUpdatePromises);
+  return {...incident, site, user, incidentUpdates};
 }
 
-export function formatIncidentUpdate(row: Row): IncidentUpdateRecord {
-  return formatRecord<IncidentUpdateRecord>(row, Tables['IncidentUpdates']);
+export async function formatIncidentUpdate(row: Row): Promise<IncidentUpdateRecord> {
+  const incidentUpdate = formatRecord<IncidentUpdateRecord>(row, Tables.IncidentUpdates);
+  const incidentPromise = incidentUpdate.incidentId.map(async id => await getIncidentById(id));
+  const incident = await Promise.all(incidentPromise);
+  return {...incidentUpdate, incident};
 }
 
 export function formatMaintenance(row: Row): MaintenanceRecord {
-  return formatRecord<MaintenanceRecord>(row, Tables['Maintenance']);
+  return formatRecord<MaintenanceRecord>(row, Tables.Maintenance);
 }
 
-export function formatFinancialReport(row: Row): FinancialReportRecord {
-  return formatRecord<FinancialReportRecord>(row, Tables['FinancialReport']);
+export async function formatFinancialReport(row: Row): Promise<FinancialReportRecord> {
+  const financialReport = formatRecord<FinancialReportRecord>(row, Tables.FinancialReport);
+  const promises = financialReport.sitesId.map(async id => await getSiteById(id));
+  const site = await Promise.all(promises);
+  // What i want is to set financialReport.site = result from getting request
+  // financialReport.site = ;
+  return {...financialReport, site};
 }
 
-//   export function formatPOC(row: Row): ContactRecord {
-// 	const poc = formatRecord<ContactRecord>(row, Tables.POC);
-// 	poc.image = typeof poc.imageRef[0].thumbnails != 'undefined' ? poc.imageRef[0].thumbnails.large.url : '';
-// 	return poc;
-//   }
+function formatLinkedRecords<T>(table: string, ids: string[], format: (row: Row) => T): Promise<T[]> {
+  const promises = ids.map(async id => await getRecordById<T>(table, id, format));
+  return Promise.all(promises)
+    .then((records) => {
+      const transformedRecords: T[] = [];
+      if (!records || records.length < 1) {
+        // No need for this to throw an error, sometimes there're just no values
+        return [];
+      }
+      records.forEach((record: T) => {
+        transformedRecords.push(record);
+      });
+      return transformedRecords;
+    });
+}

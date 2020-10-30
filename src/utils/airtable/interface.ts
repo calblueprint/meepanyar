@@ -31,8 +31,11 @@ export interface UserRecord extends Record {
   email: string;
   password: string;
   photo?: Airtable.Attachment[];
-  incidentIds: IncidentRecord[];
-  siteIds: SiteRecord[];
+  incidentIds: string[];
+  incidents: IncidentRecord[];
+  siteIds: string[];
+  sites: SiteRecord[];
+  customerIds: string[];
   customers: CustomerRecord[];
 }
 
@@ -40,14 +43,20 @@ export interface CustomerRecord extends Record {
   အမည်: string;
   name: string;
   meterNumber: number;
-  tariffPlansId: TariffPlanRecord[];
-  customerUpdateIds: CustomerUpdateRecord[];
-  sitesId: SiteRecord[];
+  tariffPlansId: string[];
+  tariffPlans: TariffPlanRecord[];
+  customerUpdateIds: string[];
+  customerUpdates: CustomerUpdateRecord[];
+  sitesId: string[];
+  sites: SiteRecord[];
   isactive: boolean;
   hasmeter: boolean;
-  invoiceIds: InvoiceRecord[];
-  paymentIds: PaymentRecord[];
-  meterReadingIds: MeterReadingRecord[];
+  invoiceIds: string[];
+  invoices: InvoiceRecord[];
+  paymentIds: string[];
+  payments: PaymentRecord[];
+  meterReadingIds: string[];
+  meterReadings: MeterReadingRecord[];
   haspaid: boolean;
   isbilled: boolean;
   needsReading: boolean;
@@ -55,14 +64,21 @@ export interface CustomerRecord extends Record {
 
 export interface SiteRecord extends Record {
   name: string;
-  incidentIds: IncidentRecord[];
-  inventoryIds: InventoryRecord[];
-  inventoryUpdateIds: InventoryUpdateRecord[];
-  tariffPlanIds: TariffPlanRecord[];
-  userIds: UserRecord[];
-  customerIds: CustomerRecord[];
+  incidentIds: string[];
+  incidents: IncidentRecord[];
+  inventoryIds: string[];
+  inventory: InventoryRecord[];
+  inventoryUpdateIds: string[];
+  inventoryUpdates: InventoryUpdateRecord[];
+  tariffPlanIds: string[];
+  tariffPlans: TariffPlanRecord[];
+  userIds: string[];
+  users: UserRecord[];
+  customerIds: string[];
+  customers: CustomerRecord[];
   currentPeriod: number;
-  financialReportIds: FinancialReportRecord[];
+  financialReportIds: string[];
+  financialReports: FinancialReportRecord[];
   periodStartDate: string;
   periodEndDate: string;
   numNeedsReading: number;
@@ -72,26 +88,30 @@ export interface SiteRecord extends Record {
 export interface InvoiceRecord extends Record {
   amount: number;
   date: string;
-  customerId: CustomerRecord[];
+  customerId: string[];
+  customer: CustomerRecord[];
 }
 
 export interface PaymentRecord extends Record {
   amount: number;
   date: string;
-  customerId: CustomerRecord[];
+  customerId: string[];
+  customer: CustomerRecord[];
 }
 
 export interface CustomerUpdateRecord extends Record {
   explanation: string;
   dateUpdated: string;
-  customerId: CustomerRecord[];
+  customerId: string[];
+  customer: CustomerRecord[];
 }
 
 export interface MeterReadingRecord extends Record {
   date: string;
   reading: number;
   period: number;
-  customerId: CustomerRecord[];
+  customerId: string[];
+  customer: CustomerRecord[];
 }
 
 export interface TariffPlanRecord extends Record {
@@ -99,25 +119,31 @@ export interface TariffPlanRecord extends Record {
   fixedTariff: number;
   tariffByUnit: number;
   minUnits: number;
-  siteIds: SiteRecord[];
-  customerIds: CustomerRecord[];
+  siteIds: string[];
+  sites: SiteRecord[];
+  customerIds: string[];
+  customers: CustomerRecord[];
 }
 
 export interface InventoryRecord extends Record {
   name: string;
   quantity: number;
-  siteId: SiteRecord[];
+  siteId: string[];
+  site: SiteRecord[];
   quantityUnit: string;
-  inventoryUpdateIds: InventoryUpdateRecord[];
+  inventoryUpdateIds: string[];
+  inventoryUpdates: InventoryUpdateRecord[];
   lastUpdatedDatefromInventoryUpdates: string;
 }
 
 export interface InventoryUpdateRecord extends Record {
   quantity: number;
   receiptPhoto: Airtable.Attachment[];
-  inventoryItemId: InventoryRecord[];
+  inventoryItemId: string[];
+  inventoryItem: InventoryRecord[];
   adminApproved: boolean;
-  siteId: SiteRecord[];
+  siteId: string[];
+  site: SiteRecord[];
   amountPaid: number;
   notes: string;
   dateRecorded: string;
@@ -128,14 +154,17 @@ export interface IncidentRecord extends Record {
   description: string;
   incidentPhotos: Airtable.Attachment[];
   status: string;
-  incidentUpdateIds: IncidentUpdateRecord[];
+  incidentUpdateIds: string[];
+  incidentUpdates: IncidentUpdateRecord[];
   isResolved: boolean;
   resolutionDate: string;
   resolutionDescription: string;
   resolutionPhoto: Airtable.Attachment[];
   dateRecorded: string;
-  siteId: SiteRecord[];
-  userId: UserRecord[];
+  siteId: string[];
+  site: SiteRecord[];
+  userId: string[];
+  user: UserRecord[];
   category: string[];
 }
 
@@ -143,7 +172,8 @@ export interface IncidentUpdateRecord extends Record {
   description: string;
   photos?: Airtable.Attachment[];
   dateRecorded: string;
-  incidentId: IncidentRecord[];
+  incidentId: string[];
+  incident: IncidentRecord[];
 }
 
 export interface MaintenanceRecord extends Record {
@@ -163,7 +193,8 @@ export interface FinancialReportRecord extends Record {
   bankSlip: Airtable.Attachment[];
   paymentApproved: boolean;
   reportApproved: boolean;
-  sitesId: SiteRecord[];
+  sitesId: string[];
+  site: SiteRecord[];
   numTotalCustomers: number;
   totalOutstandingPayments: number;
   numActiveCustomers: number;

@@ -45,13 +45,11 @@ function getAllRecords<T>(table: string, filterByFormula = '', sort = [], format
       if (records === null || records.length < 1) {
         return [];
       }
-      console.log(records);
       records.forEach((record: unknown) => {
         const row: unknown = record;
         const formatted = format(row as Row);
         transformedRecords.push(formatted);
       });
-      console.log(transformedRecords);
       return transformedRecords;
     })
     .catch((err) => {
