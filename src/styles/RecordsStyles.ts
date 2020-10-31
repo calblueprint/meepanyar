@@ -38,7 +38,6 @@ export const RecordTab = styled(Tab)`
 `;
 
 export const ScrollDiv = styled('div')`
-
-  max-height: 350px;
+  max-height: 380px;
   overflow: auto;
 `;
