@@ -22,7 +22,6 @@ const HomeInfoRow = ({ amount, name }: HomeInfoProps) =>
                         <Styles.RowTitleGrayed>
                             {name}
                         </Styles.RowTitleGrayed>
-                        {/* <IconButton><Styles.Arrow /></IconButton> */}
                         <Styles.Arrow />
                     </Styles.CardCon>
                 </ButtonBase>

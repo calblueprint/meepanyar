@@ -12,12 +12,13 @@ border: 1px solid #E5E5E5;
 box-sizing: border-box;
 border-radius: 6px;
 flex-direction: column;
+left: 25.6px;
+top: 157.95px;
+position: absolute;
 `;
 
 export const CardRow = styled.div`
-flex-direction: row;
 height: 63.4525px;
-width: 308.81px;
 display: flex;
 `;
 

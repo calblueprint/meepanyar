@@ -7,18 +7,16 @@ import * as Styles from "../styles/FinSumStyles";
 const FinSumCard = () =>
 
     <StylesProvider injectFirst>
-        <ButtonBase>
-            <Styles.SingleCard elevation={0}>
+        <Styles.SingleCard elevation={0}>
+            <ButtonBase>
                 <Styles.CardCon>
                     <Styles.InsideText>
                         Financial Summary
-                </Styles.InsideText>
-                </Styles.CardCon>
-                <CardActions>
+                    </Styles.InsideText>
                     <Styles.Arrow />
-                </CardActions>
-            </Styles.SingleCard>
-        </ButtonBase>
+                </Styles.CardCon>
+            </ButtonBase>
+        </Styles.SingleCard>
     </StylesProvider>;
 
 export default FinSumCard;

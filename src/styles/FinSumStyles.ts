@@ -6,10 +6,11 @@ export const SingleCard = styled(Card)`
 width: 308.81px;
 height: 57.04px;
 background: #FFE3CA;
-text-align: left;
 display: flex;
 flex-direction: row;
-
+top: 50.95px;
+left: 25.6px;
+position: absolute;
 `;
 
 export const InsideText = styled(Typography)`
@@ -19,6 +20,7 @@ font-weight: bold;
 font-size: 18px;
 line-height: 22px;
 color: #FF7A00;
+flex-grow: 1;
 `;
 
 export const Arrow = styled(ArrowForwardIosIcon)`
@@ -27,5 +29,8 @@ font-size: 18px;
 `;
 
 export const CardCon = styled(CardContent)`
-flex-grow: 1;
+flex-direction: row;
+display: flex;
+width: 308.81px;
+text-align: left;
 `;

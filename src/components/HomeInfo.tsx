@@ -19,7 +19,6 @@ const HomeInfoCard = ({ customer, payment, unpaid, incidents }: HomeInfoProps) =
             <HomeInfoRow amount={payment} name={"Outstanding Payments"} />
             <HomeInfoRow amount={unpaid} name={"Unpaid Reports"} />
             <HomeInfoRow amount={incidents} name={"Unresolved Incidents"} />
-
         </Styles.MainCard>
     </StylesProvider>;
 
