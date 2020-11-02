@@ -26,21 +26,21 @@ interface SiteData {
 
 let MockSiteData = [
     {
-        "name": "Julians House",
+        "name": "Julians Panel",
         "customer": "2",
         "payment": "4",
         "unpaid": "0",
         "incidents": "1"
     },
     {
-        "name": "Kyles House",
+        "name": "Kyles Panel",
         "customer": "4",
         "payment": "2",
         "unpaid": "1",
         "incidents": "3"
     },
     {
-        "name": "Jens House",
+        "name": "Jens Panel",
         "customer": "1",
         "payment": "3",
         "unpaid": "3",

@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { StylesProvider } from '@material-ui/core';
+import { IconButton, StylesProvider } from '@material-ui/core';
 import * as Styles from "../styles/HomeInfoStyles";
 
 type HomeInfoProps = {
@@ -20,7 +20,7 @@ const HomeInfoRow = ({ amount, name }: HomeInfoProps) =>
                         {name}
                     </Styles.RowTitleGrayed>
                     <Styles.Error />
-                    <Styles.Arrow />
+                    <IconButton><Styles.Arrow /></IconButton>
                 </Styles.CardCon>
                 :
                 <Styles.CardCon>
@@ -31,7 +31,7 @@ const HomeInfoRow = ({ amount, name }: HomeInfoProps) =>
                         {name}
                     </Styles.RowTitle>
                     <Styles.Check />
-                    <Styles.Arrow />
+                    <IconButton><Styles.Arrow /></IconButton>
                 </Styles.CardCon>
             }
 
