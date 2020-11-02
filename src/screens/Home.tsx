@@ -7,10 +7,6 @@ import FinancialSumCard from "../components/FinancialSumCard";
 import HomeInfoCard from "../components/HomeInfo";
 import { mockComponent } from "react-dom/test-utils";
 
-interface HomeProps {
-
-}
-
 interface HomeState {
     selectedSite: SiteData;
     sites: Array<SiteData>;
@@ -49,9 +45,9 @@ let MockSiteData = [
 ];
 
 
-class Home extends React.Component<HomeProps, HomeState> {
+class Home extends React.Component<{}, HomeState> {
 
-    constructor(props: HomeProps) {
+    constructor(props: {}) {
         super(props)
         this.state = {
             selectedSite: MockSiteData[0],

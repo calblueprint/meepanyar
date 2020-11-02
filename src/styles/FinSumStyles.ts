@@ -9,6 +9,7 @@ background: #FFE3CA;
 text-align: left;
 display: flex;
 flex-direction: row;
+
 `;
 
 export const InsideText = styled(Typography)`
@@ -22,6 +23,7 @@ color: #FF7A00;
 
 export const Arrow = styled(ArrowForwardIosIcon)`
 color: #FF922E;
+font-size: 18px;
 `;
 
 export const CardCon = styled(CardContent)`

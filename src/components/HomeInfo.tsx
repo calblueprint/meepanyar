@@ -15,7 +15,6 @@ const HomeInfoCard = ({ customer, payment, unpaid, incidents }: HomeInfoProps) =
 
     <StylesProvider injectFirst>
         <Styles.MainCard elevation={0}>
-
             <HomeInfoRow amount={customer} name={"Customers to Charge"} />
             <HomeInfoRow amount={payment} name={"Outstanding Payments"} />
             <HomeInfoRow amount={unpaid} name={"Unpaid Reports"} />

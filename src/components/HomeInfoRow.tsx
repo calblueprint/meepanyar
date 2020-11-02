@@ -1,7 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { IconButton, StylesProvider } from '@material-ui/core';
+import { ButtonBase, IconButton, StylesProvider } from '@material-ui/core';
 import * as Styles from "../styles/HomeInfoStyles";
+
 
 type HomeInfoProps = {
     amount: string,
@@ -12,27 +13,32 @@ const HomeInfoRow = ({ amount, name }: HomeInfoProps) =>
     <StylesProvider injectFirst>
         <Styles.CardRow>
             {amount === "0" ?
-                <Styles.CardCon>
-                    <Styles.RowTitleGrayed>
-                        {amount}
-                    </Styles.RowTitleGrayed>
-                    <Styles.RowTitleGrayed>
-                        {name}
-                    </Styles.RowTitleGrayed>
-                    <Styles.Error />
-                    <IconButton><Styles.Arrow /></IconButton>
-                </Styles.CardCon>
+                <ButtonBase>
+                    <Styles.CardCon>
+                        <Styles.Error />
+                        <Styles.RowTitleGrayedNum>
+                            {amount}
+                        </Styles.RowTitleGrayedNum>
+                        <Styles.RowTitleGrayed>
+                            {name}
+                        </Styles.RowTitleGrayed>
+                        {/* <IconButton><Styles.Arrow /></IconButton> */}
+                        <Styles.Arrow />
+                    </Styles.CardCon>
+                </ButtonBase>
                 :
-                <Styles.CardCon>
-                    <Styles.RowTitle>
-                        {amount}
-                    </Styles.RowTitle>
-                    <Styles.RowTitle>
-                        {name}
-                    </Styles.RowTitle>
-                    <Styles.Check />
-                    <IconButton><Styles.Arrow /></IconButton>
-                </Styles.CardCon>
+                <ButtonBase>
+                    <Styles.CardCon>
+                        <Styles.Check />
+                        <Styles.RowTitleNum>
+                            {amount}
+                        </Styles.RowTitleNum>
+                        <Styles.RowTitle>
+                            {name}
+                        </Styles.RowTitle>
+                        <Styles.Arrow />
+                    </Styles.CardCon>
+                </ButtonBase>
             }
 
         </Styles.CardRow>
