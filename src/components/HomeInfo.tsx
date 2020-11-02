@@ -1,7 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, CardActions, CardContent, Button, Typography, IconButton, StylesProvider } from '@material-ui/core';
+import { StylesProvider } from '@material-ui/core';
 import * as Styles from "../styles/HomeInfoStyles";
+import HomeInfoRow from "./HomeInfoRow";
 
 type HomeInfoProps = {
     customer: string,
@@ -14,35 +15,12 @@ const HomeInfoCard = ({ customer, payment, unpaid, incidents }: HomeInfoProps) =
 
     <StylesProvider injectFirst>
         <Styles.MainCard elevation={0}>
-            <Styles.CardRow>
-                <Styles.CardCon>
-                    <Styles.RowTitle>
-                        hi
-                    </Styles.RowTitle>
-                </Styles.CardCon>
-            </Styles.CardRow>
-            <Styles.CardRow>
-                <Styles.CardCon>
-                    <Styles.RowTitle>
-                        hi
-                </Styles.RowTitle>
-                </Styles.CardCon>
-            </Styles.CardRow>
-            <Styles.CardRow>
-                <Styles.CardCon>
-                    <Styles.RowTitle>
-                        hi
-                </Styles.RowTitle>
-                    <Styles.Arrow />
-                </Styles.CardCon>
-            </Styles.CardRow>
-            <Styles.CardRow>
-                <Styles.CardCon>
-                    <Styles.RowTitle>
-                        hi
-                </Styles.RowTitle>
-                </Styles.CardCon>
-            </Styles.CardRow>
+
+            <HomeInfoRow amount={customer} name={"Customers to Charge"} />
+            <HomeInfoRow amount={payment} name={"Outstanding Payments"} />
+            <HomeInfoRow amount={unpaid} name={"Unpaid Reports"} />
+            <HomeInfoRow amount={incidents} name={"Unresolved Incidents"} />
+
         </Styles.MainCard>
     </StylesProvider>;
 
