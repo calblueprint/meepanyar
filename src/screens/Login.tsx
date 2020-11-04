@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Styles from '../styles/LoginStyles';
 import Container from '@material-ui/core/Container';
-import { signupUser, loginUser } from '../airlock/airlock';
+import { signupUser, loginUser } from '../lib/airlock/airlock';
 
 interface LoginState {
   username: string;
@@ -44,9 +44,8 @@ class Login extends React.Component<{}, LoginState> {
     const { username, password } = this.state;
     const registerSuccessful = await signupUser(username, password);
 
-    // Assume logged in as registered user, navigate to home screen
     if (registerSuccessful) {
-      window.location.replace('/home');
+      this.onLoginClicked(event);
     } else {
       // TODO: Change to pop up error
       // Gracefully deal with existing user with registered name (ask Ashley)
