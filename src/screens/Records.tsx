@@ -1,15 +1,19 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import * as Styles from "../styles/RecordsStyles";
 import * as BaseStyles from "../styles/CustomerStyles";
 import Container from "@material-ui/core/Container";
 import { TabContext, TabPanel } from "@material-ui/lab";
 import Paper from '@material-ui/core/Paper';
+import { InvoiceRecord, PaymentRecord } from '../utils/airtable/interface';
 import Invoice from '../components/Invoice';
 import Payment from '../components/Payment';
 import createMuiTheme from '@material-ui/styles'
+import { getAllInvoices, getAllPayments } from '../utils/airtable/requests';
 
 interface RecordsState {
   value: string;
+  invoices: InvoiceRecord[];
+  payments: PaymentRecord[];
 }
 
 export default class Records extends React.Component<{}, RecordsState> {
@@ -17,7 +21,9 @@ export default class Records extends React.Component<{}, RecordsState> {
     super(props);
     this.state = {
       value: "0",
-    };
+      invoices: [],
+      payments: [],
+    }
   }
 
   changeTab = (event: any, newValue: string): void => {
@@ -25,6 +31,17 @@ export default class Records extends React.Component<{}, RecordsState> {
       value: newValue,
     });
   };
+
+  componentDidMount(): void {
+    getAllInvoices().then((records) => {
+      this.setState({invoices: records});
+      console.log(this.state.invoices);
+    });
+    getAllPayments().then((records) => {
+      this.setState({payments: records});
+      console.log(this.state.payments)
+    });
+  }
 
   render() {
     return (
@@ -50,57 +67,21 @@ export default class Records extends React.Component<{}, RecordsState> {
             </Styles.RecordAppBar>
             <Styles.ScrollDiv>
             <TabPanel value="0" id="invoices">
+              {this.state.invoices.map((invoice: InvoiceRecord) => (
                 <Invoice
-                  date={"10.29.2020"}
-                  used_kwh={123}
-                  amount_ks={456}
+                  date={invoice.date}
+                  used_kwh={invoice.amount}
+                  amount_ks={invoice.amount}
                 />
-                <Invoice
-                  date={"10.28.2020"}
-                  used_kwh={789}
-                  amount_ks={123}
-                />
-                <Invoice
-                  date={"10.28.2020"}
-                  used_kwh={789}
-                  amount_ks={123}
-                />
-                <Invoice
-                  date={"10.28.2020"}
-                  used_kwh={789}
-                  amount_ks={123}
-                />
-                <Invoice
-                  date={"10.28.2020"}
-                  used_kwh={789}
-                  amount_ks={123}
-                />
-                <Invoice
-                  date={"10.28.2020"}
-                  used_kwh={789}
-                  amount_ks={123}
-                />
-                <Invoice
-                  date={"10.28.2020"}
-                  used_kwh={789}
-                  amount_ks={123}
-                />
-                <Invoice
-                  date={"10.28.2020"}
-                  used_kwh={789}
-                  amount_ks={123}
-                />
-
+              ))}
             </TabPanel>
             <TabPanel value="1" id="payments">
-              <Payment
-                date={"02.02.2020"}
-                amount_ks={1212}
-              />
-              <Payment
-                date={"03.05.2020"}
-                amount_ks={3434}
-              />
+              {this.state.payments.map((payment: PaymentRecord) => (
+                <Payment
+                  date={payment.date}
+                  amount_ks={payment.amount}
+                />
+              ))}
             </TabPanel>
             </Styles.ScrollDiv>
           </TabContext>
