@@ -1,7 +1,10 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import userDataSlice from './userDataSlice';
 import { persistStore, persistReducer } from 'redux-persist';
+import logger from 'redux-logger';
+import thunk from 'redux-thunk';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
+
+import userDataSlice from './userDataSlice';
 
 const allReducers = combineReducers({ userData: userDataSlice });
 
@@ -14,6 +17,7 @@ const persistedReducer = persistReducer(persistConfig, allReducers);
 
 const store = configureStore({
   reducer: persistedReducer,
+  middleware: [thunk, logger],
 });
 
 const persistor = persistStore(store);

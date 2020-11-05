@@ -1,19 +1,20 @@
 import React from 'react';
 import * as Styles from '../styles/LoginStyles';
 import Container from '@material-ui/core/Container';
+import { Typography } from '@material-ui/core';
 import { signupUser, loginUser } from '../lib/airlock/airlock';
 
 interface LoginState {
   username: string;
   password: string;
-  isLoading: boolean;
+  errorMessage: string;
 }
 
 class Login extends React.Component<{}, LoginState> {
   state = {
     username: '',
     password: '',
-    isLoading: false,
+    errorMessage: '',
   };
 
   onUsernameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -33,24 +34,28 @@ class Login extends React.Component<{}, LoginState> {
     if (loginSuccessful) {
       window.location.replace('/home');
     } else {
-      // TODO: Change to pop up error.
-      // Gracefully deal with failed login (ask Ashley)
-      console.log('Login unsuccessful');
+      this.setState({ errorMessage: 'Login unsuccessful. Incorrect username or password.' });
     }
   };
 
   onCreateAccountClicked = async (event: React.MouseEvent) => {
     event.preventDefault();
     const { username, password } = this.state;
-    const registerSuccessful = await signupUser(username, password);
+    const { success, message } = await signupUser(username, password);
 
-    if (registerSuccessful) {
+    if (success) {
       this.onLoginClicked(event);
     } else {
-      // TODO: Change to pop up error
-      // Gracefully deal with existing user with registered name (ask Ashley)
-      console.log('Register unsuccessful');
+      this.setState({ errorMessage: `Register unsuccessful. ${message}` });
     }
+  };
+
+  renderErrorMessage = () => {
+    return (
+      <Typography color="error" display="block" gutterBottom>
+        {this.state.errorMessage}
+      </Typography>
+    );
   };
 
   render() {
@@ -80,6 +85,7 @@ class Login extends React.Component<{}, LoginState> {
                 type="password"
               />
             </Styles.FieldDiv>
+            {this.state.errorMessage ? this.renderErrorMessage() : ''}
             <Styles.LoginButton type="submit" variant="contained" color="primary" onClick={this.onLoginClicked}>
               Login
             </Styles.LoginButton>
