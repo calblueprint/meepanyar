@@ -6,6 +6,7 @@ import Menu from "../components/HamburgerMenu";
 import FinancialSumCard from "../components/FinancialSumCard";
 import HomeInfoCard from "../components/HomeInfo";
 import { mockComponent } from "react-dom/test-utils";
+import * as Styles from "../styles/HomeInfoStyles";
 
 interface HomeState {
     selectedSite: SiteData;
@@ -76,11 +77,13 @@ class Home extends React.Component<{}, HomeState> {
         let siteData = this.state.sites;
         return (
             <div>
-                <FormControl >
-                    <Select inputProps={{ 'aria-label': 'Without label' }}>
-                        {siteData.map((site: SiteData) => <MenuItem onClick={() => this.handleSiteChange(site)}>{site.name}</MenuItem>)}
-                    </Select>
-                </FormControl>
+                <Styles.Header>
+                    <FormControl >
+                        <Select inputProps={{ 'aria-label': 'Without label' }}>
+                            {siteData.map((site: SiteData) => <MenuItem onClick={() => this.handleSiteChange(site)}>{site.name}</MenuItem>)}
+                        </Select>
+                    </FormControl>
+                </Styles.Header>
                 {this.renderSite()}
                 <FinancialSumCard />
             </div>

@@ -8,9 +8,8 @@ height: 57.04px;
 background: #FFE3CA;
 display: flex;
 flex-direction: row;
-top: 50.95px;
-left: 25.6px;
-position: absolute;
+margin-left: auto;
+margin-right: auto;
 `;
 
 export const InsideText = styled(Typography)`

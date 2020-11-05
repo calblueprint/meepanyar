@@ -12,9 +12,8 @@ border: 1px solid #E5E5E5;
 box-sizing: border-box;
 border-radius: 6px;
 flex-direction: column;
-left: 25.6px;
-top: 157.95px;
-position: absolute;
+margin-left: auto;
+margin-right: auto;
 `;
 
 export const CardRow = styled.div`
@@ -69,7 +68,13 @@ export const Error = styled(ErrorOutlineIcon)`
 color: #FFCFA2;
 margin-right: 16.61px;
 `;
-// margin-right: 16px;
-// margin-left: 20px;
+
+export const Header = styled.div`
+display: flex;
+flex-direction: row;
+margin-left: auto;
+margin-right: auto;
+
+`;
 
 
