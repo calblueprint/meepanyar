@@ -3,11 +3,11 @@ import InputBase from '@material-ui/core/InputBase';
 import * as Styles from '../styles/UserSearchBarStyle';
 
 type SearchProps = {
-    name: string,
-    //callBack: function? to implement search term later.
+    searchFun: any,
 }
-const UserSearchBar = ({ name }: SearchProps) =>
-    <Styles.SearchWrapper component="form" >
+const UserSearchBar = ({ searchFun }: SearchProps) =>
+    <Styles.SearchWrapper component="form"
+        onChange={searchFun} >
         <Styles.InputWrapper />
         <Styles.Search />
     </Styles.SearchWrapper >

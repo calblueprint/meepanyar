@@ -6,7 +6,7 @@ import * as Styles from "../styles/CustomerCardStyles";
 
 type CardProps = {
     name: string,
-    amount: number,
+    amount: string,
     date: string,
 }
 const CustomerCard = ({ name, amount, date }: CardProps) =>
