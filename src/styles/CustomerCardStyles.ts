@@ -13,6 +13,7 @@ border-radius: 10px;
 text-align: left;
 display: flex;
 flex-direction: row;
+margin-bottom: 10px;
 `;
 
 export const InsideText = styled(Typography)`

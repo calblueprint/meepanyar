@@ -20,23 +20,25 @@ class User extends React.Component {
             <div>
                 <Styles.HeaderWrapper>
                     <Styles.Title>Customers</Styles.Title>
-                    <UserSearchBar name='hi' />
-                    <FormControl >
-                        <Select
-                            inputProps={{ 'aria-label': 'Without label' }}
-                        >
-                            <MenuItem value={10}>Ten</MenuItem>
-                            <MenuItem value={20}>Twenty</MenuItem>
-                            <MenuItem value={30}>Thirty</MenuItem>
-                        </Select>
-                        <FormHelperText>Sort By</FormHelperText>
-                    </FormControl>
+                    <Styles.SelectionHeader>
+                        <UserSearchBar name='hi' />
+                        <FormControl >
+                            <Select
+                                inputProps={{ 'aria-label': 'Without label' }}
+                            >
+                                <MenuItem value={10}>Ten</MenuItem>
+                                <MenuItem value={20}>Twenty</MenuItem>
+                                <MenuItem value={30}>Thirty</MenuItem>
+                            </Select>
+                            <FormHelperText>Sort By</FormHelperText>
+                        </FormControl>
+                    </Styles.SelectionHeader>
                 </Styles.HeaderWrapper>
-                <ul>
+                <Styles.ScrollDiv>
                     {customers.map(cus => (
                         <CustomerCard name={cus.name} amount={cus.amount} date={today.toDateString()} />
                     ))}
-                </ul>
+                </Styles.ScrollDiv>
             </div>
         )
     }
