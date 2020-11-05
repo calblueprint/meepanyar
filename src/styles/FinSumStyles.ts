@@ -10,6 +10,7 @@ display: flex;
 flex-direction: row;
 margin-left: auto;
 margin-right: auto;
+margin-top: 31.97px;
 `;
 
 export const InsideText = styled(Typography)`
