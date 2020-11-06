@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@calblueprint/airlock": "^0.7.3",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "@types/airtable": "^0.8.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.31",
     "@fortawesome/free-solid-svg-icons": "^5.15.0",
     "@fortawesome/react-fontawesome": "^0.1.11",
@@ -10,15 +15,13 @@
     "@material-ui/styles": "^4.10.0",
     "@material-ui/icons": "^4.9.1",
     "@react-navigation/bottom-tabs": "^5.9.1",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
     "@types/bootstrap": "^4.5.0",
     "@types/jest": "^24.9.1",
     "@types/material-ui": "^0.21.8",
     "@types/node": "^12.12.62",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
+    "airtable": "^0.9.0",
     "@types/react-hamburger-menu": "0.0.3",
     "@types/react-router-dom": "^5.1.5",
     "@types/reactstrap": "^8.5.1",
@@ -40,6 +43,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "generate-schema": "generate-airtable-schema",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.{ts,tsx,css}' --write",
     "lint": "eslint . --ext .ts,.tsx"
   },
@@ -64,10 +68,16 @@
     ]
   },
   "devDependencies": {
+    "airtable-schema-generator": "^1.5.0",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
     "husky": "^4.3.0",
     "prettier": "^2.1.2",
     "prettier-eslint": "^11.0.0"
+  },
+  "airtable-schema-generator": {
+    "mode": "auto-headless",
+    "output": "./src/utils/airtable",
+    "airlock": true
   }
 }
