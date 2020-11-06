@@ -1,13 +1,12 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import BaseHeader from '../components/BaseComponents/BaseHeader';
-import OutlinedColCard from '../components/OutlinedCardList';
+import BaseHeader from '../../components/BaseComponents/BaseHeader';
+import OutlinedColCard from '../../components/OutlinedCardList';
 import Button from '@material-ui/core/Button';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
-import { CustomerRecord } from '../utils/airtable/interface';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -35,12 +34,13 @@ const styles = (theme: Theme) =>
   });
 
 interface CustomerProps {
-  customer: CustomerRecord;
   classes: any;
+  location: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
   const { classes } = props;
+  const customer = props.location.state.customer;
 
   const getPaymentButtons = () => {
     return (
@@ -74,17 +74,15 @@ function CustomerProfile(props: CustomerProps) {
   const numbers2 = [0, 0, 0];
   const labels2 = ['Starting Meter', 'Period Usage', 'Amount Billed'];
   const unit = ['kWh', 'kWh', 'Ks'];
-  // const primary = [true, false, false, false];
-
   const s = ['Remaining Balance'];
 
   return (
     <div className={classes.root}>
-      <BaseHeader leftIcon="backNav" title={props.customer.name} rightIcon="edit" />
+      <BaseHeader leftIcon="backNav" title={customer.name} rightIcon="edit" />
       <div className={classes.content}>
         <Typography variant="h1">Site Name</Typography>
         <Typography variant="h4" color="textSecondary">
-          {props.customer.meterNumber}
+          {customer.meterNumber}
         </Typography>
 
         <Typography className={classes.header} variant="h2">
@@ -95,7 +93,13 @@ function CustomerProfile(props: CustomerProps) {
         <Typography className={classes.header} variant="h2">
           Meter Reading
         </Typography>
-        <OutlinedColCard numbers={[0]} labels={['Current Reading']} unit={['kWh']} primary={true} rightIcon={getAddButton()} />
+        <OutlinedColCard
+          numbers={[0]}
+          labels={['Current Reading']}
+          unit={['kWh']}
+          primary={true}
+          rightIcon={getAddButton()}
+        />
         <OutlinedColCard numbers={numbers2} labels={labels2} unit={unit} primary={false} />
       </div>
     </div>

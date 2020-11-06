@@ -8,6 +8,7 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CreateIcon from '@material-ui/icons/Create';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -30,12 +31,21 @@ interface HeaderProps {
 
 function BaseHeader(props: HeaderProps) {
   const { classes } = props;
+  const history = useHistory();
+
+  const getIcon = (onClick: any, icon: JSX.Element) => {
+    return (
+      <IconButton onClick={onClick} color="primary">
+        {icon}
+      </IconButton>
+    );
+  };
 
   const icons: { [key: string]: JSX.Element } = {
-    menu: <MenuIcon />,
-    backNav: <ArrowBackIosIcon />,
-    edit: <CreateIcon />,
-    user: <AccountCircleIcon />,
+    menu: getIcon(history.goBack, <MenuIcon />), //replace history.goBack with correct functions
+    backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
+    edit: getIcon(history.goBack, <CreateIcon />),
+    user: getIcon(history.goBack, <AccountCircleIcon />),
   };
 
   return (

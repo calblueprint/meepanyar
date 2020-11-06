@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import User from './screens/User';
 import Inventory from './screens/Inventory';
 import Home from './screens/Home';
 import Incidents from './screens/Incidents';
@@ -8,7 +7,8 @@ import Maintenance from './screens/Maintenance';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import LabelBottomNavigation from './components/BaseComponents/BottomNav';
 import Login from './screens/Login';
-import CustomerProfile from './screens/CustomerProfile';
+import CustomerMain from './screens/Customers/CustomerMain';
+import CustomerProfile from './screens/Customers/CustomerProfile';
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { theme } from './styles/ThemeStyles';
 
@@ -21,12 +21,12 @@ function App() {
             <LabelBottomNavigation />
             <Switch>
               <Route path="/home" component={Home} />
-              <Route path="/customers" component={User} />
+              <Route path="/customers" exact component={CustomerMain} />
               <Route path="/inventory" component={Inventory} />
               <Route path="/maintenance" component={Maintenance} />
               <Route path="/incidents" component={Incidents} />
               <Route path="/login" component={Login} />
-              <Route path="/customerProfile" component={CustomerProfile} />
+              <Route path={'/customers/:name'} component={CustomerProfile} />
             </Switch>
           </BrowserRouter>
         </ThemeProvider>

@@ -58,7 +58,9 @@ export default function OutlinedColCard(props: CardProps) {
   return (
     <div className={classes.root}>
       <div className={classes.content}>
-        {props.numbers.map((num, index) => getLabeledNumber(num, props.labels[index], props.unit[index], props.primary, rightIcon))}
+        {props.numbers.map((num, index) =>
+          getLabeledNumber(num, props.labels[index], props.unit[index], props.primary, rightIcon),
+        )}
       </div>
     </div>
   );
