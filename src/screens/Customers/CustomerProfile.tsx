@@ -3,10 +3,10 @@ import Typography from '@material-ui/core/Typography';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
 import OutlinedColCard from '../../components/OutlinedCardList';
 import Button from '@material-ui/core/Button';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import { CustomerRecord } from '../../utils/airtable/interface';
 
