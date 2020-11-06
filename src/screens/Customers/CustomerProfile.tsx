@@ -7,6 +7,8 @@ import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+import { Link } from 'react-router-dom';
+import { CustomerRecord } from '../../utils/airtable/interface';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -36,11 +38,12 @@ const styles = (theme: Theme) =>
 interface CustomerProps {
   classes: any;
   location: any;
+  match: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
-  const { classes } = props;
-  const customer = props.location.state.customer;
+  const { classes, match } = props;
+  const customer: CustomerRecord = props.location.state.customer;
 
   const getPaymentButtons = () => {
     return (
@@ -49,7 +52,14 @@ function CustomerProfile(props: CustomerProps) {
           Add Payment
         </Button>
         <div className={classes.buttonSecondary}>
-          <IconButton size="small">
+          <IconButton
+            component={Link}
+            to={{
+              pathname: `${match.url}/records`,
+              state: { meterReadings: customer.meterReadings, invoices: customer.invoices },
+            }}
+            size="small"
+          >
             <ListAltOutlinedIcon color="primary" />
           </IconButton>
         </div>

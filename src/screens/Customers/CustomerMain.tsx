@@ -21,8 +21,8 @@ function CustomerMain(props: CustomerMainProps) {
 
   return (
     <>
-      {customers.map((customer) => (
-        <Link to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
+      {customers.map((customer, index) => (
+        <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
           <h3>{customer.name}</h3>
         </Link>
       ))}

@@ -40,9 +40,16 @@ interface CardProps {
 export default function OutlinedColCard(props: CardProps) {
   const classes = useStyles();
 
-  const getLabeledNumber = (number: number, label: string, unit: string, primary: boolean, rightIcon: JSX.Element) => {
+  const getLabeledNumber = (
+    key: number,
+    number: number,
+    label: string,
+    unit: string,
+    primary: boolean,
+    rightIcon: JSX.Element,
+  ) => {
     return (
-      <div className={classes.itemWrapper}>
+      <div key={key} className={classes.itemWrapper}>
         <div className={classes.items}>
           <Typography variant="h4">{label}</Typography>
           <Typography variant="h3" color={primary ? 'primary' : 'inherit'}>
@@ -59,7 +66,7 @@ export default function OutlinedColCard(props: CardProps) {
     <div className={classes.root}>
       <div className={classes.content}>
         {props.numbers.map((num, index) =>
-          getLabeledNumber(num, props.labels[index], props.unit[index], props.primary, rightIcon),
+          getLabeledNumber(index, num, props.labels[index], props.unit[index], props.primary, rightIcon),
         )}
       </div>
     </div>

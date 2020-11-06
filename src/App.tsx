@@ -9,6 +9,7 @@ import LabelBottomNavigation from './components/BaseComponents/BottomNav';
 import Login from './screens/Login';
 import CustomerMain from './screens/Customers/CustomerMain';
 import CustomerProfile from './screens/Customers/CustomerProfile';
+import CustomerRecords from './screens/Customers/CustomerRecords';
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { theme } from './styles/ThemeStyles';
 
@@ -26,7 +27,8 @@ function App() {
               <Route path="/maintenance" component={Maintenance} />
               <Route path="/incidents" component={Incidents} />
               <Route path="/login" component={Login} />
-              <Route path={'/customers/:name'} component={CustomerProfile} />
+              <Route path={'/customers/:name'} exact component={CustomerProfile} />
+              <Route path={'/customers/:name/records'} component={CustomerRecords} />
             </Switch>
           </BrowserRouter>
         </ThemeProvider>

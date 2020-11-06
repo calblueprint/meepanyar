@@ -52,13 +52,13 @@ function BaseHeader(props: HeaderProps) {
     <div className={classes.root}>
       <AppBar color="transparent" elevation={0} position="static">
         <Toolbar>
-          {props.leftIcon ? <IconButton color="primary"> {icons[props.leftIcon]} </IconButton> : null}
+          {props.leftIcon ? icons[props.leftIcon] : null}
           {props.title ? (
             <Typography className={classes.title} variant="h2">
               {props.title}
             </Typography>
           ) : null}
-          {props.rightIcon ? <IconButton color="primary"> {icons[props.rightIcon]} </IconButton> : null}
+          {props.rightIcon ? icons[props.rightIcon] : null}
         </Toolbar>
       </AppBar>
     </div>
