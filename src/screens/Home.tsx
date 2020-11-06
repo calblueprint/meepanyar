@@ -2,10 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../lib/moment/momentUtils';
-import moment from 'moment';
 
 interface HomeProps {
   lastUpdated: string;
+  isOnline: boolean;
 }
 
 class Home extends React.Component<HomeProps, {}> {
@@ -14,6 +14,7 @@ class Home extends React.Component<HomeProps, {}> {
       <h4>
         This is the home screen
         <p> User data last updated on: {this.props.lastUpdated}</p>
+        {!this.props.isOnline ? <p>Offline</p> : null}
       </h4>
     );
   }
@@ -25,8 +26,8 @@ const mapStateToProps = (state: RootState) => {
   if (state.userData.lastUpdated) {
     lastUpdated = formatUTCDateStringToLocal(state.userData.lastUpdated);
   }
-
-  return { lastUpdated };
+  const isOnline = state.userData.isOnline;
+  return { lastUpdated, isOnline };
 };
 
 export default connect(mapStateToProps)(Home);

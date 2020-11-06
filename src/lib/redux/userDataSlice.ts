@@ -27,12 +27,14 @@ interface UserDataState {
   isLoading: boolean;
   user: User | null;
   lastUpdated: string;
+  isOnline: boolean;
 }
 
 const initialState: UserDataState = {
   isLoading: false,
   user: null,
   lastUpdated: '',
+  isOnline: true,
 };
 
 const userDataSlice = createSlice({
@@ -42,13 +44,17 @@ const userDataSlice = createSlice({
     setLoadingForUserData(state) {
       state.isLoading = true;
     },
+    setIsOnline(state, action) {
+      state.isOnline = action.payload.isOnline;
+    },
     saveUserData(state, action) {
       state.user = { ...action.payload };
       state.isLoading = false;
       state.lastUpdated = moment().toString();
+      state.isOnline = true;
     },
   },
 });
 
-export const { setLoadingForUserData, saveUserData } = userDataSlice.actions;
+export const { setLoadingForUserData, saveUserData, setIsOnline } = userDataSlice.actions;
 export default userDataSlice.reducer;
