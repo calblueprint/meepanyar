@@ -7,9 +7,9 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CreateIcon from '@material-ui/icons/Create';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme: Theme) =>
+const styles = (theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
@@ -19,50 +19,40 @@ const useStyles = makeStyles((theme: Theme) =>
       flexGrow: 1,
       color: theme.palette.text.primary,
     },
-  }),
-);
+  });
 
 interface HeaderProps {
   leftIcon?: string;
   title?: string;
   rightIcon?: string;
+  classes: any;
 }
 
-export default function BaseHeader(props: HeaderProps) {
-  const getIconButton = (icon: string) => {
-    let displayIcon;
-    switch (icon) {
-      case 'menu':
-        displayIcon = <MenuIcon />;
-        break;
-      case 'backNav':
-        displayIcon = <ArrowBackIosIcon />;
-        break;
-      case 'edit':
-        displayIcon = <CreateIcon />;
-        break;
-      case 'user':
-        displayIcon = <AccountCircleIcon />;
-        break;
-      default:
-        displayIcon = null;
-    }
-    return <IconButton color="primary"> {displayIcon} </IconButton>;
+function BaseHeader(props: HeaderProps) {
+  const { classes } = props;
+
+  const icons: { [key: string]: JSX.Element } = {
+    menu: <MenuIcon />,
+    backNav: <ArrowBackIosIcon />,
+    edit: <CreateIcon />,
+    user: <AccountCircleIcon />,
   };
-  const classes = useStyles();
+
   return (
     <div className={classes.root}>
       <AppBar color="transparent" elevation={0} position="static">
         <Toolbar>
-          {props.leftIcon ? <>{getIconButton(props.leftIcon)}</> : null}
+          {props.leftIcon ? <IconButton color="primary"> {icons[props.leftIcon]} </IconButton> : null}
           {props.title ? (
             <Typography className={classes.title} variant="h2">
               {props.title}
             </Typography>
           ) : null}
-          {props.rightIcon ? <>{getIconButton(props.rightIcon)}</> : null}
+          {props.rightIcon ? <IconButton color="primary"> {icons[props.rightIcon]} </IconButton> : null}
         </Toolbar>
       </AppBar>
     </div>
   );
 }
+
+export default withStyles(styles)(BaseHeader);

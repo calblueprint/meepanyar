@@ -36,5 +36,8 @@ export const theme = createMuiTheme({
       fontSize: '12px',
       fontWeight: 500,
     },
+    button: {
+      fontSize: '12px',
+    },
   },
 });

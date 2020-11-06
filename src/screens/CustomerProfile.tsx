@@ -1,14 +1,15 @@
-import Typography from '@material-ui/core/Typography';
 import React from 'react';
+import Typography from '@material-ui/core/Typography';
 import BaseHeader from '../components/BaseComponents/BaseHeader';
-import OutlinedRowCard from '../components/OutlinedRowCard';
-import OutlinedColCard from '../components/OutlinedColCard';
+import OutlinedColCard from '../components/OutlinedCardList';
 import Button from '@material-ui/core/Button';
-import CheckIcon from '@material-ui/icons/Check';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import PaymentCard from '../components/PaymentCard';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import IconButton from '@material-ui/core/IconButton';
+import AddIcon from '@material-ui/icons/Add';
+import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+import { CustomerRecord } from '../utils/airtable/interface';
 
-const useStyles = makeStyles((theme: Theme) =>
+const styles = (theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
@@ -18,51 +19,87 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'left',
       color: theme.palette.text.primary,
     },
-    confirmButton: {
-      borderRadius: '15px',
-      borderColor: theme.palette.grey[400],
-      marginTop: '-10px',
-      float: 'right',
+    header: {
+      marginTop: '15px',
     },
-  }),
-);
+    button: {
+      borderRadius: '12px',
+      height: '30px',
+      color: 'white',
+      backgroundColor: theme.palette.primary.main,
+    },
+    buttonSecondary: {
+      borderRadius: '12px',
+      backgroundColor: theme.palette.secondary.main,
+    },
+  });
 
-export default function CustomerProfile() {
-  const classes = useStyles();
+interface CustomerProps {
+  customer: CustomerRecord;
+  classes: any;
+}
+
+function CustomerProfile(props: CustomerProps) {
+  const { classes } = props;
+
+  const getPaymentButtons = () => {
+    return (
+      <>
+        <Button className={classes.button} color="primary" startIcon={<AddIcon />} disableElevation={true}>
+          Add Payment
+        </Button>
+        <div className={classes.buttonSecondary}>
+          <IconButton size="small">
+            <ListAltOutlinedIcon color="primary" />
+          </IconButton>
+        </div>
+      </>
+    );
+  };
+
+  const getAddButton = () => {
+    return (
+      <div className={classes.button}>
+        <IconButton size="small">
+          <AddIcon style={{ color: 'white' }} />
+        </IconButton>
+      </div>
+    );
+  };
 
   //dummy data
   //TODO: pull from Airtable and hold information in the form of Records as defined in the schema
   const numbers = [0, 0, 0];
   const labels = ['Fixed Tariff', 'Unit Tariff', 'Minimum Units Used'];
-  const numbers2 = [0, 0, 0, 0];
-  const labels2 = ['Current Reading', 'Starting Meter', 'Period Usage', 'Amount Billed'];
-  const unit = ['kWh', 'kWh', 'kWh', 'Ks'];
-  const primary = [true, false, false, false];
+  const numbers2 = [0, 0, 0];
+  const labels2 = ['Starting Meter', 'Period Usage', 'Amount Billed'];
+  const unit = ['kWh', 'kWh', 'Ks'];
+  // const primary = [true, false, false, false];
+
+  const s = ['Remaining Balance'];
 
   return (
     <div className={classes.root}>
-      <BaseHeader leftIcon="backNav" title="Customer Profile" rightIcon="edit" />
+      <BaseHeader leftIcon="backNav" title={props.customer.name} rightIcon="edit" />
       <div className={classes.content}>
         <Typography variant="h1">Site Name</Typography>
         <Typography variant="h4" color="textSecondary">
-          Meter Number
+          {props.customer.meterNumber}
         </Typography>
-        <OutlinedRowCard numbers={numbers} labels={labels} />
 
-        <Typography variant="h2">Meter Reading</Typography>
-        <OutlinedColCard numbers={numbers2} labels={labels2} unit={unit} primary={primary} />
-        <Button
-          className={classes.confirmButton}
-          color="primary"
-          variant="outlined"
-          size="small"
-          startIcon={<CheckIcon />}
-        >
-          <Typography variant="h4">Confirm</Typography>
-        </Button>
+        <Typography className={classes.header} variant="h2">
+          Payment
+        </Typography>
+        <OutlinedColCard numbers={[0]} labels={s} unit={['Ks']} primary={true} rightIcon={getPaymentButtons()} />
 
-        {/* <PaymentCard balance={0} owed={0} /> */}
+        <Typography className={classes.header} variant="h2">
+          Meter Reading
+        </Typography>
+        <OutlinedColCard numbers={[0]} labels={['Current Reading']} unit={['kWh']} primary={true} rightIcon={getAddButton()} />
+        <OutlinedColCard numbers={numbers2} labels={labels2} unit={unit} primary={false} />
       </div>
     </div>
   );
 }
+
+export default withStyles(styles)(CustomerProfile);
