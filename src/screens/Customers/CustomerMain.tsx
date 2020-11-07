@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { CustomerRecord } from '../../utils/airtable/interface';
 import { getAllCustomers } from '../../utils/airtable/requests';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 
-interface CustomerMainProps {
-  match: any;
-}
-
-function CustomerMain(props: CustomerMainProps) {
+function CustomerMain(props: RouteComponentProps) {
   useEffect(() => {
     getCustomers();
   }, []);
@@ -22,7 +18,7 @@ function CustomerMain(props: CustomerMainProps) {
   return (
     <>
       {customers.map((customer, index) => (
-        <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
+        <Link key={index} to={{ pathname: `${props.match.url}/${customer.rid}`, state: { customer: customer } }}>
           <h3>{customer.name}</h3>
         </Link>
       ))}

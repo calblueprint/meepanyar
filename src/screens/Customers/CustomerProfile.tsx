@@ -7,7 +7,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { CustomerRecord } from '../../utils/airtable/interface';
 
 const styles = (theme: Theme) =>
@@ -35,10 +35,9 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface CustomerProps {
-  classes: any;
+interface CustomerProps extends RouteComponentProps {
+  classes: { root: string; content: string; header: string; button: string; buttonSecondary: string };
   location: any;
-  match: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
@@ -79,12 +78,14 @@ function CustomerProfile(props: CustomerProps) {
 
   //dummy data
   //TODO: pull from Airtable and hold information in the form of Records as defined in the schema
-  const numbers = [0, 0, 0];
-  const labels = ['Fixed Tariff', 'Unit Tariff', 'Minimum Units Used'];
-  const numbers2 = [0, 0, 0];
-  const labels2 = ['Starting Meter', 'Period Usage', 'Amount Billed'];
-  const unit = ['kWh', 'kWh', 'Ks'];
-  const s = ['Remaining Balance'];
+  const info3 = [
+    { number: 0, label: 'Fixed Tariff', unit: 'kWh' },
+    { number: 0, label: 'Period Usage', unit: 'kWh' },
+    { number: 0, label: 'Amount Billed', unit: 'kS' },
+  ];
+
+  const balanceInfo = [{ number: 0, label: 'Remaining Balance', unit: 'kS' }];
+  const readingInfo = [{ number: 0, label: 'Current Reading', unit: 'kWh' }];
 
   return (
     <div className={classes.root}>
@@ -98,19 +99,13 @@ function CustomerProfile(props: CustomerProps) {
         <Typography className={classes.header} variant="h2">
           Payment
         </Typography>
-        <OutlinedColCard numbers={[0]} labels={s} unit={['Ks']} primary={true} rightIcon={getPaymentButtons()} />
+        <OutlinedColCard info={balanceInfo} primary={true} rightIcon={getPaymentButtons()} />
 
         <Typography className={classes.header} variant="h2">
           Meter Reading
         </Typography>
-        <OutlinedColCard
-          numbers={[0]}
-          labels={['Current Reading']}
-          unit={['kWh']}
-          primary={true}
-          rightIcon={getAddButton()}
-        />
-        <OutlinedColCard numbers={numbers2} labels={labels2} unit={unit} primary={false} />
+        <OutlinedColCard info={readingInfo} primary={true} rightIcon={getAddButton()} />
+        <OutlinedColCard info={info3} primary={false} />
       </div>
     </div>
   );

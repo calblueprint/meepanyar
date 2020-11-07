@@ -27,8 +27,8 @@ function App() {
               <Route path="/maintenance" component={Maintenance} />
               <Route path="/incidents" component={Incidents} />
               <Route path="/login" component={Login} />
-              <Route path={'/customers/:name'} exact component={CustomerProfile} />
-              <Route path={'/customers/:name/records'} component={CustomerRecords} />
+              <Route path={'/customers/:rid'} exact component={CustomerProfile} />
+              <Route path={'/customers/:rid/records'} component={CustomerRecords} />
             </Switch>
           </BrowserRouter>
         </ThemeProvider>

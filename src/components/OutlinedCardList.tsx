@@ -30,14 +30,16 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface CardProps {
-  numbers: number[];
-  labels: string[];
-  unit: string[];
+  info: {
+    number: number;
+    label: string;
+    unit: string;
+  }[];
   primary: boolean;
   rightIcon?: JSX.Element;
 }
 
-export default function OutlinedColCard(props: CardProps) {
+export default function OutlinedCardList(props: CardProps) {
   const classes = useStyles();
 
   const getLabeledNumber = (
@@ -46,7 +48,7 @@ export default function OutlinedColCard(props: CardProps) {
     label: string,
     unit: string,
     primary: boolean,
-    rightIcon: JSX.Element,
+    rightIcon: JSX.Element | null,
   ) => {
     return (
       <div key={key} className={classes.itemWrapper}>
@@ -61,12 +63,12 @@ export default function OutlinedColCard(props: CardProps) {
     );
   };
 
-  const rightIcon = props.rightIcon ? props.rightIcon : <></>;
+  const rightIcon = props.rightIcon ? props.rightIcon : null;
   return (
     <div className={classes.root}>
       <div className={classes.content}>
-        {props.numbers.map((num, index) =>
-          getLabeledNumber(index, num, props.labels[index], props.unit[index], props.primary, rightIcon),
+        {props.info.map((info, index) =>
+          getLabeledNumber(index, info.number, info.label, info.unit, props.primary, rightIcon),
         )}
       </div>
     </div>

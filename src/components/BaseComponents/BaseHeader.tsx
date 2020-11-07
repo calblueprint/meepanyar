@@ -33,7 +33,7 @@ function BaseHeader(props: HeaderProps) {
   const { classes } = props;
   const history = useHistory();
 
-  const getIcon = (onClick: any, icon: JSX.Element) => {
+  const getIcon = (onClick: (event: React.MouseEvent) => void, icon: JSX.Element) => {
     return (
       <IconButton onClick={onClick} color="primary">
         {icon}

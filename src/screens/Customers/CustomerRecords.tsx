@@ -16,12 +16,12 @@ function CustomerRecords(props: CustomerRecordsProps) {
       <BaseHeader leftIcon="backNav" />
       <h3>Meter Readings</h3>
       {meterReadings.map((meterReading: MeterReadingRecord, index) => (
-        <p key={index}>{`${meterReading.date} ${meterReading.reading}`}</p>
+        <p key={meterReading.rid}>{`${meterReading.date} ${meterReading.reading}`}</p>
       ))}
 
       <h3>Invoices</h3>
       {invoices.map((invoice: InvoiceRecord, index) => (
-        <p key={index}>{`${invoice.date} ${invoice.amount}`}</p>
+        <p key={invoice.rid}>{`${invoice.date} ${invoice.amount}`}</p>
       ))}
     </>
   );
