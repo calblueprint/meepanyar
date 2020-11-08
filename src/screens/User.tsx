@@ -22,8 +22,8 @@ interface CustomerRecord {
   amount: string;
 }
 
-// eslint-disable-next-line no-use-before-define
-import TrieSearch from 'trie-search';
+// prettier-ignore
+//const TrieSearch = require('trie-search'); // eslint-disable-line no-eval
 const ts = new TrieSearch();
 class User extends React.Component<{}, UserState> {
   constructor(props: {}) {
