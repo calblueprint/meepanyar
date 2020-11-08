@@ -9,8 +9,8 @@ import { mockComponent } from 'react-dom/test-utils';
 import * as Styles from '../styles/HomeInfoStyles';
 
 interface HomeState {
-    selectedSite: SiteRecord;
-    sites: Array<SiteRecord>;
+  selectedSite: SiteRecord;
+  sites: Array<SiteRecord>;
 }
 
 // let MockRecord: SiteRecord= {
@@ -31,58 +31,58 @@ interface HomeState {
 //   }
 
 class Home extends React.Component<{}, HomeState> {
-    constructor(props: {}) {
-        super(props);
-        this.handleSiteChange = this.handleSiteChange.bind(this);
-    }
+  constructor(props: {}) {
+    super(props);
+    this.handleSiteChange = this.handleSiteChange.bind(this);
+  }
 
-    async getSites() {
-        const sites: SiteRecord[] = await getAllSites();
-        console.log(sites);
-        this.setState({
-            selectedSite: sites[0],
-            sites: sites,
-        });
-    }
+  async getSites() {
+    const sites: SiteRecord[] = await getAllSites();
+    console.log(sites);
+    this.setState({
+      selectedSite: sites[0],
+      sites: sites,
+    });
+  }
 
-    componentDidMount() {
-        this.getSites();
-    }
+  componentDidMount() {
+    this.getSites();
+  }
 
-    // renderSite() {
-    //     let selectedSite = this.state.selectedSite;
-    //     return (
-    //         <HomeInfoCard
-    //             customer={selectedSite.customer}
-    //             payment={selectedSite.payment}
-    //             unpaid={selectedSite.unpaid}
-    //             incidents={selectedSite.incidents}
-    //         />
-    //     );
-    // }
+  // renderSite() {
+  //     let selectedSite = this.state.selectedSite;
+  //     return (
+  //         <HomeInfoCard
+  //             customer={selectedSite.customer}
+  //             payment={selectedSite.payment}
+  //             unpaid={selectedSite.unpaid}
+  //             incidents={selectedSite.incidents}
+  //         />
+  //     );
+  // }
 
-    handleSiteChange(newSite: SiteRecord) {
-        this.setState({ selectedSite: newSite });
-    }
+  handleSiteChange(newSite: SiteRecord) {
+    this.setState({ selectedSite: newSite });
+  }
 
-    render() {
-        const siteData = this.state.sites;
-        return (
-            <div>
-                <Styles.Header>
-                    <FormControl>
-                        <Select inputProps={{ 'aria-label': 'Without label' }}>
-                            {siteData.map((site: SiteRecord) => (
-                                <MenuItem onClick={() => this.handleSiteChange(site)}>{site.name}</MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                </Styles.Header>
+  render() {
+    const siteData = this.state.sites;
+    return (
+      <div>
+        <Styles.Header>
+          <FormControl>
+            <Select inputProps={{ 'aria-label': 'Without label' }}>
+              {siteData.map((site: SiteRecord) => (
+                <MenuItem onClick={() => this.handleSiteChange(site)}>{site.name}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Styles.Header>
 
-                <FinancialSumCard />
-            </div>
-        );
-    }
+        <FinancialSumCard />
+      </div>
+    );
+  }
 }
 
 export default Home;
