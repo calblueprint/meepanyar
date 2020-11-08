@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import { StyledHamburger } from "../styles/HamburgerStyle";
+import { StyledHamburger } from '../styles/HamburgerStyle';
 
 export type Props = {
   open: boolean;
