@@ -38,10 +38,17 @@
 }
 
 .navbar {
+<<<<<<< HEAD
   border-bottom: solid 1px #EBEBEB;
 }
 .bottom-tab-nav {
   border-top: solid 1px #EBEBEB;
+=======
+  border-bottom: solid 1px #ebebeb;
+}
+.bottom-tab-nav {
+  border-top: solid 1px #ebebeb;
+>>>>>>> main
 }
 .nav-link,
 .bottom-nav-link {

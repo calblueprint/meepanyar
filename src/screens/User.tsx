@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import CustomerCards from "../components/CustomerCard"
 import * as Styles from "../styles/UserStyle";
@@ -91,4 +92,14 @@ class User extends React.Component<{}, UserState> {
     }
 };
 
+=======
+import React from 'react';
+
+class User extends React.Component {
+  render() {
+    return <h4>This is the user screen</h4>;
+  }
+}
+
+>>>>>>> main
 export default User;

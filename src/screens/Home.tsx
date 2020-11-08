@@ -1,3 +1,4 @@
+
 import React from "react";
 //import { Nav, NavItem} from 'reactstrap';
 //import { NavLink } from 'react-router-dom';
@@ -18,25 +19,25 @@ const topBarS = {
 
 class Home extends React.Component {
     static navigationOptions = {
-            headerLeft: <Menu />,
-            title:'Home',
-            headerTitleStyle:{
-                fontSize: 25,
-                textAlign: 'center',
-                flex: 1,
-                color: 'white',
-            },
-            //tabBarVisible: false,
-            headerStyle:{
-                backgroundColor: '#fc6f03',
-                borderBottomColor: 'transparent',
-            },
-            //headerTintColor: 'white'
+        headerLeft: <Menu />,
+        title: 'Home',
+        headerTitleStyle: {
+            fontSize: 25,
+            textAlign: 'center',
+            flex: 1,
+            color: 'white',
+        },
+        //tabBarVisible: false,
+        headerStyle: {
+            backgroundColor: '#fc6f03',
+            borderBottomColor: 'transparent',
+        },
+        //headerTintColor: 'white'
     };
     render() {
         return (
             <div className='container-fluid' style={topBarS}>
-                <Menu/>
+                <Menu />
                 <header>
                     <h1 style={{ color: 'white' }}>Home</h1>
                 </header>
