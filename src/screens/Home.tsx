@@ -9,31 +9,18 @@ import { mockComponent } from 'react-dom/test-utils';
 import * as Styles from '../styles/HomeInfoStyles';
 
 interface HomeState {
-  selectedSite: SiteRecord;
-  sites: Array<SiteRecord>;
+  selectedSite: SiteRecord | null;
+  sites: Array<SiteRecord> | null;
 }
-
-// let MockRecord: SiteRecord= {
-//     name: "hi",
-//     incidentIds: ['id'],
-//     incidents: [],
-//     inventoryIds: ['inventory'],
-//     tariffPlanIds: ['plan'],
-//     tariffPlans: [],
-//     customerIds: ['custids'],
-//     currentPeriod: 1,
-//     financialReportIds: ['finreports'],
-//     financialReports: [],
-//     periodStartDate: 'April',
-//     periodEndDate: 'May',
-//     numNeedsReading: 3,
-//     numCustomersNeedPay: 4,
-//   }
 
 class Home extends React.Component<{}, HomeState> {
   constructor(props: {}) {
     super(props);
     this.handleSiteChange = this.handleSiteChange.bind(this);
+    this.state = {
+      selectedSite: null,
+      sites: null
+    }
   }
 
   async getSites() {
@@ -50,31 +37,40 @@ class Home extends React.Component<{}, HomeState> {
   }
 
   // renderSite() {
-  //     let selectedSite = this.state.selectedSite;
+  //   const selectedSite = this.state.selectedSite;
+  //   if (selectedSite) {
   //     return (
-  //         <HomeInfoCard
-  //             customer={selectedSite.customer}
-  //             payment={selectedSite.payment}
-  //             unpaid={selectedSite.unpaid}
-  //             incidents={selectedSite.incidents}
-  //         />
+  //       <HomeInfoCard
+  //         customer={selectedSite.customer}
+  //         payment={selectedSite.payment}
+  //         unpaid={selectedSite.unpaid}
+  //         incidents={selectedSite.incidents}
+  //       />
   //     );
+  //   }
   // }
+
+  renderMenuOptions() {
+    const siteData: Array<SiteRecord> | null = this.state.sites;
+    if (siteData) {
+      return (
+        siteData.map((site: SiteRecord) => (
+          <MenuItem onClick={() => this.handleSiteChange(site)} key={site.name}>{site.name}</MenuItem>))
+      );
+    }
+  }
 
   handleSiteChange(newSite: SiteRecord) {
     this.setState({ selectedSite: newSite });
   }
 
   render() {
-    const siteData = this.state.sites;
     return (
       <div>
         <Styles.Header>
           <FormControl>
             <Select inputProps={{ 'aria-label': 'Without label' }}>
-              {siteData.map((site: SiteRecord) => (
-                <MenuItem onClick={() => this.handleSiteChange(site)}>{site.name}</MenuItem>
-              ))}
+              {this.renderMenuOptions()}
             </Select>
           </FormControl>
         </Styles.Header>
