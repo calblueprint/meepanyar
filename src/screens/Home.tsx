@@ -19,8 +19,8 @@ class Home extends React.Component<{}, HomeState> {
     this.handleSiteChange = this.handleSiteChange.bind(this);
     this.state = {
       selectedSite: null,
-      sites: null
-    }
+      sites: null,
+    };
   }
 
   async getSites() {
@@ -53,10 +53,11 @@ class Home extends React.Component<{}, HomeState> {
   renderMenuOptions() {
     const siteData: Array<SiteRecord> | null = this.state.sites;
     if (siteData) {
-      return (
-        siteData.map((site: SiteRecord) => (
-          <MenuItem onClick={() => this.handleSiteChange(site)} key={site.name}>{site.name}</MenuItem>))
-      );
+      return siteData.map((site: SiteRecord) => (
+        <MenuItem onClick={() => this.handleSiteChange(site)} key={site.name}>
+          {site.name}
+        </MenuItem>
+      ));
     }
   }
 
@@ -69,9 +70,7 @@ class Home extends React.Component<{}, HomeState> {
       <div>
         <Styles.Header>
           <FormControl>
-            <Select inputProps={{ 'aria-label': 'Without label' }}>
-              {this.renderMenuOptions()}
-            </Select>
+            <Select inputProps={{ 'aria-label': 'Without label' }}>{this.renderMenuOptions()}</Select>
           </FormControl>
         </Styles.Header>
 
