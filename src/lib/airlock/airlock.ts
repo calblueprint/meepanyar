@@ -1,16 +1,13 @@
 import { base } from '../airtable/airtable';
 import { refreshUserData } from '../redux/userData';
 
-const signupUser = async (username: string, password: string) => {
+const signupUser = async (username: string, password: string): Promise<{ success: boolean; message: string }> => {
   let success, message;
   try {
     const res = await base.register({
       username: username,
       password: password,
     });
-
-    console.log('Request successful with following res');
-    console.log(res);
 
     success = res.body.success;
     message = res.body.message;
@@ -29,7 +26,7 @@ const signupUser = async (username: string, password: string) => {
   return { success, message };
 };
 
-const loginUser = async (username: string, password: string) => {
+const loginUser = async (username: string, password: string): Promise<boolean> => {
   try {
     const res = await base.login({
       username: username,
@@ -44,7 +41,7 @@ const loginUser = async (username: string, password: string) => {
   }
 };
 
-const logoutUser = async () => {
+const logoutUser = async (): Promise<boolean> => {
   try {
     const res = await base.logout();
     if (!res.body.success) {

@@ -2,7 +2,7 @@ import { store } from './store';
 import { saveUserData, setLoadingForUserData, setIsOnline } from './userDataSlice';
 import $ from 'jquery';
 
-// TODO: Change from ANY type to user schema after Maria's schema PR gets merged
+// TODO: Change from any when typing introduced
 const refreshUserData = (user: any): void => {
   store.dispatch(setLoadingForUserData());
   store.dispatch(saveUserData(user));
