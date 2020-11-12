@@ -1,40 +1,46 @@
 import React from 'react';
 import './App.css';
-import Navigation from './components/Navigation';
-import User from './screens/User';
-import Shopping from './screens/Shopping';
-import Home from './screens/Home';
-import Errors from './screens/Errors';
-import Tools from './screens/Tools';
 import Login from './screens/Login';
+import Home from './screens/Home';
+import CustomerMain from './screens/Customers/CustomerMain';
+import CustomerProfile from './screens/Customers/CustomerProfile';
+import CustomerRecords from './screens/Customers/CustomerRecords';
 import AddCustomer from './screens/AddCustomer';
 import EditCustomer from './screens/EditCustomer';
 import AddMeterReading from './screens/AddMeterReading';
 import Records from './screens/Records';
+import Inventory from './screens/Inventory';
+import Incidents from './screens/Incidents';
+import Maintenance from './screens/Maintenance';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import { ThemeProvider } from "@material-ui/core/styles";
-import { theme } from './styles/ThemeStyles'
+import LabelBottomNavigation from './components/BaseComponents/BottomNav';
+import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
+import { theme } from './styles/ThemeStyles';
 
 function App() {
   return (
     <div className="App">
-      <ThemeProvider theme={theme}>
-      <BrowserRouter>
-        <Navigation />
-        <Switch>
-          <Route path="/home" component={Home}/>
-          <Route path="/user" component={User}/>
-          <Route path="/shopping" component={Shopping}/>
-          <Route path="/tools" component={Tools}/>
-          <Route path="/errors" component={Errors}/>
-          <Route path="/login" component={Login}/>
-          <Route path="/customer/add" component={AddCustomer}/>
-          <Route path="/customer/edit" component={EditCustomer}/>
-          <Route path="/customer/records" component={Records}/>
-          <Route path="/customer/meter" component={AddMeterReading}/>
-        </Switch>
-      </BrowserRouter>
-      </ThemeProvider>
+      <StylesProvider injectFirst>
+        <ThemeProvider theme={theme}>
+          <BrowserRouter>
+            <LabelBottomNavigation />
+            <Switch>
+              <Route path="/home" component={Home} />
+              <Route path="/customers" exact component={CustomerMain} />
+              <Route path="/inventory" component={Inventory} />
+              <Route path="/maintenance" component={Maintenance} />
+              <Route path="/incidents" component={Incidents} />
+              <Route path="/login" component={Login} />
+              <Route path="/customers/add" component={AddCustomer} />
+              <Route path="/customers/edit" component={EditCustomer} />
+              <Route path="/customers/records" component={Records} />
+              <Route path="/customers/meter" component={AddMeterReading} />
+              <Route path={'/customers/:rid'} exact component={CustomerProfile} />
+              <Route path={'/customers/:rid/records'} component={CustomerRecords} />
+            </Switch>
+          </BrowserRouter>
+        </ThemeProvider>
+      </StylesProvider>
     </div>
   );
 }

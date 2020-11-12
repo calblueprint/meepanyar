@@ -18,7 +18,7 @@ export const BackButton = styled(Button)`
 `;
 
 export const BackArrow = styled(ArrowBackIosIcon)`
-  color: #FF922E;
+  color: #ff922e;
   flex-direction: column;
   align-items: flex-start;
   margin-left: 10px;
@@ -52,7 +52,7 @@ export const FieldDiv = styled('div')`
 
 export const Field = styled(TextField)`
   background-color: white;
-  border: 1px solid #FF922E;
+  border: 1px solid #ff922e;
   border-radius: 5px;
   width: 100%;
   height: 30px;
@@ -63,20 +63,21 @@ export const Field = styled(TextField)`
 export const AddButton = styled(Button)`
   color: white;
   position: absolute;
-  background-color: #FF922E;
+  background-color: #ff922e;
   font-size: 12px;
   font-weight: bold;
   border-radius: 20px;
   width: 187px;
   height: 48px;
   margin: 0 auto;
-  right: 0; left: 0;
+  right: 0;
+  left: 0;
   top: 60%;
   text-transform: none;
 `;
 
 export const Check = styled(Checkbox)`
-  color: #FF922E;
+  color: #ff922e;
   float: left;
   margin-left: 5%;
   size: small;
@@ -86,7 +87,7 @@ export const CheckIcon = styled('div')`
   background-color: white;
   width: 20px;
   height: 20px;
-  border: 1px solid #FF922E;
+  border: 1px solid #ff922e;
   border-radius: 3px;
   position: absolute;
 `;
@@ -100,7 +101,7 @@ export const CheckDiv = styled('div')`
 
 export const CheckedIcon = styled(CheckBoxIcon)`
   position: absolute;
-  color: #FF922E;
+  color: #ff922e;
   width: 26px;
   height: 26px;
 `;
@@ -120,7 +121,7 @@ export const CheckLabel = styled(Typography)`
 export const CheckField = styled(TextField)`
   position: absolute;
   background-color: white;
-  border: 1px solid #FF922E;
+  border: 1px solid #ff922e;
   border-radius: 5px;
   width: 76px;
   height: 30px;
@@ -138,7 +139,7 @@ export const MeterDiv = styled('div')`
 `;
 
 export const MeterLabel = styled(Typography)`
-  color: #BDBDBD;
+  color: #bdbdbd;
   font-weight: bold;
   font-size: 12px;
 `;
@@ -148,6 +149,6 @@ export const OutlinedDiv = styled('div')`
   text-align: left;
   width: 100%;
   padding: 15px 15px 0px 15px;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #e5e5e5;
   border-radius: 6px;
 `;

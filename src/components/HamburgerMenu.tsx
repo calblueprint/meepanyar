@@ -1,9 +1,9 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef } from 'react';
 
-import Hamburger from "./HamburgerIcon";
+import Hamburger from './HamburgerIcon';
 import { StyledMenu, StyledLink } from '../styles/MenuStyle';
 
-import { useOnClickOutside } from "./hooks";
+import { useOnClickOutside } from './hooks';
 
 const Menu = () => {
   const [open, setOpen] = useState<boolean>(false);

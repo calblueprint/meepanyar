@@ -1,5 +1,5 @@
-import React from "react";
-import * as Styles from "../styles/CustomerStyles";
+import React from 'react';
+import * as Styles from '../styles/CustomerStyles';
 import Container from '@material-ui/core/Container';
 
 class EditCustomer extends React.Component {
@@ -17,8 +17,8 @@ class EditCustomer extends React.Component {
             <Styles.FieldDiv>
               <Styles.Label>Name</Styles.Label>
               <Styles.Field
-                id='namey'
-                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off'}}
+                id="namey"
+                InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
               />
@@ -46,8 +46,8 @@ class EditCustomer extends React.Component {
             <Styles.FieldDiv>
               <Styles.Label>Tariff Plan</Styles.Label>
               <Styles.Field
-                id='tarrif-plan'
-                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off'}}
+                id="tarrif-plan"
+                InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
               />
@@ -55,17 +55,13 @@ class EditCustomer extends React.Component {
             <Styles.FieldDiv>
               <Styles.Label>Reason</Styles.Label>
               <Styles.Field
-                id='reason'
-                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off'}}
+                id="reason"
+                InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
               />
             </Styles.FieldDiv>
-            <Styles.AddButton
-              type="submit"
-              variant="contained"
-              color="primary"
-            >
+            <Styles.AddButton type="submit" variant="contained" color="primary">
               SAVE
             </Styles.AddButton>
           </form>

@@ -1,16 +1,13 @@
 import React from 'react';
-import Container from "@material-ui/core/Container";
-import * as Styles from "../styles/RecordStyles";
+import Container from '@material-ui/core/Container';
+import * as Styles from '../styles/RecordStyles';
 
 interface PaymentProps {
   date: string;
   amount_ks: number;
 }
 
-const Payment: React.FC<PaymentProps> = ({
-  date,
-  amount_ks,
-}) => {
+const Payment: React.FC<PaymentProps> = ({ date, amount_ks }) => {
   return (
     <Container component="main" maxWidth="xs">
       <Styles.Container>
@@ -23,4 +20,4 @@ const Payment: React.FC<PaymentProps> = ({
   );
 };
 
-export default Payment
+export default Payment;

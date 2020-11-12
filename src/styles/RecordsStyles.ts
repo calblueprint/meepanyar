@@ -30,7 +30,7 @@ export const RecordTabs = styled(Tabs)`
 `;
 
 export const RecordTab = styled(Tab)`
-  color: #E5E5E5;
+  color: #e5e5e5;
   font-size: 12px;
   &:focus {
     outline: none;

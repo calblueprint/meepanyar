@@ -1,5 +1,5 @@
-import React from "react";
-import * as Styles from "../styles/CustomerStyles";
+import React from 'react';
+import * as Styles from '../styles/CustomerStyles';
 import Container from '@material-ui/core/Container';
 
 class AddCustomer extends React.Component {
@@ -17,8 +17,8 @@ class AddCustomer extends React.Component {
             <Styles.FieldDiv>
               <Styles.Label>Name</Styles.Label>
               <Styles.Field
-                id='name'
-                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off' }}
+                id="name"
+                InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
                 type="name"
@@ -44,30 +44,24 @@ class AddCustomer extends React.Component {
               />
               <Styles.CheckLabel>Meter:</Styles.CheckLabel>
               <Styles.CheckField
-                id='meter'
-                InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off' }}
+                id="meter"
+                InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
                 InputLabelProps={{ shrink: true }}
                 color="primary"
                 type="meter"
               />
             </Styles.CheckDiv>
-            <Styles.FieldDiv
-              style={{marginTop: 30}}
-            >
-            <Styles.Label>Tariff Plan</Styles.Label>
-            <Styles.Field
-              id='tarrif-plan'
-              InputProps={{ style: {fontSize: 14}, disableUnderline: true, autoComplete: 'off'}}
-              InputLabelProps={{ shrink: true }}
-              color="primary"
-              type="tariff-plan"
-            />
+            <Styles.FieldDiv style={{ marginTop: 30 }}>
+              <Styles.Label>Tariff Plan</Styles.Label>
+              <Styles.Field
+                id="tarrif-plan"
+                InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
+                InputLabelProps={{ shrink: true }}
+                color="primary"
+                type="tariff-plan"
+              />
             </Styles.FieldDiv>
-            <Styles.AddButton
-              type="submit"
-              variant="contained"
-              color="primary"
-            >
+            <Styles.AddButton type="submit" variant="contained" color="primary">
               ADD
             </Styles.AddButton>
           </form>
