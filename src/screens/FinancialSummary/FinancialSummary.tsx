@@ -93,20 +93,25 @@ export default function FinancialSummary() {
   };
 
   const getCustomerNumbers = (financialSummary: FinancialReportRecord) => {
-    return [financialSummary.numTotalCustomers, financialSummary.numBilledCustomers, financialSummary.numPaidCustomers]
-  }
+    return [financialSummary.numTotalCustomers, financialSummary.numBilledCustomers, financialSummary.numPaidCustomers];
+  };
 
   const getFinancialSummaryNumbers = (financialSummary: FinancialReportRecord) => {
-    return [financialSummary.electricityUsage, financialSummary.tariffsCharged, financialSummary.amountCollected, financialSummary.totalExpenses];
-  }
+    return [
+      financialSummary.electricityUsage,
+      financialSummary.tariffsCharged,
+      financialSummary.amountCollected,
+      financialSummary.totalExpenses,
+    ];
+  };
 
   const getProfitNumbers = (financialSummary: FinancialReportRecord) => {
     return [financialSummary.totalProfit];
-  }
+  };
 
   const getRemainingOwed = (financialSummary: FinancialReportRecord) => {
     return [financialSummary.totalOutstandingPayments];
-  }
+  };
 
   const handleOpen = () => {
     setOpen(true);
@@ -157,7 +162,13 @@ export default function FinancialSummary() {
             />
             <Divider className={classes.divider} />
             <TextWrapper title={''} labels={profitLabel} numbers={profitNumbers} units={currencyUnits} />
-            <TextWrapper title={''} labels={remainingOwedLabel} numbers={remainingOwed} units={currencyUnits} color={'primary'} />
+            <TextWrapper
+              title={''}
+              labels={remainingOwedLabel}
+              numbers={remainingOwed}
+              units={currencyUnits}
+              color={'primary'}
+            />
           </CardContent>
         </Card>
         <Button
@@ -170,7 +181,10 @@ export default function FinancialSummary() {
           <Typography variant="body1">Submit Report</Typography>
         </Button>
       </div>
-      <ConfirmModal isOpen={isOpen} modalContents={<ConfirmModalContents onClick={handleClose} profitNumbers={profitNumbers} />} />
+      <ConfirmModal
+        isOpen={isOpen}
+        modalContents={<ConfirmModalContents onClick={handleClose} profitNumbers={profitNumbers} />}
+      />
     </div>
   );
 }
