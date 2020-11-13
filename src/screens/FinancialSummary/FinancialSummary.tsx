@@ -1,4 +1,4 @@
-import React, { useEffect, useState }  from 'react';
+import React, { useEffect, useState } from 'react';
 import { FinancialReportRecord } from '../../utils/airtable/interface';
 import { getFinancialReportById } from '../../utils/airtable/requests';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
@@ -30,10 +30,10 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: '24px',
     },
     cardContent: {
-      "&:last-child": {
+      '&:last-child': {
         paddingTop: '6px',
         paddingBottom: '16px',
-      }
+      },
     },
     content: {
       margin: '0px 35px',
@@ -99,7 +99,7 @@ const useStyles = makeStyles((theme: Theme) =>
     invisibleDivider: {
       backgroundColor: theme.palette.common.white,
       margin: '4px 0',
-    }
+    },
   }),
 );
 
@@ -107,7 +107,7 @@ export default function FinancialSummary() {
   const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
   const [financialSummary, setFinancialSummary] = useState<FinancialReportRecord>();
-  
+
   // useEffect(() => {
   //   getFinancialSummary();
   // }, []);
@@ -144,7 +144,14 @@ export default function FinancialSummary() {
       <div className={classes.valueWrappers}>
         <TextWrapper title={''} labels={modalLabelsOne} numbers={modalNumbersOne} units={modalUnitsOne} bold />
         <Divider className={classes.invisibleDivider} />
-        <TextWrapper title={''} labels={modalLabelsTwo} numbers={modalNumbersTwo} units={modalUnitsTwo} color="textSecondary" bold />
+        <TextWrapper
+          title={''}
+          labels={modalLabelsTwo}
+          numbers={modalNumbersTwo}
+          units={modalUnitsTwo}
+          color="textSecondary"
+          bold
+        />
       </div>
       <Typography variant="h4" className={classes.confirmText}>
         Please make sure that you want to close the current period before clicking "Confirm"
@@ -166,8 +173,8 @@ export default function FinancialSummary() {
       <div className={classes.content}>
         <ButtonBase className={classes.unpaidRecordsButton}>
           <Typography variant="h2">Unpaid Reports</Typography>
-          <Badge classes={{colorError: classes.badge}} badgeContent={1} color="error" />
-          <ChevronRightIcon style={{ color: '#BDBDBD' }}/>
+          <Badge classes={{ colorError: classes.badge }} badgeContent={1} color="error" />
+          <ChevronRightIcon style={{ color: '#BDBDBD' }} />
         </ButtonBase>
         <div className={classes.titleTexts}>
           <Typography style={{ fontWeight: 500, fontSize: '24px' }}>Current Period {period}</Typography>
@@ -205,8 +212,8 @@ export default function FinancialSummary() {
         >
           <Typography variant="body1">Submit Report</Typography>
         </Button>
-        </div>
-        <ConfirmModal isOpen={isOpen} modalContents={modalContents} />
       </div>
+      <ConfirmModal isOpen={isOpen} modalContents={modalContents} />
+    </div>
   );
 }

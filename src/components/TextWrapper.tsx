@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     bold: {
       fontWeight: 700,
-    }
+    },
   }),
 );
 
@@ -39,20 +39,24 @@ export default function TextWrapper(props: TextWrapperProps) {
     return (
       <div className={classes.items}>
         {props.bold ? (
-          <><Typography className={classes.bold} color={props.color ? props.color : 'inherit'} variant="h4">
-            {label}
-          </Typography>
+          <>
+            <Typography className={classes.bold} color={props.color ? props.color : 'inherit'} variant="h4">
+              {label}
+            </Typography>
             <Typography className={classes.bold} color={props.color ? props.color : 'inherit'} variant="h4">
               {number + (props.units ? props.units[index] : '')}
-            </Typography></>
-        ) : 
-        <><Typography color={props.color ? props.color : 'inherit'} variant="h4">
-            {label}
-          </Typography>
+            </Typography>
+          </>
+        ) : (
+          <>
+            <Typography color={props.color ? props.color : 'inherit'} variant="h4">
+              {label}
+            </Typography>
             <Typography color={props.color ? props.color : 'inherit'} variant="h4">
               {number + (props.units ? props.units[index] : '')}
-            </Typography></>
-        }
+            </Typography>
+          </>
+        )}
       </div>
     );
   };
@@ -63,9 +67,7 @@ export default function TextWrapper(props: TextWrapperProps) {
         <Typography className={classes.titleText} variant="h2" align="left">
           {props.title}
         </Typography>
-      ) : (
-        null
-      )}
+      ) : null}
       {props.numbers.map((num, index) => getLabeledNumber(num, props.labels[index], index))}
     </div>
   );
