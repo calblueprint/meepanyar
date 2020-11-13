@@ -57,7 +57,6 @@ const useStyles = makeStyles((theme: Theme) =>
 interface ConfirmModalContentsProps {
   onClick: () => void;
   profitNumbers: number[];
-
 }
 
 export default function ConfirmModalContents(props: ConfirmModalContentsProps): JSX.Element {

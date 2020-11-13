@@ -161,12 +161,7 @@ export default function FinancialSummary(): JSX.Element {
             />
             <Divider className={classes.divider} />
             <TextWrapper labels={profitLabel} numbers={profitNumbers} units={currencyUnits} />
-            <TextWrapper
-              labels={remainingOwedLabel}
-              numbers={remainingOwed}
-              units={currencyUnits}
-              color={'primary'}
-            />
+            <TextWrapper labels={remainingOwedLabel} numbers={remainingOwed} units={currencyUnits} color={'primary'} />
           </CardContent>
         </Card>
         <Button
