@@ -23,19 +23,19 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '0 0 5px 0',
     },
     confirmButton: {
-        borderRadius: '15px',
-        borderColor: theme.palette.grey[400],
-        marginTop: '-10px',
-        float: 'right',
-      },
+      borderRadius: '15px',
+      borderColor: theme.palette.grey[400],
+      marginTop: '-10px',
+      float: 'right',
+    },
   }),
 );
 
 interface TextWrapperProps {
-    title: string;
-    numbers: number[];
-    labels: string[];
-    units?: string[];
+  title: string;
+  numbers: number[];
+  labels: string[];
+  units?: string[];
 }
 
 export default function TextWrapper(props: TextWrapperProps) {
@@ -44,16 +44,16 @@ export default function TextWrapper(props: TextWrapperProps) {
   const getLabeledNumber = (number: number, label: string, index: number) => {
     return (
       <div className={classes.items}>
-          <Typography variant="h3">{label}</Typography>
-          <Typography variant="h3">{number + (props.units ? props.units[index] : '')}</Typography>
+        <Typography variant="h3">{label}</Typography>
+        <Typography variant="h3">{number + (props.units ? props.units[index] : '')}</Typography>
       </div>
     );
   };
 
   return (
     <div className={classes.root}>
-        <Typography>{props.title}</Typography>
-        {props.numbers.map((num, index) => getLabeledNumber(num, props.labels[index], index))}
+      <Typography>{props.title}</Typography>
+      {props.numbers.map((num, index) => getLabeledNumber(num, props.labels[index], index))}
     </div>
   );
 }

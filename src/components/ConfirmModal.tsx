@@ -27,11 +27,11 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '0 0 5px 0',
     },
     confirmButton: {
-        borderRadius: '15px',
-        borderColor: theme.palette.grey[400],
-        marginTop: '-10px',
-        float: 'right',
-      },
+      borderRadius: '15px',
+      borderColor: theme.palette.grey[400],
+      marginTop: '-10px',
+      float: 'right',
+    },
   }),
 );
 
@@ -45,9 +45,7 @@ export default function ConfirmModal(props: ModalProps) {
 
   return (
     <div className={classes.root}>
-      <Modal open={props.isOpen}>
-          {props.modalContents}
-      </Modal>
+      <Modal open={props.isOpen}>{props.modalContents}</Modal>
     </div>
   );
 }
