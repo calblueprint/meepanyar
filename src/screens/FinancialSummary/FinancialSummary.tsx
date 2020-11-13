@@ -8,6 +8,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import TextWrapper from '../../components/TextWrapper';
 import ConfirmModal from './ConfirmModal';
+import ConfirmModalContents from './ConfirmModalContents';
 import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import CheckIcon from '@material-ui/icons/Check';
@@ -41,17 +42,6 @@ const useStyles = makeStyles((theme: Theme) =>
     divider: {
       margin: '8px 0',
     },
-    buttons: {
-      display: 'flex',
-      justifyContent: 'space-around',
-    },
-    cancelButton: {
-      borderRadius: '18px',
-      borderWidth: '2px',
-      borderColor: theme.palette.grey[300],
-      letterSpacing: '0.14em',
-      height: '41px',
-    },
     confirmButton: {
       borderColor: theme.palette.primary.main,
       borderRadius: '18px',
@@ -69,32 +59,11 @@ const useStyles = makeStyles((theme: Theme) =>
       height: '62px',
       width: '100%',
     },
-    confirmText: {
-      margin: '24px 31px',
-      textAlign: 'center',
-      color: theme.palette.text.primary,
-      lineHeight: '120.5%',
-    },
-    modalContents: {
-      backgroundColor: theme.palette.common.white,
-      border: '1px solid',
-      borderColor: theme.palette.divider,
-      borderRadius: '15px',
-      color: theme.palette.text.primary,
-      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)',
-      padding: '25px 19px',
-    },
     titleTexts: {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
       margin: '18px 0px',
-    },
-    valueWrappers: {
-      border: '1px solid',
-      borderColor: theme.palette.divider,
-      borderRadius: '6px',
-      padding: '22px 22px',
     },
     invisibleDivider: {
       backgroundColor: theme.palette.common.white,
@@ -106,16 +75,38 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function FinancialSummary() {
   const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
-  const [financialSummary, setFinancialSummary] = useState<FinancialReportRecord>();
+  const [customerNumbers, setCustomerNumbers] = useState<number[]>([]);
+  const [financialSummaryNumbers, setFinancialSummaryNumbers] = useState<number[]>([]);
+  const [profitNumbers, setProfitNumbers] = useState<number[]>([]);
+  const [remainingOwed, setRemainingOwed] = useState<number[]>([]);
 
-  // useEffect(() => {
-  //   getFinancialSummary();
-  // }, []);
+  useEffect(() => {
+    getFinancialSummary();
+  }, []);
 
   const getFinancialSummary = async () => {
     const financialSummary: FinancialReportRecord = await getFinancialReportById('recNoCPefwMb4cwqB');
-    setFinancialSummary(financialSummary);
+    setCustomerNumbers(getCustomerNumbers(financialSummary));
+    setFinancialSummaryNumbers(getFinancialSummaryNumbers(financialSummary));
+    setProfitNumbers(getProfitNumbers(financialSummary));
+    setRemainingOwed(getRemainingOwed(financialSummary));
   };
+
+  const getCustomerNumbers = (financialSummary: FinancialReportRecord) => {
+    return [financialSummary.numTotalCustomers, financialSummary.numBilledCustomers, financialSummary.numPaidCustomers]
+  }
+
+  const getFinancialSummaryNumbers = (financialSummary: FinancialReportRecord) => {
+    return [financialSummary.electricityUsage, financialSummary.tariffsCharged, financialSummary.amountCollected, financialSummary.totalExpenses];
+  }
+
+  const getProfitNumbers = (financialSummary: FinancialReportRecord) => {
+    return [financialSummary.totalProfit];
+  }
+
+  const getRemainingOwed = (financialSummary: FinancialReportRecord) => {
+    return [financialSummary.totalOutstandingPayments];
+  }
 
   const handleOpen = () => {
     setOpen(true);
@@ -127,45 +118,11 @@ export default function FinancialSummary() {
 
   const period = 0;
   const customerLabels = ['Total', 'Billed', 'Paid Up'];
-  const customerNumbers = [0, 0, 0];
-  const summaryLabels = ['Total Usage', 'Total Billed', 'Total Collected', 'Total Spent'];
-  const summaryNumbers = [0, 0, 0, 0];
-  const summaryUnits = [' kWh', ' Ks', ' Ks', ' Ks'];
-  const modalLabelsOne = ['Total Profit'];
-  const modalNumbersOne = [0];
-  const modalUnitsOne = [' Ks'];
-  const modalLabelsTwo = ['Your Profit', "Mee Panyar's Profit"];
-  const modalNumbersTwo = [0, 0];
-  const modalUnitsTwo = [' Ks', ' Ks'];
-  const modalLabelsThree = ['Profit'];
-
-  const modalContents = (
-    <div className={classes.modalContents}>
-      <div className={classes.valueWrappers}>
-        <TextWrapper title={''} labels={modalLabelsOne} numbers={modalNumbersOne} units={modalUnitsOne} bold />
-        <Divider className={classes.invisibleDivider} />
-        <TextWrapper
-          title={''}
-          labels={modalLabelsTwo}
-          numbers={modalNumbersTwo}
-          units={modalUnitsTwo}
-          color="textSecondary"
-          bold
-        />
-      </div>
-      <Typography variant="h4" className={classes.confirmText}>
-        Please make sure that you want to close the current period before clicking "Confirm"
-      </Typography>
-      <div className={classes.buttons}>
-        <Button className={classes.cancelButton} color="primary" size="medium" onClick={handleClose} variant="outlined">
-          <Typography variant="body1">Cancel</Typography>
-        </Button>
-        <Button className={classes.confirmButton} size="medium" variant="outlined">
-          <Typography variant="body1">Confirm</Typography>
-        </Button>
-      </div>
-    </div>
-  );
+  const financialSummaryLabels = ['Total Usage', 'Total Billed', 'Total Collected', 'Total Spent'];
+  const financialSummaryUnits = [' kWh', ' Ks', ' Ks', ' Ks'];
+  const profitLabel = ['Profit'];
+  const remainingOwedLabel = ['Total Remaining Owed'];
+  const currencyUnits = [' Ks'];
 
   return (
     <div className={classes.root}>
@@ -187,20 +144,20 @@ export default function FinancialSummary() {
             <TextWrapper title={'Customers'} labels={customerLabels} numbers={customerNumbers} />
             <TextWrapper
               title={'Financial Summary'}
-              labels={summaryLabels.slice(0, 2)}
-              numbers={summaryNumbers.slice(0, 2)}
-              units={summaryUnits.slice(0, 2)}
+              labels={financialSummaryLabels.slice(0, 2)}
+              numbers={financialSummaryNumbers.slice(0, 2)}
+              units={financialSummaryUnits.slice(0, 2)}
             />
             <Divider className={classes.invisibleDivider} />
             <TextWrapper
               title={''}
-              labels={summaryLabels.slice(2)}
-              numbers={summaryNumbers.slice(2)}
-              units={summaryUnits.slice(2)}
+              labels={financialSummaryLabels.slice(2)}
+              numbers={financialSummaryNumbers.slice(2)}
+              units={financialSummaryUnits.slice(2)}
             />
             <Divider className={classes.divider} />
-            <TextWrapper title={''} labels={modalLabelsThree} numbers={[0]} units={[' Ks']} />
-            <TextWrapper title={''} labels={['Total Remaining Owed']} numbers={[0]} units={[' Ks']} color={'primary'} />
+            <TextWrapper title={''} labels={profitLabel} numbers={profitNumbers} units={currencyUnits} />
+            <TextWrapper title={''} labels={remainingOwedLabel} numbers={remainingOwed} units={currencyUnits} color={'primary'} />
           </CardContent>
         </Card>
         <Button
@@ -213,7 +170,7 @@ export default function FinancialSummary() {
           <Typography variant="body1">Submit Report</Typography>
         </Button>
       </div>
-      <ConfirmModal isOpen={isOpen} modalContents={modalContents} />
+      <ConfirmModal isOpen={isOpen} modalContents={<ConfirmModalContents onClick={handleClose} profitNumbers={profitNumbers} />} />
     </div>
   );
 }

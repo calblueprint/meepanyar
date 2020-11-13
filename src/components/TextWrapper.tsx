@@ -37,7 +37,7 @@ export default function TextWrapper(props: TextWrapperProps) {
 
   const getLabeledNumber = (number: number, label: string, index: number) => {
     return (
-      <div className={classes.items}>
+      <div key={index} className={classes.items}>
         {props.bold ? (
           <>
             <Typography className={classes.bold} color={props.color ? props.color : 'inherit'} variant="h4">
