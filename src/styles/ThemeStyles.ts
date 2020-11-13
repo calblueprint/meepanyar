@@ -8,6 +8,9 @@ export const theme = createMuiTheme({
     secondary: {
       main: '#FFE3CA',
     },
+    info: {
+      main: '#FF6142',
+    },
     text: {
       primary: '#828282',
       secondary: '#C4C4C4',
@@ -34,6 +37,10 @@ export const theme = createMuiTheme({
     //caption
     h4: {
       fontSize: '12px',
+      fontWeight: 500,
+    },
+    body1: {
+      fontSize: '14px',
       fontWeight: 500,
     },
     button: {

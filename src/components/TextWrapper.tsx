@@ -14,17 +14,22 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '2px 0px',
     },
     titleText: {
-      margin: '0 0 10px 0',
+      color: '#6A6A6A',
+      margin: '10px 0',
     },
+    bold: {
+      fontWeight: 700,
+    }
   }),
 );
 
 interface TextWrapperProps {
-  title: string;
+  title?: string;
   numbers: number[];
   labels: string[];
   units?: string[];
-  color?: 'inherit' | 'primary';
+  color?: 'inherit' | 'primary' | 'textSecondary';
+  bold?: boolean;
 }
 
 export default function TextWrapper(props: TextWrapperProps) {
@@ -33,12 +38,21 @@ export default function TextWrapper(props: TextWrapperProps) {
   const getLabeledNumber = (number: number, label: string, index: number) => {
     return (
       <div className={classes.items}>
-        <Typography color={props.color ? props.color : 'inherit'} variant="h4">
-          {label}
-        </Typography>
-        <Typography color={props.color ? props.color : 'inherit'} variant="h4">
-          {number + (props.units ? props.units[index] : '')}
-        </Typography>
+        {props.bold ? (
+          <><Typography className={classes.bold} color={props.color ? props.color : 'inherit'} variant="h4">
+            {label}
+          </Typography>
+            <Typography className={classes.bold} color={props.color ? props.color : 'inherit'} variant="h4">
+              {number + (props.units ? props.units[index] : '')}
+            </Typography></>
+        ) : 
+        <><Typography color={props.color ? props.color : 'inherit'} variant="h4">
+            {label}
+          </Typography>
+            <Typography color={props.color ? props.color : 'inherit'} variant="h4">
+              {number + (props.units ? props.units[index] : '')}
+            </Typography></>
+        }
       </div>
     );
   };
@@ -50,7 +64,7 @@ export default function TextWrapper(props: TextWrapperProps) {
           {props.title}
         </Typography>
       ) : (
-        ''
+        null
       )}
       {props.numbers.map((num, index) => getLabeledNumber(num, props.labels[index], index))}
     </div>
