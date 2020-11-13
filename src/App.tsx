@@ -4,7 +4,7 @@ import Inventory from './screens/Inventory';
 import Home from './screens/Home';
 import Incidents from './screens/Incidents';
 import Maintenance from './screens/Maintenance';
-import FinancialSummary from './screens/FinancialSummary';
+import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import LabelBottomNavigation from './components/BaseComponents/BottomNav';
 import Login from './screens/Login';

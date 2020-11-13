@@ -1,8 +1,8 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       margin: '0 0',
@@ -32,7 +32,7 @@ interface TextWrapperProps {
   bold?: boolean;
 }
 
-export default function TextWrapper(props: TextWrapperProps) {
+export default function TextWrapper(props: TextWrapperProps): JSX.Element {
   const classes = useStyles();
 
   const getLabeledNumber = (number: number, label: string, index: number) => {

@@ -54,12 +54,13 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface ConfirmModalContents {
+interface ConfirmModalContentsProps {
   onClick: () => void;
   profitNumbers: number[];
+
 }
 
-export default function ConfirmModalContents(props: ConfirmModalContents) {
+export default function ConfirmModalContents(props: ConfirmModalContentsProps): JSX.Element {
   const classes = useStyles();
 
   const profitLabels = ['Total Profit', 'Your Profit', "Mee Panyar's Profit"];
@@ -70,7 +71,6 @@ export default function ConfirmModalContents(props: ConfirmModalContents) {
     <div className={classes.modalContents}>
       <div className={classes.valueWrappers}>
         <TextWrapper
-          title={''}
           labels={profitLabels.slice(0, 1)}
           numbers={props.profitNumbers}
           units={currencyUnits.slice(0, 1)}
@@ -78,7 +78,6 @@ export default function ConfirmModalContents(props: ConfirmModalContents) {
         />
         <Divider className={classes.invisibleDivider} />
         <TextWrapper
-          title={''}
           labels={profitLabels.slice(1)}
           numbers={zeroes}
           units={currencyUnits.slice(1)}

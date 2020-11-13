@@ -1,8 +1,8 @@
 import React from 'react';
 import Modal from '@material-ui/core/Modal';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, createStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
   createStyles({
     root: {
       margin: '0 15px',
@@ -18,7 +18,7 @@ interface ModalProps {
   modalContents: JSX.Element;
 }
 
-export default function ConfirmModal(props: ModalProps) {
+export default function ConfirmModal(props: ModalProps): JSX.Element {
   const classes = useStyles();
 
   return (

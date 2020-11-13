@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { FinancialReportRecord } from '../../utils/airtable/interface';
-import { getFinancialReportById } from '../../utils/airtable/requests';
+import Badge from '@material-ui/core/Badge';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
 import Button from '@material-ui/core/Button';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import TextWrapper from '../../components/TextWrapper';
 import ConfirmModal from './ConfirmModal';
 import ConfirmModalContents from './ConfirmModalContents';
 import Divider from '@material-ui/core/Divider';
+import TextWrapper from '../../components/TextWrapper';
 import Typography from '@material-ui/core/Typography';
 import CheckIcon from '@material-ui/icons/Check';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import Badge from '@material-ui/core/Badge';
+import { FinancialReportRecord } from '../../utils/airtable/interface';
+import { getFinancialReportById } from '../../utils/airtable/requests';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-export default function FinancialSummary() {
+export default function FinancialSummary(): JSX.Element {
   const classes = useStyles();
   const [isOpen, setOpen] = useState(false);
   const [customerNumbers, setCustomerNumbers] = useState<number[]>([]);
@@ -155,15 +155,13 @@ export default function FinancialSummary() {
             />
             <Divider className={classes.invisibleDivider} />
             <TextWrapper
-              title={''}
               labels={financialSummaryLabels.slice(2)}
               numbers={financialSummaryNumbers.slice(2)}
               units={financialSummaryUnits.slice(2)}
             />
             <Divider className={classes.divider} />
-            <TextWrapper title={''} labels={profitLabel} numbers={profitNumbers} units={currencyUnits} />
+            <TextWrapper labels={profitLabel} numbers={profitNumbers} units={currencyUnits} />
             <TextWrapper
-              title={''}
               labels={remainingOwedLabel}
               numbers={remainingOwed}
               units={currencyUnits}
