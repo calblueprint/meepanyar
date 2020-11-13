@@ -33,7 +33,12 @@ export default class LabelBottomNavigation extends React.Component<{}, NavState>
         <BottomNavigationAction value="/customers" icon={<PersonIcon />} component={Link} to="/customers" />
         <BottomNavigationAction value="/inventory" icon={<ShoppingCartIcon />} component={Link} to="/inventory" />
         <BottomNavigationAction value="/maintenance" icon={<BuildIcon />} component={Link} to="/maintenance" />
-        <BottomNavigationAction value="/financialsummary" icon={<ReportProblemIcon />} component={Link} to="/financialsummary" />
+        <BottomNavigationAction
+          value="/financialsummary"
+          icon={<ReportProblemIcon />}
+          component={Link}
+          to="/financialsummary"
+        />
       </BottomNav>
     );
   }
