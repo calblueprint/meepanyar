@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     titleText: {
       margin: '0 0 10px 0',
-    }
+    },
   }),
 );
 
@@ -24,7 +24,7 @@ interface TextWrapperProps {
   numbers: number[];
   labels: string[];
   units?: string[];
-  color?: "inherit" | "primary"; 
+  color?: 'inherit' | 'primary';
 }
 
 export default function TextWrapper(props: TextWrapperProps) {
@@ -33,15 +33,25 @@ export default function TextWrapper(props: TextWrapperProps) {
   const getLabeledNumber = (number: number, label: string, index: number) => {
     return (
       <div className={classes.items}>
-        <Typography color={props.color ? props.color : "inherit"} variant="h4">{label}</Typography>
-        <Typography color={props.color ? props.color : "inherit"} variant="h4">{number + (props.units ? props.units[index] : '')}</Typography>
+        <Typography color={props.color ? props.color : 'inherit'} variant="h4">
+          {label}
+        </Typography>
+        <Typography color={props.color ? props.color : 'inherit'} variant="h4">
+          {number + (props.units ? props.units[index] : '')}
+        </Typography>
       </div>
     );
   };
 
   return (
     <div className={classes.root}>
-      {props.title ? <Typography className={classes.titleText} variant="h2" align="left">{props.title}</Typography> : ''}
+      {props.title ? (
+        <Typography className={classes.titleText} variant="h2" align="left">
+          {props.title}
+        </Typography>
+      ) : (
+        ''
+      )}
       {props.numbers.map((num, index) => getLabeledNumber(num, props.labels[index], index))}
     </div>
   );

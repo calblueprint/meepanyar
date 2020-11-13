@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       margin: '0 15px',
       display: 'flex',
-      alignItems:'center',
+      alignItems: 'center',
       justifyContent: 'center',
     },
   }),
@@ -22,6 +22,8 @@ export default function ConfirmModal(props: ModalProps) {
   const classes = useStyles();
 
   return (
-    <Modal className={classes.root} open={props.isOpen}>{props.modalContents}</Modal>
+    <Modal className={classes.root} open={props.isOpen}>
+      {props.modalContents}
+    </Modal>
   );
 }

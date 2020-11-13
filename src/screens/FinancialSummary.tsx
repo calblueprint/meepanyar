@@ -22,9 +22,9 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '10px 10px',
     },
     cardContent: {
-      "&:last-child": {
+      '&:last-child': {
         paddingBottom: '16px',
-      }
+      },
     },
     content: {
       margin: '0px 35px',
@@ -82,7 +82,7 @@ const useStyles = makeStyles((theme: Theme) =>
       borderColor: theme.palette.divider,
       borderRadius: '6px',
       padding: '22px 22px',
-    }
+    },
   }),
 );
 
@@ -107,63 +107,58 @@ export default function FinancialSummary() {
   const modalLabelsOne = ['Total Profit'];
   const modalNumbersOne = [0];
   const modalUnitsOne = [' Ks'];
-  const modalLabelsTwo = ['Your Profit', 'Mee Panyar\'s Profit'];
+  const modalLabelsTwo = ['Your Profit', "Mee Panyar's Profit"];
   const modalNumbersTwo = [0, 0];
   const modalUnitsTwo = [' Ks', ' Ks'];
   const modalLabelsThree = ['Profit'];
 
   const modalContents = (
-      <div className={classes.modalContents}>
-        <div className={classes.valueWrappers}>
-          <TextWrapper title={''} labels={modalLabelsOne} numbers={modalNumbersOne} units={modalUnitsOne} />
-          <TextWrapper title={''} labels={modalLabelsTwo} numbers={modalNumbersTwo} units={modalUnitsTwo} />
-        </div>
-        <Typography variant="h4" className={classes.confirmText}>Please make sure that you want to close the current period before clicking "Confirm"</Typography>
-        <div className={classes.buttons}>
-          <Button
-            className={classes.cancelButton}
-            color="primary"
-            size="medium"
-            onClick={handleClose}
-            variant="outlined"
-          >
-            <Typography variant="h4">Cancel</Typography>
-          </Button>
-          <Button
-            className={classes.confirmButton}
-            size="medium"
-            variant="outlined"
-          >
-            <Typography variant="h4">Confirm</Typography>
-          </Button>
-        </div>
+    <div className={classes.modalContents}>
+      <div className={classes.valueWrappers}>
+        <TextWrapper title={''} labels={modalLabelsOne} numbers={modalNumbersOne} units={modalUnitsOne} />
+        <TextWrapper title={''} labels={modalLabelsTwo} numbers={modalNumbersTwo} units={modalUnitsTwo} />
       </div>
-);
+      <Typography variant="h4" className={classes.confirmText}>
+        Please make sure that you want to close the current period before clicking "Confirm"
+      </Typography>
+      <div className={classes.buttons}>
+        <Button className={classes.cancelButton} color="primary" size="medium" onClick={handleClose} variant="outlined">
+          <Typography variant="h4">Cancel</Typography>
+        </Button>
+        <Button className={classes.confirmButton} size="medium" variant="outlined">
+          <Typography variant="h4">Confirm</Typography>
+        </Button>
+      </div>
+    </div>
+  );
 
   return (
     <div className={classes.root}>
       <BaseHeader leftIcon="backNav" title="Financial Summary" />
       <div className={classes.content}>
-        <Button
-          className={classes.unpaidRecordsButton}
-          fullWidth
-          endIcon={<ChevronRightIcon />}
-        >
+        <Button className={classes.unpaidRecordsButton} fullWidth endIcon={<ChevronRightIcon />}>
           <Typography variant="h2">Unpaid Reports</Typography>
         </Button>
-      <div className={classes.titleTexts}>
-      <Typography variant="h3">Current Period {period}</Typography>
-      <Typography color="primary" variant="h4">View All</Typography>
-      </div>
-      <Card variant="outlined">
-        <CardContent className={classes.cardContent}>
-          <TextWrapper title={"Customers"} labels={customerLabels} numbers={customerNumbers} />
-          <TextWrapper title={"Financial Summary"} labels={summaryLabels} numbers={summaryNumbers} units={summaryUnits} />
-          <Divider className={classes.divider} />
-          <TextWrapper title={''} labels={modalLabelsThree} numbers={[0]} units={[' Ks']} />
-          <TextWrapper title={''} labels={["Total Remaining Owed"]} numbers={[0]} units={[' Ks']} color={"primary"} />
-        </CardContent>
-      </Card>
+        <div className={classes.titleTexts}>
+          <Typography variant="h3">Current Period {period}</Typography>
+          <Typography color="primary" variant="h4">
+            View All
+          </Typography>
+        </div>
+        <Card variant="outlined">
+          <CardContent className={classes.cardContent}>
+            <TextWrapper title={'Customers'} labels={customerLabels} numbers={customerNumbers} />
+            <TextWrapper
+              title={'Financial Summary'}
+              labels={summaryLabels}
+              numbers={summaryNumbers}
+              units={summaryUnits}
+            />
+            <Divider className={classes.divider} />
+            <TextWrapper title={''} labels={modalLabelsThree} numbers={[0]} units={[' Ks']} />
+            <TextWrapper title={''} labels={['Total Remaining Owed']} numbers={[0]} units={[' Ks']} color={'primary'} />
+          </CardContent>
+        </Card>
         <Button
           className={classes.confirmButton}
           color="primary"
@@ -173,7 +168,7 @@ export default function FinancialSummary() {
         >
           <Typography variant="h4">Submit Report</Typography>
         </Button>
-      <ConfirmModal isOpen={isOpen} modalContents={modalContents} />
+        <ConfirmModal isOpen={isOpen} modalContents={modalContents} />
       </div>
     </div>
   );
