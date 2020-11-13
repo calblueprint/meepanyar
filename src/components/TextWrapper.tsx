@@ -5,29 +5,17 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      margin: '15px 0',
-    },
-    content: {
-      padding: '8px 12px',
-      textAlign: 'left',
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    itemWrapper: {
-      display: 'flex',
+      margin: '0 0',
     },
     items: {
+      display: 'flex',
       flex: '1',
+      justifyContent: 'space-between',
+      margin: '2px 0px',
     },
-    divider: {
-      margin: '0 0 5px 0',
-    },
-    confirmButton: {
-      borderRadius: '15px',
-      borderColor: theme.palette.grey[400],
-      marginTop: '-10px',
-      float: 'right',
-    },
+    titleText: {
+      margin: '0 0 10px 0',
+    }
   }),
 );
 
@@ -36,6 +24,7 @@ interface TextWrapperProps {
   numbers: number[];
   labels: string[];
   units?: string[];
+  color?: "inherit" | "primary"; 
 }
 
 export default function TextWrapper(props: TextWrapperProps) {
@@ -44,15 +33,15 @@ export default function TextWrapper(props: TextWrapperProps) {
   const getLabeledNumber = (number: number, label: string, index: number) => {
     return (
       <div className={classes.items}>
-        <Typography variant="h3">{label}</Typography>
-        <Typography variant="h3">{number + (props.units ? props.units[index] : '')}</Typography>
+        <Typography color={props.color ? props.color : "inherit"} variant="h4">{label}</Typography>
+        <Typography color={props.color ? props.color : "inherit"} variant="h4">{number + (props.units ? props.units[index] : '')}</Typography>
       </div>
     );
   };
 
   return (
     <div className={classes.root}>
-      <Typography>{props.title}</Typography>
+      {props.title ? <Typography className={classes.titleText} variant="h2" align="left">{props.title}</Typography> : ''}
       {props.numbers.map((num, index) => getLabeledNumber(num, props.labels[index], index))}
     </div>
   );

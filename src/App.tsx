@@ -4,6 +4,7 @@ import Inventory from './screens/Inventory';
 import Home from './screens/Home';
 import Incidents from './screens/Incidents';
 import Maintenance from './screens/Maintenance';
+import FinancialSummary from './screens/FinancialSummary';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import LabelBottomNavigation from './components/BaseComponents/BottomNav';
 import Login from './screens/Login';
@@ -29,6 +30,7 @@ function App() {
               <Route path="/login" component={Login} />
               <Route path={'/customers/:rid'} exact component={CustomerProfile} />
               <Route path={'/customers/:rid/records'} component={CustomerRecords} />
+              <Route path="/financialsummary" component={FinancialSummary} />
             </Switch>
           </BrowserRouter>
         </ThemeProvider>
