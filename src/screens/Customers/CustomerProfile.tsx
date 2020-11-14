@@ -69,7 +69,14 @@ function CustomerProfile(props: CustomerProps) {
   const getAddButton = () => {
     return (
       <div className={classes.button}>
-        <IconButton size="small">
+        <IconButton
+          component={Link}
+          to={{
+            pathname: `${match.url}/addReading`,
+            state: { customer: customer, meterReadings: customer.meterReadings },
+          }}
+          size="small"
+        >
           <AddIcon style={{ color: 'white' }} />
         </IconButton>
       </div>

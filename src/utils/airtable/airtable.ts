@@ -29,6 +29,21 @@ const base = Airtable.base(BASE_ID as string);
 
 // ******** CRUD ******** //
 
+function createRecord(table: string, fields: {}): Promise<string> {
+  return base(table)
+    .create([
+      {
+        fields: fields,
+      },
+    ])
+    .then((records: any) => {
+      return records[0].id;
+    })
+    .catch((err: any) => {
+      throw err;
+    });
+}
+
 // Given a table, get all records from Airtable
 
 function getAllRecords<T>(table: string, filterByFormula = '', sort = [], format: (row: Row) => T): Promise<T[]> {
@@ -128,4 +143,4 @@ function deleteRecord(table: string, id: string): Promise<void> {
     });
 }
 
-export { base, getAllRecords, getRecordById, getRecordsByAttribute, deleteRecord };
+export { base, createRecord, getAllRecords, getRecordById, getRecordsByAttribute, deleteRecord };

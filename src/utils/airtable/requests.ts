@@ -31,11 +31,29 @@ import {
   MeterReadingRecord,
   TariffPlanRecord,
 } from './interface';
-import { getAllRecords, getRecordById, deleteRecord } from './airtable';
+import { createRecord, getAllRecords, getRecordById, deleteRecord } from './airtable';
 
 /*
  ******* READ RECORDS *******
  */
+
+export const createMeterReading = async (meterID: number, reading: number, customer: string): Promise<string> => {
+  return createRecord(Tables.MeterReadings, { 'Meter ID': meterID, Reading: reading, Customer: [customer] });
+};
+
+export const createInvoice = async (
+  billedTo: string,
+  billedBy: string,
+  amount: number,
+  meterReading: string,
+): Promise<string> => {
+  return createRecord(Tables.Invoices, {
+    'Billed To': [billedTo],
+    'Billed By': [billedBy],
+    'Amount Billed': amount,
+    'Meter Readings': [meterReading],
+  });
+};
 
 export const getUserById = async (id: string): Promise<UserRecord> => {
   return getRecordById(Tables.Users, id, formatUser);

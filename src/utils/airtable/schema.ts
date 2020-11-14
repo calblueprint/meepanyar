@@ -83,6 +83,8 @@ export const TableSchemas: Schema = {
     customerId: `Customer`,
     technician: `Technician`,
     invoiceId: `Invoice`,
+    isStartingMeter: `Is Starting Meter`,
+    isCurrentReading: `Is Current Reading`,
   },
   Invoices: {
     name: `Name`,
