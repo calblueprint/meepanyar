@@ -31,14 +31,24 @@ import {
   MeterReadingRecord,
   TariffPlanRecord,
 } from './interface';
-import { createRecord, getAllRecords, getRecordById, deleteRecord } from './airtable';
+import { createRecord, getAllRecords, getRecordById, deleteRecord, updateRecord } from './airtable';
 
 /*
  ******* READ RECORDS *******
  */
 
-export const createMeterReading = async (meterID: number, reading: number, customer: string): Promise<string> => {
-  return createRecord(Tables.MeterReadings, { 'Meter ID': meterID, Reading: reading, Customer: [customer] });
+export const createMeterReading = async (
+  meterID: number,
+  reading: number,
+  date: string,
+  customer: string,
+): Promise<string> => {
+  return createRecord(Tables.MeterReadings, {
+    'Meter ID': meterID,
+    Reading: reading,
+    Date: date,
+    Customer: [customer],
+  });
 };
 
 export const createInvoice = async (
@@ -51,8 +61,16 @@ export const createInvoice = async (
     'Billed To': [billedTo],
     'Billed By': [billedBy],
     'Amount Billed': amount,
-    'Meter Readings': [meterReading],
+    'Meter Reading': [meterReading],
   });
+};
+
+export const updateMeterReading = async (id: string, reading: number, date: string): Promise<string> => {
+  return updateRecord(Tables.MeterReadings, id, { Reading: reading, Date: date });
+};
+
+export const updateInvoice = async (id: string, amount: number, mrId: string): Promise<string> => {
+  return updateRecord(Tables.Invoices, id, { 'Amount Billed': amount, 'Meter Reading': [mrId] });
 };
 
 export const getUserById = async (id: string): Promise<UserRecord> => {

@@ -91,7 +91,7 @@ export const TableSchemas: Schema = {
     date: `Date`,
     billedToId: `Billed To`,
     billedByIds: `Billed By`,
-    meterReadingsId: `Meter Readings`,
+    meterReadingId: `Meter Reading`,
     tariffPlanIds: `Tariff Plan`,
     amountBilled: `Amount Billed`,
     meterReading: `Meter Reading`,

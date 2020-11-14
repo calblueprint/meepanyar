@@ -61,6 +61,7 @@ export interface MeterReadingRecord extends Record {
   reading: number;
   isStartingMeter: boolean;
   isCurrentReading: boolean;
+  invoiceId: string[];
 }
 
 export interface InvoiceRecord extends Record {
