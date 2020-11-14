@@ -9,15 +9,8 @@ import {
   SiteRecord,
   InvoiceRecord,
   PaymentRecord,
-  CustomerUpdateRecord,
   MeterReadingRecord,
   TariffPlanRecord,
-  InventoryRecord,
-  InventoryUpdateRecord,
-  IncidentRecord,
-  IncidentUpdateRecord,
-  MaintenanceRecord,
-  FinancialReportRecord,
   Row,
 } from './interface';
 import { getRecordById } from './airtable';
@@ -26,7 +19,7 @@ type Map = {
   [key: string]: string;
 };
 
-type Column = {
+export type Column = {
   [column: string]: string;
 };
 
@@ -35,154 +28,86 @@ type Schema = {
 };
 
 export const Tables: Map = {
-  Users: 'Users',
-  Customers: 'Customers',
-  Invoices: 'Invoices',
-  Payments: 'Payments',
-  CustomerUpdates: 'Customer Updates',
-  MeterReadings: 'Meter Readings',
+  Users: 'Technician',
   Sites: 'Sites',
   TariffPlans: 'Tariff Plans',
-  Inventory: 'Inventory',
-  InventoryUpdates: 'Inventory Updates',
-  Incidents: 'Incidents',
-  IncidentUpdates: 'Incident Updates',
-  Maintenance: 'Maintenance',
+  Customers: 'Customers',
+  MeterReadings: 'Meter Readings',
+  Invoices: 'Invoices',
+  Payments: 'Payments',
   FinancialReport: 'Financial Report',
 };
 
 export const TableSchemas: Schema = {
-  Users: {
-    အမည်: 'အမည်',
-    email: 'Email',
-    photo: 'Photo',
-    incidentIds: 'Incidents',
-    siteIds: 'Site',
-    password: 'Password',
-    name: 'Name',
-    username: 'Username',
-    customerIds: 'Customers',
-  },
-  Customers: {
-    အမည်: 'အမည်',
-    name: 'Name',
-    meterNumber: 'Meter Number',
-    tariffPlansId: 'Tariff Plans',
-    customerUpdateIds: 'Customer Updates',
-    sitesId: 'Sites',
-    isactive: 'IsActive',
-    hasmeter: 'HasMeter',
-    invoiceIds: 'Invoices',
-    paymentIds: 'Payments',
-    meterReadingIds: 'Meter Readings',
-    haspaid: 'HasPaid',
-    isbilled: 'IsBilled',
-    needsReading: 'Needs Reading',
-  },
-  Invoices: {
-    amount: 'Amount',
-    date: 'Date',
-    customerId: 'Customer',
-  },
-  Payments: {
-    amount: 'Amount',
-    date: 'Date',
-    customerId: 'Customer',
-  },
-  'Customer Updates': {
-    explanation: 'Explanation',
-    dateUpdated: 'Date Updated',
-    customerId: 'Customer',
-  },
-  'Meter Readings': {
-    date: 'Date',
-    reading: 'Reading',
-    customerId: 'Customer',
+  Technician: {
+    username: `Username`,
+    name: `Name`,
+    email: `Email`,
+    password: `Password`,
+    photo: `Photo`,
+    siteIds: `Site`,
+    invoiceIds: `Invoices`,
+    paymentIds: `Payments`,
   },
   Sites: {
-    name: 'Name',
-    incidentIds: 'Incidents',
-    inventoryIds: 'Inventory',
-    tariffPlanIds: 'Tariff Plans',
-    userIds: 'Users',
-    customerIds: 'Customers',
-    currentPeriod: 'Current Period',
-    financialReportIds: 'Financial Report',
-    periodStartDate: 'Period Start Date',
-    periodEndDate: 'Period End Date',
-    numNeedsReading: 'Num Needs Reading',
-    numCustomersNeedPay: 'Num Customers Need Pay',
+    name: `Name`,
+    technicianIds: `Technicians`,
+    customerIds: `Customers`,
   },
   'Tariff Plans': {
-    name: 'Name',
-    fixedTariff: 'Fixed Tariff',
-    tariffByUnit: 'Tariff By Unit',
-    minUnits: 'Min Units',
+    name: `Name`,
+    fixedTariff: `Fixed Tariff`,
+    tariffByUnit: `Tariff By Unit`,
+    minUnits: `Min Units`,
+    customerIds: `Customer`,
+    invoiceIds: `Invoices`,
   },
-  Inventory: {
-    name: 'Name',
-    quantity: 'Quantity',
-    siteId: 'Site',
-    quantityUnit: 'Quantity Unit',
-    inventoryUpdateIds: 'Inventory Updates',
-    lastUpdatedDatefromInventoryUpdates: 'Last Updated Date(from Inventory Updates)',
+  Customers: {
+    name: `Name`,
+    outstandingBalance: `Outstanding Balance`,
+    meterNumber: `Meter Number`,
+    meterReadingIds: `Meter Readings`,
+    tariffPlansId: `Tariff Plans`,
+    invoiceIds: `Invoices`,
+    paymentIds: `Payments`,
+    isactive: `IsActive`,
+    hasmeter: `HasMeter`,
+    totalAmountBilledfromInvoices: `Total Amount Billed (from Invoices)`,
+    totalAmountPaidfromPayments: `Total Amount Paid (from Payments)`,
+    sitesId: `Sites`,
   },
-  'Inventory Updates': {
-    quantity: 'Quantity',
-    receiptPhoto: 'Receipt Photo',
-    inventoryItemId: 'Inventory Item',
-    adminApproved: 'Admin Approved',
-    siteId: 'Site',
-    amountPaid: 'Amount Paid',
-    notes: 'Notes',
-    dateRecorded: 'Date Recorded',
+  'Meter Readings': {
+    meterId: `Meter ID`,
+    date: `Date`,
+    reading: `Reading`,
+    customerId: `Customer`,
+    technician: `Technician`,
+    invoiceId: `Invoice`,
   },
-  Incidents: {
-    description: 'Description',
-    incidentPhotos: 'Incident Photos',
-    status: 'Status',
-    incidentUpdateIds: 'Incident Updates',
-    isResolved: 'Is Resolved',
-    resolutionDate: 'Resolution Date',
-    resolutionDescription: 'Resolution Description',
-    resolutionPhoto: 'Resolution Photo',
-    dateRecorded: 'Date Recorded',
-    siteId: 'Site',
-    userId: 'User',
-    category: 'Category',
-    name: 'Name',
+  Invoices: {
+    name: `Name`,
+    date: `Date`,
+    billedToId: `Billed To`,
+    billedByIds: `Billed By`,
+    meterReadingsId: `Meter Readings`,
+    tariffPlanIds: `Tariff Plan`,
+    amountBilled: `Amount Billed`,
+    meterReading: `Meter Reading`,
+    tariffByUnitfromTariffPlan: `Tariff By Unit (from Tariff Plan)`,
+    fixedTarifffromTariffPlan: `Fixed Tariff (from Tariff Plan)`,
   },
-  'Incident Updates': {
-    description: 'Description',
-    photos: 'Photos',
-    dateRecorded: 'Date Recorded',
-    incidentId: 'Incident',
-  },
-  Maintenance: {
-    taskDescription: 'Task Description',
-    frequency: 'Frequency',
-    equipment: 'Equipment',
+  Payments: {
+    name: `Name`,
+    amount: `Amount`,
+    date: `Date`,
+    billedToIds: `Billed To`,
+    billedByIds: `Billed By`,
   },
   'Financial Report': {
-    name: 'Name',
-    electricityUsage: 'Electricity Usage',
-    tariffsCharged: 'Tariffs Charged',
-    numBilledCustomers: 'Num Billed Customers',
-    totalProfit: 'Total Profit',
-    lastUpdated: 'Last Updated',
-    period: 'Period',
-    bankSlip: 'Bank Slip',
-    paymentApproved: 'Payment Approved',
-    reportApproved: 'Report Approved',
-    sitesId: 'Sites',
-    numTotalCustomers: 'Num Total Customers',
-    totalOutstandingPayments: 'Total Outstanding Payments',
-    numActiveCustomers: 'Num Active Customers',
-    totalExpenses: 'Total Expenses',
-    numPaidCustomers: 'Num Paid Customers',
-    amountCollected: 'Amount Collected',
-    numNeedsReading: 'Num Needs Reading',
-    numCustomersNeedPay: 'Num Customers Need Pay',
+    reportId: `Report ID`,
+    notes: `Notes`,
+    attachments: `Attachments`,
+    status: `Status`,
   },
 };
 
@@ -223,28 +148,27 @@ export function formatUser(row: Row): UserRecord {
       user.sites = sites;
     });
   }
-  if (user.customerIds !== undefined) {
-    formatLinkedRecords<CustomerRecord>(Tables.Customers, user.customerIds, formatCustomer).then((customers) => {
-      user.customers = customers;
+  return user;
+}
+
+export function formatSite(row: Row): SiteRecord {
+  const site = formatRecord<SiteRecord>(row, Tables.Sites);
+  if (site.customerIds !== undefined) {
+    formatLinkedRecords<CustomerRecord>(Tables.Customers, site.customerIds, formatCustomer).then((customers) => {
+      site.customers = customers;
     });
   }
-  return user;
+  return site;
 }
 
 export function formatCustomer(row: Row): CustomerRecord {
   const customer = formatRecord<CustomerRecord>(row, Tables.Customers);
-  customer.haspaid = !!customer.haspaid;
-  customer.isactive = !!customer.isactive;
-  customer.isbilled = !!customer.isbilled;
-  customer.needsReading = !!customer.needsReading;
-  if (customer.customerUpdateIds !== undefined) {
-    formatLinkedRecords<CustomerUpdateRecord>(
-      Tables.CustomerUpdates,
-      customer.customerUpdateIds,
-      formatCustomerUpdate,
-    ).then((customerUpdates) => {
-      customer.customerUpdates = customerUpdates;
-    });
+  if (customer.meterReadingIds !== undefined) {
+    formatLinkedRecords<MeterReadingRecord>(Tables.MeterReadings, customer.meterReadingIds, formatMeterReading).then(
+      (meterReadings) => {
+        customer.meterReadings = meterReadings;
+      },
+    );
   }
   if (customer.tariffPlansId !== undefined) {
     formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan).then(
@@ -263,14 +187,11 @@ export function formatCustomer(row: Row): CustomerRecord {
       customer.payments = payments;
     });
   }
-  if (customer.meterReadingIds !== undefined) {
-    formatLinkedRecords<MeterReadingRecord>(Tables.MeterReadings, customer.meterReadingIds, formatMeterReading).then(
-      (meterReadings) => {
-        customer.meterReadings = meterReadings;
-      },
-    );
-  }
   return customer;
+}
+
+export function formatTariffPlan(row: Row): TariffPlanRecord {
+  return formatRecord<TariffPlanRecord>(row, Tables.TariffPlans);
 }
 
 export function formatInvoice(row: Row): InvoiceRecord {
@@ -281,89 +202,6 @@ export function formatPayment(row: Row): PaymentRecord {
   return formatRecord<PaymentRecord>(row, Tables.Payments);
 }
 
-export function formatCustomerUpdate(row: Row): CustomerUpdateRecord {
-  return formatRecord<CustomerUpdateRecord>(row, Tables.CustomerUpdates);
-}
-
 export function formatMeterReading(row: Row): MeterReadingRecord {
   return formatRecord<MeterReadingRecord>(row, Tables.MeterReadings);
-}
-
-export function formatSite(row: Row): SiteRecord {
-  const site = formatRecord<SiteRecord>(row, Tables.Sites);
-  if (site.incidentIds !== undefined) {
-    formatLinkedRecords<IncidentRecord>(Tables.Incidents, site.incidentIds, formatIncident).then((incidents) => {
-      site.incidents = incidents;
-    });
-  }
-  if (site.tariffPlanIds !== undefined) {
-    formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, site.tariffPlanIds, formatTariffPlan).then(
-      (tariffPlans) => {
-        site.tariffPlans = tariffPlans;
-      },
-    );
-  }
-  if (site.inventoryIds !== undefined) {
-    formatLinkedRecords<InventoryRecord>(Tables.Inventory, site.inventoryIds, formatInventory).then((inventory) => {
-      site.inventory = inventory;
-    });
-  }
-  if (site.financialReportIds !== undefined) {
-    formatLinkedRecords<FinancialReportRecord>(
-      Tables.FinancialReport,
-      site.financialReportIds,
-      formatFinancialReport,
-    ).then((financialReports) => {
-      site.financialReports = financialReports;
-    });
-  }
-  return site;
-}
-
-export function formatTariffPlan(row: Row): TariffPlanRecord {
-  return formatRecord<TariffPlanRecord>(row, Tables.TariffPlans);
-}
-
-export function formatInventory(row: Row): InventoryRecord {
-  const inventory = formatRecord<InventoryRecord>(row, Tables.Inventory);
-  if (inventory.inventoryUpdateIds !== undefined) {
-    formatLinkedRecords<InventoryUpdateRecord>(
-      Tables.InventoryUpdates,
-      inventory.inventoryUpdateIds,
-      formatInventoryUpdate,
-    ).then((inventoryUpdates) => {
-      inventory.inventoryUpdates = inventoryUpdates;
-    });
-  }
-  return inventory;
-}
-
-export function formatInventoryUpdate(row: Row): InventoryUpdateRecord {
-  return formatRecord<InventoryUpdateRecord>(row, Tables.InventoryUpdates);
-}
-
-export function formatIncident(row: Row): IncidentRecord {
-  const incident = formatRecord<IncidentRecord>(row, Tables.Incidents);
-  if (incident.incidentUpdateIds !== undefined) {
-    formatLinkedRecords<IncidentUpdateRecord>(
-      Tables.IncidentUpdates,
-      incident.incidentUpdateIds,
-      formatIncidentUpdate,
-    ).then((incidentUpdates) => {
-      incident.incidentUpdates = incidentUpdates;
-    });
-  }
-  return incident;
-}
-
-export function formatIncidentUpdate(row: Row): IncidentUpdateRecord {
-  return formatRecord<IncidentUpdateRecord>(row, Tables.IncidentUpdates);
-}
-
-export function formatMaintenance(row: Row): MaintenanceRecord {
-  return formatRecord<MaintenanceRecord>(row, Tables.Maintenance);
-}
-
-export function formatFinancialReport(row: Row): FinancialReportRecord {
-  return formatRecord<FinancialReportRecord>(row, Tables.FinancialReport);
 }
