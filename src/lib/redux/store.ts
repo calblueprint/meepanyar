@@ -1,5 +1,6 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
+import { createBrowserHistory } from 'history';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
@@ -7,6 +8,7 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 import userDataSlice from './userDataSlice';
 
 const allReducers = combineReducers({ userData: userDataSlice });
+const history = createBrowserHistory();
 
 const persistConfig = {
   key: 'root',
@@ -22,5 +24,5 @@ const store = configureStore({
 
 const persistor = persistStore(store);
 
-export { store, persistor };
+export { history, store, persistor };
 export type RootState = ReturnType<typeof store.getState>;
