@@ -27,10 +27,12 @@ interface HeaderProps {
   title?: string;
   rightIcon?: string;
   classes: any;
+  match?: any;
 }
 
 function BaseHeader(props: HeaderProps) {
   const { classes } = props;
+  const match = props.match;
   const history = useHistory();
 
   const getIcon = (onClick: (event: React.MouseEvent) => void, icon: JSX.Element) => {
@@ -41,10 +43,14 @@ function BaseHeader(props: HeaderProps) {
     );
   };
 
+  const navigateToEdit = () => { //TEMPORARY navigation
+    window.location.href = `${match.url}/edit`;
+  };
+
   const icons: { [key: string]: JSX.Element } = {
     menu: getIcon(history.goBack, <MenuIcon />), //replace history.goBack with correct functions
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
-    edit: getIcon(history.goBack, <CreateIcon />),
+    edit: getIcon(navigateToEdit, <CreateIcon />),
     user: getIcon(history.goBack, <AccountCircleIcon />),
   };
 

@@ -8,7 +8,6 @@ import CustomerRecords from './screens/Customers/CustomerRecords';
 import AddCustomer from './screens/AddCustomer';
 import EditCustomer from './screens/EditCustomer';
 import AddMeterReading from './screens/AddMeterReading';
-import Records from './screens/Records';
 import Inventory from './screens/Inventory';
 import Incidents from './screens/Incidents';
 import Maintenance from './screens/Maintenance';
@@ -32,11 +31,10 @@ function App() {
               <Route path="/incidents" component={Incidents} />
               <Route path="/login" component={Login} />
               <Route path="/customers/add" component={AddCustomer} />
-              <Route path="/customers/edit" component={EditCustomer} />
-              <Route path="/customers/records" component={Records} />
               <Route path="/customers/meter" component={AddMeterReading} />
               <Route path={'/customers/:rid'} exact component={CustomerProfile} />
               <Route path={'/customers/:rid/records'} component={CustomerRecords} />
+              <Route path={'/customers/:rid/edit'} component={EditCustomer} />
             </Switch>
           </BrowserRouter>
         </ThemeProvider>

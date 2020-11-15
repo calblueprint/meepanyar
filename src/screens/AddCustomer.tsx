@@ -1,74 +1,60 @@
 import React from 'react';
-import * as Styles from '../styles/CustomerStyles';
-import Container from '@material-ui/core/Container';
+import { Typography } from '@material-ui/core';
+import BaseHeader from '../components/BaseComponents/BaseHeader';
+import TextField from '../components/TextField';
+import Checkbox from '../components/Checkbox';
+import Button from '../components/Button';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { Link, RouteComponentProps } from 'react-router-dom';
 
-class AddCustomer extends React.Component {
-  render() {
-    return (
-      <Container component="main" maxWidth="xs">
-        <Styles.HeaderDiv>
-          <Styles.BackButton>
-            <Styles.BackArrow />
-          </Styles.BackButton>
-          <Styles.HeaderText>Add New Customer</Styles.HeaderText>
-        </Styles.HeaderDiv>
-        <Styles.MainDiv>
-          <form noValidate>
-            <Styles.FieldDiv>
-              <Styles.Label>Name</Styles.Label>
-              <Styles.Field
-                id="name"
-                InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
-                InputLabelProps={{ shrink: true }}
-                color="primary"
-                type="name"
-              />
-            </Styles.FieldDiv>
-            <Styles.CheckDiv>
-              <Styles.Check
-                value="checkedA"
-                color="primary"
-                inputProps={{ 'aria-label': 'Checkbox A' }}
-                icon={<Styles.CheckIcon />}
-                checkedIcon={<Styles.CheckedIcon />}
-              />
-              <Styles.CheckLabel>Select if customer is inactive</Styles.CheckLabel>
-            </Styles.CheckDiv>
-            <Styles.CheckDiv>
-              <Styles.Check
-                value="checkedA"
-                color="primary"
-                inputProps={{ 'aria-label': 'Checkbox A' }}
-                icon={<Styles.CheckIcon />}
-                checkedIcon={<Styles.CheckedIcon />}
-              />
-              <Styles.CheckLabel>Meter:</Styles.CheckLabel>
-              <Styles.CheckField
-                id="meter"
-                InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
-                InputLabelProps={{ shrink: true }}
-                color="primary"
-                type="meter"
-              />
-            </Styles.CheckDiv>
-            <Styles.FieldDiv style={{ marginTop: 30 }}>
-              <Styles.Label>Tariff Plan</Styles.Label>
-              <Styles.Field
-                id="tarrif-plan"
-                InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
-                InputLabelProps={{ shrink: true }}
-                color="primary"
-                type="tariff-plan"
-              />
-            </Styles.FieldDiv>
-            <Styles.AddButton type="submit" variant="contained" color="primary">
-              ADD
-            </Styles.AddButton>
-          </form>
-        </Styles.MainDiv>
-      </Container>
-    );
-  }
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    header: {
+      marginTop: '20px',
+      color: theme.palette.text.primary,
+    },
+    content: {
+      margin: '0 25px',
+      textAlign: 'left',
+      color: theme.palette.text.primary,
+    },
+    form: {
+      margin: '10px -5px',
+    },
+    label: {
+      marginTop: '-55px',
+      marginBottom: '40px',
+    },
+  });
+
+interface AddCustomerProps extends RouteComponentProps {
+  classes: { root: string; header: string; content: string; form: string; label: string; };
+  location: any;
 }
 
-export default AddCustomer;
+function AddCustomer(props: AddCustomerProps) {
+  const { classes, match } = props;
+
+  return (
+    <div className={classes.root}>
+      <div className={classes.header}>
+        <BaseHeader leftIcon="backNav" />
+        <Typography className={classes.label} variant="h2">Add New Customer</Typography>
+      </div>
+      <div className={classes.content}>
+        <form noValidate className={classes.form}>
+          <TextField label={"Name"} id={"name"} primary={true} />
+          <Checkbox label={"Select if customer is inactive"} id={"inactive"} />
+          <Checkbox label={"Meter:"} id={"meter"} textField={"meter"} />
+          <TextField label={"Tariff Plan"} id={"tarrif-plan"} primary={true} />
+          <Button label={"ADD"} primary={true} />
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default withStyles(styles)(AddCustomer);

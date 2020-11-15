@@ -89,7 +89,7 @@ function CustomerProfile(props: CustomerProps) {
 
   return (
     <div className={classes.root}>
-      <BaseHeader leftIcon="backNav" title={customer.name} rightIcon="edit" />
+      <BaseHeader leftIcon="backNav" title={customer.name} rightIcon="edit"  match={match} />
       <div className={classes.content}>
         <Typography variant="h1">Site Name</Typography>
         <Typography variant="h4" color="textSecondary">
