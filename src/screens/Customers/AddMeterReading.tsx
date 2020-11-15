@@ -14,7 +14,7 @@ function AddMeterReading(props: MeterReadingProps) {
     addMeterReading('recKzFGFgYkr5ObUJ', customer, 700); //replace with actual user rid and user input
   };
 
-  return <button onClick={onClick}>Add Payment</button>;
+  return <button onClick={onClick}>Add Reading</button>;
 }
 
 export default AddMeterReading;

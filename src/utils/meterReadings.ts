@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { createMeterReading, createInvoice, updateInvoice, updateMeterReading } from '../utils/airtable/requests';
+import { createMeterReading, updateMeterReading } from '../utils/airtable/requests';
 import { CustomerRecord, MeterReadingRecord } from '../utils/airtable/interface';
 
 const isCurrentReading = (mr: MeterReadingRecord): boolean => {
@@ -36,24 +36,22 @@ export const addMeterReading = async (userId: string, customer: CustomerRecord, 
   const currReading = getCurrentReading(customer);
   const startingMeter: MeterReadingRecord | undefined = getStartingMeter(customer);
   if (currReading) {
-    await updateMeterReading(currReading.rid, reading, moment().format('YYYY-MM-DD'));
-    return await updateInvoice(
-      currReading.invoiceId[0],
-      getAmountBilled(customer, reading, startingMeter?.reading),
+    await updateMeterReading(
       currReading.rid,
+      reading,
+      getAmountBilled(customer, reading, startingMeter?.reading),
+      moment().format('YYYY-MM-DD'),
     );
   } else {
-    const meterId = await createMeterReading(
+    const meterReadingRecord = await createMeterReading(
       customer.meterNumber,
       reading,
+      getAmountBilled(customer, reading, startingMeter?.reading),
       moment().format('YYYY-MM-DD'),
       customer.rid,
-    );
-    return await createInvoice(
-      customer.rid,
       userId,
-      getAmountBilled(customer, reading, startingMeter?.reading),
-      meterId,
     );
+    customer.meterReadings.push(meterReadingRecord);
+    customer.meterReadingIds.push(meterReadingRecord.rid);
   }
 };

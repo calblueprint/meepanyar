@@ -1,6 +1,7 @@
 import React from 'react';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
-import { InvoiceRecord, PaymentRecord } from '../../utils/airtable/interface';
+import { MeterReadingRecord } from '../../utils/airtable/interface';
+import { PaymentRecord } from '../../utils/airtable/interface';
 
 interface CustomerRecordsProps {
   classes: any;
@@ -9,7 +10,7 @@ interface CustomerRecordsProps {
 
 function CustomerRecords(props: CustomerRecordsProps) {
   const payments: PaymentRecord[] = props.location.state.payments;
-  const invoices: InvoiceRecord[] = props.location.state.invoices;
+  const meterReadings: MeterReadingRecord[] = props.location.state.meterReadings;
 
   return (
     <>
@@ -20,8 +21,10 @@ function CustomerRecords(props: CustomerRecordsProps) {
         : null}
 
       <h3>Invoices</h3>
-      {invoices
-        ? invoices.map((invoice: InvoiceRecord) => <p key={invoice.rid}>{`${invoice.date} ${invoice.amountBilled}`}</p>)
+      {meterReadings
+        ? meterReadings.map((meterReading: MeterReadingRecord) => (
+            <p key={meterReading.rid}>{`${meterReading.date} ${meterReading.amountBilled}`}</p>
+          ))
         : null}
     </>
   );

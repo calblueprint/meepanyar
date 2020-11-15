@@ -1,9 +1,11 @@
 export type TableValues = string | boolean | number | Array<unknown> | Airtable.Attachment;
+export type TableRecordType = {
+  [key: string]: TableValues;
+};
 export type TableRecord =
   | UserRecord
   | CustomerRecord
   | SiteRecord
-  | InvoiceRecord
   | PaymentRecord
   | MeterReadingRecord
   | TariffPlanRecord;
@@ -19,10 +21,10 @@ interface Record {
 
 export interface UserRecord extends Record {
   username: string;
-  name: string;
   email: string;
-  password: string;
   photo?: Airtable.Attachment[];
+  password: string;
+  name: string;
   siteIds: string[];
   sites: SiteRecord[];
 }
@@ -42,31 +44,22 @@ export interface TariffPlanRecord extends Record {
 
 export interface CustomerRecord extends Record {
   name: string;
-  outstandingBalance: string;
   meterNumber: number;
-  meterReadingIds: string[];
-  meterReadings: MeterReadingRecord[];
   tariffPlansId: string[];
   tariffPlans: TariffPlanRecord[];
-  invoiceIds: string[];
-  invoices: InvoiceRecord[];
-  paymentIds: string[];
-  payments: PaymentRecord[];
   isactive: boolean;
   hasmeter: boolean;
+  outstandingBalance: string;
+  meterReadingIds: string[];
+  meterReadings: MeterReadingRecord[];
+  paymentIds: string[];
+  payments: PaymentRecord[];
 }
 
 export interface MeterReadingRecord extends Record {
   date: string;
   reading: number;
-  isStartingMeter: boolean;
-  isCurrentReading: boolean;
-  invoiceId: string[];
-}
-
-export interface InvoiceRecord extends Record {
   amountBilled: number;
-  date: string;
 }
 
 export interface PaymentRecord extends Record {

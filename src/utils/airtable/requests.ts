@@ -16,7 +16,6 @@ import {
   Tables,
   formatUser,
   formatCustomer,
-  formatInvoice,
   formatPayment,
   formatMeterReading,
   formatSite,
@@ -26,7 +25,6 @@ import {
   UserRecord,
   CustomerRecord,
   SiteRecord,
-  InvoiceRecord,
   PaymentRecord,
   MeterReadingRecord,
   TariffPlanRecord,
@@ -40,37 +38,35 @@ import { createRecord, getAllRecords, getRecordById, deleteRecord, updateRecord 
 export const createMeterReading = async (
   meterID: number,
   reading: number,
+  amount: number,
   date: string,
   customer: string,
-): Promise<string> => {
-  return createRecord(Tables.MeterReadings, {
+  user: string,
+): Promise<MeterReadingRecord> => {
+  const id = await createRecord(Tables.MeterReadingsandInvoices, {
     'Meter ID': meterID,
     Reading: reading,
+    'Amount Billed': amount,
     Date: date,
     Customer: [customer],
+    'Billed By': [user],
   });
+  const record: MeterReadingRecord = {
+    rid: id,
+    date: date,
+    reading: reading,
+    amountBilled: amount,
+  };
+  return record;
 };
 
-export const createInvoice = async (
-  billedTo: string,
-  billedBy: string,
+export const updateMeterReading = async (
+  id: string,
+  reading: number,
   amount: number,
-  meterReading: string,
+  date: string,
 ): Promise<string> => {
-  return createRecord(Tables.Invoices, {
-    'Billed To': [billedTo],
-    'Billed By': [billedBy],
-    'Amount Billed': amount,
-    'Meter Reading': [meterReading],
-  });
-};
-
-export const updateMeterReading = async (id: string, reading: number, date: string): Promise<string> => {
-  return updateRecord(Tables.MeterReadings, id, { Reading: reading, Date: date });
-};
-
-export const updateInvoice = async (id: string, amount: number, mrId: string): Promise<string> => {
-  return updateRecord(Tables.Invoices, id, { 'Amount Billed': amount, 'Meter Reading': [mrId] });
+  return updateRecord(Tables.MeterReadingsandInvoices, id, { Reading: reading, 'Amount Billed': amount, Date: date });
 };
 
 export const getUserById = async (id: string): Promise<UserRecord> => {
@@ -134,7 +130,7 @@ export const getAllCustomers = async (filterByFormula = '', sort = []): Promise<
 };
 
 export const getMeterReadingById = async (id: string): Promise<MeterReadingRecord> => {
-  return getRecordById(Tables.MeterReadings, id, formatMeterReading);
+  return getRecordById(Tables.MeterReadingsandInvoices, id, formatMeterReading);
 };
 
 export const getMeterReadingsByIds = async (
@@ -144,25 +140,11 @@ export const getMeterReadingsByIds = async (
 ): Promise<MeterReadingRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-  return getAllRecords(Tables.MeterReadings, formula, sort, formatMeterReading);
+  return getAllRecords(Tables.MeterReadingsandInvoices, formula, sort, formatMeterReading);
 };
 
 export const getAllMeterReadings = async (filterByFormula = '', sort = []): Promise<MeterReadingRecord[]> => {
-  return getAllRecords(Tables.MeterReadings, filterByFormula, sort, formatMeterReading);
-};
-
-export const getInvoiceById = async (id: string): Promise<InvoiceRecord> => {
-  return getRecordById(Tables.Invoices, id, formatInvoice);
-};
-
-export const getInvoicesByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<InvoiceRecord[]> => {
-  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
-  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
-  return getAllRecords(Tables.Invoices, formula, sort, formatInvoice);
-};
-
-export const getAllInvoices = async (filterByFormula = '', sort = []): Promise<InvoiceRecord[]> => {
-  return getAllRecords(Tables.Invoices, filterByFormula, sort, formatInvoice);
+  return getAllRecords(Tables.MeterReadingsandInvoices, filterByFormula, sort, formatMeterReading);
 };
 
 export const getPaymentById = async (id: string): Promise<PaymentRecord> => {
@@ -184,7 +166,7 @@ export const getAllPayments = async (filterByFormula = '', sort = []): Promise<P
  */
 
 export const deleteTechnician = async (id: string): Promise<void> => {
-  return deleteRecord(Tables.Technician, id);
+  return deleteRecord(Tables.Users, id);
 };
 export const deleteSite = async (id: string): Promise<void> => {
   return deleteRecord(Tables.Sites, id);
@@ -196,10 +178,7 @@ export const deleteCustomer = async (id: string): Promise<void> => {
   return deleteRecord(Tables.Customers, id);
 };
 export const deleteMeterReading = async (id: string): Promise<void> => {
-  return deleteRecord(Tables.MeterReadings, id);
-};
-export const deleteInvoice = async (id: string): Promise<void> => {
-  return deleteRecord(Tables.Invoices, id);
+  return deleteRecord(Tables.MeterReadingsandInvoices, id);
 };
 export const deletePayment = async (id: string): Promise<void> => {
   return deleteRecord(Tables.Payments, id);

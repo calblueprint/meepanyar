@@ -7,7 +7,6 @@ import {
   UserRecord,
   CustomerRecord,
   SiteRecord,
-  InvoiceRecord,
   PaymentRecord,
   MeterReadingRecord,
   TariffPlanRecord,
@@ -28,30 +27,29 @@ type Schema = {
 };
 
 export const Tables: Map = {
-  Users: 'Technician',
+  Users: 'Users',
   Sites: 'Sites',
   TariffPlans: 'Tariff Plans',
   Customers: 'Customers',
-  MeterReadings: 'Meter Readings',
-  Invoices: 'Invoices',
+  MeterReadingsandInvoices: 'Meter Readings and Invoices',
   Payments: 'Payments',
-  FinancialReport: 'Financial Report',
 };
 
 export const TableSchemas: Schema = {
-  Technician: {
+  Users: {
     username: `Username`,
-    name: `Name`,
     email: `Email`,
-    password: `Password`,
     photo: `Photo`,
     siteIds: `Site`,
-    invoiceIds: `Invoices`,
+    password: `Password`,
+    name: `Name`,
+    invoices: `Invoices`,
     paymentIds: `Payments`,
+    meterReadingIds: `Meter Readings and Invoices`,
   },
   Sites: {
     name: `Name`,
-    technicianIds: `Technicians`,
+    userIds: `Users`,
     customerIds: `Customers`,
   },
   'Tariff Plans': {
@@ -60,56 +58,34 @@ export const TableSchemas: Schema = {
     tariffByUnit: `Tariff By Unit`,
     minUnits: `Min Units`,
     customerIds: `Customer`,
-    invoiceIds: `Invoices`,
   },
   Customers: {
     name: `Name`,
-    outstandingBalance: `Outstanding Balance`,
     meterNumber: `Meter Number`,
-    meterReadingIds: `Meter Readings`,
     tariffPlansId: `Tariff Plans`,
-    invoiceIds: `Invoices`,
-    paymentIds: `Payments`,
+    sitesId: `Sites`,
     isactive: `IsActive`,
     hasmeter: `HasMeter`,
+    outstandingBalance: `Outstanding Balance`,
+    meterReadingIds: `Meter Readings`,
     totalAmountBilledfromInvoices: `Total Amount Billed (from Invoices)`,
     totalAmountPaidfromPayments: `Total Amount Paid (from Payments)`,
-    sitesId: `Sites`,
+    paymentIds: `Payments`,
   },
-  'Meter Readings': {
+  'Meter Readings and Invoices': {
     meterId: `Meter ID`,
-    date: `Date`,
     reading: `Reading`,
     customerId: `Customer`,
-    technician: `Technician`,
-    invoiceId: `Invoice`,
-    isStartingMeter: `Is Starting Meter`,
-    isCurrentReading: `Is Current Reading`,
-  },
-  Invoices: {
-    name: `Name`,
-    date: `Date`,
-    billedToId: `Billed To`,
-    billedByIds: `Billed By`,
-    meterReadingId: `Meter Reading`,
-    tariffPlanIds: `Tariff Plan`,
     amountBilled: `Amount Billed`,
-    meterReading: `Meter Reading`,
-    tariffByUnitfromTariffPlan: `Tariff By Unit (from Tariff Plan)`,
-    fixedTarifffromTariffPlan: `Fixed Tariff (from Tariff Plan)`,
+    date: `Date`,
+    billedByIds: `Billed By`,
   },
   Payments: {
     name: `Name`,
     amount: `Amount`,
     date: `Date`,
     billedToIds: `Billed To`,
-    billedByIds: `Billed By`,
-  },
-  'Financial Report': {
-    reportId: `Report ID`,
-    notes: `Notes`,
-    attachments: `Attachments`,
-    status: `Status`,
+    collectedByIds: `Collected By`,
   },
 };
 
@@ -166,11 +142,13 @@ export function formatSite(row: Row): SiteRecord {
 export function formatCustomer(row: Row): CustomerRecord {
   const customer = formatRecord<CustomerRecord>(row, Tables.Customers);
   if (customer.meterReadingIds !== undefined) {
-    formatLinkedRecords<MeterReadingRecord>(Tables.MeterReadings, customer.meterReadingIds, formatMeterReading).then(
-      (meterReadings) => {
-        customer.meterReadings = meterReadings;
-      },
-    );
+    formatLinkedRecords<MeterReadingRecord>(
+      Tables.MeterReadingsandInvoices,
+      customer.meterReadingIds,
+      formatMeterReading,
+    ).then((meterReadings) => {
+      customer.meterReadings = meterReadings;
+    });
   }
   if (customer.tariffPlansId !== undefined) {
     formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan).then(
@@ -178,11 +156,6 @@ export function formatCustomer(row: Row): CustomerRecord {
         customer.tariffPlans = tariffPlans;
       },
     );
-  }
-  if (customer.invoiceIds !== undefined) {
-    formatLinkedRecords<InvoiceRecord>(Tables.Invoices, customer.invoiceIds, formatInvoice).then((invoices) => {
-      customer.invoices = invoices;
-    });
   }
   if (customer.paymentIds !== undefined) {
     formatLinkedRecords<PaymentRecord>(Tables.Payments, customer.paymentIds, formatPayment).then((payments) => {
@@ -196,14 +169,10 @@ export function formatTariffPlan(row: Row): TariffPlanRecord {
   return formatRecord<TariffPlanRecord>(row, Tables.TariffPlans);
 }
 
-export function formatInvoice(row: Row): InvoiceRecord {
-  return formatRecord<InvoiceRecord>(row, Tables.Invoices);
-}
-
 export function formatPayment(row: Row): PaymentRecord {
   return formatRecord<PaymentRecord>(row, Tables.Payments);
 }
 
 export function formatMeterReading(row: Row): MeterReadingRecord {
-  return formatRecord<MeterReadingRecord>(row, Tables.MeterReadings);
+  return formatRecord<MeterReadingRecord>(row, Tables.MeterReadingsandInvoices);
 }
