@@ -5,7 +5,7 @@ import Home from './screens/Home';
 import Incidents from './screens/Incidents';
 import Maintenance from './screens/Maintenance';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
-import { history, RootState } from './lib/redux/store';
+import { RootState } from './lib/redux/store';
 import LabelBottomNavigation from './components/BaseComponents/BottomNav';
 import Login from './screens/Login';
 import CustomerMain from './screens/Customers/CustomerMain';
@@ -14,6 +14,7 @@ import CustomerRecords from './screens/Customers/CustomerRecords';
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { theme } from './styles/ThemeStyles';
+import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 
 interface AppProps {
   isSignedIn: boolean;
@@ -29,17 +30,17 @@ function App(isSignedIn: AppProps) {
           <BrowserRouter>
             <LabelBottomNavigation />
             <Switch>
-              <Route exact path="/" history={history}>
+              <Route exact path="/">
                 <Redirect to={homeRedirect} />
               </Route>
-              <Route path="/home" component={Home} />
-              <Route path="/customers" exact component={CustomerMain} />
-              <Route path="/inventory" component={Inventory} />
-              <Route path="/maintenance" component={Maintenance} />
-              <Route path="/incidents" component={Incidents} />
-              <Route path="/login" history={history} component={Login} />
-              <Route path={'/customers/:rid'} exact component={CustomerProfile} />
-              <Route path={'/customers/:rid/records'} component={CustomerRecords} />
+              <AuthenticatedRoute path="/home" component={Home} />
+              <AuthenticatedRoute path="/customers" component={CustomerMain} exact />
+              <AuthenticatedRoute path="/inventory" component={Inventory} />
+              <AuthenticatedRoute path="/maintenance" component={Maintenance} />
+              <AuthenticatedRoute path="/incidents" component={Incidents} />
+              <Route path="/login" component={Login} />
+              <AuthenticatedRoute path={'/customers/:rid'} component={CustomerProfile} exact />
+              <AuthenticatedRoute path={'/customers/:rid/records'} component={CustomerRecords} />
             </Switch>
           </BrowserRouter>
         </ThemeProvider>
