@@ -2,9 +2,16 @@
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
+interface siteDataSliceState {
+  isLoading: boolean;
+  currentSite: any;
+  sites: any[];
+}
+
+const initialState: siteDataSliceState = {
   isLoading: false,
-  sites: {},
+  currentSite: null,
+  sites: [],
 };
 
 const siteDataSlice = createSlice({
@@ -15,12 +22,22 @@ const siteDataSlice = createSlice({
       state.isLoading = true;
     },
     saveSiteData(state, action) {
-      const siteData = action.payload;
-      state.sites = siteData;
+      const { sites, currentSite } = action.payload;
+      state.sites = sites;
+      state.currentSite = currentSite;
       state.isLoading = false;
+    },
+    setCurrSite(state, action) {
+      const newSiteId = action.payload;
+      for (const site of state.sites) {
+        if (site.id === newSiteId) {
+          state.currentSite = site;
+          break;
+        }
+      }
     },
   },
 });
 
-export const { setLoadingForSiteData, saveSiteData } = siteDataSlice.actions;
+export const { setLoadingForSiteData, saveSiteData, setCurrSite } = siteDataSlice.actions;
 export default siteDataSlice.reducer;

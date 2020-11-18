@@ -1,28 +1,38 @@
 import { store } from './store';
-import { setLoadingForSiteData, saveSiteData } from './siteDataSlice';
+import { setLoadingForSiteData, setCurrSite, saveSiteData } from './siteDataSlice';
 import { base } from '../airtable/airtable';
 
 const refreshSiteData = async (user: any): Promise<void> => {
-  store.dispatch(setLoadingForSiteData());
-  console.log('refresh Site finished loading for site data');
-  const sites: string[] = user.fields.Site;
-  console.log('refresh Site finished loading for site data');
-  const siteInfo: any = [];
+    store.dispatch(setLoadingForSiteData());
+    const siteIds: string[] = user.fields.Site;
+    let currentSite = null;
+    const sites: any = [];
 
-  await base('Sites')
-    .select({
-      view: 'Grid view',
-    })
-    .eachPage(async (records: any, fetchNextPage: any) => {
-      records.forEach((record: any) => {
-        siteInfo.push(record.fields);
-        console.log('Site info pushed', JSON.stringify(record));
-      });
-      await fetchNextPage();
-    });
+    await base('Sites')
+        .select({
+            view: 'Grid view',
+        })
+        .eachPage((records: any, fetchNextPage: any) => {
+            records.forEach((record: any) => {
+                sites.push(record);
+            });
+            fetchNextPage();
+        });
 
-  console.log('dispatch occurring');
-  store.dispatch(saveSiteData(siteInfo));
+    if (sites.length > 0) {
+        currentSite = sites[0];
+    }
+
+    const siteData = {
+        sites,
+        currentSite,
+    };
+
+    store.dispatch(saveSiteData(siteData));
+};
+
+const setCurrentSite = (newSiteId: string): void => {
+    store.dispatch(setCurrSite(newSiteId));
 };
 
 export { refreshSiteData };
