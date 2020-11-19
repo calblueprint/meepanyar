@@ -21,9 +21,6 @@ const styles = (theme: Theme) =>
       textAlign: 'left',
       color: theme.palette.text.primary,
     },
-    form: {
-      margin: '10px -5px',
-    },
     label: {
       marginTop: '-55px',
       marginBottom: '40px',
@@ -31,29 +28,26 @@ const styles = (theme: Theme) =>
   });
 
 interface EditCustomerProps extends RouteComponentProps {
-  classes: { root: string; header: string; content: string; form: string; label: string; };
+  classes: { root: string; header: string; content: string; label: string; };
   location: any;
 }
 
 function EditCustomer(props: EditCustomerProps) {
-  const { classes, match } = props;
+  const { classes } = props;
 
   return (
     <div className={classes.root}>
       <div className={classes.header}>
-        <BaseHeader leftIcon="backNav" />
-        <Typography className={classes.label} variant="h2">Edit Customer</Typography>
+        <BaseHeader title="Edit Customer" leftIcon="backNav" />
       </div>
-      <div className={classes.content}>
-        <form noValidate className={classes.form}>
-          <TextField label={"Name"} id={"name"} primary={true} />
-          <Checkbox label={"Select if customer is inactive"} id={"inactive"} />
-          <Checkbox label={"Select if customer has meter"} id={"meter"} />
-          <TextField label={"Tariff Plan"} id={"tarrif-plan"} primary={true} />
-          <TextField label={"Reason"} id={"reason"} primary={true} />
-          <Button label={"SAVE"} primary={true} />
-        </form>
-      </div>
+      <form noValidate className={classes.content}>
+        <TextField label={"Name"} id={"name"} primary={true} />
+        <Checkbox label={"Select if customer is inactive"} />
+        <Checkbox label={"Select if customer has meter"} />
+        <TextField label={"Tariff Plan"} id={"tarrif-plan"} primary={true} />
+        <TextField label={"Reason"} id={"reason"} primary={true} />
+        <Button label={"SAVE"} />
+      </form>
     </div>
   );
 }

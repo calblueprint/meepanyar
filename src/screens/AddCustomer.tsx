@@ -21,9 +21,6 @@ const styles = (theme: Theme) =>
       textAlign: 'left',
       color: theme.palette.text.primary,
     },
-    form: {
-      margin: '10px -5px',
-    },
     label: {
       marginTop: '-55px',
       marginBottom: '40px',
@@ -31,28 +28,25 @@ const styles = (theme: Theme) =>
   });
 
 interface AddCustomerProps extends RouteComponentProps {
-  classes: { root: string; header: string; content: string; form: string; label: string; };
+  classes: { root: string; header: string; content: string; label: string; };
   location: any;
 }
 
 function AddCustomer(props: AddCustomerProps) {
-  const { classes, match } = props;
+  const { classes } = props;
 
   return (
     <div className={classes.root}>
       <div className={classes.header}>
-        <BaseHeader leftIcon="backNav" />
-        <Typography className={classes.label} variant="h2">Add New Customer</Typography>
+        <BaseHeader title="Add New Customer" leftIcon="backNav" />
       </div>
-      <div className={classes.content}>
-        <form noValidate className={classes.form}>
-          <TextField label={"Name"} id={"name"} primary={true} />
-          <Checkbox label={"Select if customer is inactive"} id={"inactive"} />
-          <Checkbox label={"Meter:"} id={"meter"} textField={"meter"} />
-          <TextField label={"Tariff Plan"} id={"tarrif-plan"} primary={true} />
-          <Button label={"ADD"} primary={true} />
-        </form>
-      </div>
+      <form noValidate className={classes.content}>
+        <TextField label={"Name"} id={"name"} primary={true} />
+        <Checkbox label={"Select if customer is inactive"} />
+        <Checkbox label={"Meter:"} textField={"meter"} />
+        <TextField label={"Tariff Plan"} id={"tarrif-plan"} primary={true} />
+        <Button label={"ADD"} />
+      </form>
     </div>
   );
 }

@@ -1,31 +1,27 @@
 import React from 'react';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Typography, TextField, Checkbox } from '@material-ui/core';
-import Container from '@material-ui/core/Container';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
-      marginTop: '10px',
-      marginLeft: '-6px',
-      marginBottom: '14px',
-    },
-    check: {
-      float: 'left',
-      marginLeft: '5%',
-      size: 'small',
+      marginTop: '5px',
+      marginLeft: '30px',
+      marginBottom: '10px',
     },
     checkIcon: {
-      backgroundColor: 'white',
+      marginLeft: '-20px',
+      position: 'absolute',
       width: '20px',
       height: '20px',
       border: `1px solid ${theme.palette.primary.main}`,
       borderRadius: '3px',
-      position: 'absolute',
     },
     checkedIcon: {
+      marginLeft: '-20px',
       position: 'absolute',
       color: theme.palette.primary.main,
       width: '26px',
@@ -33,20 +29,16 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     label: {
       position: 'absolute',
-      textAlign: 'left',
-      padding: '6px 0px',
       width: '300px',
-      marginLeft: '50px',
-      marginTop: '-5px',
+      marginLeft: '20px',
     },
     textField: {
       position: 'absolute',
-      backgroundColor: 'white',
       border: `1px solid ${theme.palette.primary.main}`,
       borderRadius: '5px',
       width: '76px',
       height: '30px',
-      marginLeft: '90px',
+      marginLeft: '70px',
       marginTop: '-6px',
       padding: '0px 10px',
     },
@@ -55,7 +47,6 @@ const useStyles = makeStyles((theme: Theme) =>
 
 interface CheckBoxProps {
   label: string,
-  id: string,
   textField?: string | null,
 }
 
@@ -63,15 +54,13 @@ export default function CheckBox(props: CheckBoxProps) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Checkbox className={classes.check}
-        id={props.id}
-        value="checkedA"
-        color="primary"
-        inputProps={{ 'aria-label': 'Checkbox A' }}
-        icon={<div className={classes.checkIcon} />}
-        checkedIcon={<CheckBoxIcon className={classes.checkedIcon} />}
-      />
-      <Typography variant="h4" className={classes.label}>{props.label}</Typography>
+      <FormControlLabel control={
+        <Checkbox
+          color="primary"
+          icon={<div className={classes.checkIcon} />}
+          checkedIcon={<CheckBoxIcon className={classes.checkedIcon} />}
+        />
+      } label={props.label} />
       { props.textField ?
         <TextField className={classes.textField}
           id={props.textField}

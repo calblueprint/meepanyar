@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography, Container, AppBar, Tabs, Tab } from '@material-ui/core';
+import { Button, Typography, Tabs, Tab } from '@material-ui/core';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Record from '../components/Record';
@@ -7,31 +7,23 @@ import { InvoiceRecord, PaymentRecord, MeterReadingRecord } from '../utils/airta
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      marginTop: '10px',
-      border: '1px solid',
-      borderColor: theme.palette.divider,
-      borderRadius: '6px',
-    },
     scroll: {
-      maxHeight: '380px',
+      height: '70vh',
       overflow: 'auto',
     },
     tabs: {
       background: 'white',
-      outline: '3px solid white',
-      border: '1px solid white',
     },
     tab: {
-      color: '#e5e5e5',
+      color: `${theme.palette.divider}`,
       fontSize: '12px',
       '&:focus': {
         outline: 'none',
       }
     },
-    appBar: {
-      boxShadow: 'none',
-    }
+    tabPanel: {
+      padding: '10px 0 0',
+    },
   }),
 );
 
@@ -45,25 +37,23 @@ export default function TabMenu(props: TabProps) {
   const invoices = props.invoices;
   const payments = props.payments;
   const [value, setValue] = React.useState('0');
-  const changeTab = (event: any, newValue: string) => { setValue(newValue); };
+  const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => { setValue(newValue); };
 
   return (
     <TabContext value={value}>
-      <AppBar className={classes.appBar} position="static">
-        <Tabs className={classes.tabs} textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
-          <Tab className={classes.tab} label="Invoices" value="0" />
-          <Tab className={classes.tab} label="Payment" value="1" />
-        </Tabs>
-      </AppBar>
+      <Tabs className={classes.tabs} textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
+        <Tab className={classes.tab} label="Invoices" value="0" />
+        <Tab className={classes.tab} label="Payment" value="1" />
+      </Tabs>
       <div className={classes.scroll}>
-        <TabPanel value="0" id="invoices">
+        <TabPanel className={classes.tabPanel} value="0" id="invoices">
           {invoices.map((invoice: InvoiceRecord, index) => (
-            <Record date={invoice.date} used_kwh={invoice.amount} amount_ks={invoice.amount} />
+            <Record date={invoice.date} used={invoice.amount} amount={invoice.amount}key={index} />
           ))}
         </TabPanel>
-        <TabPanel value="1" id="payments">
+        <TabPanel className={classes.tabPanel} value="1" id="payments">
           {payments.map((payment: MeterReadingRecord, index) => (
-            <Record date={payment.date} amount_ks={payment.reading} />
+            <Record date={payment.date} amount={payment.reading} key={index} />
           ))}
         </TabPanel>
       </div>

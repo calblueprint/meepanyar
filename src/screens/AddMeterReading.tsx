@@ -1,6 +1,5 @@
 import React from 'react';
 import BaseHeader from '../components/BaseComponents/BaseHeader';
-import Container from '@material-ui/core/Container';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
 import { Typography } from '@material-ui/core';
@@ -52,30 +51,29 @@ interface AddMeterReadingProps extends RouteComponentProps {
 }
 
 function AddMeterReading(props: AddMeterReadingProps) {
-  const { classes, match } = props;
+  const { classes } = props;
 
   return (
     <div className={classes.root}>
       <div className={classes.header}>
-        <BaseHeader leftIcon="backNav" />
-        <Typography className={classes.label} variant="h2">Add Meter Reading</Typography>
+        <BaseHeader title="Add Meter Reading" leftIcon="backNav" />
       </div>
       <div className={classes.content}>
         <form noValidate className={classes.form}>
           <div className={classes.secondaryText}>
-            <Typography variant="h4">Date Recorded</Typography>
-            <Typography variant="h4">00.00.0000</Typography>
-            <Typography variant="h4" style={{ marginTop: 10 }}>Current Reading</Typography>
+            <Typography variant="body1">Date Recorded</Typography>
+            <Typography variant="body1">00.00.0000</Typography>
+            <Typography variant="body1" style={{ marginTop: 10 }}>Current Reading</Typography>
             <Typography variant="h2" style={{ fontSize: 22 }}>0 kWh</Typography>
           </div>
           <div className={classes.outlined}>
-            <Typography variant="h4" style={{ marginBottom: 0 }}>Today</Typography>
-            <Typography variant="h4" style={{ marginBottom: 15 }}>00.00.0000</Typography>
+            <Typography variant="body1" style={{ marginBottom: 0 }}>Today</Typography>
+            <Typography variant="body1" style={{ marginBottom: 15 }}>00.00.0000</Typography>
             <div className={classes.textField}>
               <TextField label={"New Meter Reading (kWh)"} id={"meter-reading"} primary={true}/>
             </div>
           </div>
-          <Button label={"ADD"} primary={true} />
+          <Button label={"ADD"} />
         </form>
       </div>
     </div>

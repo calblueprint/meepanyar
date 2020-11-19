@@ -31,8 +31,8 @@ interface CustomerRecordsProps extends RouteComponentProps {
 }
 
 function CustomerRecords(props: CustomerRecordsProps) {
-  const { classes, match } = props;
-  const meterReadings: MeterReadingRecord[] = props.location.state.meterReadings;
+  const { classes } = props;
+  const payments: MeterReadingRecord[] = props.location.state.payments;
   const invoices: InvoiceRecord[] = props.location.state.invoices;
 
   return (
@@ -40,7 +40,7 @@ function CustomerRecords(props: CustomerRecordsProps) {
       <BaseHeader leftIcon="backNav" />
       <div className={classes.content}>
         <Typography variant="h1">Records</Typography>
-        <TabMenu invoices={invoices} payments={meterReadings} />
+        <TabMenu invoices={invoices} payments={payments} />
       </div>
     </div>
   );
