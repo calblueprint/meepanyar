@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Button, TextField, Typography, Link, Container, FormControl } from '@material-ui/core';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 export const Title = styled.h1`
   width: 153.9px;
@@ -35,3 +36,40 @@ export const ScrollDiv = styled('div')`
   margin-right: auto;
   width: 310.71px;
 `;
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    title: {
+      width: '153.9px',
+      height: '33.83px',
+      left: '25.6px',
+      top: '96px',
+      fontFamily: 'Helvetica Neue',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      fontSize: '30px',
+      lineHeight: '115%',
+      color: '#828282',
+      flexGrow: 1,
+    },
+    headerWrapper: {
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+    },
+    selectionHeader: {
+      display: 'flex',
+      flexDirection: 'column',
+      flexGrow: 1,
+    },
+    scrollDiv: {
+      maxHeight: '380px',
+      overflow: 'auto',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      width: '310.71px',
+    },
+  }),
+);
+
+export default useStyles;

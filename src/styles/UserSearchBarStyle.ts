@@ -1,21 +1,44 @@
 import styled from 'styled-components';
 import { Button, TextField, Typography, Link, InputBase, Paper } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-export const Search = styled(SearchIcon)`
-  color: #828282;
-`;
+// export const Search = styled(SearchIcon)`
+//   color: #828282;
+// `;
 
-export const SearchWrapper = styled(Paper)`
-  width: 134.45px;
-  height: 25px;
-  border: 1px solid #ff922d;
-  box-sizing: border-box;
-  border-radius: 10px;
-  text-align: right;
-`;
+// export const SearchWrapper = styled(Paper)`
+//   width: 134.45px;
+//   height: 25px;
+//   border: 1px solid #ff922d;
+//   box-sizing: border-box;
+//   border-radius: 10px;
+//   text-align: right;
+// `;
 
-export const InputWrapper = styled(InputBase)`
-  width: 100.45px;
-  height: 25px;
-`;
+// export const InputWrapper = styled(InputBase)`
+//   width: 100.45px;
+//   height: 25px;
+// `;
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    search: {
+      color: '#828282',
+    },
+    searchWrapper: {
+      width: '135.45px',
+      height: '25px',
+      border: '1px solid #ff922d',
+      boxSizing: 'border-box',
+      borderRadius: '10px',
+      textAlign: 'right',
+    },
+    inputWrapper: {
+      width: '100.45px',
+      height: '25px',
+    },
+  }),
+);
+
+export default useStyles;

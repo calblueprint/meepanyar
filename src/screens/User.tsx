@@ -1,54 +1,55 @@
 import React from 'react';
 import CustomerCards from '../components/CustomerCard';
-import * as Styles from '../styles/UserStyle';
+import useStyles from '../styles/UserStyle';
 import UserSearchBar from '../components/UserSearchBar';
 import CustomerCard from '../components/CustomerCard';
 import { FormControl, FormHelperText, MenuItem, Select } from '@material-ui/core';
-
-const MockCustomers = [
-  { name: 'jen', amount: '5' },
-  { name: 'emma', amount: '6' },
-  { name: 'tiff', amount: '7' },
-  { name: 'jul', amount: '9' },
-];
+import { getAllCustomerUpdates, getAllSites, getCustomersByIds, getSiteById } from '../utils/airtable/requests';
+import { CustomerRecord, SiteRecord } from '../utils/airtable/interface';
 
 interface UserState {
-  customers: Array<CustomerRecord>;
+  customers: Array<CustomerRecord> | null;
   trie: any;
+  fullCustomers: Array<CustomerRecord> | null;
 }
 
-interface CustomerRecord {
-  name: string;
-  amount: string;
-}
-
-// prettier-ignore
+// eslint-ignore
 //const TrieSearch = require('trie-search'); // eslint-disable-line no-eval
 const ts = new TrieSearch();
+
 class User extends React.Component<{}, UserState> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      customers: MockCustomers,
+      customers: null,
       trie: null,
+      fullCustomers: null,
     };
     this.handleSearchChange = this.handleSearchChange.bind(this);
   }
 
-  componentDidMount() {
-    const customers: Array<CustomerRecord> = this.state.customers;
+  async getCustomers() {
+    const sites: SiteRecord[] = await getAllSites();
+    const customers: CustomerRecord[] = await getCustomersByIds(sites[0].customerIds);
+    console.log(customers);
     const trie = new TrieSearch('name');
     trie.addAll(customers);
     this.setState({
-      trie,
+      customers: customers,
+      trie: trie,
+      fullCustomers: customers,
     });
+  }
+
+  componentDidMount() {
+    this.getCustomers();
   }
 
   handleSearchChange(e: any) {
     const searchVal = e.target.value.trim();
     if (searchVal === '') {
       this.setState({
-        customers: MockCustomers,
+        customers: this.state.fullCustomers,
       });
       return;
     }
@@ -58,14 +59,26 @@ class User extends React.Component<{}, UserState> {
     });
   }
 
+  // renderCustomerCards() {
+  //   const customers = this.state.customers;
+  //   if (customers) {
+  //     return (
+  //       customers.map((cus) => (
+  //         <CustomerCard name={cus.name} amount={cus.} date={cus.} />
+  //       ))
+  //     );
+  //   }
+  // }
+
   render() {
     const today = new Date();
     const customers = this.state.customers;
+    const classes = useStyles();
     return (
       <div>
-        <Styles.HeaderWrapper>
-          <Styles.Title>Customers</Styles.Title>
-          <Styles.SelectionHeader>
+        <div className={classes.headerWrapper}>
+          <h1 className={classes.title}>Customers</h1>
+          <div className={classes.selectionHeader}>
             <UserSearchBar searchFun={this.handleSearchChange} />
             <FormControl>
               <Select inputProps={{ 'aria-label': 'Without label' }}>
@@ -75,13 +88,14 @@ class User extends React.Component<{}, UserState> {
               </Select>
               <FormHelperText>Sort By</FormHelperText>
             </FormControl>
-          </Styles.SelectionHeader>
-        </Styles.HeaderWrapper>
-        <Styles.ScrollDiv>
-          {customers.map((cus) => (
+          </div>
+        </div>
+        <div className={classes.scrollDiv}>
+          {/* {customers.map((cus) => (
             <CustomerCard name={cus.name} amount={cus.amount} date={today.toDateString()} />
-          ))}
-        </Styles.ScrollDiv>
+          ))} */}
+          <CustomerCard name={'hi'} amount={'4'} date={'hi'} />
+        </div>
       </div>
     );
   }
