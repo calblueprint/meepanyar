@@ -1,8 +1,8 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { StylesProvider } from '@material-ui/core';
-import * as Styles from '../styles/HomeInfoStyles';
 import HomeInfoRow from './HomeInfoRow';
+import { StylesProvider, Button, Card, CardContent, Paper, Typography } from '@material-ui/core';
+import useStyles from '../styles/HomeInfoStyles';
 
 type HomeInfoProps = {
   customer: string;
@@ -11,14 +11,16 @@ type HomeInfoProps = {
   incidents: string;
 };
 
+const classes = useStyles();
+
 const HomeInfoCard = ({ customer, payment, unpaid, incidents }: HomeInfoProps) => (
   <StylesProvider injectFirst>
-    <Styles.MainCard elevation={0}>
+    <Paper className={classes.mainCard} elevation={0}>
       <HomeInfoRow amount={customer} name={'Customers to Charge'} />
       <HomeInfoRow amount={payment} name={'Outstanding Payments'} />
       <HomeInfoRow amount={unpaid} name={'Unpaid Reports'} />
       <HomeInfoRow amount={incidents} name={'Unresolved Incidents'} />
-    </Styles.MainCard>
+    </Paper>
   </StylesProvider>
 );
 

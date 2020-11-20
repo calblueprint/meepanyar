@@ -1,36 +1,40 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import { ButtonBase, IconButton, StylesProvider } from '@material-ui/core';
-import * as Styles from '../styles/HomeInfoStyles';
+import { ButtonBase, IconButton, StylesProvider, Button, Card, CardContent, Paper, Typography } from '@material-ui/core';
+import useStyles from '../styles/HomeInfoStyles';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
 type HomeInfoProps = {
   amount: string;
   name: string;
 };
 
+const classes = useStyles();
+
 const HomeInfoRow = ({ amount, name }: HomeInfoProps) => (
   <StylesProvider injectFirst>
-    <Styles.CardRow>
+    <div className={classes.cardRow}>
       {amount === '0' ? (
         <ButtonBase>
-          <Styles.CardCon>
-            <Styles.Error />
-            <Styles.RowTitleGrayedNum>{amount}</Styles.RowTitleGrayedNum>
-            <Styles.RowTitleGrayed>{name}</Styles.RowTitleGrayed>
-            <Styles.Arrow />
-          </Styles.CardCon>
+          <CardContent className={classes.cardCon}>
+            <ErrorOutlineIcon className={classes.error} />
+            <Typography className={classes.rowTitleGrayedNum}>{amount}</Typography>
+            <Typography className={classes.rowTitleGrayed}>{name}</Typography>
+            <ArrowForwardIosIcon className={classes.arrow} />
+          </CardContent>
         </ButtonBase>
       ) : (
-        <ButtonBase>
-          <Styles.CardCon>
-            <Styles.Check />
-            <Styles.RowTitleNum>{amount}</Styles.RowTitleNum>
-            <Styles.RowTitle>{name}</Styles.RowTitle>
-            <Styles.Arrow />
-          </Styles.CardCon>
-        </ButtonBase>
-      )}
-    </Styles.CardRow>
+          <ButtonBase>
+            <CardContent className={classes.cardCon}>
+              <CheckCircleIcon className={classes.check} />
+              <Typography className={classes.rowTitleNum}>{amount}</Typography>
+              <Typography className={classes.rowTitle}>{name}</Typography>
+              <ArrowForwardIosIcon className={classes.arrow} />
+            </CardContent>
+          </ButtonBase>
+        )}
+    </div>
   </StylesProvider>
 );
 

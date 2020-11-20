@@ -6,7 +6,7 @@ import { SiteRecord } from '../utils/airtable/interface';
 import FinancialSumCard from '../components/FinancialSumCard';
 import HomeInfoCard from '../components/HomeInfo';
 import { mockComponent } from 'react-dom/test-utils';
-import * as Styles from '../styles/HomeInfoStyles';
+import useStyles from '../styles/HomeInfoStyles';
 
 interface HomeState {
   selectedSite: SiteRecord | null;
@@ -66,13 +66,14 @@ class Home extends React.Component<{}, HomeState> {
   }
 
   render() {
+    const classes = useStyles();
     return (
       <div>
-        <Styles.Header>
+        <div className={classes.header}>
           <FormControl>
             <Select inputProps={{ 'aria-label': 'Without label' }}>{this.renderMenuOptions()}</Select>
           </FormControl>
-        </Styles.Header>
+        </div>
 
         <FinancialSumCard />
       </div>

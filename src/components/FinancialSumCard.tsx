@@ -10,18 +10,21 @@ import {
   StylesProvider,
   ButtonBase,
 } from '@material-ui/core';
-import * as Styles from '../styles/FinSumStyles';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import useStyles from '../styles/FinSumStyles';
+
+const classes = useStyles();
 
 const FinSumCard = () => (
   <StylesProvider injectFirst>
-    <Styles.SingleCard elevation={0}>
+    <Card className={classes.singleCard} elevation={0}>
       <ButtonBase>
-        <Styles.CardCon>
-          <Styles.InsideText>Financial Summary</Styles.InsideText>
-          <Styles.Arrow />
-        </Styles.CardCon>
+        <CardContent className={classes.cardCon}>
+          <Typography className={classes.insideText}>Financial Summary</Typography>
+          <ArrowForwardIosIcon className={classes.arrow} />
+        </CardContent>
       </ButtonBase>
-    </Styles.SingleCard>
+    </Card>
   </StylesProvider>
 );
 
