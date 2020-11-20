@@ -1,5 +1,14 @@
 import React from 'react';
-import { ButtonBase, IconButton, StylesProvider, Button, Card, CardContent, Paper, Typography } from '@material-ui/core';
+import {
+  ButtonBase,
+  IconButton,
+  StylesProvider,
+  Button,
+  Card,
+  CardContent,
+  Paper,
+  Typography,
+} from '@material-ui/core';
 import useStyles from '../styles/HomeInfoStyles';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
@@ -25,15 +34,15 @@ const HomeInfoRow = ({ amount, name }: HomeInfoProps) => (
           </CardContent>
         </ButtonBase>
       ) : (
-          <ButtonBase>
-            <CardContent className={classes.cardCon}>
-              <CheckCircleIcon className={classes.check} />
-              <Typography className={classes.rowTitleNum}>{amount}</Typography>
-              <Typography className={classes.rowTitle}>{name}</Typography>
-              <ArrowForwardIosIcon className={classes.arrow} />
-            </CardContent>
-          </ButtonBase>
-        )}
+        <ButtonBase>
+          <CardContent className={classes.cardCon}>
+            <CheckCircleIcon className={classes.check} />
+            <Typography className={classes.rowTitleNum}>{amount}</Typography>
+            <Typography className={classes.rowTitle}>{name}</Typography>
+            <ArrowForwardIosIcon className={classes.arrow} />
+          </CardContent>
+        </ButtonBase>
+      )}
     </div>
   </StylesProvider>
 );

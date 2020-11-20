@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     arrow: {
       color: '#ff922e',
-      fontSize: '18px'
+      fontSize: '18px',
     },
     insideText: {
       fontFamily: 'Helvetica Neue',
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: 'auto',
       marginRight: 'auto',
       marginTop: '31.97px',
-    }
+    },
   }),
 );
 

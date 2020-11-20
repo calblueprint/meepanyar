@@ -162,8 +162,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: 'auto',
       marginRight: 'auto',
       top: '90.09px',
-    }
-
+    },
   }),
 );
 
