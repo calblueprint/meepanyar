@@ -14,7 +14,7 @@ interface UserState {
 }
 
 // eslint-ignore
-//const TrieSearch = require('trie-search'); // eslint-disable-line no-eval
+const TrieSearch = require('trie-search'); // eslint-disable-line no-eval
 const ts = new TrieSearch();
 
 class User extends React.Component<{}, UserState> {
