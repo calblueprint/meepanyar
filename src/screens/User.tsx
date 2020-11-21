@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import CustomerCards from '../components/CustomerCard';
 import useStyles from '../styles/UserStyle';
 import UserSearchBar from '../components/UserSearchBar';
@@ -8,20 +8,9 @@ import { getAllCustomerUpdates, getAllSites, getCustomersByIds, getSiteById } fr
 import { CustomerRecord, SiteRecord } from '../utils/airtable/interface';
 import { RouteComponentProps } from 'react-router-dom';
 
-interface UserState {
-  customers: Array<CustomerRecord> | null;
-  trie: any;
-  fullCustomers: Array<CustomerRecord> | null;
-}
+// // eslint-ignore
+const TrieSearch = require('trie-search');
 
-interface UserProps {
-  classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string };
-}
-
-// eslint-ignore
-const TrieSearch = require('trie-search'); // eslint-disable-line no-eval
-const ts = new TrieSearch();
-const classes = useStyles();
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -57,108 +46,43 @@ const styles = (theme: Theme) =>
     },
   });
 
-class User extends React.Component<UserProps, UserState> {
-  constructor(props: {}) {
-    super(props);
-    this.state = {
-      customers: null,
-      trie: null,
-      fullCustomers: null,
-    };
-    this.handleSearchChange = this.handleSearchChange.bind(this);
-  }
-
-  async getCustomers() {
-    const sites: SiteRecord[] = await getAllSites();
-    const customers: CustomerRecord[] = await getCustomersByIds(sites[0].customerIds);
-    console.log(customers);
-    const trie = new TrieSearch('name');
-    trie.addAll(customers);
-    this.setState({
-      customers: customers,
-      trie: trie,
-      fullCustomers: customers,
-    });
-  }
-
-  componentDidMount() {
-    this.getCustomers();
-  }
-
-  handleSearchChange(e: any) {
-    const searchVal = e.target.value.trim();
-    if (searchVal === '') {
-      this.setState({
-        customers: this.state.fullCustomers,
-      });
-      return;
-    }
-    const customers = this.state.trie.get(searchVal);
-    this.setState({
-      customers,
-    });
-  }
-
-  // renderCustomerCards() {
-  //   const customers = this.state.customers;
-  //   if (customers) {
-  //     return (
-  //       customers.map((cus) => (
-  //         <CustomerCard name={cus.name} amount={cus.} date={cus.} />
-  //       ))
-  //     );
-  //   }
-  // }
-
-  render() {
-    const customers = this.state.customers;
-    return (
-      <div>
-        <div className={classes.headerWrapper}>
-          <h1 className={classes.title}>Customers</h1>
-          <div className={classes.selectionHeader}>
-            <UserSearchBar searchFun={this.handleSearchChange} />
-            <FormControl>
-              <Select inputProps={{ 'aria-label': 'Without label' }}>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-              <FormHelperText>Sort By</FormHelperText>
-            </FormControl>
-          </div>
-        </div>
-        <div className={classes.scrollDiv}>
-          {/* {customers.map((cus) => (
-            <CustomerCard name={cus.name} amount={cus.amount} date={today.toDateString()} />
-          ))} */}
-          <CustomerCard name={'hi'} amount={'4'} date={'hi'} />
-        </div>
-      </div>
-    );
-  }
-}
-
-export default withStyles(styles)(User);
-
-interface UserProps extends RouteComponentProps {
+interface UserProps {
   classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string };
 }
 
 function User(props: UserProps) {
+  useEffect(() => {
+    getCustomers();
+  }, []);
   const { classes } = props;
-  // customers: null,
-  //     trie: null,
-  //     fullCustomers: null,
-  const [customers, trie] = useState(null);
-  const [fullCustomers] = useState(null);
+  const [customers, setCustomers] = useState<CustomerRecord[]>([]);
+  const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
+  const trie = new TrieSearch('name');
+
+  const handleSearchChange = (e: any) => {
+    const searchVal = e.target.value.trim();
+    if (searchVal === '') {
+      setCustomers(fullCustomers);
+      return;
+    }
+    const customers = trie.get(searchVal);
+    setCustomers(customers);
+  }
+
+  const getCustomers = async () => {
+    const sites: SiteRecord[] = await getAllSites();
+    const customers: CustomerRecord[] = await getCustomersByIds(sites[0].customerIds);
+    console.log(customers);
+    trie.addAll(customers);
+    setCustomers(customers);
+  };
 
   return (
     <div>
       <div className={classes.headerWrapper}>
         <h1 className={classes.title}>Customers</h1>
         <div className={classes.selectionHeader}>
-          <UserSearchBar searchFun={this.handleSearchChange} />
+          <UserSearchBar searchFun={handleSearchChange} />
           <FormControl>
             <Select inputProps={{ 'aria-label': 'Without label' }}>
               <MenuItem value={10}>Ten</MenuItem>
@@ -178,3 +102,5 @@ function User(props: UserProps) {
     </div>
   );
 }
+
+export default withStyles(styles)(User);
