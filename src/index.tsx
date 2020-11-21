@@ -9,6 +9,10 @@ import * as serviceWorker from './serviceWorker';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import { store, persistor } from './lib/redux/store';
+import { checkOnline } from './lib/redux/userData';
+
+// Check if online every 10 seconds
+setInterval(checkOnline, 10000);
 
 ReactDOM.render(
   <Provider store={store}>
