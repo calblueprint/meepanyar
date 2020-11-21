@@ -15,7 +15,7 @@ interface UserState {
 }
 
 interface UserProps {
-  classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string; }
+  classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string };
 }
 
 // eslint-ignore
@@ -142,7 +142,7 @@ class User extends React.Component<UserProps, UserState> {
 export default withStyles(styles)(User);
 
 interface UserProps extends RouteComponentProps {
-  classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string; }
+  classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string };
 }
 
 function User(props: UserProps) {
@@ -152,8 +152,6 @@ function User(props: UserProps) {
   //     fullCustomers: null,
   const [customers, trie] = useState(null);
   const [fullCustomers] = useState(null);
-
-
 
   return (
     <div>
@@ -180,4 +178,3 @@ function User(props: UserProps) {
     </div>
   );
 }
-
