@@ -38,12 +38,12 @@ export default function TextWrapper(props: TextWrapperProps): JSX.Element {
   const getLabeledNumber = (number: number, label: string, index: number) => {
     return (
       <div key={index} className={classes.items}>
-            <Typography className={typographyClasses} color={props.color ? props.color : 'inherit'} variant="h4">
-              {label}
-            </Typography>
-            <Typography className={typographyClasses} color={props.color ? props.color : 'inherit'} variant="h4">
-              {number + (props.units ? props.units[index] : '')}
-            </Typography>
+        <Typography className={typographyClasses} color={props.color ? props.color : 'inherit'} variant="h4">
+          {label}
+        </Typography>
+        <Typography className={typographyClasses} color={props.color ? props.color : 'inherit'} variant="h4">
+          {number + (props.units ? props.units[index] : '')}
+        </Typography>
       </div>
     );
   };
