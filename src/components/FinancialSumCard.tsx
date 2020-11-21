@@ -47,7 +47,7 @@ const styles = (theme: Theme) =>
   });
 
 interface FinSumProps {
-  classes: { cardCon: string; arrow: string; insideText: string; singleCard: string; };
+  classes: { cardCon: string; arrow: string; insideText: string; singleCard: string };
 }
 
 function FinSumCard(props: FinSumProps) {
