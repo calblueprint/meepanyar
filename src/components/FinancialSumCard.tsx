@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
 import {
   Card,
   CardActions,
@@ -11,21 +11,59 @@ import {
   ButtonBase,
 } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
-import useStyles from '../styles/FinSumStyles';
+import { RouteComponentProps } from 'react-router-dom';
 
-const classes = useStyles();
+const styles = (theme: Theme) =>
+  createStyles({
+    cardCon: {
+      flexDirection: 'row',
+      display: 'flex',
+      width: '308.81px',
+      textAlign: 'left',
+    },
+    arrow: {
+      color: '#ff922e',
+      fontSize: '18px',
+    },
+    insideText: {
+      fontFamily: 'Helvetica Neue',
+      fontStyle: 'normal',
+      fontWeight: 'bold',
+      fontSize: '18px',
+      lineHeight: '22px',
+      color: '#ff7a00',
+      flexGrow: 1,
+    },
+    singleCard: {
+      width: '308.81px',
+      height: '57.04px',
+      background: '#ffe3ca',
+      display: 'flex',
+      flexDirection: 'row',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      marginTop: '31.97px',
+    },
+  });
 
-const FinSumCard = () => (
-  <StylesProvider injectFirst>
-    <Card className={classes.singleCard} elevation={0}>
-      <ButtonBase>
-        <CardContent className={classes.cardCon}>
-          <Typography className={classes.insideText}>Financial Summary</Typography>
-          <ArrowForwardIosIcon className={classes.arrow} />
-        </CardContent>
-      </ButtonBase>
-    </Card>
-  </StylesProvider>
-);
+interface FinSumProps {
+  classes: { cardCon: string; arrow: string; insideText: string; singleCard: string; };
+}
 
-export default FinSumCard;
+function FinSumCard(props: FinSumProps) {
+  const { classes } = props;
+  return (
+    <StylesProvider injectFirst>
+      <Card className={classes.singleCard} elevation={0}>
+        <ButtonBase>
+          <CardContent className={classes.cardCon}>
+            <Typography className={classes.insideText}>Financial Summary</Typography>
+            <ArrowForwardIosIcon className={classes.arrow} />
+          </CardContent>
+        </ButtonBase>
+      </Card>
+    </StylesProvider>
+  );
+}
+
+export default withStyles(styles)(FinSumCard);
