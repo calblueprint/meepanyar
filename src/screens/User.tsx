@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CustomerCards from '../components/CustomerCard';
 import useStyles from '../styles/UserStyle';
 import UserSearchBar from '../components/UserSearchBar';
 import CustomerCard from '../components/CustomerCard';
-import { FormControl, FormHelperText, MenuItem, Select } from '@material-ui/core';
+import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
 import { getAllCustomerUpdates, getAllSites, getCustomersByIds, getSiteById } from '../utils/airtable/requests';
 import { CustomerRecord, SiteRecord } from '../utils/airtable/interface';
+import { RouteComponentProps } from 'react-router-dom';
 
 interface UserState {
   customers: Array<CustomerRecord> | null;
@@ -13,11 +14,50 @@ interface UserState {
   fullCustomers: Array<CustomerRecord> | null;
 }
 
+interface UserProps {
+  classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string; }
+}
+
 // eslint-ignore
 const TrieSearch = require('trie-search'); // eslint-disable-line no-eval
 const ts = new TrieSearch();
+const classes = useStyles();
 
-class User extends React.Component<{}, UserState> {
+const styles = (theme: Theme) =>
+  createStyles({
+    title: {
+      width: '153.9px',
+      height: '33.83px',
+      left: '25.6px',
+      top: '96px',
+      fontFamily: 'Helvetica Neue',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      fontSize: '30px',
+      lineHeight: '115%',
+      color: '#828282',
+      flexGrow: 1,
+    },
+    headerWrapper: {
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+    },
+    selectionHeader: {
+      display: 'flex',
+      flexDirection: 'column',
+      flexGrow: 1,
+    },
+    scrollDiv: {
+      maxHeight: '380px',
+      overflow: 'auto',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      width: '310.71px',
+    },
+  });
+
+class User extends React.Component<UserProps, UserState> {
   constructor(props: {}) {
     super(props);
     this.state = {
@@ -71,9 +111,7 @@ class User extends React.Component<{}, UserState> {
   // }
 
   render() {
-    const today = new Date();
     const customers = this.state.customers;
-    const classes = useStyles();
     return (
       <div>
         <div className={classes.headerWrapper}>
@@ -101,4 +139,45 @@ class User extends React.Component<{}, UserState> {
   }
 }
 
-export default User;
+export default withStyles(styles)(User);
+
+interface UserProps extends RouteComponentProps {
+  classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string; }
+}
+
+function User(props: UserProps) {
+  const { classes } = props;
+  // customers: null,
+  //     trie: null,
+  //     fullCustomers: null,
+  const [customers, trie] = useState(null);
+  const [fullCustomers] = useState(null);
+
+
+
+  return (
+    <div>
+      <div className={classes.headerWrapper}>
+        <h1 className={classes.title}>Customers</h1>
+        <div className={classes.selectionHeader}>
+          <UserSearchBar searchFun={this.handleSearchChange} />
+          <FormControl>
+            <Select inputProps={{ 'aria-label': 'Without label' }}>
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Select>
+            <FormHelperText>Sort By</FormHelperText>
+          </FormControl>
+        </div>
+      </div>
+      <div className={classes.scrollDiv}>
+        {/* {customers.map((cus) => (
+          <CustomerCard name={cus.name} amount={cus.amount} date={today.toDateString()} />
+        ))} */}
+        <CustomerCard name={'hi'} amount={'4'} date={'hi'} />
+      </div>
+    </div>
+  );
+}
+
