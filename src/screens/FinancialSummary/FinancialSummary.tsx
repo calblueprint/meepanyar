@@ -66,7 +66,6 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '18px 0px',
     },
     invisibleDivider: {
-      backgroundColor: theme.palette.common.white,
       margin: '4px 0',
     },
   }),
