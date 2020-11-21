@@ -28,13 +28,7 @@ const siteDataSlice = createSlice({
       state.isLoading = false;
     },
     setCurrSite(state, action) {
-      const newSiteId = action.payload;
-      for (const site of state.sites) {
-        if (site.id === newSiteId) {
-          state.currentSite = site;
-          break;
-        }
-      }
+      state.currentSite = action.payload;
     },
   },
 });
