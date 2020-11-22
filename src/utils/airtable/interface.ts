@@ -2,47 +2,39 @@ export type TableValues = string | boolean | number | Array<unknown> | Airtable.
 export type TableRecordType = {
   [key: string]: TableValues;
 };
-export type TableRecord =
-  | UserRecord
-  | CustomerRecord
-  | SiteRecord
-  | PaymentRecord
-  | MeterReadingRecord
-  | TariffPlanRecord;
+export type TableRecord = UserRecord | SiteRecord | TariffPlanRecord | CustomerRecord | MeterReadingRecord | PaymentRecord | FinancialSummaryRecord;
 
 export type Row = {
   get: (key: string) => TableValues;
   getId: () => string;
 };
 
-interface Record {
-  rid: string;
-}
-
-export interface UserRecord extends Record {
+export interface UserRecord {
   username: string;
   email: string;
   photo?: Airtable.Attachment[];
-  password: string;
-  name: string;
   siteIds: string[];
   sites: SiteRecord[];
+  password: string;
+  name: string;
 }
 
-export interface SiteRecord extends Record {
+export interface SiteRecord {
   name: string;
   customerIds: string[];
   customers: CustomerRecord[];
+  financialSummaryIds: string[];
+  financialSummaries: FinancialSummaryRecord[];
 }
 
-export interface TariffPlanRecord extends Record {
+export interface TariffPlanRecord {
   name: string;
   fixedTariff: number;
   tariffByUnit: number;
   minUnits: number;
 }
 
-export interface CustomerRecord extends Record {
+export interface CustomerRecord {
   name: string;
   meterNumber: number;
   tariffPlansId: string[];
@@ -56,13 +48,31 @@ export interface CustomerRecord extends Record {
   payments: PaymentRecord[];
 }
 
-export interface MeterReadingRecord extends Record {
-  date: string;
+export interface MeterReadingRecord {
   reading: number;
   amountBilled: number;
+  date: string;
+  meterNumber: number;
 }
 
-export interface PaymentRecord extends Record {
+export interface PaymentRecord {
   amount: number;
   date: string;
+}
+
+export interface FinancialSummaryRecord {
+  name: string;
+  totalCustomers: number;
+  totalCustomersBilled: number;
+  totalCustomersPaid: number;
+  totalUsage: number;
+  totalAmountBilled: number;
+  totalAmountCollected: number;
+  totalAmountSpent: number;
+  totalProfit: number;
+  period: string;
+  bankSlip?: Airtable.Attachment[];
+  isapproved: boolean;
+  lastUpdated: string;
+  issubmitted: boolean;
 }

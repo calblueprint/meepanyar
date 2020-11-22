@@ -12,50 +12,26 @@
 
 */
 
-import {
-  Tables,
-  formatUser,
-  formatCustomer,
-  formatPayment,
-  formatMeterReading,
-  formatSite,
-  formatTariffPlan,
-} from './schema';
-import {
-  UserRecord,
-  CustomerRecord,
-  SiteRecord,
-  PaymentRecord,
-  MeterReadingRecord,
-  TariffPlanRecord,
-} from './interface';
+import { Tables, formatUser, formatSite, formatTariffPlan, formatCustomer, formatMeterReading, formatPayment, formatFinancialSummary } from './schema';
+import { UserRecord, SiteRecord, TariffPlanRecord, CustomerRecord, MeterReadingRecord, PaymentRecord, FinancialSummaryRecord } from './interface';
 import { createRecord, getAllRecords, getRecordById, deleteRecord, updateRecord } from './airtable';
 
-/*
- ******* READ RECORDS *******
- */
 
-export const createMeterReading = async (
-  meterID: number,
-  reading: number,
-  amount: number,
-  date: string,
-  customer: string,
-  user: string,
-): Promise<MeterReadingRecord> => {
+
+export const createMeterReading = async (meterID: number, reading: number, amount: number, date: string, customer: string, user: string): Promise<MeterReadingRecord> => {
   const id = await createRecord(Tables.MeterReadingsandInvoices, {
-    'Meter ID': meterID,
     Reading: reading,
     'Amount Billed': amount,
     Date: date,
+    'Meter ID': meterID,
     Customer: [customer],
     'Billed By': [user],
   });
   const record: MeterReadingRecord = {
-    rid: id,
-    date: date,
     reading: reading,
     amountBilled: amount,
+    date: date,
+    meterNumber: meterID,
   };
   return record;
 };
@@ -101,11 +77,7 @@ export const getTariffPlanById = async (id: string): Promise<TariffPlanRecord> =
   return getRecordById(Tables.TariffPlans, id, formatTariffPlan);
 };
 
-export const getTariffPlansByIds = async (
-  ids: string[],
-  filterByFormula = '',
-  sort = [],
-): Promise<TariffPlanRecord[]> => {
+export const getTariffPlansByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<TariffPlanRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.TariffPlans, formula, sort, formatTariffPlan);
@@ -133,11 +105,7 @@ export const getMeterReadingById = async (id: string): Promise<MeterReadingRecor
   return getRecordById(Tables.MeterReadingsandInvoices, id, formatMeterReading);
 };
 
-export const getMeterReadingsByIds = async (
-  ids: string[],
-  filterByFormula = '',
-  sort = [],
-): Promise<MeterReadingRecord[]> => {
+export const getMeterReadingsByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<MeterReadingRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.MeterReadingsandInvoices, formula, sort, formatMeterReading);
@@ -161,11 +129,25 @@ export const getAllPayments = async (filterByFormula = '', sort = []): Promise<P
   return getAllRecords(Tables.Payments, filterByFormula, sort, formatPayment);
 };
 
+export const getFinancialSummaryById = async (id: string): Promise<FinancialSummaryRecord> => {
+  return getRecordById(Tables.FinancialSummaries, id, formatFinancialSummary);
+};
+
+export const getFinancialSummariesByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<FinancialSummaryRecord[]> => {
+  let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.FinancialSummaries, formula, sort, formatFinancialSummary);
+};
+
+export const getAllFinancialSummaries = async (filterByFormula = '', sort = []): Promise<FinancialSummaryRecord[]> => {
+  return getAllRecords(Tables.FinancialSummaries, filterByFormula, sort, formatFinancialSummary);
+};
+
 /*
  ******* DELETE RECORDS *******
  */
 
-export const deleteTechnician = async (id: string): Promise<void> => {
+export const deleteUser = async (id: string): Promise<void> => {
   return deleteRecord(Tables.Users, id);
 };
 export const deleteSite = async (id: string): Promise<void> => {
@@ -183,6 +165,6 @@ export const deleteMeterReading = async (id: string): Promise<void> => {
 export const deletePayment = async (id: string): Promise<void> => {
   return deleteRecord(Tables.Payments, id);
 };
-export const deleteFinancialReport = async (id: string): Promise<void> => {
-  return deleteRecord(Tables.FinancialReport, id);
+export const deleteFinancialSummary = async (id: string): Promise<void> => {
+  return deleteRecord(Tables.FinancialSummaries, id);
 };
