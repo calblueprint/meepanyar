@@ -84,12 +84,7 @@ export default function ConfirmDialogContents(props: ConfirmDialogContentsProps)
         Please make sure that you want to close the current period before clicking "Confirm"
       </Typography>
       <div className={classes.buttons}>
-        <Button
-          className={classes.cancelButton}
-          size="medium"
-          onClick={props.onClick}
-          variant="contained"
-        >
+        <Button className={classes.cancelButton} size="medium" onClick={props.onClick} variant="contained">
           <Typography variant="body1">Cancel</Typography>
         </Button>
         <Button className={classes.confirmButton} size="medium" variant="contained">

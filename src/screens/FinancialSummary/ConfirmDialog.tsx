@@ -26,7 +26,7 @@ export default function ConfirmDialog(props: DialogProps): JSX.Element {
   const classes = useStyles();
 
   return (
-    <Dialog classes={{paper: classes.paper}} open={props.isOpen}>
+    <Dialog classes={{ paper: classes.paper }} open={props.isOpen}>
       {props.dialogContents}
     </Dialog>
   );
