@@ -1,6 +1,5 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import Divider from '@material-ui/core/Divider';
 import Typography from '@material-ui/core/Typography';
 import TextWrapper from '../../components/TextWrapper';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
@@ -15,6 +14,8 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: '18px',
       borderWidth: '2px',
       borderColor: theme.palette.grey[300],
+      backgroundColor: theme.palette.common.white,
+      color: theme.palette.primary.main,
       letterSpacing: '0.14em',
       height: '41px',
     },
@@ -32,11 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
       lineHeight: '120.5%',
     },
-    modalContents: {
-      backgroundColor: theme.palette.common.white,
-      border: '1px solid',
-      borderColor: theme.palette.divider,
-      borderRadius: '15px',
+    dialogContents: {
       color: theme.palette.text.primary,
       boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.25)',
       padding: '25px 19px',
@@ -47,19 +44,18 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: '6px',
       padding: '22px 22px',
     },
-    invisibleDivider: {
-      backgroundColor: theme.palette.common.white,
-      margin: '4px 0',
+    bottomMargin: {
+      marginBottom: '8px',
     },
   }),
 );
 
-interface ConfirmModalContentsProps {
+interface ConfirmDialogContentsProps {
   onClick: () => void;
   profitNumbers: number[];
 }
 
-export default function ConfirmModalContents(props: ConfirmModalContentsProps): JSX.Element {
+export default function ConfirmDialogContents(props: ConfirmDialogContentsProps): JSX.Element {
   const classes = useStyles();
 
   const profitLabels = ['Total Profit', 'Your Profit', "Mee Panyar's Profit"];
@@ -67,15 +63,15 @@ export default function ConfirmModalContents(props: ConfirmModalContentsProps): 
   const zeroes = [0, 0];
 
   return (
-    <div className={classes.modalContents}>
+    <div className={classes.dialogContents}>
       <div className={classes.valueWrappers}>
         <TextWrapper
           labels={profitLabels.slice(0, 1)}
           numbers={props.profitNumbers}
           units={currencyUnits.slice(0, 1)}
           bold
+          styling={classes.bottomMargin}
         />
-        <Divider className={classes.invisibleDivider} />
         <TextWrapper
           labels={profitLabels.slice(1)}
           numbers={zeroes}
@@ -90,14 +86,13 @@ export default function ConfirmModalContents(props: ConfirmModalContentsProps): 
       <div className={classes.buttons}>
         <Button
           className={classes.cancelButton}
-          color="primary"
           size="medium"
           onClick={props.onClick}
-          variant="outlined"
+          variant="contained"
         >
           <Typography variant="body1">Cancel</Typography>
         </Button>
-        <Button className={classes.confirmButton} size="medium" variant="outlined">
+        <Button className={classes.confirmButton} size="medium" variant="contained">
           <Typography variant="body1">Confirm</Typography>
         </Button>
       </div>

@@ -5,8 +5,8 @@ import Button from '@material-ui/core/Button';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import ConfirmModal from './ConfirmModal';
-import ConfirmModalContents from './ConfirmModalContents';
+import ConfirmDialog from './ConfirmDialog';
+import ConfirmDialogContents from './ConfirmDialogContents';
 import Divider from '@material-ui/core/Divider';
 import TextWrapper from '../../components/TextWrapper';
 import Typography from '@material-ui/core/Typography';
@@ -65,8 +65,8 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       margin: '18px 0px',
     },
-    invisibleDivider: {
-      margin: '4px 0',
+    bottomMargin: {
+      marginBottom: '10px',
     },
   }),
 );
@@ -151,8 +151,8 @@ export default function FinancialSummary(): JSX.Element {
               labels={financialSummaryLabels.slice(0, 2)}
               numbers={financialSummaryNumbers.slice(0, 2)}
               units={financialSummaryUnits.slice(0, 2)}
+              styling={classes.bottomMargin}
             />
-            <Divider className={classes.invisibleDivider} />
             <TextWrapper
               labels={financialSummaryLabels.slice(2)}
               numbers={financialSummaryNumbers.slice(2)}
@@ -169,13 +169,14 @@ export default function FinancialSummary(): JSX.Element {
           startIcon={<CheckIcon />}
           onClick={handleOpen}
           fullWidth
+          variant="contained"
         >
           <Typography variant="body1">Submit Report</Typography>
         </Button>
       </div>
-      <ConfirmModal
+      <ConfirmDialog
         isOpen={isOpen}
-        modalContents={<ConfirmModalContents onClick={handleClose} profitNumbers={profitNumbers} />}
+        dialogContents={<ConfirmDialogContents onClick={handleClose} profitNumbers={profitNumbers} />}
       />
     </div>
   );

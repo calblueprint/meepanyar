@@ -30,11 +30,14 @@ interface TextWrapperProps {
   units?: string[];
   color?: 'inherit' | 'primary' | 'textSecondary';
   bold?: boolean;
+  styling?: string;
 }
 
 export default function TextWrapper(props: TextWrapperProps): JSX.Element {
   const classes = useStyles();
   const typographyClasses = props.bold ? classes.bold : undefined;
+  const rootClass = props.styling ? `${classes.root} ${props.styling}` : classes.root;
+
   const getLabeledNumber = (number: number, label: string, index: number) => {
     return (
       <div key={label} className={classes.items}>
@@ -49,7 +52,7 @@ export default function TextWrapper(props: TextWrapperProps): JSX.Element {
   };
 
   return (
-    <div className={classes.root}>
+    <div className={rootClass}>
       {props.title ? (
         <Typography className={classes.titleText} variant="h2" align="left">
           {props.title}
