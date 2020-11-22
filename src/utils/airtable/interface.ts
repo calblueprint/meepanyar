@@ -1,12 +1,11 @@
 export type TableValues = string | boolean | number | Array<unknown> | Airtable.Attachment;
-export type TableRecordType = {
-  [key: string]: TableValues;
-};
+
 export type TableRecord =
   | UserRecord
   | SiteRecord
   | TariffPlanRecord
   | CustomerRecord
+  | CustomerUpdateRecord
   | MeterReadingRecord
   | PaymentRecord
   | FinancialSummaryRecord;
@@ -17,6 +16,7 @@ export type Row = {
 };
 
 export interface UserRecord {
+  rid: string;
   username: string;
   email: string;
   photo?: Airtable.Attachment[];
@@ -27,6 +27,7 @@ export interface UserRecord {
 }
 
 export interface SiteRecord {
+  rid: string;
   name: string;
   customerIds: string[];
   customers: CustomerRecord[];
@@ -35,6 +36,7 @@ export interface SiteRecord {
 }
 
 export interface TariffPlanRecord {
+  rid: string;
   name: string;
   fixedTariff: number;
   tariffByUnit: number;
@@ -53,6 +55,15 @@ export interface CustomerRecord {
   meterReadings: MeterReadingRecord[];
   paymentIds: string[];
   payments: PaymentRecord[];
+  customerUpdateIds: string[];
+  customerUpdates: CustomerUpdateRecord[];
+}
+
+export interface CustomerUpdateRecord {
+  dateUpdated: string;
+  customerId: string[];
+  explanation: string;
+  userId: string[];
 }
 
 export interface MeterReadingRecord {

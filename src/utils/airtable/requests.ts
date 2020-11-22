@@ -31,41 +31,7 @@ import {
   PaymentRecord,
   FinancialSummaryRecord,
 } from './interface';
-import { createRecord, getAllRecords, getRecordById, deleteRecord, updateRecord } from './airtable';
-
-export const createMeterReading = async (
-  meterID: number,
-  reading: number,
-  amount: number,
-  date: string,
-  customer: string,
-  user: string,
-): Promise<MeterReadingRecord> => {
-  const id = await createRecord(Tables.MeterReadingsandInvoices, {
-    Reading: reading,
-    'Amount Billed': amount,
-    Date: date,
-    'Meter ID': meterID,
-    Customer: [customer],
-    'Billed By': [user],
-  });
-  const record: MeterReadingRecord = {
-    reading: reading,
-    amountBilled: amount,
-    date: date,
-    meterNumber: meterID,
-  };
-  return record;
-};
-
-export const updateMeterReading = async (
-  id: string,
-  reading: number,
-  amount: number,
-  date: string,
-): Promise<string> => {
-  return updateRecord(Tables.MeterReadingsandInvoices, id, { Reading: reading, 'Amount Billed': amount, Date: date });
-};
+import { getAllRecords, getRecordById, deleteRecord } from './airtable';
 
 export const getUserById = async (id: string): Promise<UserRecord> => {
   return getRecordById(Tables.Users, id, formatUser);

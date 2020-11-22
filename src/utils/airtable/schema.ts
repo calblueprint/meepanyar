@@ -9,10 +9,12 @@ import {
   SiteRecord,
   TariffPlanRecord,
   CustomerRecord,
+  CustomerUpdateRecord,
   MeterReadingRecord,
   PaymentRecord,
   FinancialSummaryRecord,
 } from './interface';
+
 import { getRecordById } from './airtable';
 
 type Map = {
@@ -75,6 +77,12 @@ export const TableSchemas: Schema = {
     totalAmountBilledfromInvoices: `Total Amount Billed (from Invoices)`,
     totalAmountPaidfromPayments: `Total Amount Paid (from Payments)`,
     paymentIds: `Payments`,
+  },
+  CustomerUpdates: {
+    dateUpdated: `Date Updated`,
+    customerId: `Customer`,
+    explanation: `Explanation`,
+    userId: `User`,
   },
   'Meter Readings and Invoices': {
     id: `ID`,
@@ -198,6 +206,10 @@ export function formatCustomer(row: Row): CustomerRecord {
 
 export function formatTariffPlan(row: Row): TariffPlanRecord {
   return formatRecord<TariffPlanRecord>(row, Tables.TariffPlans);
+}
+
+export function formatCustomerUpdates(row: Row): CustomerUpdateRecord {
+  return formatRecord<CustomerUpdateRecord>(row, Tables.CustomerUpdates);
 }
 
 export function formatPayment(row: Row): PaymentRecord {
