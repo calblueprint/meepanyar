@@ -111,13 +111,22 @@ function getRecordById<T>(table: string, id: string, format: (row: Row) => T): P
     - getProductsByPoints(325) --> `{Points} = 325`
     - getStoresByOpen('TRUE()') --> `{Open} = TRUE()`
 */
-function getRecordsByAttribute<T>(table: string, fieldType: string, fieldValue: unknown, filterByFormula = '', sort = [], format: (row: Row) => T): Promise<T[]> {
+function getRecordsByAttribute<T>(
+  table: string,
+  fieldType: string,
+  fieldValue: unknown,
+  filterByFormula = '',
+  sort = [],
+  format: (row: Row) => T,
+): Promise<T[]> {
   const transformedRecords: T[] = [];
 
   return base(table)
     .select({
       view: VIEW,
-      filterByFormula: filterByFormula ? `AND(${filterByFormula}, {${fieldType}}=${fieldValue})` : `{${fieldType}}=${fieldValue}`,
+      filterByFormula: filterByFormula
+        ? `AND(${filterByFormula}, {${fieldType}}=${fieldValue})`
+        : `{${fieldType}}=${fieldValue}`,
       sort,
     })
     .all()

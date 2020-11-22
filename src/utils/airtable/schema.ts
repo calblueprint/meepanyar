@@ -2,7 +2,17 @@
     THIS IS A GENERATED FILE
     Changes might be overwritten in the future, edit with caution!
 */
-import { Row, TableRecord, UserRecord, SiteRecord, TariffPlanRecord, CustomerRecord, MeterReadingRecord, PaymentRecord, FinancialSummaryRecord } from './interface';
+import {
+  Row,
+  TableRecord,
+  UserRecord,
+  SiteRecord,
+  TariffPlanRecord,
+  CustomerRecord,
+  MeterReadingRecord,
+  PaymentRecord,
+  FinancialSummaryRecord,
+} from './interface';
 import { getRecordById } from './airtable';
 
 type Map = {
@@ -149,7 +159,11 @@ export function formatSite(row: Row): SiteRecord {
     });
   }
   if (site.financialSummaryIds !== undefined) {
-    formatLinkedRecords<FinancialSummaryRecord>(Tables.FinancialSummaries, site.financialSummaryIds, formatFinancialSummary).then((financialSummaries) => {
+    formatLinkedRecords<FinancialSummaryRecord>(
+      Tables.FinancialSummaries,
+      site.financialSummaryIds,
+      formatFinancialSummary,
+    ).then((financialSummaries) => {
       site.financialSummaries = financialSummaries;
     });
   }
@@ -159,12 +173,18 @@ export function formatSite(row: Row): SiteRecord {
 export function formatCustomer(row: Row): CustomerRecord {
   const customer = formatRecord<CustomerRecord>(row, Tables.Customers);
   if (customer.tariffPlansId !== undefined) {
-    formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan).then((tariffPlans) => {
-      customer.tariffPlans = tariffPlans;
-    });
+    formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan).then(
+      (tariffPlans) => {
+        customer.tariffPlans = tariffPlans;
+      },
+    );
   }
   if (customer.meterReadingIds !== undefined) {
-    formatLinkedRecords<MeterReadingRecord>(Tables.MeterReadingsandInvoices, customer.meterReadingIds, formatMeterReading).then((meterReadings) => {
+    formatLinkedRecords<MeterReadingRecord>(
+      Tables.MeterReadingsandInvoices,
+      customer.meterReadingIds,
+      formatMeterReading,
+    ).then((meterReadings) => {
       customer.meterReadings = meterReadings;
     });
   }

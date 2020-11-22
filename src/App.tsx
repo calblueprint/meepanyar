@@ -10,7 +10,6 @@ import Login from './screens/Login';
 import CustomerMain from './screens/Customers/CustomerMain';
 import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
-import AddMeterReading from './screens/Customers/AddMeterReading';
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { theme } from './styles/ThemeStyles';
 
@@ -30,7 +29,6 @@ function App() {
               <Route path="/login" component={Login} />
               <Route path={'/customers/:rid'} exact component={CustomerProfile} />
               <Route path={'/customers/:rid/records'} component={CustomerRecords} />
-              <Route path={'/customers/:rid/addReading'} component={AddMeterReading} />
             </Switch>
           </BrowserRouter>
         </ThemeProvider>

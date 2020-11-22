@@ -2,7 +2,14 @@ export type TableValues = string | boolean | number | Array<unknown> | Airtable.
 export type TableRecordType = {
   [key: string]: TableValues;
 };
-export type TableRecord = UserRecord | SiteRecord | TariffPlanRecord | CustomerRecord | MeterReadingRecord | PaymentRecord | FinancialSummaryRecord;
+export type TableRecord =
+  | UserRecord
+  | SiteRecord
+  | TariffPlanRecord
+  | CustomerRecord
+  | MeterReadingRecord
+  | PaymentRecord
+  | FinancialSummaryRecord;
 
 export type Row = {
   get: (key: string) => TableValues;

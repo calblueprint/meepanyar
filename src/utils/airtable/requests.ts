@@ -12,13 +12,35 @@
 
 */
 
-import { Tables, formatUser, formatSite, formatTariffPlan, formatCustomer, formatMeterReading, formatPayment, formatFinancialSummary } from './schema';
-import { UserRecord, SiteRecord, TariffPlanRecord, CustomerRecord, MeterReadingRecord, PaymentRecord, FinancialSummaryRecord } from './interface';
+import {
+  Tables,
+  formatUser,
+  formatSite,
+  formatTariffPlan,
+  formatCustomer,
+  formatMeterReading,
+  formatPayment,
+  formatFinancialSummary,
+} from './schema';
+import {
+  UserRecord,
+  SiteRecord,
+  TariffPlanRecord,
+  CustomerRecord,
+  MeterReadingRecord,
+  PaymentRecord,
+  FinancialSummaryRecord,
+} from './interface';
 import { createRecord, getAllRecords, getRecordById, deleteRecord, updateRecord } from './airtable';
 
-
-
-export const createMeterReading = async (meterID: number, reading: number, amount: number, date: string, customer: string, user: string): Promise<MeterReadingRecord> => {
+export const createMeterReading = async (
+  meterID: number,
+  reading: number,
+  amount: number,
+  date: string,
+  customer: string,
+  user: string,
+): Promise<MeterReadingRecord> => {
   const id = await createRecord(Tables.MeterReadingsandInvoices, {
     Reading: reading,
     'Amount Billed': amount,
@@ -77,7 +99,11 @@ export const getTariffPlanById = async (id: string): Promise<TariffPlanRecord> =
   return getRecordById(Tables.TariffPlans, id, formatTariffPlan);
 };
 
-export const getTariffPlansByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<TariffPlanRecord[]> => {
+export const getTariffPlansByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<TariffPlanRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.TariffPlans, formula, sort, formatTariffPlan);
@@ -105,7 +131,11 @@ export const getMeterReadingById = async (id: string): Promise<MeterReadingRecor
   return getRecordById(Tables.MeterReadingsandInvoices, id, formatMeterReading);
 };
 
-export const getMeterReadingsByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<MeterReadingRecord[]> => {
+export const getMeterReadingsByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<MeterReadingRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.MeterReadingsandInvoices, formula, sort, formatMeterReading);
@@ -133,7 +163,11 @@ export const getFinancialSummaryById = async (id: string): Promise<FinancialSumm
   return getRecordById(Tables.FinancialSummaries, id, formatFinancialSummary);
 };
 
-export const getFinancialSummariesByIds = async (ids: string[], filterByFormula = '', sort = []): Promise<FinancialSummaryRecord[]> => {
+export const getFinancialSummariesByIds = async (
+  ids: string[],
+  filterByFormula = '',
+  sort = [],
+): Promise<FinancialSummaryRecord[]> => {
   let formula = `OR(${ids.reduce((f, id) => `${f} {ID}='${id}',`, '')} 1 < 0)`;
   formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
   return getAllRecords(Tables.FinancialSummaries, formula, sort, formatFinancialSummary);
