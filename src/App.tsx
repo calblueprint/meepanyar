@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import Login from './screens/Login';
-import Home from './screens/Home';
 import CustomerMain from './screens/Customers/CustomerMain';
 import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
@@ -24,7 +23,6 @@ function App() {
           <BrowserRouter>
             <LabelBottomNavigation />
             <Switch>
-              <Route path="/home" component={Home} />
               <Route path="/customers" exact component={CustomerMain} />
               <Route path="/inventory" component={Inventory} />
               <Route path="/maintenance" component={Maintenance} />
