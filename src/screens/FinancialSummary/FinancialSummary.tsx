@@ -95,6 +95,15 @@ export default function FinancialSummary(): JSX.Element {
     return [financialSummary.numTotalCustomers, financialSummary.numBilledCustomers, financialSummary.numPaidCustomers];
   };
 
+  const getCustomerInfo = (financialSummary: FinancialReportRecord) => {
+    const customerInfo = [
+      {number: financialSummary.numTotalCustomers, label: 'Total', unit: ''},
+      {number: financialSummary.numBilledCustomers, label: 'Billed', unit: ''},
+      {number: financialSummary.numPaidCustomers, label: 'Paid Up', unit: ''}
+    ];
+    return customerInfo;
+  }
+
   const getFinancialSummaryNumbers = (financialSummary: FinancialReportRecord) => {
     return [
       financialSummary.electricityUsage,
@@ -103,6 +112,10 @@ export default function FinancialSummary(): JSX.Element {
       financialSummary.totalExpenses,
     ];
   };
+
+  const getFinancialSummaryInfo = (financialSummary: FinancialReportRecord) => {
+    return null;
+  }
 
   const getProfitNumbers = (financialSummary: FinancialReportRecord) => {
     return [financialSummary.totalProfit];
