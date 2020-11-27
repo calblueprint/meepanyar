@@ -41,7 +41,7 @@ if ("function" === typeof importScripts) {
         // Will add to bgSyncPlugin queue and will resend when network reconnect
         // TODO: Change to know routes once we know the routes needed to catch
         workbox.routing.registerRoute(
-            "",
+            "http://127.0.0.1:4000/customer/create",
             new workbox.strategies.NetworkOnly({
                 plugins: [bgSyncPlugin]
             }),

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { RootState } from '../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../lib/moment/momentUtils';
 import { getAllSites, getAllTariffPlans } from '../utils/new-schema/request';
+import { createCustomer, createMeterReadingsandInvoice } from '../lib/airtable/airtable';
 
 interface HomeProps {
   lastUpdated: string;
@@ -20,17 +21,46 @@ class Home extends React.Component<HomeProps, HomeState> {
     tariffPlans: [],
   };
 
-  public componentDidMount() {
-    this.getSiteData();
-    this.getTariffPlans();
+  public async componentDidMount() {
+    await this.getSiteData();
+    await this.getTariffPlans();
   }
 
   getCustomerName = () => {
     return 'Julian Kung';
   };
 
-  submitCustomer = async (): Promise<void> => {
+  getSite = () => {
+    return 'recdokHLQX8zCHofF';
+  };
+
+  getTariffPlan = () => {
+    return 'recOpsFHSM2pwaLXI';
+  };
+
+  getMeterNumber = () => {
+    return 2323;
+  };
+
+  createCustomer = async (): Promise<void> => {
     const customerName = this.getCustomerName();
+    const siteId = this.getSite();
+    const meterNumber = this.getMeterNumber();
+    const tariffPlanId = this.getTariffPlan();
+
+    const customerData = { customerName, siteId, tariffPlanId, meterNumber };
+    createCustomer(customerData);
+  };
+
+  createMeterReading = async (): Promise<void> => {
+    const customerName = this.getCustomerName();
+    const siteId = this.getSite();
+    const meterNumber = this.getMeterNumber();
+    const tariffPlanId = this.getTariffPlan();
+
+    const customerData = { customerName, siteId, tariffPlanId, meterNumber };
+    const meterReading = { reading: 10, meterNumber: 10 };
+    createMeterReadingsandInvoice(customerData, meterReading);
   };
 
   getTariffPlans = async () => {
@@ -51,8 +81,8 @@ class Home extends React.Component<HomeProps, HomeState> {
     const { sites, tariffPlans } = this.state;
     return (
       <>
-        <button onClick={this.submitCustomer}>Create a customer</button>
-        <button>Create an invoice for customer</button>
+        <button onClick={this.createCustomer}>Create a customer</button>
+        <button onClick={this.createMeterReading}>Create an invoice for customer</button>
         <h4>
           {JSON.stringify(tariffPlans)}
           This is the home screen
