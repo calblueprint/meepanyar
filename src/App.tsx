@@ -33,12 +33,12 @@ function App(isSignedIn: AppProps) {
               <Route exact path="/">
                 <Redirect to={homeRedirect} />
               </Route>
+              <Route path="/login" component={Login} />
               <AuthenticatedRoute path="/home" component={Home} />
               <AuthenticatedRoute path="/customers" component={CustomerMain} exact />
               <AuthenticatedRoute path="/inventory" component={Inventory} />
               <AuthenticatedRoute path="/maintenance" component={Maintenance} />
               <AuthenticatedRoute path="/incidents" component={Incidents} />
-              <Route path="/login" component={Login} />
               <AuthenticatedRoute path={'/customers/:rid'} component={CustomerProfile} exact />
               <AuthenticatedRoute path={'/customers/:rid/records'} component={CustomerRecords} />
             </Switch>
