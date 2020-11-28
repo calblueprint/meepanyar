@@ -123,35 +123,36 @@ function Home(props: HomeProps) {
       //   />
       // );
     }
-
-    const renderMenuOptions = () => {
-      const siteData: Array<SiteRecord> | null = sites
-      if (siteData) {
-        return siteData.map((site: SiteRecord) => (
-          <MenuItem onClick={() => handleSiteChange(site)} key={site.name}>
-            {site.name}
-          </MenuItem>
-        ));
-      }
-    }
-
-    const handleSiteChange = (newSite: SiteRecord) => {
-      setSelectedSite(newSite);
-    }
-
-    return (
-      <div>
-        <div className={classes.header}>
-          <FormControl>
-            <Select inputProps={{ 'aria-label': 'Without label' }}>{renderMenuOptions()}</Select>
-          </FormControl>
-        </div>
-
-        <FinancialSumCard />
-      </div>
-    );
-
   }
+
+  const renderMenuOptions = () => {
+    const siteData: Array<SiteRecord> | null = sites
+    if (siteData) {
+      return siteData.map((site: SiteRecord) => (
+        <MenuItem onClick={() => handleSiteChange(site)} key={site.name}>
+          {site.name}
+        </MenuItem>
+      ));
+    }
+  }
+
+  const handleSiteChange = (newSite: SiteRecord) => {
+    setSelectedSite(newSite);
+  }
+
+  return (
+    <div>
+      <div className={classes.header}>
+        <FormControl>
+          <Select inputProps={{ 'aria-label': 'Without label' }}>{renderMenuOptions()}</Select>
+        </FormControl>
+      </div>
+
+      <FinancialSumCard />
+    </div>
+  );
+
 }
+
 
 export default withStyles(styles)(Home);
