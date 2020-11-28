@@ -1,4 +1,5 @@
 import Airtable from '@calblueprint/airlock';
+import { createDBRequest, createTransaction, openObjectStore } from '../indexedbUtils';
 
 const BASE_ID = process.env.REACT_APP_AIRTABLE_BASE_ID;
 const API_KEY = 'airlock';
@@ -12,14 +13,12 @@ Airtable.configure({
 const base = Airtable.base(BASE_ID);
 
 const addToOfflineCustomer = (customer, fieldToAppend, objectToAdd) => {
-    const dbRequest = indexedDB.open('workbox-background-sync');
+    const dbRequest = createDBRequest('workbox-background-sync');
 
-    dbRequest.onerror = event => {
-        console.error(`Error when opening indexedb in order to add a ${fieldToAppend} with error ${event.target.errorCode}`);
-    }
     dbRequest.onsuccess = event => {
         const dbInstance = event.target.result;
-        const objectStore = dbInstance.transaction(["requests"], "readwrite").objectStore("requests")
+        const transactionInstance = createTransaction(dbInstance, ["requests"]);
+        const objectStore = openObjectStore(transactionInstance, "requests")
 
         objectStore.openCursor().onsuccess = event => {
             const cursor = event.target.result;
