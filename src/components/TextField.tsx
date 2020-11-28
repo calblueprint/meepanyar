@@ -4,20 +4,13 @@ import { Typography, TextField } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      display: 'flex',
-      flexDirection: 'column',
-      width: '95%',
-      margin: 'auto',
-      marginTop: '2px',
-      marginBottom: '15px',
-    },
     textField: {
       border: `1px solid ${theme.palette.primary.main}`,
       borderRadius: '5px',
       width: '100%',
       height: '30px',
       padding: '1px 10px',
+      marginBottom: '4px',
     },
   }),
 );
@@ -31,7 +24,7 @@ interface TextFieldProps {
 export default function Field(props: TextFieldProps) {
   const classes = useStyles();
   return (
-    <div className={classes.root}>
+    <div>
       <Typography variant="body1">{props.label}</Typography>
       <TextField className={classes.textField}
         id={props.id}

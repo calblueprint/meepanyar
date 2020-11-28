@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) =>
       borderRadius: '5px',
       width: '76px',
       height: '30px',
-      marginLeft: '10px',
+      marginLeft: '-7px',
       padding: '0px 10px',
     },
   }),

@@ -21,32 +21,18 @@ const styles = (theme: Theme) =>
       color: theme.palette.text.primary,
     },
     outlined: {
-      display: 'block',
-      textAlign: 'left',
-      width: '100%',
-      padding: '15px 15px 0px 15px',
+      padding: '15px 15px 10px 15px',
       border: `1px solid ${theme.palette.text.secondary}`,
       borderRadius: '6px',
       marginTop: '10px',
     },
-    label: {
-      marginTop: '-55px',
-      marginBottom: '40px',
-    },
     secondaryText: {
       color: theme.palette.text.secondary,
-      margin: '20px 10px',
-    },
-    form: {
-      margin: '10px -5px',
-    },
-    textField: {
-      marginLeft: '-8px',
     },
   });
 
 interface AddMeterReadingProps extends RouteComponentProps {
-  classes: { root: string; header: string; content: string; outlined: string; label: string; form: string; secondaryText: string; textField: string; };
+  classes: { root: string; header: string; content: string; outlined: string; secondaryText: string; };
   location: any;
 }
 
@@ -59,7 +45,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
         <BaseHeader title="Add Meter Reading" leftIcon="backNav" />
       </div>
       <div className={classes.content}>
-        <form noValidate className={classes.form}>
+        <form noValidate>
           <div className={classes.secondaryText}>
             <Typography variant="body1">Date Recorded</Typography>
             <Typography variant="body1">00.00.0000</Typography>
@@ -69,9 +55,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
           <div className={classes.outlined}>
             <Typography variant="body1" style={{ marginBottom: 0 }}>Today</Typography>
             <Typography variant="body1" style={{ marginBottom: 15 }}>00.00.0000</Typography>
-            <div className={classes.textField}>
-              <TextField label={"New Meter Reading (kWh)"} id={"meter-reading"} primary={true}/>
-            </div>
+            <TextField label={"New Meter Reading (kWh)"} id={"meter-reading"} primary={true}/>
           </div>
           <Button label={"ADD"} />
         </form>

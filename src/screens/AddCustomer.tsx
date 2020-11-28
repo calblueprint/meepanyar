@@ -16,19 +16,18 @@ const styles = (theme: Theme) =>
       marginTop: '20px',
       color: theme.palette.text.primary,
     },
+    checkBoxes: {
+      marginLeft: '2px',
+    },
     content: {
       margin: '0 25px',
       textAlign: 'left',
       color: theme.palette.text.primary,
     },
-    label: {
-      marginTop: '-55px',
-      marginBottom: '40px',
-    },
   });
 
 interface AddCustomerProps extends RouteComponentProps {
-  classes: { root: string; header: string; content: string; label: string; };
+  classes: { root: string; header: string; checkBoxes: string; content: string; };
   location: any;
 }
 
@@ -42,8 +41,10 @@ function AddCustomer(props: AddCustomerProps) {
       </div>
       <form noValidate className={classes.content}>
         <TextField label={"Name"} id={"name"} primary={true} />
-        <Checkbox label={"Select if customer is inactive"} />
-        <Checkbox label={"Meter:"} textField={"meter"} />
+        <div className={classes.checkBoxes}>
+          <Checkbox label={"Select if customer is inactive"} />
+          <Checkbox label={"Meter:"} textField={"meter"} />
+        </div>
         <TextField label={"Tariff Plan"} id={"tarrif-plan"} primary={true} />
         <Button label={"ADD"} />
       </form>
