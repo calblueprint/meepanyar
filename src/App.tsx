@@ -4,13 +4,9 @@ import Inventory from './screens/Inventory';
 import Home from './screens/Home';
 import Incidents from './screens/Incidents';
 import Maintenance from './screens/Maintenance';
-<<<<<<< HEAD
-import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
-=======
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { RootState } from './lib/redux/store';
->>>>>>> main
+import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import LabelBottomNavigation from './components/BaseComponents/BottomNav';
 import Login from './screens/Login';
 import CustomerMain from './screens/Customers/CustomerMain';

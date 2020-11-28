@@ -12,8 +12,8 @@ import TextWrapper from '../../components/TextWrapper';
 import Typography from '@material-ui/core/Typography';
 import CheckIcon from '@material-ui/icons/Check';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import { FinancialReportRecord } from '../../utils/airtable/interface';
-import { getFinancialReportById } from '../../utils/airtable/requests';
+import { FinancialSummaryRecord } from '../../utils/airtable/interface';
+import { getFinancialSummaryById } from '../../utils/airtable/requests';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -84,32 +84,32 @@ export default function FinancialSummary(): JSX.Element {
   }, []);
 
   const getFinancialSummary = async () => {
-    const financialSummary: FinancialReportRecord = await getFinancialReportById('recNoCPefwMb4cwqB');
+    const financialSummary: FinancialSummaryRecord = await getFinancialSummaryById('recNoCPefwMb4cwqB');
     setCustomerNumbers(getCustomerNumbers(financialSummary));
     setFinancialSummaryNumbers(getFinancialSummaryNumbers(financialSummary));
     setProfitNumbers(getProfitNumbers(financialSummary));
     setRemainingOwed(getRemainingOwed(financialSummary));
   };
 
-  const getCustomerNumbers = (financialSummary: FinancialReportRecord) => {
-    return [financialSummary.numTotalCustomers, financialSummary.numBilledCustomers, financialSummary.numPaidCustomers];
+  const getCustomerNumbers = (financialSummary: FinancialSummaryRecord) => {
+    return [financialSummary.totalCustomers, financialSummary.totalCustomersBilled, financialSummary.totalCustomersPaid];
   };
 
-  const getFinancialSummaryNumbers = (financialSummary: FinancialReportRecord) => {
+  const getFinancialSummaryNumbers = (financialSummary: FinancialSummaryRecord) => {
     return [
-      financialSummary.electricityUsage,
-      financialSummary.tariffsCharged,
-      financialSummary.amountCollected,
-      financialSummary.totalExpenses,
+      financialSummary.totalUsage,
+      financialSummary.totalAmountBilled,
+      financialSummary.totalAmountCollected,
+      financialSummary.totalAmountSpent,
     ];
   };
 
-  const getProfitNumbers = (financialSummary: FinancialReportRecord) => {
+  const getProfitNumbers = (financialSummary: FinancialSummaryRecord) => {
     return [financialSummary.totalProfit];
   };
 
-  const getRemainingOwed = (financialSummary: FinancialReportRecord) => {
-    return [financialSummary.totalOutstandingPayments];
+  const getRemainingOwed = (financialSummary: FinancialSummaryRecord) => {
+    return [financialSummary.totalAmountBilled - financialSummary.totalAmountCollected];
   };
 
   const handleOpen = () => {
