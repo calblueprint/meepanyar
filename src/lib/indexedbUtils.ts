@@ -19,4 +19,9 @@ const openObjectStore = (transactionInstance: IDBTransaction, storeName: string)
   return transactionInstance.objectStore(storeName);
 };
 
-export { createDBRequest, createTransaction, openObjectStore };
+const getJSONFromBlob = async (jsonBlob: Blob): Promise<object> => {
+  const jsonText = await jsonBlob.text();
+  return JSON.parse(jsonText);
+};
+
+export { createDBRequest, createTransaction, openObjectStore, getJSONFromBlob };

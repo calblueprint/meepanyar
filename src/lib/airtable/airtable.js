@@ -1,5 +1,5 @@
 import Airtable from '@calblueprint/airlock';
-import { createDBRequest, createTransaction, openObjectStore } from '../indexedbUtils';
+import { opendb } from 'idb';
 
 const BASE_ID = process.env.REACT_APP_AIRTABLE_BASE_ID;
 const API_KEY = 'airlock';
@@ -12,21 +12,36 @@ Airtable.configure({
 
 const base = Airtable.base(BASE_ID);
 
-const addToOfflineCustomer = (customer, fieldToAppend, objectToAdd) => {
+const addToOfflineCustomer = async (customer, fieldToAppend, objectToAdd) => {
+    const db = await opendb
+
     const dbRequest = createDBRequest('workbox-background-sync');
 
     dbRequest.onsuccess = event => {
         const dbInstance = event.target.result;
         const transactionInstance = createTransaction(dbInstance, ["requests"]);
-        const objectStore = openObjectStore(transactionInstance, "requests")
+        const objectStore = openObjectStore(transactionInstance, "requests");
 
         objectStore.openCursor().onsuccess = event => {
             const cursor = event.target.result;
 
             if (cursor) {
-                console.log("Cursor key: ", cursor.key);
-                console.log("Cursor value: ", cursor.value);
-                const cursorValue = { ...cursor.value };
+                try {
+                    console.log("Cursor key: ", cursor.key);
+                    console.log("Cursor value: ", cursor.value);
+                    const cursorValue = { ...cursor.value };
+                    const requestBodyBlob = cursorValue.storableRequest.requestInit.body;
+
+                    getJSONFromBlob(requestBodyBlob).then(bodyObject => {
+                        console.log("Body object ", bodyObject);
+
+                    })
+
+                } catch (error) {
+                    console.log("Error occurred when iterating through cursor ", error);
+                    cursor.continue();
+                }
+
                 const newBody = JSON.stringify({
                     ...customer,
                     [fieldToAppend]: [objectToAdd]
