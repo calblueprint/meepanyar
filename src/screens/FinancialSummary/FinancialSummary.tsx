@@ -92,7 +92,11 @@ export default function FinancialSummary(): JSX.Element {
   };
 
   const getCustomerNumbers = (financialSummary: FinancialSummaryRecord) => {
-    return [financialSummary.totalCustomers, financialSummary.totalCustomersBilled, financialSummary.totalCustomersPaid];
+    return [
+      financialSummary.totalCustomers,
+      financialSummary.totalCustomersBilled,
+      financialSummary.totalCustomersPaid,
+    ];
   };
 
   const getFinancialSummaryNumbers = (financialSummary: FinancialSummaryRecord) => {
