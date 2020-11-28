@@ -28,7 +28,10 @@ const addToOfflineCustomer = (customer, fieldToAppend, objectToAdd) => {
                 console.log("Cursor key: ", cursor.key);
                 console.log("Cursor value: ", cursor.value);
                 const cursorValue = { ...cursor.value };
-                const newBody = JSON.stringify({ uhOh: "stinky" })
+                const newBody = JSON.stringify({
+                    ...customer,
+                    [fieldToAppend]: [objectToAdd]
+                })
                 const newBlob = new Blob([newBody], { type: 'application/json' })
                 cursorValue.storableRequest.requestInit.body = newBlob;
                 console.log("Changed value: ", cursorValue);

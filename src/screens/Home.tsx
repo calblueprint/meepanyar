@@ -82,7 +82,7 @@ class Home extends React.Component<HomeProps, HomeState> {
     return (
       <>
         <button onClick={this.createCustomer}>Create a customer</button>
-        <button onClick={this.createMeterReading}>Create an invoice for customer</button>
+        <button onClick={this.createMeterReading}>Create a Meter Reading for customer</button>
         <h4>
           {JSON.stringify(tariffPlans)}
           This is the home screen
