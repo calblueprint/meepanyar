@@ -10,13 +10,17 @@ const styles = (theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+      overflow: 'auto',
+      maxHeight: '100vh',
     },
     content: {
-      margin: '0 25px',
       textAlign: 'left',
       color: theme.palette.text.secondary,
+      padding: '20px',
+      marginBottom: '80px',
     },
     payButton: {
+      zIndex: -1,
       borderRadius: '12px',
       height: '30px',
       width: '80px',
@@ -24,13 +28,13 @@ const styles = (theme: Theme) =>
       backgroundColor: theme.palette.primary.main,
     },
     viewButton: {
+      zIndex: -1,
       borderRadius: '12px',
       height: '30px',
       width: '80px',
       color: theme.palette.primary.main,
       backgroundColor: 'white',
       border: `1px solid ${theme.palette.primary.main}`,
-      zIndex: -1,
     },
     searchContainer: {
       float: 'right',
@@ -50,11 +54,20 @@ const styles = (theme: Theme) =>
     },
     title: {
       marginTop: '20px',
-    }
+    },
   });
 
 interface SubmittedRecordsProps extends RouteComponentProps {
-  classes: { root: string; content: string; payButton: string; viewButton: string; searchIcon: string; searchContainer: string; search: string; title: string; };
+  classes: {
+    root: string;
+    content: string;
+    payButton: string;
+    viewButton: string;
+    searchIcon: string;
+    searchContainer: string;
+    search: string;
+    title: string;
+  };
   location: any;
 }
 
@@ -75,7 +88,12 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
   const getSearch = () => {
     return (
       <div className={classes.searchContainer}>
-        <TextField className={classes.search} size="small" InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }} color="primary" />
+        <TextField
+          className={classes.search}
+          size="small"
+          InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
+          color="primary"
+        />
         <SearchIcon className={classes.searchIcon} />
       </div>
     );
@@ -97,18 +115,20 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
     <div className={classes.root}>
       <BaseHeader leftIcon="backNav" title="Reports" />
       {getSearch()}
-      <List style={{maxHeight: '100%', overflow: 'auto'}}>
       <div className={classes.content}>
-        <Typography className={classes.title} variant="h4">Unpaid Reports</Typography>
+        <Typography className={classes.title} variant="h4">
+          Unpaid Reports
+        </Typography>
         {unpaidInfo.map((report: any, index) => (
           <OutlinedColCard key={report.label} info={report} primary={false} rightIcon={getPaymentButtons()} />
         ))}
-        <Typography className={classes.title} variant="h4">Paid Reports</Typography>
+        <Typography className={classes.title} variant="h4">
+          Paid Reports
+        </Typography>
         {unpaidInfo.map((report: any, index) => (
           <OutlinedColCard key={report.label} info={report} primary={false} rightIcon={getViewButtons()} />
         ))}
       </div>
-      </List>
     </div>
   );
 }
