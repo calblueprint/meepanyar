@@ -10,6 +10,7 @@ import Login from './screens/Login';
 import CustomerMain from './screens/Customers/CustomerMain';
 import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
+import SubmittedRecords from './screens/SubmittedRecords';
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { theme } from './styles/ThemeStyles';
 
@@ -27,6 +28,7 @@ function App() {
               <Route path="/maintenance" component={Maintenance} />
               <Route path="/incidents" component={Incidents} />
               <Route path="/login" component={Login} />
+              <Route path="/records" component={SubmittedRecords} />
               <Route path={'/customers/:rid'} exact component={CustomerProfile} />
               <Route path={'/customers/:rid/records'} component={CustomerRecords} />
             </Switch>
