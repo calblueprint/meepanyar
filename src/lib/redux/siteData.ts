@@ -1,26 +1,13 @@
 import { store } from './store';
 import { setLoadingForSiteData, setCurrSite, saveSiteData } from './siteDataSlice';
-import { base } from '../airtable/airtable';
 import { getAllSites } from '../../utils/airtable/requests';
 
 const refreshSiteData = async (user: any): Promise<void> => {
   store.dispatch(setLoadingForSiteData());
   const siteIds: string[] = user.fields.Site;
   let currentSite = null;
-  // const sites: any = [];
   const sites = await getAllSites();
   console.log(sites);
-
-  // await base('Sites')
-  //   .select({
-  //     view: 'Grid view',
-  //   })
-  //   .eachPage((records: any, fetchNextPage: any) => {
-  //     records.forEach((record: any) => {
-  //       sites.push(record);
-  //     });
-  //     fetchNextPage();
-  //   });
 
   if (sites.length > 0) {
     currentSite = sites[0];

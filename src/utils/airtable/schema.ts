@@ -161,20 +161,23 @@ export function formatUser(row: Row): UserRecord {
 
 export function formatSite(row: Row): SiteRecord {
   const site = formatRecord<SiteRecord>(row, Tables.Sites);
-  if (site.customerIds !== undefined) {
-    formatLinkedRecords<CustomerRecord>(Tables.Customers, site.customerIds, formatCustomer).then((customers) => {
-      site.customers = customers;
-    });
-  }
-  if (site.financialSummaryIds !== undefined) {
-    formatLinkedRecords<FinancialSummaryRecord>(
-      Tables.FinancialSummaries,
-      site.financialSummaryIds,
-      formatFinancialSummary,
-    ).then((financialSummaries) => {
-      site.financialSummaries = financialSummaries;
-    });
-  }
+  // We don't recursively grab sites and financial summaries with this call.
+  // This will be done in a separate call in siteData.ts.
+
+  // if (site.customerIds !== undefined) {
+  //   formatLinkedRecords<CustomerRecord>(Tables.Customers, site.customerIds, formatCustomer).then((customers) => {
+  //     site.customers = customers;
+  //   });
+  // }
+  // if (site.financialSummaryIds !== undefined) {
+  //   formatLinkedRecords<FinancialSummaryRecord>(
+  //     Tables.FinancialSummaries,
+  //     site.financialSummaryIds,
+  //     formatFinancialSummary,
+  //   ).then((financialSummaries) => {
+  //     site.financialSummaries = financialSummaries;
+  //   });
+  // }
   return site;
 }
 
