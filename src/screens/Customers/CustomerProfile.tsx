@@ -55,7 +55,7 @@ function CustomerProfile(props: CustomerProps) {
             component={Link}
             to={{
               pathname: `${match.url}/records`,
-              state: { meterReadings: customer.meterReadings, invoices: customer.invoices },
+              state: { payments: customer.payments, meterReadings: customer.meterReadings },
             }}
             size="small"
           >

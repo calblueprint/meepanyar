@@ -1,6 +1,7 @@
 import React from 'react';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
-import { InvoiceRecord, MeterReadingRecord } from '../../utils/airtable/interface';
+import { MeterReadingRecord } from '../../utils/airtable/interface';
+import { PaymentRecord } from '../../utils/airtable/interface';
 
 interface CustomerRecordsProps {
   classes: any;
@@ -8,21 +9,23 @@ interface CustomerRecordsProps {
 }
 
 function CustomerRecords(props: CustomerRecordsProps) {
+  const payments: PaymentRecord[] = props.location.state.payments;
   const meterReadings: MeterReadingRecord[] = props.location.state.meterReadings;
-  const invoices: InvoiceRecord[] = props.location.state.invoices;
 
   return (
     <>
       <BaseHeader leftIcon="backNav" />
-      <h3>Meter Readings</h3>
-      {meterReadings.map((meterReading: MeterReadingRecord, index) => (
-        <p key={meterReading.rid}>{`${meterReading.date} ${meterReading.reading}`}</p>
-      ))}
+      <h3>Payments</h3>
+      {payments
+        ? payments.map((payment: PaymentRecord) => <p key={payment.date}>{`${payment.date} ${payment.amount}`}</p>)
+        : null}
 
       <h3>Invoices</h3>
-      {invoices.map((invoice: InvoiceRecord, index) => (
-        <p key={invoice.rid}>{`${invoice.date} ${invoice.amount}`}</p>
-      ))}
+      {meterReadings
+        ? meterReadings.map((meterReading: MeterReadingRecord) => (
+            <p key={meterReading.date}>{`${meterReading.date} ${meterReading.amountBilled}`}</p>
+          ))
+        : null}
     </>
   );
 }
