@@ -18,7 +18,7 @@ function CustomerMain(props: RouteComponentProps) {
   return (
     <>
       {customers.map((customer, index) => (
-        <Link key={index} to={{ pathname: `${props.match.url}/${customer.rid}`, state: { customer: customer } }}>
+        <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
           <h3>{customer.name}</h3>
         </Link>
       ))}
