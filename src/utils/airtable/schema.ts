@@ -85,7 +85,7 @@ export const TableSchemas: Schema = {
     userId: `User`,
   },
   'Meter Readings and Invoices': {
-    id: `ID`,
+    meterReading: `Meter Reading Name`,
     reading: `Reading`,
     customerId: `Customer`,
     amountBilled: `Amount Billed`,
@@ -94,7 +94,7 @@ export const TableSchemas: Schema = {
     meterNumber: `Meter Number`,
   },
   Payments: {
-    id: `ID`,
+    payment: `Payment Name`,
     amount: `Amount`,
     date: `Date`,
     billedToIds: `Billed To`,
@@ -183,27 +183,30 @@ export function formatSite(row: Row): SiteRecord {
 
 export function formatCustomer(row: Row): CustomerRecord {
   const customer = formatRecord<CustomerRecord>(row, Tables.Customers);
-  if (customer.tariffPlansId !== undefined) {
-    formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan).then(
-      (tariffPlans) => {
-        customer.tariffPlans = tariffPlans;
-      },
-    );
-  }
-  if (customer.meterReadingIds !== undefined) {
-    formatLinkedRecords<MeterReadingRecord>(
-      Tables.MeterReadingsandInvoices,
-      customer.meterReadingIds,
-      formatMeterReading,
-    ).then((meterReadings) => {
-      customer.meterReadings = meterReadings;
-    });
-  }
-  if (customer.paymentIds !== undefined) {
-    formatLinkedRecords<PaymentRecord>(Tables.Payments, customer.paymentIds, formatPayment).then((payments) => {
-      customer.payments = payments;
-    });
-  }
+  // We don't recursively grab tariffs nor meter readings with this call.
+  // This will be done in a separate call in siteData.ts.
+
+  // if (customer.tariffPlansId !== undefined) {
+  //   formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan).then(
+  //     (tariffPlans) => {
+  //       customer.tariffPlans = tariffPlans;
+  //     },
+  //   );
+  // }
+  // if (customer.meterReadingIds !== undefined) {
+  //   formatLinkedRecords<MeterReadingRecord>(
+  //     Tables.MeterReadingsandInvoices,
+  //     customer.meterReadingIds,
+  //     formatMeterReading,
+  //   ).then((meterReadings) => {
+  //     customer.meterReadings = meterReadings;
+  //   });
+  // }
+  // if (customer.paymentIds !== undefined) {
+  //   formatLinkedRecords<PaymentRecord>(Tables.Payments, customer.paymentIds, formatPayment).then((payments) => {
+  //     customer.payments = payments;
+  //   });
+  // }
   return customer;
 }
 
