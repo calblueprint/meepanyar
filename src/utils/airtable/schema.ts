@@ -150,13 +150,7 @@ function formatLinkedRecords<T>(table: string, ids: string[], format: (row: Row)
 }
 
 export function formatUser(row: Row): UserRecord {
-  const user = formatRecord<UserRecord>(row, Tables.Users);
-  if (user.siteIds !== undefined) {
-    formatLinkedRecords<SiteRecord>(Tables.Sites, user.siteIds, formatSite).then((sites) => {
-      user.sites = sites;
-    });
-  }
-  return user;
+  return formatRecord<UserRecord>(row, Tables.Users);
 }
 
 export function formatSite(row: Row): SiteRecord {
