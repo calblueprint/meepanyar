@@ -84,7 +84,7 @@ export default function FinancialSummary(): JSX.Element {
   }, []);
 
   const getFinancialSummary = async () => {
-    const financialSummary: FinancialSummaryRecord = await getFinancialSummaryById('recNoCPefwMb4cwqB');
+    const financialSummary: FinancialSummaryRecord = await getFinancialSummaryById('recMuHpJFsLrNzX01');
     setCustomerNumbers(getCustomerNumbers(financialSummary));
     setFinancialSummaryNumbers(getFinancialSummaryNumbers(financialSummary));
     setProfitNumbers(getProfitNumbers(financialSummary));
