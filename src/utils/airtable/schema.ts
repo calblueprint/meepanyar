@@ -160,54 +160,11 @@ export function formatUser(row: Row): UserRecord {
 }
 
 export function formatSite(row: Row): SiteRecord {
-  const site = formatRecord<SiteRecord>(row, Tables.Sites);
-  // We don't recursively grab sites and financial summaries with this call.
-  // This will be done in a separate call in siteData.ts.
-
-  // if (site.customerIds !== undefined) {
-  //   formatLinkedRecords<CustomerRecord>(Tables.Customers, site.customerIds, formatCustomer).then((customers) => {
-  //     site.customers = customers;
-  //   });
-  // }
-  // if (site.financialSummaryIds !== undefined) {
-  //   formatLinkedRecords<FinancialSummaryRecord>(
-  //     Tables.FinancialSummaries,
-  //     site.financialSummaryIds,
-  //     formatFinancialSummary,
-  //   ).then((financialSummaries) => {
-  //     site.financialSummaries = financialSummaries;
-  //   });
-  // }
-  return site;
+  return formatRecord<SiteRecord>(row, Tables.Sites);
 }
 
 export function formatCustomer(row: Row): CustomerRecord {
-  const customer = formatRecord<CustomerRecord>(row, Tables.Customers);
-  // We don't recursively grab tariffs nor meter readings with this call.
-  // This will be done in a separate call in siteData.ts.
-
-  // if (customer.tariffPlansId !== undefined) {
-  //   formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan).then(
-  //     (tariffPlans) => {
-  //       customer.tariffPlans = tariffPlans;
-  //     },
-  //   );
-  // }
-  // if (customer.meterReadingIds !== undefined) {
-  //   formatLinkedRecords<MeterReadingRecord>(
-  //     Tables.MeterReadingsandInvoices,
-  //     customer.meterReadingIds,
-  //     formatMeterReading,
-  //   ).then((meterReadings) => {
-  //     customer.meterReadings = meterReadings;
-  //   });
-  // }
-  // if (customer.paymentIds !== undefined) {
-  //   formatLinkedRecords<PaymentRecord>(Tables.Payments, customer.paymentIds, formatPayment).then((payments) => {
-  //     customer.payments = payments;
-  //   });
-  // }
-  return customer;
+  return formatRecord<CustomerRecord>(row, Tables.Customers);
 }
 
 export function formatTariffPlan(row: Row): TariffPlanRecord {
