@@ -15,7 +15,7 @@ const styles = (theme: Theme) =>
     content: {
       textAlign: 'left',
       color: theme.palette.text.secondary,
-      padding: '0px 20px 80px 20px',
+      padding: '0px 20px 80px',
       width: '100%',
       height: '80vh',
       overflow: 'auto',
@@ -79,9 +79,6 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
   const dummyData = [
     [{ number: 89, label: '01/02/2003', unit: '' }],
     [{ number: 20, label: '02/03/2004', unit: '' }],
-    [{ number: 10, label: '04/03/2002', unit: '' }],
-    [{ number: 10, label: '04/03/2002', unit: '' }],
-    [{ number: 10, label: '04/03/2002', unit: '' }],
     [{ number: 10, label: '04/03/2002', unit: '' }],
     [{ number: 10, label: '04/03/2002', unit: '' }],
   ];
