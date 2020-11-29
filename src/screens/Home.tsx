@@ -113,16 +113,15 @@ function Home(props: HomeProps) {
   }
 
   const renderSites = () => {
-    if (selectedSite) {
-      // return (
-      //   <HomeInfoCard
-      //     customer={selectedSite.customer}
-      //     payment={selectedSite.payment}
-      //     unpaid={selectedSite.unpaid}
-      //     incidents={selectedSite.incidents}
-      //   />
-      // );
-    }
+    return (
+      <HomeInfoCard
+        customer={'0'}
+        payment={'0'}
+        unpaid={'1'}
+        incidents={'0'}
+      />
+    );
+
   }
 
   const renderMenuOptions = () => {
@@ -147,7 +146,7 @@ function Home(props: HomeProps) {
           <Select inputProps={{ 'aria-label': 'Without label' }}>{renderMenuOptions()}</Select>
         </FormControl>
       </div>
-
+      {renderSites()}
       <FinancialSumCard />
     </div>
   );

@@ -53,16 +53,16 @@ interface FinSumProps {
 function FinSumCard(props: FinSumProps) {
   const { classes } = props;
   return (
-    <StylesProvider injectFirst>
-      <Card className={classes.singleCard} elevation={0}>
-        <ButtonBase>
-          <CardContent className={classes.cardCon}>
-            <Typography className={classes.insideText}>Financial Summary</Typography>
-            <ArrowForwardIosIcon className={classes.arrow} />
-          </CardContent>
-        </ButtonBase>
-      </Card>
-    </StylesProvider>
+
+    <Card className={classes.singleCard} elevation={0}>
+      <ButtonBase>
+        <CardContent className={classes.cardCon}>
+          <Typography className={classes.insideText}>Financial Summary</Typography>
+          <ArrowForwardIosIcon className={classes.arrow} />
+        </CardContent>
+      </ButtonBase>
+    </Card>
+
   );
 }
 
