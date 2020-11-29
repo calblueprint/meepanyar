@@ -53,7 +53,6 @@ interface FinSumProps {
 function FinSumCard(props: FinSumProps) {
   const { classes } = props;
   return (
-
     <Card className={classes.singleCard} elevation={0}>
       <ButtonBase>
         <CardContent className={classes.cardCon}>
@@ -62,7 +61,6 @@ function FinSumCard(props: FinSumProps) {
         </CardContent>
       </ButtonBase>
     </Card>
-
   );
 }
 

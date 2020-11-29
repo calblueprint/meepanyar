@@ -21,8 +21,15 @@ type HomeInfoProps = {
   amount: string;
   name: string;
   classes: {
-    cardRow: string, cardCon: string, rowTitle: string, rowTitleNum: string, rowTitleGrayed: string,
-    rowTitleGrayedNum: string, arrow: string, check: string, error: string
+    cardRow: string;
+    cardCon: string;
+    rowTitle: string;
+    rowTitleNum: string;
+    rowTitleGrayed: string;
+    rowTitleGrayedNum: string;
+    arrow: string;
+    check: string;
+    error: string;
   };
 };
 
@@ -110,19 +117,17 @@ function HomeInfoRow(props: HomeInfoProps) {
           </CardContent>
         </ButtonBase>
       ) : (
-          <ButtonBase>
-            <CardContent className={classes.cardCon}>
-              <CheckCircleIcon className={classes.check} />
-              <Typography className={classes.rowTitleNum}>{amount}</Typography>
-              <Typography className={classes.rowTitle}>{name}</Typography>
-              <ArrowForwardIosIcon className={classes.arrow} />
-            </CardContent>
-          </ButtonBase>
-        )}
+        <ButtonBase>
+          <CardContent className={classes.cardCon}>
+            <CheckCircleIcon className={classes.check} />
+            <Typography className={classes.rowTitleNum}>{amount}</Typography>
+            <Typography className={classes.rowTitle}>{name}</Typography>
+            <ArrowForwardIosIcon className={classes.arrow} />
+          </CardContent>
+        </ButtonBase>
+      )}
     </div>
-
   );
 }
 
 export default withStyles(styles)(HomeInfoRow);
-

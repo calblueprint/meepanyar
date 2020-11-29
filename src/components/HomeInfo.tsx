@@ -3,7 +3,6 @@ import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core/s
 import HomeInfoRow from './HomeInfoRow';
 import { StylesProvider, Button, Card, CardContent, Paper, Typography } from '@material-ui/core';
 
-
 const styles = (theme: Theme) =>
   createStyles({
     mainCard: {
@@ -19,7 +18,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-
 type HomeInfoProps = {
   customer: string;
   payment: string;
@@ -27,7 +25,6 @@ type HomeInfoProps = {
   incidents: string;
   classes: { mainCard: string };
 };
-
 
 function HomeInfoCard(props: HomeInfoProps) {
   const { classes } = props;
@@ -41,7 +38,5 @@ function HomeInfoCard(props: HomeInfoProps) {
     </Paper>
   );
 }
-
-
 
 export default withStyles(styles)(HomeInfoCard);

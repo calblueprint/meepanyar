@@ -93,7 +93,7 @@ const styles = (theme: Theme) =>
   });
 
 interface HomeProps {
-  classes: { header: string; };
+  classes: { header: string };
 }
 
 function Home(props: HomeProps) {
@@ -108,24 +108,16 @@ function Home(props: HomeProps) {
   const getSites = async () => {
     const sites: SiteRecord[] = await getAllSites();
     console.log(sites);
-    setSites(sites)
-    setSelectedSite(sites[0])
-  }
+    setSites(sites);
+    setSelectedSite(sites[0]);
+  };
 
   const renderSites = () => {
-    return (
-      <HomeInfoCard
-        customer={'0'}
-        payment={'0'}
-        unpaid={'1'}
-        incidents={'0'}
-      />
-    );
-
-  }
+    return <HomeInfoCard customer={'0'} payment={'0'} unpaid={'1'} incidents={'0'} />;
+  };
 
   const renderMenuOptions = () => {
-    const siteData: Array<SiteRecord> | null = sites
+    const siteData: Array<SiteRecord> | null = sites;
     if (siteData) {
       return siteData.map((site: SiteRecord) => (
         <MenuItem onClick={() => handleSiteChange(site)} key={site.name}>
@@ -133,11 +125,11 @@ function Home(props: HomeProps) {
         </MenuItem>
       ));
     }
-  }
+  };
 
   const handleSiteChange = (newSite: SiteRecord) => {
     setSelectedSite(newSite);
-  }
+  };
 
   return (
     <div>
@@ -150,8 +142,6 @@ function Home(props: HomeProps) {
       <FinancialSumCard />
     </div>
   );
-
 }
-
 
 export default withStyles(styles)(Home);
