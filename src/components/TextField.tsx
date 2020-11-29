@@ -14,25 +14,28 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     bolded: {
       fontWeight: 700,
-    }
+    },
   }),
 );
 
 interface TextFieldProps {
-  label: string,
-  bold?: boolean,
+  label: string;
+  bold?: boolean;
 }
 
 export default function Field(props: TextFieldProps) {
   const classes = useStyles();
   return (
     <div>
-      <Typography variant="body1" className={props.bold ? classes.bolded : undefined}>{props.label}</Typography>
-      <TextField className={classes.textField}
+      <Typography variant="body1" className={props.bold ? classes.bolded : undefined}>
+        {props.label}
+      </Typography>
+      <TextField
+        className={classes.textField}
         InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
         InputLabelProps={{ shrink: true }}
         color="primary"
       />
     </div>
   );
-};
+}

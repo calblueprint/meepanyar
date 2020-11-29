@@ -6,21 +6,19 @@ import { RouteComponentProps } from 'react-router-dom';
 import SearchIcon from '@material-ui/icons/Search';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-import PaymentCard from '../components/PaymentCard';
-import FinancialInfo from '../components/FinancialInfo';
-
 const styles = (theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
-      overflow: 'auto',
-      maxHeight: '100vh',
+      height: '100vh',
     },
     content: {
       textAlign: 'left',
       color: theme.palette.text.secondary,
-      padding: '20px',
-      marginBottom: '70px',
+      padding: '0px 20px 80px 20px',
+      width: '100%',
+      height: '80vh',
+      overflow: 'auto',
     },
     payButton: {
       zIndex: -1,

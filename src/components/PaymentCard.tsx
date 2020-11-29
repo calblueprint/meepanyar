@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     unbolded: {
       fontWeight: 500,
-    }
+    },
   }),
 );
 
@@ -46,7 +46,9 @@ export default function FilledCard(props: CardProps) {
   const classes = useStyles();
   const getPaymentButtons = () => {
     return (
-      <Button className={classes.button} color="primary" disableElevation={true}>Add Payment</Button>
+      <Button className={classes.button} color="primary" disableElevation={true}>
+        Add Payment
+      </Button>
     );
   };
 
@@ -57,7 +59,9 @@ export default function FilledCard(props: CardProps) {
           <div>
             <Typography variant="h2">Payment to</Typography>
             <Typography variant="h2">Mee Panyar</Typography>
-            <Typography variant="h3" className={classes.paymentText}>{props.payment} Ks</Typography>
+            <Typography variant="h3" className={classes.paymentText}>
+              {props.payment} Ks
+            </Typography>
           </div>
           {getPaymentButtons()}
         </div>

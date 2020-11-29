@@ -53,13 +53,21 @@ export default function FilledCard(props: CardProps) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h2" className={classes.title}>Financial Info</Typography>
+      <Typography variant="h2" className={classes.title}>
+        Financial Info
+      </Typography>
       <div className={classes.content}>
         <div className={classes.itemWrapper}>
           <div>
-            <Typography className={classes.bolded} variant="h4">Bank</Typography>
-            <Typography className={classes.bolded} variant="h4">Account Number</Typography>
-            <Typography className={classes.bolded} variant="h4">Account Name</Typography>
+            <Typography className={classes.bolded} variant="h4">
+              Bank
+            </Typography>
+            <Typography className={classes.bolded} variant="h4">
+              Account Number
+            </Typography>
+            <Typography className={classes.bolded} variant="h4">
+              Account Name
+            </Typography>
           </div>
           <div className={classes.right}>
             <Typography variant="h4">{props.bankName}</Typography>
@@ -70,15 +78,19 @@ export default function FilledCard(props: CardProps) {
         <Divider className={classes.divider} />
         <div className={classes.itemWrapper}>
           <div>
-            <Typography className={classes.bolded} variant="h4">Remaining Balance</Typography>
+            <Typography className={classes.bolded} variant="h4">
+              Remaining Balance
+            </Typography>
           </div>
           <div className={classes.right}>
-            <Typography variant="h4" className={classes.balanceText}>{props.balance} Ks</Typography>
+            <Typography variant="h4" className={classes.balanceText}>
+              {props.balance} Ks
+            </Typography>
           </div>
         </div>
       </div>
       <div className={classes.fieldContainer}>
-        <TextField label="Payment Amount" bold={true}/>
+        <TextField label="Payment Amount" bold={true} />
       </div>
     </div>
   );
