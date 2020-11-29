@@ -15,7 +15,7 @@ export const theme = createMuiTheme({
     divider: '#E5E5E5',
   },
   typography: {
-    fontFamily: 'Helvetica Neue',
+    fontFamily: 'Arial',
     //title
     h1: {
       fontSize: '30px',

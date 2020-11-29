@@ -6,6 +6,9 @@ import { RouteComponentProps } from 'react-router-dom';
 import SearchIcon from '@material-ui/icons/Search';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
+import PaymentCard from '../components/PaymentCard';
+import FinancialInfo from '../components/FinancialInfo';
+
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -17,7 +20,7 @@ const styles = (theme: Theme) =>
       textAlign: 'left',
       color: theme.palette.text.secondary,
       padding: '20px',
-      marginBottom: '80px',
+      marginBottom: '70px',
     },
     payButton: {
       zIndex: -1,
@@ -75,7 +78,7 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
   const { classes } = props;
 
   //DUMMY DATA
-  const unpaidInfo = [
+  const dummyData = [
     [{ number: 89, label: '01/02/2003', unit: '' }],
     [{ number: 20, label: '02/03/2004', unit: '' }],
     [{ number: 10, label: '04/03/2002', unit: '' }],
@@ -119,13 +122,13 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
         <Typography className={classes.title} variant="h4">
           Unpaid Reports
         </Typography>
-        {unpaidInfo.map((report: any, index) => (
+        {dummyData.map((report: any, index) => (
           <OutlinedColCard key={report.label} info={report} primary={false} rightIcon={getPaymentButtons()} />
         ))}
         <Typography className={classes.title} variant="h4">
           Paid Reports
         </Typography>
-        {unpaidInfo.map((report: any, index) => (
+        {dummyData.map((report: any, index) => (
           <OutlinedColCard key={report.label} info={report} primary={false} rightIcon={getViewButtons()} />
         ))}
       </div>
