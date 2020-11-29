@@ -85,7 +85,7 @@ export const TableSchemas: Schema = {
     userId: `User`,
   },
   'Meter Readings and Invoices': {
-    id: `ID`,
+    meterReading: `Meter Reading Name`,
     reading: `Reading`,
     customerId: `Customer`,
     amountBilled: `Amount Billed`,
@@ -94,7 +94,7 @@ export const TableSchemas: Schema = {
     meterNumber: `Meter Number`,
   },
   Payments: {
-    id: `ID`,
+    payment: `Payment Name`,
     amount: `Amount`,
     date: `Date`,
     billedToIds: `Billed To`,
@@ -150,58 +150,15 @@ function formatLinkedRecords<T>(table: string, ids: string[], format: (row: Row)
 }
 
 export function formatUser(row: Row): UserRecord {
-  const user = formatRecord<UserRecord>(row, Tables.Users);
-  if (user.siteIds !== undefined) {
-    formatLinkedRecords<SiteRecord>(Tables.Sites, user.siteIds, formatSite).then((sites) => {
-      user.sites = sites;
-    });
-  }
-  return user;
+  return formatRecord<UserRecord>(row, Tables.Users);
 }
 
 export function formatSite(row: Row): SiteRecord {
-  const site = formatRecord<SiteRecord>(row, Tables.Sites);
-  if (site.customerIds !== undefined) {
-    formatLinkedRecords<CustomerRecord>(Tables.Customers, site.customerIds, formatCustomer).then((customers) => {
-      site.customers = customers;
-    });
-  }
-  if (site.financialSummaryIds !== undefined) {
-    formatLinkedRecords<FinancialSummaryRecord>(
-      Tables.FinancialSummaries,
-      site.financialSummaryIds,
-      formatFinancialSummary,
-    ).then((financialSummaries) => {
-      site.financialSummaries = financialSummaries;
-    });
-  }
-  return site;
+  return formatRecord<SiteRecord>(row, Tables.Sites);
 }
 
 export function formatCustomer(row: Row): CustomerRecord {
-  const customer = formatRecord<CustomerRecord>(row, Tables.Customers);
-  if (customer.tariffPlansId !== undefined) {
-    formatLinkedRecords<TariffPlanRecord>(Tables.TariffPlans, customer.tariffPlansId, formatTariffPlan).then(
-      (tariffPlans) => {
-        customer.tariffPlans = tariffPlans;
-      },
-    );
-  }
-  if (customer.meterReadingIds !== undefined) {
-    formatLinkedRecords<MeterReadingRecord>(
-      Tables.MeterReadingsandInvoices,
-      customer.meterReadingIds,
-      formatMeterReading,
-    ).then((meterReadings) => {
-      customer.meterReadings = meterReadings;
-    });
-  }
-  if (customer.paymentIds !== undefined) {
-    formatLinkedRecords<PaymentRecord>(Tables.Payments, customer.paymentIds, formatPayment).then((payments) => {
-      customer.payments = payments;
-    });
-  }
-  return customer;
+  return formatRecord<CustomerRecord>(row, Tables.Customers);
 }
 
 export function formatTariffPlan(row: Row): TariffPlanRecord {

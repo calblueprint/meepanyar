@@ -4,7 +4,8 @@ import Inventory from './screens/Inventory';
 import Home from './screens/Home';
 import Incidents from './screens/Incidents';
 import Maintenance from './screens/Maintenance';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { ConnectedRouter } from 'connected-react-router';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { RootState } from './lib/redux/store';
 import LabelBottomNavigation from './components/BaseComponents/BottomNav';
 import Login from './screens/Login';
@@ -14,6 +15,7 @@ import CustomerRecords from './screens/Customers/CustomerRecords';
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { theme } from './styles/ThemeStyles';
+import { history } from './lib/redux/store';
 import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 
 interface AppProps {
@@ -27,7 +29,7 @@ function App(isSignedIn: AppProps) {
     <div className="App">
       <StylesProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <BrowserRouter>
+          <ConnectedRouter history={history}>
             <LabelBottomNavigation />
             <Switch>
               <Route exact path="/">
@@ -42,7 +44,7 @@ function App(isSignedIn: AppProps) {
               <AuthenticatedRoute path={'/customers/:rid'} component={CustomerProfile} exact />
               <AuthenticatedRoute path={'/customers/:rid/records'} component={CustomerRecords} />
             </Switch>
-          </BrowserRouter>
+          </ConnectedRouter>
         </ThemeProvider>
       </StylesProvider>
     </div>
