@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '12px',
       '&:focus': {
         outline: 'none',
-      }
+      },
     },
     tabPanel: {
       padding: '10px 0 0',
@@ -37,7 +37,9 @@ export default function TabMenu(props: TabProps) {
   const invoices = props.invoices;
   const payments = props.payments;
   const [value, setValue] = React.useState('0');
-  const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => { setValue(newValue); };
+  const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
+    setValue(newValue);
+  };
 
   return (
     <TabContext value={value}>
@@ -48,7 +50,23 @@ export default function TabMenu(props: TabProps) {
       <div className={classes.scroll}>
         <TabPanel className={classes.tabPanel} value="0" id="invoices">
           {invoices.map((invoice: InvoiceRecord, index) => (
-            <Record date={invoice.date} used={invoice.amount} amount={invoice.amount}key={index} />
+            <>
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+              <Record date={invoice.date} used={invoice.amount} amount={invoice.amount} key={index} />
+            </>
           ))}
         </TabPanel>
         <TabPanel className={classes.tabPanel} value="1" id="payments">

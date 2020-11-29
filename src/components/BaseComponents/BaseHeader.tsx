@@ -14,8 +14,11 @@ import { useHistory } from 'react-router-dom';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
+      top: 0,
       flexGrow: 1,
+      position: 'sticky',
       padding: '15px 0',
+      backgroundColor: 'white',
     },
     title: {
       flexGrow: 1,
@@ -67,7 +70,7 @@ function BaseHeader(props: HeaderProps) {
               {props.title}
             </Typography>
           ) : null}
-          {props.rightIcon ? icons[props.rightIcon] : <div className={classes.emptySpace}/>}
+          {props.rightIcon ? icons[props.rightIcon] : <div className={classes.emptySpace} />}
         </Toolbar>
       </AppBar>
     </div>

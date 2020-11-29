@@ -3,8 +3,8 @@ import { Typography } from '@material-ui/core';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
 import TabMenu from '../../components/TabMenu';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { InvoiceRecord, PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';
+import { RouteComponentProps } from 'react-router-dom';
+import { InvoiceRecord, MeterReadingRecord } from '../../utils/airtable/interface';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -16,17 +16,10 @@ const styles = (theme: Theme) =>
       textAlign: 'left',
       color: theme.palette.text.primary,
     },
-    header: {
-      marginTop: '15px',
-    },
-    scroll: {
-      maxHeight: '380px',
-      overflow: 'auto',
-    }
   });
 
 interface CustomerRecordsProps extends RouteComponentProps {
-  classes: { root: string; content: string; header: string; scroll: string; };
+  classes: { root: string; content: string };
   location: any;
 }
 
