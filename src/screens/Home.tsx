@@ -145,4 +145,3 @@ function Home(props: HomeProps) {
 }
 
 export default withStyles(styles)(Home);
-
