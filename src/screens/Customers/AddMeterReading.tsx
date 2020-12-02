@@ -1,7 +1,7 @@
 import React from 'react';
-import BaseHeader from '../components/BaseComponents/BaseHeader';
-import TextField from '../components/TextField';
-import Button from '../components/Button';
+import BaseHeader from '../../components/BaseComponents/BaseHeader';
+import TextField from '../../components/TextField';
+import Button from '../../components/Button';
 import { Typography } from '@material-ui/core';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -11,17 +11,13 @@ const styles = (theme: Theme) =>
     root: {
       flexGrow: 1,
     },
-    header: {
-      marginTop: '20px',
-      color: theme.palette.text.primary,
-    },
     content: {
       margin: '0 25px',
       textAlign: 'left',
       color: theme.palette.text.primary,
     },
     outlined: {
-      padding: '15px 15px 10px 15px',
+      padding: '15px 15px 10px',
       border: `1px solid ${theme.palette.text.secondary}`,
       borderRadius: '6px',
       marginTop: '10px',
@@ -32,7 +28,7 @@ const styles = (theme: Theme) =>
   });
 
 interface AddMeterReadingProps extends RouteComponentProps {
-  classes: { root: string; header: string; content: string; outlined: string; secondaryText: string; };
+  classes: { root: string; content: string; outlined: string; secondaryText: string };
   location: any;
 }
 
@@ -41,23 +37,29 @@ function AddMeterReading(props: AddMeterReadingProps) {
 
   return (
     <div className={classes.root}>
-      <div className={classes.header}>
-        <BaseHeader title="Add Meter Reading" leftIcon="backNav" />
-      </div>
+      <BaseHeader title="Add Meter Reading" leftIcon="backNav" />
       <div className={classes.content}>
         <form noValidate>
           <div className={classes.secondaryText}>
             <Typography variant="body1">Date Recorded</Typography>
             <Typography variant="body1">00.00.0000</Typography>
-            <Typography variant="body1" style={{ marginTop: 10 }}>Current Reading</Typography>
-            <Typography variant="h2" style={{ fontSize: 22 }}>0 kWh</Typography>
+            <Typography variant="body1" style={{ marginTop: 10 }}>
+              Current Reading
+            </Typography>
+            <Typography variant="h2" style={{ fontSize: 22 }}>
+              0 kWh
+            </Typography>
           </div>
           <div className={classes.outlined}>
-            <Typography variant="body1" style={{ marginBottom: 0 }}>Today</Typography>
-            <Typography variant="body1" style={{ marginBottom: 15 }}>00.00.0000</Typography>
-            <TextField label={"New Meter Reading (kWh)"} id={"meter-reading"} primary={true}/>
+            <Typography variant="body1" style={{ marginBottom: 0 }}>
+              Today
+            </Typography>
+            <Typography variant="body1" style={{ marginBottom: 15 }}>
+              00.00.0000
+            </Typography>
+            <TextField label={'New Meter Reading (kWh)'} id={'meter-reading'} primary={true} />
           </div>
-          <Button label={"ADD"} />
+          <Button label={'ADD'} />
         </form>
       </div>
     </div>

@@ -17,7 +17,7 @@ const useStyles = makeStyles(() =>
 );
 
 interface MainButtonProps {
-  label: string,
+  label: string;
 }
 
 export default function MainButton(props: MainButtonProps) {
@@ -27,4 +27,4 @@ export default function MainButton(props: MainButtonProps) {
       {props.label}
     </Button>
   );
-};
+}

@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     unbolded: {
       fontWeight: 500,
-    }
+    },
   }),
 );
 
@@ -25,10 +25,12 @@ export default function Record(props: RecordProps) {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Typography variant="h2" className={classes.unbolded}>{props.date}</Typography>
+      <Typography variant="h2" className={classes.unbolded}>
+        {props.date}
+      </Typography>
       <Typography variant="h1">
         {props.used ? props.used + ' kWh |' : null} {props.amount} Ks
       </Typography>
     </div>
   );
-};
+}

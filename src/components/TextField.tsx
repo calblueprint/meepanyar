@@ -10,15 +10,15 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       height: '30px',
       padding: '1px 10px',
-      marginBottom: '4px',
+      marginBottom: '0.5rem',
     },
   }),
 );
 
 interface TextFieldProps {
-  label: string,
-  id: string,
-  primary: boolean,
+  label: string;
+  id: string;
+  primary: boolean;
 }
 
 export default function Field(props: TextFieldProps) {
@@ -26,12 +26,13 @@ export default function Field(props: TextFieldProps) {
   return (
     <div>
       <Typography variant="body1">{props.label}</Typography>
-      <TextField className={classes.textField}
+      <TextField
+        className={classes.textField}
         id={props.id}
         InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
         InputLabelProps={{ shrink: true }}
-        color={props.primary ? "primary" : undefined}
+        color={props.primary ? 'primary' : undefined}
       />
     </div>
   );
-};
+}
