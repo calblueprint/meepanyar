@@ -1,10 +1,10 @@
 import React from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { TextField, Checkbox } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import CheckIcon from '@material-ui/icons/Check';
 
-const useStyles = makeStyles((theme: Theme) =>
+const styles = (theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
@@ -27,16 +27,16 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '0.25rem 0 0 -7px',
       padding: '0px 10px',
     },
-  }),
-);
+  });
 
 interface CheckBoxProps {
+  classes: { root: string; checkIcon: string; checkedIcon: string; textField: string };
   label: string;
   textField?: string | null;
 }
 
-export default function CheckBox(props: CheckBoxProps) {
-  const classes = useStyles();
+function CheckBox(props: CheckBoxProps) {
+  const { classes } = props;
   return (
     <div className={classes.root}>
       <FormControlLabel
@@ -62,3 +62,5 @@ export default function CheckBox(props: CheckBoxProps) {
     </div>
   );
 }
+
+export default withStyles(styles)(CheckBox);

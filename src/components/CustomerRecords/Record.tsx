@@ -1,8 +1,8 @@
 import React from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) =>
+const styles = (theme: Theme) =>
   createStyles({
     root: {
       paddingBottom: '7px',
@@ -12,17 +12,17 @@ const useStyles = makeStyles((theme: Theme) =>
     unbolded: {
       fontWeight: 500,
     },
-  }),
-);
+  });
 
 interface RecordProps {
+  classes: { root: string; unbolded: string };
   date: string;
   used?: number | null;
   amount: number;
 }
 
-export default function Record(props: RecordProps) {
-  const classes = useStyles();
+function Record(props: RecordProps) {
+  const { classes } = props;
   return (
     <div className={classes.root}>
       <Typography variant="h2" className={classes.unbolded}>
@@ -34,3 +34,4 @@ export default function Record(props: RecordProps) {
     </div>
   );
 }
+export default withStyles(styles)(Record);

@@ -47,7 +47,13 @@ function CustomerProfile(props: CustomerProps) {
   const getPaymentButtons = () => {
     return (
       <>
-        <Button className={classes.button} color="primary" startIcon={<AddIcon />} disableElevation={true}>
+        <Button
+          variant="contained"
+          className={classes.button}
+          color="primary"
+          startIcon={<AddIcon />}
+          disableElevation={true}
+        >
           Add Payment
         </Button>
         <div className={classes.buttonSecondary}>
@@ -55,7 +61,7 @@ function CustomerProfile(props: CustomerProps) {
             component={Link}
             to={{
               pathname: `${match.url}/records`,
-              state: { payments: customer.meterReadings, invoices: customer.invoices },
+              state: { invoices: customer.meterReadings, payments: customer.payments },
             }}
             size="small"
           >
@@ -69,7 +75,14 @@ function CustomerProfile(props: CustomerProps) {
   const getAddButton = () => {
     return (
       <div className={classes.button}>
-        <IconButton size="small">
+        <IconButton
+          component={Link}
+          to={{
+            pathname: `${match.url}/addMeter`,
+            state: { invoices: customer.meterReadings, payments: customer.payments },
+          }}
+          size="small"
+        >
           <AddIcon style={{ color: 'white' }} />
         </IconButton>
       </div>

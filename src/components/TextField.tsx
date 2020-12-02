@@ -1,8 +1,8 @@
 import React from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Typography, TextField } from '@material-ui/core';
 
-const useStyles = makeStyles((theme: Theme) =>
+const styles = (theme: Theme) =>
   createStyles({
     textField: {
       border: `1px solid ${theme.palette.primary.main}`,
@@ -12,17 +12,17 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '1px 10px',
       marginBottom: '0.5rem',
     },
-  }),
-);
+  });
 
 interface TextFieldProps {
+  classes: { textField: string };
   label: string;
   id: string;
   primary: boolean;
 }
 
-export default function Field(props: TextFieldProps) {
-  const classes = useStyles();
+function Field(props: TextFieldProps) {
+  const { classes } = props;
   return (
     <div>
       <Typography variant="body1">{props.label}</Typography>
@@ -36,3 +36,4 @@ export default function Field(props: TextFieldProps) {
     </div>
   );
 }
+export default withStyles(styles)(Field);

@@ -4,7 +4,7 @@ import BaseHeader from '../../components/BaseComponents/BaseHeader';
 import TabMenu from '../../components/CustomerRecords/TabMenu';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
-import { InvoiceRecord, MeterReadingRecord } from '../../utils/airtable/interface';
+import { PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -25,8 +25,8 @@ interface CustomerRecordsProps extends RouteComponentProps {
 
 function CustomerRecords(props: CustomerRecordsProps) {
   const { classes } = props;
-  const payments: MeterReadingRecord[] = props.location.state.payments;
-  const invoices: InvoiceRecord[] = props.location.state.invoices;
+  const payments: PaymentRecord[] = props.location.state.payments;
+  const invoices: MeterReadingRecord[] = props.location.state.invoices;
 
   return (
     <div className={classes.root}>
