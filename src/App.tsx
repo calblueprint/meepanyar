@@ -44,7 +44,7 @@ function App(isSignedIn: AppProps) {
               <AuthenticatedRoute path="/incidents" component={Incidents} />
               <AuthenticatedRoute path={'/customers/:rid'} component={CustomerProfile} exact />
               <AuthenticatedRoute path={'/customers/:rid/records'} component={CustomerRecords} />
-              <Route path="/financialsummary" component={FinancialSummary} />
+              <AuthenticatedRoute path="/financialsummary" component={FinancialSummary} />
             </Switch>
           </ConnectedRouter>
         </ThemeProvider>
