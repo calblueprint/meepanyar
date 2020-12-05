@@ -28,12 +28,12 @@ const styles = (theme: Theme) =>
 
 interface TabProps {
   classes: { scroll: string; tabs: string; tab: string; tabPanel: string };
-  invoices: MeterReadingRecord[];
+  meterReadings: MeterReadingRecord[];
   payments: PaymentRecord[];
 }
 
 function TabMenu(props: TabProps) {
-  const { classes, invoices, payments } = props;
+  const { classes, meterReadings, payments } = props;
   const [value, setValue] = React.useState('0');
   const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
     setValue(newValue);
@@ -47,9 +47,9 @@ function TabMenu(props: TabProps) {
       </Tabs>
       <div className={classes.scroll}>
         <TabPanel className={classes.tabPanel} value="0" id="invoices">
-          {invoices
-            ? invoices.map((invoice: MeterReadingRecord, index) => (
-                <Record date={invoice.date} used={invoice.reading} amount={invoice.amountBilled} key={index} />
+          {meterReadings
+            ? meterReadings.map((reading: MeterReadingRecord, index) => (
+                <Record date={reading.date} used={reading.reading} amount={reading.amountBilled} key={index} />
               ))
             : null}
         </TabPanel>
@@ -64,4 +64,5 @@ function TabMenu(props: TabProps) {
     </TabContext>
   );
 }
+
 export default withStyles(styles)(TabMenu);

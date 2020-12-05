@@ -25,6 +25,8 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100px',
       color: theme.palette.text.primary,
       margin: '5px',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
     },
   }),
 );

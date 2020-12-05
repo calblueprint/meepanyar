@@ -5,6 +5,8 @@ import TabMenu from '../../components/CustomerRecords/TabMenu';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
 import { PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';
+import { connect } from 'react-redux';
+import { RootState } from '../../lib/redux/store';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -23,20 +25,22 @@ interface CustomerRecordsProps extends RouteComponentProps {
   location: any;
 }
 
-function CustomerRecords(props: CustomerRecordsProps) {
-  const { classes } = props;
-  const payments: PaymentRecord[] = props.location.state.payments;
-  const invoices: MeterReadingRecord[] = props.location.state.invoices;
+class CustomerRecords extends React.Component<CustomerRecordsProps, {}> {
+  render() {
+    const { classes } = this.props;
+    const payments: PaymentRecord[] = this.props.location.state.payments;
+    const meterReadings: MeterReadingRecord[] = this.props.location.state.meterReadings;
 
-  return (
-    <div className={classes.root}>
-      <BaseHeader leftIcon="backNav" />
-      <div className={classes.content}>
-        <Typography variant="h1">Records</Typography>
-        <TabMenu invoices={invoices} payments={payments} />
+    return (
+      <div className={classes.root}>
+        <BaseHeader leftIcon="backNav" />
+        <div className={classes.content}>
+          <Typography variant="h1">Records</Typography>
+          <TabMenu meterReadings={meterReadings} payments={payments} />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default withStyles(styles)(CustomerRecords);

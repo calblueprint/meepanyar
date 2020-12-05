@@ -1,7 +1,7 @@
 import { store } from './store';
 import { setLoadingForSiteData, setCurrSite, saveSiteData } from './siteDataSlice';
-import { getAllSites, getCustomersByIds, getMeterReadingsByIds, getPaymentsByIds } from '../../utils/airtable/requests';
-import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../utils/airtable/interface';
+import { getAllSites, getCustomersByIds, getMeterReadingsByIds, getPaymentsByIds, getTariffPlansByIds } from '../../utils/airtable/requests';
+import { CustomerRecord, MeterReadingRecord, PaymentRecord, TariffPlanRecord } from '../../utils/airtable/interface';
 
 const refreshSiteData = async (user: any): Promise<void> => {
   store.dispatch(setLoadingForSiteData());
@@ -19,8 +19,10 @@ const refreshSiteData = async (user: any): Promise<void> => {
       for (const customer of customers) {
         const meterReadings = await getMeterReadingsForCustomer(customer);
         const payments = await getPaymentsForCustomer(customer);
+        const tariffPlans = await getTariffPlanForCustomer(customer);
         customer.meterReadings = meterReadings;
         customer.payments = payments;
+        customer.tariffPlans = tariffPlans;
       }
     }
 
@@ -65,6 +67,18 @@ const getPaymentsForCustomer = async (customer: CustomerRecord): Promise<Payment
   }
 
   return payments;
+};
+
+// Helper function to grab a tariff plan for a specific customer
+const getTariffPlanForCustomer = async (customer: CustomerRecord): Promise<TariffPlanRecord[]> => {
+  const tariffIds = customer.tariffPlansId;
+  let tariffPlans: TariffPlanRecord[] = [];
+
+  if (tariffIds) {
+    tariffPlans = await getTariffPlansByIds(tariffIds);
+  }
+  
+  return tariffPlans;
 };
 
 export { refreshSiteData };
