@@ -1,10 +1,6 @@
 import React from 'react';
 import {
   ButtonBase,
-  IconButton,
-  StylesProvider,
-  Button,
-  Card,
   CardContent,
   Paper,
   Typography,
@@ -12,7 +8,6 @@ import {
   createStyles,
   withStyles,
 } from '@material-ui/core';
-import useStyles from '../styles/HomeInfoStyles';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
@@ -47,7 +42,7 @@ const styles = (theme: Theme) =>
       textAlign: 'left',
     },
     rowTitle: {
-      fontFamily: 'Helvetica Neue',
+      fontFamily: theme.typography.fontFamily,
       fontStyle: 'normal',
       fontWeight: 'bold',
       fontSize: '18px',
@@ -57,7 +52,7 @@ const styles = (theme: Theme) =>
       flexGrow: 2,
     },
     rowTitleNum: {
-      fontFamily: 'Helvetica Neue',
+      fontFamily: theme.typography.fontFamily,
       fontStyle: 'normal',
       fontWeight: 'bold',
       fontSize: '18px',
@@ -69,7 +64,7 @@ const styles = (theme: Theme) =>
     },
     rowTitleGrayed: {
       color: '#bdbdbd',
-      fontFamily: 'Helvetica Neue',
+      fontFamily: theme.typography.fontFamily,
       fontStyle: 'normal',
       fontWeight: 'bold',
       fontSize: '18px',
@@ -78,7 +73,7 @@ const styles = (theme: Theme) =>
       flexGrow: 2,
     },
     rowTitleGrayedNum: {
-      fontFamily: 'Helvetica Neue',
+      fontFamily: theme.typography.fontFamily,
       fontStyle: 'normal',
       fontWeight: 'bold',
       fontSize: '18px',
@@ -117,15 +112,15 @@ function HomeInfoRow(props: HomeInfoProps) {
           </CardContent>
         </ButtonBase>
       ) : (
-        <ButtonBase>
-          <CardContent className={classes.cardCon}>
-            <CheckCircleIcon className={classes.check} />
-            <Typography className={classes.rowTitleNum}>{amount}</Typography>
-            <Typography className={classes.rowTitle}>{name}</Typography>
-            <ArrowForwardIosIcon className={classes.arrow} />
-          </CardContent>
-        </ButtonBase>
-      )}
+          <ButtonBase>
+            <CardContent className={classes.cardCon}>
+              <CheckCircleIcon className={classes.check} />
+              <Typography className={classes.rowTitleNum}>{amount}</Typography>
+              <Typography className={classes.rowTitle}>{name}</Typography>
+              <ArrowForwardIosIcon className={classes.arrow} />
+            </CardContent>
+          </ButtonBase>
+        )}
     </div>
   );
 }
