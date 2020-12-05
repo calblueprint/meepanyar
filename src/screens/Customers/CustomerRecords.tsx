@@ -1,30 +1,42 @@
 import React from 'react';
+import { Typography } from '@material-ui/core';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
-import { InvoiceRecord, MeterReadingRecord } from '../../utils/airtable/interface';
+import TabMenu from '../../components/CustomerRecords/TabMenu';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { RouteComponentProps } from 'react-router-dom';
+import { PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';
 
-interface CustomerRecordsProps {
-  classes: any;
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    content: {
+      margin: '0 25px',
+      textAlign: 'left',
+      color: theme.palette.text.primary,
+    },
+  });
+
+interface CustomerRecordsProps extends RouteComponentProps {
+  classes: { root: string; content: string };
   location: any;
 }
 
 function CustomerRecords(props: CustomerRecordsProps) {
-  const meterReadings: MeterReadingRecord[] = props.location.state.meterReadings;
-  const invoices: InvoiceRecord[] = props.location.state.invoices;
+  const { classes } = props;
+  const payments: PaymentRecord[] = props.location.state.payments;
+  const invoices: MeterReadingRecord[] = props.location.state.invoices;
 
   return (
-    <>
+    <div className={classes.root}>
       <BaseHeader leftIcon="backNav" />
-      <h3>Meter Readings</h3>
-      {meterReadings.map((meterReading: MeterReadingRecord, index) => (
-        <p key={meterReading.rid}>{`${meterReading.date} ${meterReading.reading}`}</p>
-      ))}
-
-      <h3>Invoices</h3>
-      {invoices.map((invoice: InvoiceRecord, index) => (
-        <p key={invoice.rid}>{`${invoice.date} ${invoice.amount}`}</p>
-      ))}
-    </>
+      <div className={classes.content}>
+        <Typography variant="h1">Records</Typography>
+        <TabMenu invoices={invoices} payments={payments} />
+      </div>
+    </div>
   );
 }
 
-export default CustomerRecords;
+export default withStyles(styles)(CustomerRecords);

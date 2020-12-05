@@ -14,8 +14,11 @@ import { useHistory } from 'react-router-dom';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
+      top: 0,
       flexGrow: 1,
+      position: 'sticky',
       padding: '15px 0',
+      backgroundColor: 'white',
     },
     title: {
       flexGrow: 1,
@@ -46,10 +49,14 @@ function BaseHeader(props: HeaderProps) {
     );
   };
 
+  const navigateToEdit = () => {
+    history.push(`${match.url}/edit`);
+  };
+
   const icons: { [key: string]: JSX.Element } = {
     menu: getIcon(history.goBack, <MenuIcon />), //replace history.goBack with correct functions
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
-    edit: getIcon(history.goBack, <CreateIcon />),
+    edit: getIcon(navigateToEdit, <CreateIcon />),
     user: getIcon(history.goBack, <AccountCircleIcon />),
   };
 

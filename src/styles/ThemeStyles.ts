@@ -32,12 +32,13 @@ export const theme = createMuiTheme({
       fontWeight: 700,
     },
     //caption
-    h4: {
+    body1: {
       fontSize: '12px',
       fontWeight: 500,
     },
     button: {
       fontSize: '12px',
+      fontWeight: 'bold',
     },
   },
 });
