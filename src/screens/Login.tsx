@@ -3,6 +3,7 @@ import * as Styles from '../styles/LoginStyles';
 import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
 import { signupUser, loginUser } from '../lib/airlock/airlock';
+import { RouteComponentProps } from 'react-router-dom';
 
 interface LoginState {
   username: string;
@@ -10,7 +11,7 @@ interface LoginState {
   errorMessage: string;
 }
 
-class Login extends React.Component<{}, LoginState> {
+class Login extends React.Component<RouteComponentProps, LoginState> {
   state = {
     username: '',
     password: '',
@@ -28,11 +29,12 @@ class Login extends React.Component<{}, LoginState> {
   onLoginClicked = async (event: React.MouseEvent) => {
     event.preventDefault();
     const { username, password } = this.state;
+    const { history } = this.props;
     const loginSuccessful = await loginUser(username, password);
 
     // Navigate to new screen
     if (loginSuccessful) {
-      window.location.replace('/home');
+      history.push('/home');
     } else {
       this.setState({ errorMessage: 'Login unsuccessful. Incorrect username or password.' });
     }
@@ -83,6 +85,7 @@ class Login extends React.Component<{}, LoginState> {
                 onChange={this.onPasswordChange}
                 color="primary"
                 type="password"
+                autoComplete="off"
               />
             </Styles.FieldDiv>
             {this.state.errorMessage ? this.renderErrorMessage() : ''}

@@ -1,33 +1,42 @@
 import React from 'react';
+import { Typography } from '@material-ui/core';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
-import { MeterReadingRecord } from '../../utils/airtable/interface';
-import { PaymentRecord } from '../../utils/airtable/interface';
+import TabMenu from '../../components/CustomerRecords/TabMenu';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { RouteComponentProps } from 'react-router-dom';
+import { PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';
 
-interface CustomerRecordsProps {
-  classes: any;
+const styles = (theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    content: {
+      margin: '0 25px',
+      textAlign: 'left',
+      color: theme.palette.text.primary,
+    },
+  });
+
+interface CustomerRecordsProps extends RouteComponentProps {
+  classes: { root: string; content: string };
   location: any;
 }
 
 function CustomerRecords(props: CustomerRecordsProps) {
+  const { classes } = props;
   const payments: PaymentRecord[] = props.location.state.payments;
-  const meterReadings: MeterReadingRecord[] = props.location.state.meterReadings;
+  const invoices: MeterReadingRecord[] = props.location.state.invoices;
 
   return (
-    <>
+    <div className={classes.root}>
       <BaseHeader leftIcon="backNav" />
-      <h3>Payments</h3>
-      {payments
-        ? payments.map((payment: PaymentRecord) => <p key={payment.date}>{`${payment.date} ${payment.amount}`}</p>)
-        : null}
-
-      <h3>Invoices</h3>
-      {meterReadings
-        ? meterReadings.map((meterReading: MeterReadingRecord) => (
-            <p key={meterReading.date}>{`${meterReading.date} ${meterReading.amountBilled}`}</p>
-          ))
-        : null}
-    </>
+      <div className={classes.content}>
+        <Typography variant="h1">Records</Typography>
+        <TabMenu invoices={invoices} payments={payments} />
+      </div>
+    </div>
   );
 }
 
-export default CustomerRecords;
+export default withStyles(styles)(CustomerRecords);

@@ -1,4 +1,4 @@
-import { base } from '../airtable/airtable';
+import { base } from '../../utils/airtable/airtable';
 import { refreshUserData } from '../redux/userData';
 
 const signupUser = async (username: string, password: string): Promise<{ success: boolean; message: string }> => {
