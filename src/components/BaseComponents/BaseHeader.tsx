@@ -14,14 +14,14 @@ import { useHistory } from 'react-router-dom';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      top: 0,
-      flexGrow: 1,
-      position: 'sticky',
-      padding: '15px 0',
+      display: 'flex',
+      alignItems: 'center',
+      height: '85px',
       backgroundColor: 'white',
     },
     title: {
       flexGrow: 1,
+      textAlign: 'center',
       color: theme.palette.text.primary,
     },
     emptySpace: {
@@ -29,7 +29,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface HeaderProps {
+export interface HeaderProps {
   leftIcon?: string;
   title?: string;
   rightIcon?: string;

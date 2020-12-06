@@ -4,13 +4,10 @@ import { TabContext, TabPanel } from '@material-ui/lab';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import Record from './Record';
 import { PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';
+import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 
 const styles = (theme: Theme) =>
   createStyles({
-    scroll: {
-      height: '70vh',
-      overflow: 'auto',
-    },
     tabs: {
       background: 'white',
     },
@@ -22,12 +19,13 @@ const styles = (theme: Theme) =>
       },
     },
     tabPanel: {
+      height: '100%',
       padding: '10px 0 0',
     },
   });
 
 interface TabProps {
-  classes: { scroll: string; tabs: string; tab: string; tabPanel: string };
+  classes: { tabs: string; tab: string; tabPanel: string };
   invoices: MeterReadingRecord[];
   payments: PaymentRecord[];
 }
@@ -45,7 +43,7 @@ function TabMenu(props: TabProps) {
         <Tab className={classes.tab} label="Invoices" value="0" />
         <Tab className={classes.tab} label="Payment" value="1" />
       </Tabs>
-      <div className={classes.scroll}>
+      <BaseScrollView>
         <TabPanel className={classes.tabPanel} value="0" id="invoices">
           {invoices
             ? invoices.map((invoice: MeterReadingRecord, index) => (
@@ -60,7 +58,7 @@ function TabMenu(props: TabProps) {
               ))
             : null}
         </TabPanel>
-      </div>
+      </BaseScrollView>
     </TabContext>
   );
 }

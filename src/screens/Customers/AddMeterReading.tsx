@@ -1,19 +1,15 @@
 import React from 'react';
-import BaseHeader from '../../components/BaseComponents/BaseHeader';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 import { Typography } from '@material-ui/core';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 
 const styles = (theme: Theme) =>
   createStyles({
-    root: {
-      flexGrow: 1,
-    },
     content: {
       margin: '0 25px',
-      textAlign: 'left',
       color: theme.palette.text.primary,
     },
     outlined: {
@@ -28,7 +24,7 @@ const styles = (theme: Theme) =>
   });
 
 interface AddMeterReadingProps extends RouteComponentProps {
-  classes: { root: string; content: string; outlined: string; secondaryText: string };
+  classes: { content: string; outlined: string; secondaryText: string };
   location: any;
 }
 
@@ -36,8 +32,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
   const { classes } = props;
 
   return (
-    <div className={classes.root}>
-      <BaseHeader title="Add Meter Reading" leftIcon="backNav" />
+    <BaseScreen title="Add Meter Reading" leftIcon="backNav">
       <div className={classes.content}>
         <form noValidate>
           <div className={classes.secondaryText}>
@@ -62,7 +57,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
           <Button label={'ADD'} />
         </form>
       </div>
-    </div>
+    </BaseScreen>
   );
 }
 
