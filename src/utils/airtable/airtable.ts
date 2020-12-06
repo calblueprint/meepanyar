@@ -9,23 +9,22 @@
   If you're adding a new function: make sure you add a corresponding test (at least 1) for it in airtable.spec.js
 */
 import Airtable from 'airtable';
-// import Airtable from '@calblueprint/airlock';
+import Airlock from '@calblueprint/airlock';
 import { Row } from './interface';
 
 const BASE_ID = process.env.REACT_APP_AIRTABLE_BASE_ID;
 
-const API_KEY = process.env.REACT_APP_AIRTABLE_API_KEY;
-const ENDPOINT_URL = 'https://api.airtable.com';
-// const API_KEY = 'airlock';
-// const ENDPOINT_URL = process.env.REACT_APP_AIRTABLE_ENDPOINT_URL;
+// const API_KEY = process.env.REACT_APP_AIRTABLE_API_KEY;
+const API_KEY = 'airlock';
+const ENDPOINT_URL = process.env.REACT_APP_AIRTABLE_ENDPOINT_URL;
 const VIEW = 'Grid view';
 
-Airtable.configure({
+Airlock.configure({
   endpointUrl: ENDPOINT_URL,
   apiKey: API_KEY,
 });
 
-const base = Airtable.base(BASE_ID as string);
+const base = Airlock.base(BASE_ID as string);
 
 // ******** CRUD ******** //
 
@@ -41,7 +40,7 @@ function getAllRecords<T>(table: string, filterByFormula = '', sort = [], format
       sort,
     })
     .all()
-    .then((records) => {
+    .then((records: Airtable.Records<{}>) => {
       if (records === null || records.length < 1) {
         return [];
       }
@@ -52,7 +51,7 @@ function getAllRecords<T>(table: string, filterByFormula = '', sort = [], format
       });
       return transformedRecords;
     })
-    .catch((err) => {
+    .catch((err: any) => {
       throw err;
     });
 }
@@ -61,11 +60,11 @@ function getAllRecords<T>(table: string, filterByFormula = '', sort = [], format
 function getRecordById<T>(table: string, id: string, format: (row: Row) => T): Promise<T> {
   return base(table)
     .find(id)
-    .then((record) => {
+    .then((record: Airtable.Records<{}>) => {
       const row: unknown = record;
       return format(row as Row);
     })
-    .catch((err) => {
+    .catch((err: any) => {
       throw err;
     });
 }
@@ -99,7 +98,7 @@ function getRecordsByAttribute<T>(
       sort,
     })
     .all()
-    .then((records) => {
+    .then((records: Airtable.Records<{}>) => {
       if (!records || records.length < 1) {
         // No need for this to throw an error, sometimes there're just no values
         return [];
@@ -111,7 +110,7 @@ function getRecordsByAttribute<T>(
       });
       return transformedRecords;
     })
-    .catch((err) => {
+    .catch((err: any) => {
       throw err;
     });
 }
@@ -123,7 +122,7 @@ function deleteRecord(table: string, id: string): Promise<void> {
     .then(() => {
       return;
     })
-    .catch((err) => {
+    .catch((err: any) => {
       throw err;
     });
 }
