@@ -53,7 +53,7 @@ export default function OutlinedCardList(props: CardProps) {
     return (
       <div key={key} className={classes.itemWrapper}>
         <div className={classes.items}>
-          <Typography variant="h4">{label}</Typography>
+          <Typography variant="body1">{label}</Typography>
           <Typography variant="h3" color={primary ? 'primary' : 'inherit'}>
             {number} {unit}
           </Typography>

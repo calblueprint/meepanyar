@@ -143,7 +143,7 @@ export default function FinancialSummary(): JSX.Element {
         </ButtonBase>
         <div className={classes.titleTexts}>
           <Typography style={{ fontWeight: 500, fontSize: '24px' }}>Current Period {period}</Typography>
-          <Typography style={{ fontWeight: 700, fontSize: '14px' }} color="primary" variant="h4">
+          <Typography style={{ fontWeight: 700, fontSize: '14px' }} color="primary" variant="body1">
             View All
           </Typography>
         </div>
@@ -175,7 +175,7 @@ export default function FinancialSummary(): JSX.Element {
           fullWidth
           variant="contained"
         >
-          <Typography variant="body1">Submit Report</Typography>
+          <Typography variant="body2">Submit Report</Typography>
         </Button>
       </div>
       <ConfirmDialog
