@@ -25,22 +25,20 @@ interface CustomerRecordsProps extends RouteComponentProps {
   location: any;
 }
 
-class CustomerRecords extends React.Component<CustomerRecordsProps, {}> {
-  render() {
-    const { classes } = this.props;
-    const payments: PaymentRecord[] = this.props.location.state.payments;
-    const meterReadings: MeterReadingRecord[] = this.props.location.state.meterReadings;
+function CustomerRecords(props: CustomerRecordsProps) {
+  const { classes } = props;
+  const payments: PaymentRecord[] = props.location.state.payments;
+  const meterReadings: MeterReadingRecord[] = props.location.state.meterReadings;
 
-    return (
-      <div className={classes.root}>
-        <BaseHeader leftIcon="backNav" />
-        <div className={classes.content}>
-          <Typography variant="h1">Records</Typography>
-          <TabMenu meterReadings={meterReadings} payments={payments} />
-        </div>
+  return (
+    <div className={classes.root}>
+      <BaseHeader leftIcon="backNav" />
+      <div className={classes.content}>
+        <Typography variant="h1">Records</Typography>
+        <TabMenu meterReadings={meterReadings} payments={payments} />
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default withStyles(styles)(CustomerRecords);
