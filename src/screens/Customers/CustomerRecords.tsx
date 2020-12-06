@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import TabMenu from '../../components/CustomerRecords/TabMenu';
+import TabMenu from './components/TabMenu';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
 import { PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';

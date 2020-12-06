@@ -3,8 +3,8 @@ import { Tabs, Tab } from '@material-ui/core';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import Record from './Record';
-import { PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';
-import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import { PaymentRecord, MeterReadingRecord } from '../../../utils/airtable/interface';
+import BaseScrollView from '../../../components/BaseComponents/BaseScrollView';
 
 const styles = (theme: Theme) =>
   createStyles({

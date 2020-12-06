@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Badge from '@material-ui/core/Badge';
-import BaseHeader from '../../components/BaseComponents/BaseHeader';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
+import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '@material-ui/core/Button';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import ConfirmDialog from './ConfirmDialog';
-import ConfirmDialogContents from './ConfirmDialogContents';
+import ConfirmDialog from './components/ConfirmDialog';
+import ConfirmDialogContents from './components/ConfirmDialogContents';
 import Divider from '@material-ui/core/Divider';
 import TextWrapper from '../../components/TextWrapper';
 import Typography from '@material-ui/core/Typography';
@@ -18,9 +19,6 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      color: theme.palette.text.primary,
-    },
     badge: {
       backgroundColor: theme.palette.info.main,
       fontSize: '16px',
@@ -37,6 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     content: {
+      color: theme.palette.text.primary,
       margin: '0px 35px',
     },
     divider: {
@@ -133,55 +132,61 @@ export default function FinancialSummary(): JSX.Element {
   const currencyUnits = [' Ks'];
 
   return (
-    <div className={classes.root}>
-      <BaseHeader leftIcon="backNav" title="Financial Summary" />
-      <div className={classes.content}>
-        <ButtonBase className={classes.unpaidRecordsButton}>
-          <Typography variant="h2">Unpaid Reports</Typography>
-          <Badge classes={{ colorError: classes.badge }} badgeContent={1} color="error" />
-          <ChevronRightIcon style={{ color: '#BDBDBD' }} />
-        </ButtonBase>
-        <div className={classes.titleTexts}>
-          <Typography style={{ fontWeight: 500, fontSize: '24px' }}>Current Period {period}</Typography>
-          <Typography style={{ fontWeight: 700, fontSize: '14px' }} color="primary" variant="body1">
-            View All
-          </Typography>
+    <BaseScreen leftIcon="backNav" title="Financial Summary">
+      <BaseScrollView>
+        <div className={classes.content}>
+          <ButtonBase className={classes.unpaidRecordsButton}>
+            <Typography variant="h2">Unpaid Reports</Typography>
+            <Badge classes={{ colorError: classes.badge }} badgeContent={1} color="error" />
+            <ChevronRightIcon style={{ color: '#BDBDBD' }} />
+          </ButtonBase>
+          <div className={classes.titleTexts}>
+            <Typography style={{ fontWeight: 500, fontSize: '24px' }}>Current Period {period}</Typography>
+            <Typography style={{ fontWeight: 700, fontSize: '14px' }} color="primary" variant="body1">
+              View All
+            </Typography>
+          </div>
+          <Card className={classes.card} variant="outlined">
+            <CardContent className={classes.cardContent}>
+              <TextWrapper title={'Customers'} labels={customerLabels} numbers={customerNumbers} />
+              <TextWrapper
+                title={'Financial Summary'}
+                labels={financialSummaryLabels.slice(0, 2)}
+                numbers={financialSummaryNumbers.slice(0, 2)}
+                units={financialSummaryUnits.slice(0, 2)}
+                styling={classes.bottomMargin}
+              />
+              <TextWrapper
+                labels={financialSummaryLabels.slice(2)}
+                numbers={financialSummaryNumbers.slice(2)}
+                units={financialSummaryUnits.slice(2)}
+              />
+              <Divider className={classes.divider} />
+              <TextWrapper labels={profitLabel} numbers={profitNumbers} units={currencyUnits} />
+              <TextWrapper
+                labels={remainingOwedLabel}
+                numbers={remainingOwed}
+                units={currencyUnits}
+                color={'primary'}
+              />
+            </CardContent>
+          </Card>
+          <Button
+            className={classes.confirmButton}
+            color="primary"
+            startIcon={<CheckIcon />}
+            onClick={handleOpen}
+            fullWidth
+            variant="contained"
+          >
+            <Typography variant="body2">Submit Report</Typography>
+          </Button>
         </div>
-        <Card className={classes.card} variant="outlined">
-          <CardContent className={classes.cardContent}>
-            <TextWrapper title={'Customers'} labels={customerLabels} numbers={customerNumbers} />
-            <TextWrapper
-              title={'Financial Summary'}
-              labels={financialSummaryLabels.slice(0, 2)}
-              numbers={financialSummaryNumbers.slice(0, 2)}
-              units={financialSummaryUnits.slice(0, 2)}
-              styling={classes.bottomMargin}
-            />
-            <TextWrapper
-              labels={financialSummaryLabels.slice(2)}
-              numbers={financialSummaryNumbers.slice(2)}
-              units={financialSummaryUnits.slice(2)}
-            />
-            <Divider className={classes.divider} />
-            <TextWrapper labels={profitLabel} numbers={profitNumbers} units={currencyUnits} />
-            <TextWrapper labels={remainingOwedLabel} numbers={remainingOwed} units={currencyUnits} color={'primary'} />
-          </CardContent>
-        </Card>
-        <Button
-          className={classes.confirmButton}
-          color="primary"
-          startIcon={<CheckIcon />}
-          onClick={handleOpen}
-          fullWidth
-          variant="contained"
-        >
-          <Typography variant="body2">Submit Report</Typography>
-        </Button>
-      </div>
+      </BaseScrollView>
       <ConfirmDialog
         isOpen={isOpen}
         dialogContents={<ConfirmDialogContents onClick={handleClose} profitNumbers={profitNumbers} />}
       />
-    </div>
+    </BaseScreen>
   );
 }

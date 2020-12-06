@@ -7,7 +7,6 @@ import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CreateIcon from '@material-ui/icons/Create';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import CropSquareIcon from '@material-ui/icons/CropSquare'; //FOR CENTERING TITLE
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 
