@@ -1,7 +1,6 @@
 import React from 'react';
 import { theme } from './styles/ThemeStyles';
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
-import { withStyles, createStyles } from '@material-ui/core/styles';
 import BaseNavigation from './components/BaseComponents/BaseNavigation';
 import Login from './screens/Login';
 import Home from './screens/Home';
@@ -17,42 +16,38 @@ import Inventory from './screens/Inventory';
 import Incidents from './screens/Incidents';
 import Maintenance from './screens/Maintenance';
 
+import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
+
 import { ConnectedRouter } from 'connected-react-router';
+import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { RootState } from './lib/redux/store';
 import { connect } from 'react-redux';
 import { history } from './lib/redux/store';
-import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
-
-const styles = () =>
-  createStyles({
-    wrapper: {
-      display: 'flex',
-      flexDirection: 'column',
-    },
-  });
 
 interface AppProps {
   isSignedIn: boolean;
-  classes: { wrapper: string };
 }
 
-function App(props: AppProps) {
-  const { classes, isSignedIn } = props;
+function App(isSignedIn: AppProps) {
   const homeRedirect = isSignedIn ? '/home' : '/login';
 
   const Container = () => (
     <>
       <AuthenticatedRoute path="/home" component={Home} />
-      <AuthenticatedRoute exact path="/customers" component={CustomerMain} />
+
+      <AuthenticatedRoute path="/customers" component={CustomerMain} exact />
+      <AuthenticatedRoute path="/customers/add" component={AddCustomer} />
+      <AuthenticatedRoute path={'/customers/:rid'} component={CustomerProfile} exact />
+      <AuthenticatedRoute path={'/customers/:rid/edit'} component={EditCustomer} />
+      <AuthenticatedRoute path="/customers/:rid/addMeter" component={AddMeterReading} />
+      <AuthenticatedRoute path={'/customers/:rid/records'} component={CustomerRecords} />
+
       <AuthenticatedRoute path="/inventory" component={Inventory} />
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
-      {/* <AuthenticatedRoute exact path={'/customers/:rid'} component={CustomerProfile} /> */}
-      <AuthenticatedRoute path={'/customers/:rid/records'} component={CustomerRecords} />
-      <AuthenticatedRoute path="/customers/add" component={AddCustomer} />
-      <AuthenticatedRoute path="/customers/:rid/addMeter" component={AddMeterReading} />
-      <AuthenticatedRoute path={'/customers/:rid/edit'} component={EditCustomer} />
+
+      <AuthenticatedRoute path="/financialsummary" component={FinancialSummary} />
       <BaseNavigation />
     </>
   );
@@ -80,4 +75,4 @@ const mapStateToProps = (state: RootState) => ({
   isSignedIn: state.userData.user !== null,
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(App));
+export default connect(mapStateToProps)(App);
