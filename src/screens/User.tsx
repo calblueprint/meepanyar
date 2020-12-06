@@ -4,7 +4,7 @@ import useStyles from '../styles/UserStyle';
 import UserSearchBar from '../components/UserSearchBar';
 import CustomerCard from '../components/CustomerCard';
 import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
-import { getAllCustomerUpdates, getAllSites, getCustomersByIds, getSiteById } from '../utils/airtable/requests';
+import {  getAllSites, getCustomersByIds, getSiteById } from '../utils/airtable/requests';
 import { CustomerRecord, SiteRecord } from '../utils/airtable/interface';
 import { RouteComponentProps } from 'react-router-dom';
 
