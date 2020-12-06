@@ -37,6 +37,7 @@ const styles = (theme: Theme) =>
     cardCon: {
       flexDirection: 'row',
       display: 'flex',
+      marginTop: '13.25px',
       width: '308.81px',
       textAlign: 'left',
     },
