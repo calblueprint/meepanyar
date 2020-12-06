@@ -6,9 +6,6 @@ import { RouteComponentProps } from 'react-router-dom';
 import SearchIcon from '@material-ui/icons/Search';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
-import FinancialInfo from '../components/FinancialInfo';
-import PaymentCard from '../components/PaymentCard';
-
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -119,8 +116,6 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
       <BaseHeader leftIcon="backNav" title="Reports" />
       {getSearch()}
       <div className={classes.content}>
-      <FinancialInfo bankName="h" accountName="n" accountNumber={9239} balance={2932} />
-      <PaymentCard payment={232} paid={212} />
         <Typography className={classes.title} variant="body1">
           Unpaid Reports
         </Typography>
