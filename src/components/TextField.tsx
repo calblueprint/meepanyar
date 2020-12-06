@@ -1,8 +1,8 @@
 import React from 'react';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Typography, TextField } from '@material-ui/core';
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     textField: {
       border: `1px solid ${theme.palette.primary.main}`,
@@ -10,30 +10,29 @@ const styles = (theme: Theme) =>
       width: '100%',
       height: '30px',
       padding: '1px 10px',
-      marginBottom: '0.5rem',
+      marginBottom: '4px',
     },
-  });
+    bolded: {
+      fontWeight: 700,
+    }
+  }),
+);
 
 interface TextFieldProps {
-  classes: { textField: string };
-  label: string;
-  id: string;
-  primary: boolean;
+  label: string,
+  bold?: boolean,
 }
 
-function Field(props: TextFieldProps) {
-  const { classes } = props;
+export default function Field(props: TextFieldProps) {
+  const classes = useStyles();
   return (
     <div>
-      <Typography variant="body1">{props.label}</Typography>
-      <TextField
-        className={classes.textField}
-        id={props.id}
+      <Typography variant="body1" className={props.bold ? classes.bolded : undefined}>{props.label}</Typography>
+      <TextField className={classes.textField}
         InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
         InputLabelProps={{ shrink: true }}
-        color={props.primary ? 'primary' : undefined}
+        color="primary"
       />
     </div>
   );
-}
-export default withStyles(styles)(Field);
+};

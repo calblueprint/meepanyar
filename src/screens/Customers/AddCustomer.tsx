@@ -34,12 +34,12 @@ function AddCustomer(props: AddCustomerProps) {
     <div className={classes.root}>
       <BaseHeader title="Add New Customer" leftIcon="backNav" />
       <form noValidate className={classes.content}>
-        <TextField label={'Name'} id={'name'} primary={true} />
+        <TextField label={'Name'} />
         {/* <div className={classes.checkBoxes}> */}
         <Checkbox label={'Select if customer is inactive'} />
         <Checkbox label={'Meter:'} textField={'meter'} />
         {/* </div> */}
-        <TextField label={'Tariff Plan'} id={'tarrif-plan'} primary={true} />
+        <TextField label={'Tariff Plan'} />
         <Button label={'ADD'} />
       </form>
     </div>

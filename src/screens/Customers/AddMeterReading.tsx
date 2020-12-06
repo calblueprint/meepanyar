@@ -57,7 +57,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
             <Typography variant="body1" style={{ marginBottom: 15 }}>
               00.00.0000
             </Typography>
-            <TextField label={'New Meter Reading (kWh)'} id={'meter-reading'} primary={true} />
+            <TextField label={'New Meter Reading (kWh)'} />
           </div>
           <Button label={'ADD'} />
         </form>
