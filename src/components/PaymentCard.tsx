@@ -28,9 +28,6 @@ const useStyles = makeStyles((theme: Theme) =>
       color: 'white',
       backgroundColor: theme.palette.primary.main,
     },
-    paymentText: {
-      color: theme.palette.primary.main,
-    },
     unbolded: {
       fontWeight: 500,
     },
@@ -46,7 +43,7 @@ export default function FilledCard(props: CardProps) {
   const classes = useStyles();
   const getPaymentButtons = () => {
     return (
-      <Button className={classes.button} color="primary" disableElevation={true}>
+      <Button className={classes.button} color="primary" variant="contained" disableElevation={true}>
         Add Payment
       </Button>
     );
@@ -59,7 +56,7 @@ export default function FilledCard(props: CardProps) {
           <div>
             <Typography variant="h2">Payment to</Typography>
             <Typography variant="h2">Mee Panyar</Typography>
-            <Typography variant="h3" className={classes.paymentText}>
+            <Typography variant="h3" color="primary">
               {props.payment} Ks
             </Typography>
           </div>
@@ -68,10 +65,10 @@ export default function FilledCard(props: CardProps) {
         <div className={classes.break}></div>
         <div className={classes.itemWrapper}>
           <div>
-            <Typography variant="h4">Paid to Mee Panyar</Typography>
+            <Typography variant="body1">Paid to Mee Panyar</Typography>
           </div>
           <div>
-            <Typography variant="h4">{props.paid} Ks</Typography>
+            <Typography variant="body1">{props.paid} Ks</Typography>
           </div>
         </div>
       </div>

@@ -1,10 +1,13 @@
 import React from 'react';
 import BaseHeader from '../components/BaseComponents/BaseHeader';
-import { List, TextField, Typography, Button } from '@material-ui/core';
+import { TextField, Typography, Button, InputAdornment } from '@material-ui/core';
 import OutlinedColCard from '../components/OutlinedCardList';
 import { RouteComponentProps } from 'react-router-dom';
 import SearchIcon from '@material-ui/icons/Search';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+
+import FinancialInfo from '../components/FinancialInfo';
+import PaymentCard from '../components/PaymentCard';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -21,7 +24,6 @@ const styles = (theme: Theme) =>
       overflow: 'auto',
     },
     payButton: {
-      zIndex: -1,
       borderRadius: '12px',
       height: '30px',
       width: '80px',
@@ -29,7 +31,6 @@ const styles = (theme: Theme) =>
       backgroundColor: theme.palette.primary.main,
     },
     viewButton: {
-      zIndex: -1,
       borderRadius: '12px',
       height: '30px',
       width: '80px',
@@ -44,7 +45,7 @@ const styles = (theme: Theme) =>
     searchIcon: {
       fontSize: '20px',
       color: theme.palette.text.primary,
-      marginLeft: '-28px',
+      marginTop: '-5px',
     },
     search: {
       border: `1px solid ${theme.palette.primary.main}`,
@@ -89,23 +90,27 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
         <TextField
           className={classes.search}
           size="small"
-          InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
+          InputProps={{
+            style: { fontSize: 14 },
+            disableUnderline: true,
+            autoComplete: 'off',
+            endAdornment: <SearchIcon className={classes.searchIcon} />,
+           }}
           color="primary"
         />
-        <SearchIcon className={classes.searchIcon} />
       </div>
     );
   };
 
   const getPaymentButtons = () => {
     return (
-      <Button className={classes.payButton} color="primary" disableElevation={true}>Pay</Button>
+      <Button className={classes.payButton} variant="contained" color="primary" disableElevation={true}>Pay</Button>
     );
   };
 
   const getViewButtons = () => {
     return (
-      <Button className={classes.viewButton} color="primary" disableElevation={true}>View</Button>
+      <Button className={classes.viewButton} variant="contained" color="primary" disableElevation={true}>View</Button>
     );
   };
 
@@ -114,17 +119,19 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
       <BaseHeader leftIcon="backNav" title="Reports" />
       {getSearch()}
       <div className={classes.content}>
-        <Typography className={classes.title} variant="h4">
+      <FinancialInfo bankName="h" accountName="n" accountNumber={9239} balance={2932} />
+      <PaymentCard payment={232} paid={212} />
+        <Typography className={classes.title} variant="body1">
           Unpaid Reports
         </Typography>
         {dummyData.map((report: any, index) => (
-          <OutlinedColCard key={report.label} info={report} primary={false} rightIcon={getPaymentButtons()} />
+          <OutlinedColCard key={index} info={report} primary={false} rightIcon={getPaymentButtons()} />
         ))}
-        <Typography className={classes.title} variant="h4">
+        <Typography className={classes.title} variant="body1">
           Paid Reports
         </Typography>
         {dummyData.map((report: any, index) => (
-          <OutlinedColCard key={report.label} info={report} primary={false} rightIcon={getViewButtons()} />
+          <OutlinedColCard key={index} info={report} primary={false} rightIcon={getViewButtons()} />
         ))}
       </div>
     </div>

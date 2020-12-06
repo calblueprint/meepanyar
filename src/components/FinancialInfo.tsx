@@ -8,9 +8,6 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       color: theme.palette.text.primary,
     },
-    title: {
-      color: theme.palette.text.secondary,
-    },
     content: {
       marginTop: '10px',
       border: `1px solid ${theme.palette.divider}`,
@@ -53,40 +50,36 @@ export default function FilledCard(props: CardProps) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h2" className={classes.title}>
+      <Typography variant="h2" color="textSecondary">
         Financial Info
       </Typography>
       <div className={classes.content}>
         <div className={classes.itemWrapper}>
           <div>
-            <Typography className={classes.bolded} variant="h4">
+            <Typography className={classes.bolded} variant="body1">
               Bank
             </Typography>
-            <Typography className={classes.bolded} variant="h4">
+            <Typography className={classes.bolded} variant="body1">
               Account Number
             </Typography>
-            <Typography className={classes.bolded} variant="h4">
+            <Typography className={classes.bolded} variant="body1">
               Account Name
             </Typography>
           </div>
           <div className={classes.right}>
-            <Typography variant="h4">{props.bankName}</Typography>
-            <Typography variant="h4">**** **** {props.accountNumber}</Typography>
-            <Typography variant="h4">{props.accountName}</Typography>
+            <Typography variant="body1">{props.bankName}</Typography>
+            <Typography variant="body1">**** **** {props.accountNumber}</Typography>
+            <Typography variant="body1">{props.accountName}</Typography>
           </div>
         </div>
         <Divider className={classes.divider} />
         <div className={classes.itemWrapper}>
-          <div>
-            <Typography className={classes.bolded} variant="h4">
-              Remaining Balance
-            </Typography>
-          </div>
-          <div className={classes.right}>
-            <Typography variant="h4" className={classes.balanceText}>
-              {props.balance} Ks
-            </Typography>
-          </div>
+          <Typography className={classes.bolded} variant="body1">
+            Remaining Balance
+          </Typography>
+          <Typography variant="body1" className={classes.balanceText}>
+            {props.balance} Ks
+          </Typography>
         </div>
       </div>
       <div className={classes.fieldContainer}>
