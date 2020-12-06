@@ -42,7 +42,7 @@ const styles = (theme: Theme) =>
       flexDirection: 'row',
       marginLeft: 'auto',
       marginRight: 'auto',
-      marginTop: '31.97px',
+      marginTop: '10px',
     },
   });
 
