@@ -1,32 +1,35 @@
-import { createStyles, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
+import { withStyles, createStyles } from '@material-ui/core/styles';
 
 import { SiteRecord } from '../../utils/airtable/interface';
-import FinancialSumCard from './components/FinancialSumCard';
-import HomeInfoCard from './components/HomeInfo';
+import HomeMenuItem from './components/HomeMenuItem';
+import SiteMenu from './components/SiteMenu';
 
 import Typography from '@material-ui/core/Typography';
+import WifiIcon from '@material-ui/icons/Wifi';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 
-const styles = (theme: Theme) =>
+const styles = () =>
   createStyles({
     header: {
       display: 'flex',
       justifyContent: 'space-between',
-      marginBottom: '25px',
+      marginBottom: '35px',
     },
     select: {
       color: '#828282',
       display: 'flex',
       alignItems: 'flex-end',
+      width: '200px',
     },
     network: {
       color: '#BDBDBD',
       textAlign: 'right',
+      width: '100px',
     },
   });
 
@@ -35,46 +38,10 @@ interface HomeProps {
   lastUpdated: string;
   isOnline: boolean;
   currentSite: SiteRecord;
-  sites: SiteRecord[];
 }
 
 function Home(props: HomeProps) {
-  const { classes, lastUpdated, currentSite, sites } = props;
-  const [selectedSite, setSelectedSite] = useState<SiteRecord>();
-
-  const renderSites = () => {
-    // if (toCharge != null && outStandingPayments != null) {
-    //   return <HomeInfoCard customer={toCharge.toString()} payment={outStandingPayments.toString()} unpaid={'0'} incidents={'0'} />;
-    // }
-    return <HomeInfoCard customer={'0'} payment={'0'} unpaid={'0'} incidents={'0'} />;
-  };
-
-  const renderMenuOptions = () => {
-    const siteData: SiteRecord[] | null = sites;
-    if (siteData) {
-      return siteData.map((site: SiteRecord) => (
-        <MenuItem onClick={() => handleSiteChange(site)} key={site.name}>
-          {site.name}
-        </MenuItem>
-      ));
-    }
-  };
-
-  const handleSiteChange = (newSite: SiteRecord) => {
-    setSelectedSite(newSite);
-  };
-
-  const getNetworkInfo = () => {
-    return (
-      <div className={classes.network}>
-        <WifiOffIcon color="secondary" />
-        <Typography className={classes.network} variant="body1">
-          Last Connected to Network <br />
-          {lastUpdated}
-        </Typography>
-      </div>
-    );
-  };
+  const { classes, lastUpdated, isOnline, currentSite } = props;
 
   return (
     <BaseScreen rightIcon="user">
@@ -82,13 +49,29 @@ function Home(props: HomeProps) {
         <div className={classes.select}>
           <Typography variant="h1">
             {currentSite.name}
-            <Select>{renderMenuOptions()}</Select>
+            <SiteMenu currentSite={currentSite} />
           </Typography>
         </div>
-        {getNetworkInfo()}
+        <div className={classes.network}>
+          {isOnline ? <WifiIcon color="primary" /> : <WifiOffIcon color="secondary" />}
+          <Typography className={classes.network} variant="body1">
+            Last Connected to Network <br />
+            {lastUpdated}
+          </Typography>
+        </div>
       </div>
-      {renderSites()}
-      <FinancialSumCard />
+
+      <HomeMenuItem
+        label="Customer Alerts"
+        amount={1}
+        sublabels={[
+          { amount: 1, label: 'Customers to Charge' },
+          { amount: 2, label: 'Outstanding Payments' },
+        ]}
+      />
+      <HomeMenuItem label="Unpaid Reports" amount={1} />
+      <HomeMenuItem label="Unresolved Incidents" amount={0} />
+      <HomeMenuItem label="Financial Summary" noBadge={true} />
     </BaseScreen>
   );
 }
@@ -101,9 +84,8 @@ const mapStateToProps = (state: RootState) => {
   }
   const isOnline = state.userData.isOnline;
   const currentSite = state.siteData.currentSite;
-  const sites = state.siteData.sites;
 
-  return { lastUpdated, isOnline, currentSite, sites };
+  return { lastUpdated, isOnline, currentSite };
 };
 
 export default connect(mapStateToProps)(withStyles(styles)(Home));

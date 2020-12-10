@@ -67,4 +67,4 @@ const getPaymentsForCustomer = async (customer: CustomerRecord): Promise<Payment
   return payments;
 };
 
-export { refreshSiteData };
+export { refreshSiteData, setCurrentSite };
