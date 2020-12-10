@@ -51,7 +51,6 @@ const getMeterReadingsForCustomer = async (customer: CustomerRecord): Promise<Me
   if (meterReadingIds) {
     meterReadings = await getMeterReadingsByIds(meterReadingIds);
   }
-  meterReadings.sort((a, b) => (Date.parse(a.date) > Date.parse(b.date)) ? -1 : 1)
   return meterReadings;
 };
 
