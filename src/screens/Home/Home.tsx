@@ -21,12 +21,6 @@ const styles = () =>
       justifyContent: 'space-between',
       marginBottom: '35px',
     },
-    select: {
-      color: '#828282',
-      display: 'flex',
-      alignItems: 'flex-end',
-      width: '200px',
-    },
     network: {
       color: '#BDBDBD',
       textAlign: 'right',
@@ -35,7 +29,7 @@ const styles = () =>
   });
 
 interface HomeProps {
-  classes: any;
+  classes: { header: string; network: string };
   lastUpdated: string;
   isOnline: boolean;
   currentSite: SiteRecord;
@@ -47,12 +41,7 @@ function Home(props: HomeProps) {
   return (
     <BaseScreen rightIcon="user">
       <div className={classes.header}>
-        <div className={classes.select}>
-          <Typography variant="h1">
-            {currentSite.name}
-            <SiteMenu currentSite={currentSite} />
-          </Typography>
-        </div>
+        <SiteMenu currentSite={currentSite} />
         <div className={classes.network}>
           {isOnline ? <WifiIcon color="primary" /> : <WifiOffIcon color="secondary" />}
           <Typography className={classes.network} variant="body1">

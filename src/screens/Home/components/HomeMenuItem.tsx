@@ -14,7 +14,7 @@ interface HomeMenuItemProps {
   amount?: number;
   sublabels?: sublabel[];
   noBadge?: boolean;
-  classes: any;
+  classes: { root: string; content: string; noAlert: string; sublabel: string; icon: string; grey: string };
 }
 
 const styles = (theme: Theme) =>
