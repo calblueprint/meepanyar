@@ -42,8 +42,8 @@ const styles = (theme: Theme) =>
       color: '#BDBDBD',
     },
     icon: {
-      width: '25px',
-      height: '25px',
+      width: '20px',
+      height: '20px',
       color: theme.palette.common.white,
       display: 'flex',
       alignItems: 'center',
@@ -81,7 +81,7 @@ function HomeMenuItem(props: HomeMenuItemProps) {
         </div>
         {noBadge ? null : (
           <div className={`${classes.icon} ${amount ? null : classes.grey}`}>
-            {amount ? <Typography variant="body2">{amount}</Typography> : <CheckIcon />}
+            {amount ? <Typography variant="body2">{amount}</Typography> : <CheckIcon fontSize="small" />}
           </div>
         )}
       </div>

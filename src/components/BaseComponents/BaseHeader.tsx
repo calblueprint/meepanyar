@@ -1,6 +1,5 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CreateIcon from '@material-ui/icons/Create';
@@ -32,8 +31,10 @@ const styles = (theme: Theme) =>
     right: {
       float: 'right',
     },
-    grey: {
+    account: {
       color: theme.palette.divider,
+      fontSize: '30px',
+      padding: 0,
     },
   });
 
@@ -65,7 +66,7 @@ function BaseHeader(props: HeaderProps) {
   const icons: { [key: string]: JSX.Element } = {
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />),
-    user: getIcon(empty, <AccountCircleIcon className={classes.grey} />),
+    user: getIcon(empty, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
 
   function empty() {} //temporary empty function

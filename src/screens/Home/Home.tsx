@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
 
 import { SiteRecord } from '../../utils/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
@@ -61,17 +62,23 @@ function Home(props: HomeProps) {
         </div>
       </div>
 
-      <HomeMenuItem
-        label="Customer Alerts"
-        amount={1}
-        sublabels={[
-          { amount: 1, label: 'Customers to Charge' },
-          { amount: 2, label: 'Outstanding Payments' },
-        ]}
-      />
-      <HomeMenuItem label="Unpaid Reports" amount={1} />
+      <Link to={'/customers'}>
+        <HomeMenuItem
+          label="Customer Alerts"
+          amount={1}
+          sublabels={[
+            { amount: 1, label: 'Customers to Charge' },
+            { amount: 2, label: 'Outstanding Payments' },
+          ]}
+        />
+      </Link>
+      <Link to={'/financialsummary'}>
+        <HomeMenuItem label="Unpaid Reports" amount={1} />
+      </Link>
       <HomeMenuItem label="Unresolved Incidents" amount={0} />
-      <HomeMenuItem label="Financial Summary" noBadge={true} />
+      <Link to={'/financialsummary'}>
+        <HomeMenuItem label="Financial Summary" noBadge={true} />
+      </Link>
     </BaseScreen>
   );
 }
