@@ -1,5 +1,4 @@
 import Airtable from '@calblueprint/airlock';
-import { openDB } from 'idb';
 
 const BASE_ID = process.env.REACT_APP_AIRTABLE_BASE_ID;
 const API_KEY = 'airlock';
@@ -11,5 +10,6 @@ Airtable.configure({
 });
 
 const base = Airtable.base(BASE_ID);
+
 
 export { base };
