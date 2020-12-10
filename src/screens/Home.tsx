@@ -2,8 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../lib/moment/momentUtils';
-import { getAllSites, getAllTariffPlans } from '../utils/new-schema/request';
-import { createCustomer, createMeterReadingsandInvoice } from '../lib/airtable/airtable';
+import { getAllSites, getAllTariffPlans, createCustomer as createCustomers, createMeterReadingsandInvoice } from '../utils/new-schema/request';
 import moment from 'moment';
 import { getUserId } from '../lib/redux/userData';
 
@@ -60,7 +59,7 @@ class Home extends React.Component<HomeProps, HomeState> {
       rid: 'recoNPk1l0vYoWxnx',
     };
 
-    createCustomer(customerData);
+    createCustomers(customerData);
   };
 
   createMeterReading = async (): Promise<void> => {
@@ -86,7 +85,7 @@ class Home extends React.Component<HomeProps, HomeState> {
       amountBilled: 100,
       billedById: getUserId(),
     };
-    createMeterReadingsandInvoice(customerData, meterReading);
+    createMeterReadingsandInvoice(meterReading, customerData);
   };
 
   getTariffPlans = async () => {
