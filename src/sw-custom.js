@@ -37,7 +37,7 @@ if ("function" === typeof importScripts) {
             })
         );
 
-        // Route will catch all failed POST requests to route.
+        // Route will catch all failed POST requests that satisfies regex.
         // Will add to bgSyncPlugin queue and will resend when network reconnect
         // TODO: Change to know routes once we know the routes needed to catch
         workbox.routing.registerRoute(

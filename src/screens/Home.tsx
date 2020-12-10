@@ -2,7 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../lib/moment/momentUtils';
-import { getAllSites, getAllTariffPlans, createCustomer as createCustomers, createMeterReadingsandInvoice } from '../utils/new-schema/request';
+import {
+  getAllSites,
+  getAllTariffPlans,
+  createCustomer as createCustomers,
+  createMeterReadingsandInvoice,
+} from '../utils/new-schema/request';
 import moment from 'moment';
 import { getUserId } from '../lib/redux/userData';
 
