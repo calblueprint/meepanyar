@@ -61,7 +61,6 @@ class Home extends React.Component<HomeProps, HomeState> {
       sitesId: siteId,
       meterReadings: [],
       payments: [],
-      rid: 'recoNPk1l0vYoWxnx',
     };
 
     createCustomers(customerData);
@@ -80,7 +79,6 @@ class Home extends React.Component<HomeProps, HomeState> {
       sitesId: siteId,
       meterReadings: [],
       payments: [],
-      rid: 'recoNPk1l0vYoWxnx',
     };
 
     const meterReading = {

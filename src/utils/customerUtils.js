@@ -1,4 +1,3 @@
-
 import { openDB } from 'idb';
 
 // We define a customer to be the same if they have the same
@@ -16,6 +15,9 @@ export const checkSameCustomer = (customerOne, customerTwo) => {
     return firstName && secondName && firstName === secondName && firstMeterNumber === secondMeterNumber;
 }
 
+// This function is called when creating meterReadings or payments for an offline customer
+// (one that is not yet in the airtable). We look for the "create customer" request in the
+// background-sync object store and modify the request to include creating a meterReading / payment as well.
 export const addToOfflineCustomer = async (customer, fieldToAppend, objectToAdd) => {
     let db, getTransaction, objectStore, requestCursor;
     const requestKeyToValue = {};
@@ -48,7 +50,7 @@ export const addToOfflineCustomer = async (customer, fieldToAppend, objectToAdd)
     }
     await getTransaction.done;
 
-    // Decode the requestBlobs and replace if appropriate
+    // Decode the requestBlobs and append a value to the field if a matching customer is found
     for (const [requestKeyString, requestValue] of Object.entries(requestKeyToValue)) {
         console.log("Request value: ", requestValue);
         const requestBodyBlob = requestValue.storableRequest.requestInit.body;
