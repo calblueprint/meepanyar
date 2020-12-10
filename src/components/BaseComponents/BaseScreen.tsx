@@ -1,5 +1,4 @@
 import React from 'react';
-import BaseNavigation from './BaseNavigation';
 import BaseHeader, { HeaderProps } from './BaseHeader';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
@@ -11,6 +10,7 @@ const styles = () =>
       width: '100%',
       height: 'auto',
       position: 'absolute',
+      padding: '0 25px',
     },
   });
 

@@ -9,7 +9,6 @@ import { RouteComponentProps } from 'react-router-dom';
 const styles = (theme: Theme) =>
   createStyles({
     content: {
-      margin: '0 25px',
       color: theme.palette.text.primary,
     },
     outlined: {

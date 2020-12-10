@@ -13,7 +13,6 @@ const styles = (theme: Theme) =>
       color: theme.palette.text.primary,
     },
     content: {
-      margin: '0 25px',
       color: theme.palette.text.primary,
     },
   });

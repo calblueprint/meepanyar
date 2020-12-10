@@ -17,14 +17,25 @@ const styles = (theme: Theme) =>
       alignItems: 'center',
       height: '85px',
       backgroundColor: 'white',
+      textAlign: 'center',
     },
     title: {
       flexGrow: 1,
-      textAlign: 'center',
       color: theme.palette.text.primary,
     },
-    emptySpace: {
-      width: '40px',
+    toolbar: {
+      position: 'absolute',
+      width: '100%',
+      padding: '0 10px',
+    },
+    left: {
+      float: 'left',
+    },
+    right: {
+      float: 'right',
+    },
+    grey: {
+      color: theme.palette.divider,
     },
   });
 
@@ -37,7 +48,7 @@ export interface HeaderProps {
 }
 
 function BaseHeader(props: HeaderProps) {
-  const { classes, match } = props;
+  const { leftIcon, title, rightIcon, classes, match } = props;
   const history = useHistory();
 
   const getIcon = (onClick: (event: React.MouseEvent) => void, icon: JSX.Element) => {
@@ -56,22 +67,24 @@ function BaseHeader(props: HeaderProps) {
     menu: getIcon(history.goBack, <MenuIcon />), //replace history.goBack with correct functions
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />),
-    user: getIcon(history.goBack, <AccountCircleIcon />),
+    user: getIcon(history.goBack, <AccountCircleIcon className={classes.grey} />),
   };
+
+  const left = leftIcon ? icons[leftIcon] : null;
+  const header = title ? (
+    <Typography className={classes.title} variant="h2">
+      {title}
+    </Typography>
+  ) : null;
+  const right = rightIcon ? icons[rightIcon] : null;
 
   return (
     <div className={classes.root}>
-      <AppBar color="transparent" elevation={0} position="static">
-        <Toolbar>
-          {props.leftIcon ? icons[props.leftIcon] : null}
-          {props.title ? (
-            <Typography className={classes.title} variant="h2">
-              {props.title}
-            </Typography>
-          ) : null}
-          {props.rightIcon ? icons[props.rightIcon] : <div className={classes.emptySpace} />}
-        </Toolbar>
-      </AppBar>
+      {header}
+      <div className={classes.toolbar}>
+        <div className={classes.left}>{left}</div>
+        <div className={classes.right}>{right}</div>
+      </div>
     </div>
   );
 }

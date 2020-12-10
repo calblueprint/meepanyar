@@ -14,7 +14,6 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 const styles = (theme: Theme) =>
   createStyles({
     content: {
-      margin: '0 25px',
       color: theme.palette.text.primary,
     },
     header: {

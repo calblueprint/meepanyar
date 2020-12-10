@@ -11,7 +11,6 @@ const styles = (theme: Theme) =>
     content: {
       display: 'flex',
       flexDirection: 'column',
-      margin: '0 25px',
       color: theme.palette.text.primary,
       height: '100%',
     },
