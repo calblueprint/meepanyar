@@ -64,11 +64,12 @@ function BaseHeader(props: HeaderProps) {
   };
 
   const icons: { [key: string]: JSX.Element } = {
-    menu: getIcon(history.goBack, <MenuIcon />), //replace history.goBack with correct functions
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />),
-    user: getIcon(history.goBack, <AccountCircleIcon className={classes.grey} />),
+    user: getIcon(empty, <AccountCircleIcon className={classes.grey} />),
   };
+
+  function empty() {} //temporary empty function
 
   const left = leftIcon ? icons[leftIcon] : null;
   const header = title ? (

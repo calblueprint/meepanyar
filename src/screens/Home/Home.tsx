@@ -1,18 +1,16 @@
-import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import { createStyles, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '../lib/redux/store';
-import { formatUTCDateStringToLocal } from '../lib/moment/momentUtils';
+import { RootState } from '../../lib/redux/store';
+import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
 
-import { CustomerRecord, SiteRecord } from '../utils/airtable/interface';
-import FinancialSumCard from '../components/FinancialSumCard';
-import HomeInfoCard from '../components/HomeInfo';
-import { store } from '../lib/redux/store';
-import { current } from '@reduxjs/toolkit';
+import { SiteRecord } from '../../utils/airtable/interface';
+import FinancialSumCard from './components/FinancialSumCard';
+import HomeInfoCard from './components/HomeInfo';
 
 import Typography from '@material-ui/core/Typography';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
-import BaseHeader from '../components/BaseComponents/BaseHeader';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -33,7 +31,7 @@ const styles = (theme: Theme) =>
   });
 
 interface HomeProps {
-  classes: any; //{ header: string };
+  classes: any;
   lastUpdated: string;
   isOnline: boolean;
   currentSite: SiteRecord;
@@ -79,8 +77,7 @@ function Home(props: HomeProps) {
   };
 
   return (
-    <div>
-      <BaseHeader rightIcon="user" />
+    <BaseScreen rightIcon="user">
       <div className={classes.header}>
         <div className={classes.select}>
           <Typography variant="h1">
@@ -92,7 +89,7 @@ function Home(props: HomeProps) {
       </div>
       {renderSites()}
       <FinancialSumCard />
-    </div>
+    </BaseScreen>
   );
 }
 
