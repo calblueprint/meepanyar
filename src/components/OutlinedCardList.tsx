@@ -12,7 +12,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     content: {
       padding: '8px 12px',
-      textAlign: 'left',
       display: 'flex',
       flexDirection: 'column',
     },
