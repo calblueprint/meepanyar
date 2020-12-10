@@ -12,13 +12,21 @@ Airtable.configure({
 
 const base = Airtable.base(BASE_ID);
 
+const checkSameCustomer = (customerOne, customerTwo) => {
+    const firstName = customerOne.name;
+    const secondName = customerTwo.name;
+    const firstMeterNumber = customerOne.meterNumber;
+    const secondMeterNumber = customerTwo.meterNumber;
+
+    return firstName && secondName && firstName === secondName && firstMeterNumber === secondMeterNumber;
+}
+
 const addToOfflineCustomer = async (customer, fieldToAppend, objectToAdd) => {
     const db = await openDB('workbox-background-sync');
-    const transaction = db.transaction('requests', 'readwrite');
-    const objectStore = transaction.objectStore('requests');
+    const getTransaction = db.transaction('requests', 'readwrite');
+    const objectStore = getTransaction.objectStore('requests');
     let requestCursor = await objectStore.openCursor();
     const requestKeyToValue = {};
-    const requestKeyToBody = {};
 
     console.log(customer, fieldToAppend, objectToAdd);
 
@@ -30,76 +38,36 @@ const addToOfflineCustomer = async (customer, fieldToAppend, objectToAdd) => {
             console.log(requestKey, requestValue);
 
             if (requestValue && requestValue.storableRequest && requestValue.storableRequest.requestInit) {
-                const requestBlob = requestValue.storableRequest.requestInit.body;
-                requestKeyToValue[requestKey] = requestBlob;
+                requestKeyToValue[requestKey] = requestValue;
             }
         } catch (error) {
             console.log('Error when iterating through cursor on key ', requestCursor.key);
         }
         requestCursor = await requestCursor.continue();
     }
-    await transaction.done;
+    await getTransaction.done;
 
-    // Decode the requestBlobs
-    for (const [requestKey, requestValue] of Object.entries(requestKeyToValue)) {
+    // Decode the requestBlobs and replace if appropriate
+    for (const [requestKeyString, requestValue] of Object.entries(requestKeyToValue)) {
+        console.log("Request value: ", requestValue);
         const requestBodyBlob = requestValue.storableRequest.requestInit.body;
         const requestBody = await requestBodyBlob.text();
-        const requestBodyJSON = JSON.parse(requestBody);
-        requestKeyToBody[requestKey] = requestBodyJSON;
+        const createCustomerJSON = JSON.parse(requestBody);
+
+        if (checkSameCustomer(customer, createCustomerJSON)) {
+            const modifiedRequest = { ...requestValue };
+            createCustomerJSON[fieldToAppend].push(objectToAdd);
+            const modifiedCustomerJSON = JSON.stringify(createCustomerJSON);
+            modifiedRequest.storableRequest.requestInit.body = new Blob([modifiedCustomerJSON], { type: 'application/json' });
+
+            const requestKey = isNaN(requestKeyString) ? requestKeyString : parseInt(requestKeyString);
+
+            console.log("Modified request: ", modifiedRequest);
+            await db.put('requests', modifiedRequest, requestKey);
+        } else {
+            console.log("Not same customer!");
+        }
     }
-
-    // Decode the requestBlobs
-
-
-    // const dbRequest = createDBRequest('workbox-background-sync');
-
-    // dbRequest.onsuccess = event => {
-    //     const dbInstance = event.target.result;
-    //     const transactionInstance = createTransaction(dbInstance, ["requests"]);
-    //     const objectStore = openObjectStore(transactionInstance, "requests");
-
-    //     objectStore.openCursor().onsuccess = event => {
-    //         const cursor = event.target.result;
-
-    //         if (cursor) {
-    //             try {
-    //                 console.log("Cursor key: ", cursor.key);
-    //                 console.log("Cursor value: ", cursor.value);
-    //                 const cursorValue = { ...cursor.value };
-    //                 const requestBodyBlob = cursorValue.storableRequest.requestInit.body;
-
-    //                 getJSONFromBlob(requestBodyBlob).then(bodyObject => {
-    //                     console.log("Body object ", bodyObject);
-
-    //                 })
-
-    //             } catch (error) {
-    //                 console.log("Error occurred when iterating through cursor ", error);
-    //                 cursor.continue();
-    //             }
-
-    //             const newBody = JSON.stringify({
-    //                 ...customer,
-    //                 [fieldToAppend]: [objectToAdd]
-    //             })
-    //             const newBlob = new Blob([newBody], { type: 'application/json' })
-    //             cursorValue.storableRequest.requestInit.body = newBlob;
-    //             console.log("Changed value: ", cursorValue);
-
-    //             const updateRequest = cursor.update(cursorValue);
-    //             updateRequest.onsucces = event => {
-    //                 console.log("Cursor update success");
-    //             };
-    //             updateRequest.onerror = event => {
-    //                 console.log("Cursor update error", event);
-    //             }
-
-    //             cursor.continue();
-    //         } else {
-    //             console.log("Cursor finished iterating");
-    //         }
-    //     }
-    // }
 }
 
 const createCustomer = async (customer) => {
@@ -123,14 +91,21 @@ const createCustomer = async (customer) => {
 const createMeterReadingsandInvoice = async (customer, meterReading) => {
     // If customer does not exist, we want to search the requests objectStore
     // to add the current meter reading to the customer request being POST'ed
-    if (!customer.id) {
-        addToOfflineCustomer(customer, 'METER_READING', meterReading)
+    if (!customer.rid) {
+        addToOfflineCustomer(customer, 'meterReadings', meterReading)
     } else {
-        // Just make a standard airlock call
-        const customerId = customer.id;
-        const meterReadingData = {
-            customerId: [customerId],
-            // Whatever else a meter reading needs
+        try {
+            meterReading.customerId = customer.rid;
+            const resp = await fetch('http://127.0.0.1:4000/meter-readings-and-invoices/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(meterReading)
+            })
+            console.log("Response for meter reading: ", resp);
+        } catch (err) {
+            console.log('Error: ', err);
         }
     }
 }
@@ -138,7 +113,7 @@ const createMeterReadingsandInvoice = async (customer, meterReading) => {
 // Create a meter reading for a customer
 const createPayment = async (customer, payment) => {
     if (!customer.id) {
-        addToOfflineCustomer(customer, 'PAYMENT', payment);
+        addToOfflineCustomer(customer, 'payments', payment);
     } else {
         const customerId = customer.id;
         const paymentData = {

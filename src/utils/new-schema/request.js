@@ -73,17 +73,36 @@ export const createManyTariffPlans = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createCustomer = async (record) => {
-  return createRecord(Tables.Customers, record);
+// We use a special, non-schema-generated createCustomer that hits a special endpoint
+// because we require additional logic to handle offline functionality
+const createCustomer = async (customer) => {
+  try {
+    const resp = await fetch('http://127.0.0.1:4000/customer/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(customer)
+    })
+
+    console.log("Customer created!");
+    console.log(resp);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+export const createCustomerUpdate = async (record) => {
+  return createRecord(Tables.CustomerUpdates, record);
 };
 
-export const createManyCustomers = async (records) => {
+export const createManyCustomerUpdates = async (records) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
   for (let i = 0; i < numCalls; i += 1) {
     const subset = records.slice(i * 10, (i + 1) * 10);
     if (subset.length > 0)
-      createPromises.push(createRecords(Tables.Customers, subset));
+      createPromises.push(createRecords(Tables.CustomerUpdates, subset));
   }
   return Promise.all(createPromises);
 };
@@ -141,7 +160,7 @@ export const getUserById = async (id) => {
   return getRecordById(Tables.Users, id);
 };
 
-export const getUsersByIds = async ( ids, filterByFormula = '', sort = []
+export const getUsersByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -159,7 +178,7 @@ export const getSiteById = async (id) => {
   return getRecordById(Tables.Sites, id);
 };
 
-export const getSitesByIds = async ( ids, filterByFormula = '', sort = []
+export const getSitesByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -177,7 +196,7 @@ export const getTariffPlanById = async (id) => {
   return getRecordById(Tables.TariffPlans, id);
 };
 
-export const getTariffPlansByIds = async ( ids, filterByFormula = '', sort = []
+export const getTariffPlansByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -195,7 +214,7 @@ export const getCustomerById = async (id) => {
   return getRecordById(Tables.Customers, id);
 };
 
-export const getCustomersByIds = async ( ids, filterByFormula = '', sort = []
+export const getCustomersByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -209,11 +228,29 @@ export const getAllCustomers = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Customers, filterByFormula, sort);
 };
 
+export const getCustomerUpdateById = async (id) => {
+  return getRecordById(Tables.CustomerUpdates, id);
+};
+
+export const getCustomerUpdatesByIds = async (ids, filterByFormula = '', sort = []
+) => {
+  let formula = `OR(${ids.reduce(
+    (f, id) => `${f} {ID}='${id}',`,
+    ''
+  )} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.CustomerUpdates, formula, sort);
+};
+
+export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
+};
+
 export const getMeterReadingsandInvoiceById = async (id) => {
   return getRecordById(Tables.MeterReadingsandInvoices, id);
 };
 
-export const getMeterReadingsandInvoicesByIds = async ( ids, filterByFormula = '', sort = []
+export const getMeterReadingsandInvoicesByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -231,7 +268,7 @@ export const getPaymentById = async (id) => {
   return getRecordById(Tables.Payments, id);
 };
 
-export const getPaymentsByIds = async ( ids, filterByFormula = '', sort = []
+export const getPaymentsByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -249,7 +286,7 @@ export const getFinancialSummarieById = async (id) => {
   return getRecordById(Tables.FinancialSummaries, id);
 };
 
-export const getFinancialSummariesByIds = async ( ids, filterByFormula = '', sort = []
+export const getFinancialSummariesByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -327,6 +364,21 @@ export const updateManyCustomers = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
+export const updateCustomerUpdate = async (id, recordUpdates) => {
+  return updateRecord(Tables.CustomerUpdates, id, recordUpdates);
+};
+
+export const updateManyCustomerUpdates = async (recordUpdates) => {
+  const updatePromises = [];
+  const numCalls = Math.ceil(recordUpdates.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = recordUpdates.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      updatePromises.push(updateRecords(Tables.CustomerUpdates, subset));
+  }
+  return Promise.all(updatePromises);
+};
+
 export const updateMeterReadingsandInvoice = async (id, recordUpdates) => {
   return updateRecord(Tables.MeterReadingsandInvoices, id, recordUpdates);
 };
@@ -387,6 +439,9 @@ export const deleteTariffPlan = async (id) => {
 };
 export const deleteCustomer = async (id) => {
   return deleteRecord(Tables.Customers, id);
+};
+export const deleteCustomerUpdate = async (id) => {
+  return deleteRecord(Tables.CustomerUpdates, id);
 };
 export const deleteMeterReadingsandInvoice = async (id) => {
   return deleteRecord(Tables.MeterReadingsandInvoices, id);

@@ -4,6 +4,8 @@ import { RootState } from '../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../lib/moment/momentUtils';
 import { getAllSites, getAllTariffPlans } from '../utils/new-schema/request';
 import { createCustomer, createMeterReadingsandInvoice } from '../lib/airtable/airtable';
+import moment from 'moment';
+import { getUserId } from '../lib/redux/userData';
 
 interface HomeProps {
   lastUpdated: string;
@@ -35,7 +37,7 @@ class Home extends React.Component<HomeProps, HomeState> {
   };
 
   getTariffPlan = () => {
-    return 'recOpsFHSM2pwaLXI';
+    return 'recoeD24hlQuSPCKQ';
   };
 
   getMeterNumber = () => {
@@ -48,7 +50,16 @@ class Home extends React.Component<HomeProps, HomeState> {
     const meterNumber = this.getMeterNumber();
     const tariffPlanId = this.getTariffPlan();
 
-    const customerData = { customerName, siteId, tariffPlanId, meterNumber };
+    const customerData = {
+      name: customerName,
+      meterNumber: meterNumber,
+      tariffPlansId: tariffPlanId,
+      sitesId: siteId,
+      meterReadings: [],
+      payments: [],
+      rid: 'recoNPk1l0vYoWxnx',
+    };
+
     createCustomer(customerData);
   };
 
@@ -58,8 +69,23 @@ class Home extends React.Component<HomeProps, HomeState> {
     const meterNumber = this.getMeterNumber();
     const tariffPlanId = this.getTariffPlan();
 
-    const customerData = { customerName, siteId, tariffPlanId, meterNumber };
-    const meterReading = { reading: 10, meterNumber: 10 };
+    const customerData = {
+      name: customerName,
+      meterNumber: meterNumber,
+      tariffPlansId: tariffPlanId,
+      sitesId: siteId,
+      meterReadings: [],
+      payments: [],
+      rid: 'recoNPk1l0vYoWxnx',
+    };
+
+    const meterReading = {
+      reading: 10,
+      meterNumber: 10,
+      date: moment().format('YYYY-MM-DD'),
+      amountBilled: 100,
+      billedById: getUserId(),
+    };
     createMeterReadingsandInvoice(customerData, meterReading);
   };
 
@@ -97,11 +123,20 @@ class Home extends React.Component<HomeProps, HomeState> {
 
 const mapStateToProps = (state: RootState) => {
   let lastUpdated = '';
+  let isOnline = false;
 
-  if (state.userData.lastUpdated) {
-    lastUpdated = formatUTCDateStringToLocal(state.userData.lastUpdated);
+  if (state.userData) {
+    const userData = state.userData;
+
+    if (userData.isOnline) {
+      isOnline = userData.isOnline;
+    }
+
+    if (userData.lastUpdated) {
+      lastUpdated = formatUTCDateStringToLocal(state.userData.lastUpdated);
+    }
   }
-  const isOnline = state.userData.isOnline;
+
   return { lastUpdated, isOnline };
 };
 

@@ -31,4 +31,15 @@ const checkOnline = (): void => {
   });
 };
 
-export { refreshUserData, checkOnline };
+const getUserId = (): string => {
+  const state = store.getState();
+  let userId = '';
+
+  if (state.userData && state.userData.user) {
+    userId = state.userData.user.id;
+  }
+
+  return userId;
+};
+
+export { refreshUserData, checkOnline, getUserId };
