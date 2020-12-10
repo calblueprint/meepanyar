@@ -1,6 +1,4 @@
 import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
@@ -63,6 +61,7 @@ function BaseHeader(props: HeaderProps) {
     history.push(`${match.url}/edit`);
   };
 
+  //TODO: allow users to input icons rather than map strings to icons
   const icons: { [key: string]: JSX.Element } = {
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />),
