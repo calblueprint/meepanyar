@@ -1,9 +1,7 @@
 import React from 'react';
-import './App.css';
 import { theme } from './styles/ThemeStyles';
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
-
-import LabelBottomNavigation from './components/BaseComponents/BottomNav';
+import BaseNavigation from './components/BaseComponents/BaseNavigation';
 import Login from './screens/Login';
 import Home from './screens/Home';
 
@@ -34,31 +32,37 @@ interface AppProps {
 function App(isSignedIn: AppProps) {
   const homeRedirect = isSignedIn ? '/home' : '/login';
 
+  const Container = () => (
+    <>
+      <AuthenticatedRoute path="/home" component={Home} />
+
+      <AuthenticatedRoute path="/customers" component={CustomerMain} exact />
+      <AuthenticatedRoute path="/customers/add" component={AddCustomer} />
+      <AuthenticatedRoute path={'/customers/:rid'} component={CustomerProfile} exact />
+      <AuthenticatedRoute path={'/customers/:rid/edit'} component={EditCustomer} />
+      <AuthenticatedRoute path="/customers/:rid/addMeter" component={AddMeterReading} />
+      <AuthenticatedRoute path={'/customers/:rid/records'} component={CustomerRecords} />
+
+      <AuthenticatedRoute path="/inventory" component={Inventory} />
+      <AuthenticatedRoute path="/maintenance" component={Maintenance} />
+      <AuthenticatedRoute path="/incidents" component={Incidents} />
+
+      <AuthenticatedRoute path="/financialsummary" component={FinancialSummary} />
+      <BaseNavigation />
+    </>
+  );
+
   return (
     <div className="App">
       <StylesProvider injectFirst>
         <ThemeProvider theme={theme}>
           <ConnectedRouter history={history}>
-            <LabelBottomNavigation />
             <Switch>
               <Route exact path="/">
                 <Redirect to={homeRedirect} />
               </Route>
-              <Route path="/login" component={Login} />
-              <AuthenticatedRoute path="/home" component={Home} />
-
-              <AuthenticatedRoute path="/customers" component={CustomerMain} exact />
-              <AuthenticatedRoute path="/customers/add" component={AddCustomer} />
-              <AuthenticatedRoute path={'/customers/:rid'} component={CustomerProfile} exact />
-              <AuthenticatedRoute path={'/customers/:rid/edit'} component={EditCustomer} />
-              <AuthenticatedRoute path="/customers/:rid/addMeter" component={AddMeterReading} />
-              <AuthenticatedRoute path={'/customers/:rid/records'} component={CustomerRecords} />
-
-              <AuthenticatedRoute path="/inventory" component={Inventory} />
-              <AuthenticatedRoute path="/maintenance" component={Maintenance} />
-              <AuthenticatedRoute path="/incidents" component={Incidents} />
-
-              <AuthenticatedRoute path="/financialsummary" component={FinancialSummary} />
+              <Route exact path="/(login)" component={Login} />
+              <Route component={Container} />
             </Switch>
           </ConnectedRouter>
         </ThemeProvider>
