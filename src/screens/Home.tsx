@@ -22,11 +22,18 @@ class Home extends React.Component<HomeProps, {}> {
 
 const mapStateToProps = (state: RootState) => {
   let lastUpdated = '';
+  let isOnline = false;
 
-  if (state.userData.lastUpdated) {
-    lastUpdated = formatUTCDateStringToLocal(state.userData.lastUpdated);
+  if (state.userData) {
+    if (state.userData.isOnline) {
+      isOnline = state.userData.isOnline;
+    }
+
+    if (state.userData.lastUpdated) {
+      lastUpdated = formatUTCDateStringToLocal(state.userData.lastUpdated);
+    }
   }
-  const isOnline = state.userData.isOnline;
+
   return { lastUpdated, isOnline };
 };
 

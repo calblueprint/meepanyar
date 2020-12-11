@@ -30,6 +30,7 @@
     "@types/styled-components": "^5.1.3",
     "airtable": "^0.9.0",
     "bootstrap": "^4.5.2",
+    "idb": "^5.0.7",
     "material-ui-icons": "^1.0.0-beta.36",
     "prop-types": "^15.7.2",
     "connected-react-router": "^6.8.0",
