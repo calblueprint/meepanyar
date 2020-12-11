@@ -1,6 +1,4 @@
 import React from 'react';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
@@ -13,24 +11,42 @@ import { useHistory } from 'react-router-dom';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      flexGrow: 1,
-      padding: '15px 0',
+      display: 'flex',
+      alignItems: 'center',
+      height: '85px',
+      backgroundColor: 'white',
+      textAlign: 'center',
     },
     title: {
       flexGrow: 1,
       color: theme.palette.text.primary,
     },
+    toolbar: {
+      position: 'absolute',
+      width: '100%',
+      padding: '0 10px',
+    },
+    left: {
+      float: 'left',
+    },
+    right: {
+      float: 'right',
+    },
+    grey: {
+      color: theme.palette.divider,
+    },
   });
 
-interface HeaderProps {
+export interface HeaderProps {
   leftIcon?: string;
   title?: string;
   rightIcon?: string;
   classes: any;
+  match?: any;
 }
 
 function BaseHeader(props: HeaderProps) {
-  const { classes } = props;
+  const { leftIcon, title, rightIcon, classes, match } = props;
   const history = useHistory();
 
   const getIcon = (onClick: (event: React.MouseEvent) => void, icon: JSX.Element) => {
@@ -41,26 +57,33 @@ function BaseHeader(props: HeaderProps) {
     );
   };
 
+  const navigateToEdit = () => {
+    history.push(`${match.url}/edit`);
+  };
+
+  //TODO: allow users to input icons rather than map strings to icons
   const icons: { [key: string]: JSX.Element } = {
     menu: getIcon(history.goBack, <MenuIcon />), //replace history.goBack with correct functions
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
-    edit: getIcon(history.goBack, <CreateIcon />),
-    user: getIcon(history.goBack, <AccountCircleIcon />),
+    edit: getIcon(navigateToEdit, <CreateIcon />),
+    user: getIcon(history.goBack, <AccountCircleIcon className={classes.grey} />),
   };
+
+  const left = leftIcon ? icons[leftIcon] : null;
+  const header = title ? (
+    <Typography className={classes.title} variant="h2">
+      {title}
+    </Typography>
+  ) : null;
+  const right = rightIcon ? icons[rightIcon] : null;
 
   return (
     <div className={classes.root}>
-      <AppBar color="transparent" elevation={0} position="static">
-        <Toolbar>
-          {props.leftIcon ? icons[props.leftIcon] : null}
-          {props.title ? (
-            <Typography className={classes.title} variant="h2">
-              {props.title}
-            </Typography>
-          ) : null}
-          {props.rightIcon ? icons[props.rightIcon] : null}
-        </Toolbar>
-      </AppBar>
+      {header}
+      <div className={classes.toolbar}>
+        <div className={classes.left}>{left}</div>
+        <div className={classes.right}>{right}</div>
+      </div>
     </div>
   );
 }

@@ -47,4 +47,5 @@ export const SignUpLink = styled(Link)`
   color: #828282;
   font-size: 12px;
   font-weight: bold;
+  text-align: center;
 `;
