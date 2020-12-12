@@ -55,7 +55,8 @@ function SiteMenu(props: SiteMenuProps) {
   return (
     <div className={classes.root}>
       <Typography variant="h1">
-        {currentSite.name}
+        {/* TODO: Loading screen for empty store */}
+        {currentSite && currentSite.name}
         <IconButton className={classes.icon} onClick={openMenu}>
           <ArrowDropDownIcon color="primary" />
         </IconButton>
