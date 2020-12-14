@@ -3,7 +3,7 @@ import { theme } from './styles/ThemeStyles';
 import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import BaseNavigation from './components/BaseComponents/BaseNavigation';
 import Login from './screens/Login';
-import Home from './screens/Home';
+import Home from './screens/Home/Home';
 
 import CustomerMain from './screens/Customers/CustomerMain';
 import CustomerProfile from './screens/Customers/CustomerProfile';

@@ -36,7 +36,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     content: {
       color: theme.palette.text.primary,
-      margin: '0px 35px',
     },
     divider: {
       margin: '8px 0',

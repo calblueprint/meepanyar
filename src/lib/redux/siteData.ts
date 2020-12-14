@@ -51,7 +51,6 @@ const getMeterReadingsForCustomer = async (customer: CustomerRecord): Promise<Me
   if (meterReadingIds) {
     meterReadings = await getMeterReadingsByIds(meterReadingIds);
   }
-
   return meterReadings;
 };
 
@@ -67,4 +66,4 @@ const getPaymentsForCustomer = async (customer: CustomerRecord): Promise<Payment
   return payments;
 };
 
-export { refreshSiteData };
+export { refreshSiteData, setCurrentSite };
