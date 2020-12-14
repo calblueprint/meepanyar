@@ -23,7 +23,7 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
-import { addToOfflineCustomer } from '../customerUtils';
+import { addToOfflineCustomer } from '../utils/customerUtils';
 
 /*
  ******* CREATE RECORDS *******
@@ -326,7 +326,7 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Payments, filterByFormula, sort);
 };
 
-export const getFinancialSummarieById = async (id) => {
+export const getFinancialSummaryById = async (id) => {
   return getRecordById(Tables.FinancialSummaries, id);
 };
 

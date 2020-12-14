@@ -8,7 +8,7 @@ import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { CustomerRecord } from '../../utils/airtable/interface';
+import { CustomerRecord } from '../../lib/airtable/interface';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 
 const styles = (theme: Theme) =>

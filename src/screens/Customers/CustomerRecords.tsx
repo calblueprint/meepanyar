@@ -4,7 +4,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import TabMenu from './components/TabMenu';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
-import { PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';
+import { PaymentRecord, MeterReadingRecord } from '../../lib/airtable/interface';
 
 const styles = (theme: Theme) =>
   createStyles({
