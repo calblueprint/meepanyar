@@ -29,7 +29,7 @@ export const Columns = {
 	"Sites": {
 		name: {name:`Name`, type:`text`},
 		userIds: {name:`Users`, type:`foreignKey-many`},
-		customerIds: {name:`Customers`, type:`foreignKey-many`},
+		customers: {name:`Customers`, type:`custom-object`}, // Modified via patch.
 		financialSummarieIds: {name:`Financial Summaries`, type:`foreignKey-many`},
 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
 		field6: {name:`Field 6`, type:`text`},
