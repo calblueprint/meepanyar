@@ -158,7 +158,7 @@ export const createPayment = async (payment, customer) => {
   }
 }
 
-export const createFinancialSummarie = async (record) => {
+export const createFinancialSummary = async (record) => {
   return createRecord(Tables.FinancialSummaries, record);
 };
 
@@ -303,7 +303,7 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Payments, filterByFormula, sort);
 };
 
-export const getFinancialSummarieById = async (id) => {
+export const getFinancialSummaryById = async (id) => {
   return getRecordById(Tables.FinancialSummaries, id);
 };
 
