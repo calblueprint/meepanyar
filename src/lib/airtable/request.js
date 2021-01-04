@@ -74,8 +74,8 @@ export const createManyTariffPlans = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: We use a special, non-schema-generated createCustomer 
-// that hits a special endpoint because we require additional logic to 
+// NONGENERATED: We use a special, non-schema-generated createCustomer
+// that hits a special endpoint because we require additional logic to
 // handle offline functionality
 export const createCustomer = async (customer) => {
   try {
@@ -267,7 +267,7 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) => 
   return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
 };
 
-export const getMeterReadingsandInvoiceById = async (id) => {
+export const getMeterReadingandInvoiceById = async (id) => {
   return getRecordById(Tables.MeterReadingsandInvoices, id);
 };
 
@@ -400,7 +400,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateMeterReadingsandInvoice = async (id, recordUpdates) => {
+export const updateMeterReadingandInvoice = async (id, recordUpdates) => {
   return updateRecord(Tables.MeterReadingsandInvoices, id, recordUpdates);
 };
 
@@ -430,7 +430,7 @@ export const updateManyPayments = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateFinancialSummarie = async (id, recordUpdates) => {
+export const updateFinancialSummary = async (id, recordUpdates) => {
   return updateRecord(Tables.FinancialSummaries, id, recordUpdates);
 };
 
@@ -470,6 +470,6 @@ export const deleteMeterReadingsandInvoice = async (id) => {
 export const deletePayment = async (id) => {
   return deleteRecord(Tables.Payments, id);
 };
-export const deleteFinancialSummarie = async (id) => {
+export const deleteFinancialSummary = async (id) => {
   return deleteRecord(Tables.FinancialSummaries, id);
 };
