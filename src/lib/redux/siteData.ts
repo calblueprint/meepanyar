@@ -1,7 +1,7 @@
 import { store } from './store';
 import { setLoadingForSiteData, setCurrSite, saveSiteData } from './siteDataSlice';
-import { getAllSites, getCustomersByIds, getMeterReadingsByIds, getPaymentsByIds } from '../../utils/airtable/requests';
-import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../utils/airtable/interface';
+import { getAllSites, getCustomersByIds, getMeterReadingsandInvoicesByIds, getPaymentsByIds } from '../airtable/request';
+import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../airtable/interface';
 
 const refreshSiteData = async (user: any): Promise<void> => {
   store.dispatch(setLoadingForSiteData());
@@ -49,7 +49,7 @@ const getMeterReadingsForCustomer = async (customer: CustomerRecord): Promise<Me
   let meterReadings: MeterReadingRecord[] = [];
 
   if (meterReadingIds) {
-    meterReadings = await getMeterReadingsByIds(meterReadingIds);
+    meterReadings = await getMeterReadingsandInvoicesByIds(meterReadingIds);
   }
   return meterReadings;
 };

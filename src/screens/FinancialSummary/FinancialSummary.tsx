@@ -13,8 +13,8 @@ import TextWrapper from '../../components/TextWrapper';
 import Typography from '@material-ui/core/Typography';
 import CheckIcon from '@material-ui/icons/Check';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import { FinancialSummaryRecord } from '../../utils/airtable/interface';
-import { getFinancialSummaryById } from '../../utils/airtable/requests';
+import { FinancialSummaryRecord } from '../../lib/airtable/interface';
+import { getFinancialSummaryById } from '../../lib/airtable/request';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>

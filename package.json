@@ -93,7 +93,7 @@
   },
   "airtable-schema-generator": {
     "mode": "auto-headless",
-    "output": "./src/utils/airtable",
+    "output": "./src/lib/airtable",
     "airlock": true
   }
 }

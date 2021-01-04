@@ -9,7 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Typography from '@material-ui/core/Typography';
 
-import { SiteRecord } from '../../../utils/airtable/interface';
+import { SiteRecord } from '../../../lib/airtable/interface';
 import { setCurrentSite } from '../../../lib/redux/siteData';
 
 const styles = (theme: Theme) =>

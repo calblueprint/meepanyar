@@ -5,7 +5,7 @@ import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 
-import { SiteRecord } from '../../utils/airtable/interface';
+import { SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
 
