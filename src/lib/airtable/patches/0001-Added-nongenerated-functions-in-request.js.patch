@@ -1,0 +1,145 @@
+From 1d000f7a83cd637411c5af9dc0e6fae22553a75d Mon Sep 17 00:00:00 2001
+From: Julian Kung <julianrkung@berkeley.edu>
+Date: Sun, 3 Jan 2021 21:04:36 -0800
+Subject: [PATCH] Added nongenerated functions in request.js
+
+---
+ src/lib/airtable/request.js | 105 +++++++++++++++++++++++++++-----------------
+ 1 file changed, 65 insertions(+), 40 deletions(-)
+
+diff --git a/src/lib/airtable/request.js b/src/lib/airtable/request.js
+index 19434b3..a3bcbf7 100644
+--- a/src/lib/airtable/request.js
++++ b/src/lib/airtable/request.js
+@@ -23,6 +23,7 @@ import {
+   getRecordById,
+   deleteRecord,
+ } from './airtable';
++import { addToOfflineCustomer } from '../utils/customerUtils';
+ 
+ /*
+  ******* CREATE RECORDS *******
+@@ -73,20 +74,24 @@ export const createManyTariffPlans = async (records) => {
+   return Promise.all(createPromises);
+ };
+ 
+-export const createCustomer = async (record) => {
+-  return createRecord(Tables.Customers, record);
+-};
+-
+-export const createManyCustomers = async (records) => {
+-  const createPromises = [];
+-  const numCalls = Math.ceil(records.length / 10);
+-  for (let i = 0; i < numCalls; i += 1) {
+-    const subset = records.slice(i * 10, (i + 1) * 10);
+-    if (subset.length > 0)
+-      createPromises.push(createRecords(Tables.Customers, subset));
++// NONGENERATED: We use a special, non-schema-generated createCustomer 
++// that hits a special endpoint because we require additional logic to 
++// handle offline functionality
++export const createCustomer = async (customer) => {
++  try {
++    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/create`, {
++      method: 'POST',
++      headers: {
++        'Content-Type': 'application/json'
++      },
++      body: JSON.stringify(customer)
++    })
++
++    console.log(resp);
++  } catch (err) {
++    console.log(err);
+   }
+-  return Promise.all(createPromises);
+-};
++}
+ 
+ export const createCustomerUpdate = async (record) => {
+   return createRecord(Tables.CustomerUpdates, record);
+@@ -103,35 +108,55 @@ export const createManyCustomerUpdates = async (records) => {
+   return Promise.all(createPromises);
+ };
+ 
+-export const createMeterReadingsandInvoice = async (record) => {
+-  return createRecord(Tables.MeterReadingsandInvoices, record);
+-};
+-
+-export const createManyMeterReadingsandInvoices = async (records) => {
+-  const createPromises = [];
+-  const numCalls = Math.ceil(records.length / 10);
+-  for (let i = 0; i < numCalls; i += 1) {
+-    const subset = records.slice(i * 10, (i + 1) * 10);
+-    if (subset.length > 0)
+-      createPromises.push(createRecords(Tables.MeterReadingsandInvoices, subset));
++// NONGENERATED: Create a meter reading for a customer
++export const createMeterReadingandInvoice = async (meterReading, customer) => {
++  // If customer does not exist, we want to search the requests objectStore
++  // to add the current meter reading to the customer request being POST'ed
++  if (!customer.rid) {
++    addToOfflineCustomer(customer, 'meterReadings', meterReading)
++  } else {
++    // Customer has an rid so it is in the airtable.
++    // Make a standard request to create a meter reading / invoice.
++    try {
++      meterReading.customerId = customer.rid;
++      const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/meter-readings-and-invoices/create`, {
++        method: 'POST',
++        headers: {
++          'Content-Type': 'application/json'
++        },
++        body: JSON.stringify(meterReading)
++      })
++      console.log('Response for meter reading: ', resp);
++    } catch (err) {
++      console.log('Error with create meter reading request: ', err);
++    }
+   }
+-  return Promise.all(createPromises);
+-};
+-
+-export const createPayment = async (record) => {
+-  return createRecord(Tables.Payments, record);
+-};
+-
+-export const createManyPayments = async (records) => {
+-  const createPromises = [];
+-  const numCalls = Math.ceil(records.length / 10);
+-  for (let i = 0; i < numCalls; i += 1) {
+-    const subset = records.slice(i * 10, (i + 1) * 10);
+-    if (subset.length > 0)
+-      createPromises.push(createRecords(Tables.Payments, subset));
++}
++
++// NONGENERATED: Create a payment for a customer
++export const createPayment = async (payment, customer) => {
++  // If customer does not exist, we want to search the requests objectStore
++  // to add the current meter reading to the customer request being POST'ed
++  if (!customer.rid) {
++    addToOfflineCustomer(customer, 'payments', payment);
++  } else {
++    // Customer has an rid so it is in the airtable.
++    // Make a standard request to create a payment.
++    try {
++      payment.customerId = customer.rid;
++      const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/payments/create`, {
++        method: 'POST',
++        headers: {
++          'Content-Type': 'application/json'
++        },
++        body: JSON.stringify(payment)
++      })
++      console.log('Response for payment: ', resp);
++    } catch (err) {
++      console.log('Error with create payment request: ', err)
++    }
+   }
+-  return Promise.all(createPromises);
+-};
++}
+ 
+ export const createFinancialSummarie = async (record) => {
+   return createRecord(Tables.FinancialSummaries, record);
+-- 
+2.15.1
+
