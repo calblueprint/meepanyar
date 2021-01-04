@@ -14,7 +14,7 @@ const refreshUserData = async (user: any): Promise<void> => {
   store.dispatch(saveUserData(user));
 
   try {
-    refreshSiteData(user);
+    refreshSiteData();
   } catch (err) {
     console.log('Error occurred during login: ', err);
   }
