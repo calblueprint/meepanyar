@@ -23,7 +23,6 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
-import { addToOfflineCustomer } from '../utils/customerUtils';
 
 /*
  ******* CREATE RECORDS *******
@@ -74,25 +73,20 @@ export const createManyTariffPlans = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: We use a special, non-schema-generated createCustomer 
-// that hits a special endpoint because we require additional logic to 
-// handle offline functionality
-export const createCustomer = async (customer) => {
-  try {
-    const resp = await fetch('http://127.0.0.1:4000/customers/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(customer)
-    })
+export const createCustomer = async (record) => {
+  return createRecord(Tables.Customers, record);
+};
 
-    console.log("Customer created!");
-    console.log(resp);
-  } catch (err) {
-    console.log(err);
+export const createManyCustomers = async (records) => {
+  const createPromises = [];
+  const numCalls = Math.ceil(records.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = records.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      createPromises.push(createRecords(Tables.Customers, subset));
   }
-}
+  return Promise.all(createPromises);
+};
 
 export const createCustomerUpdate = async (record) => {
   return createRecord(Tables.CustomerUpdates, record);
@@ -109,30 +103,9 @@ export const createManyCustomerUpdates = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: Create a meter reading for a customer
-export const createMeterReadingsandInvoice = async (meterReading, customer) => {
-  // If customer does not exist, we want to search the requests objectStore
-  // to add the current meter reading to the customer request being POST'ed
-  if (!customer.rid) {
-    addToOfflineCustomer(customer, 'meterReadings', meterReading)
-  } else {
-    // Customer has an rid so it is in the airtable.
-    // Make a standard request to create a meter reading / invoice.
-    try {
-      meterReading.customerId = customer.rid;
-      const resp = await fetch('http://127.0.0.1:4000/meter-readings-and-invoices/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(meterReading)
-      })
-      console.log('Response for meter reading: ', resp);
-    } catch (err) {
-      console.log('Error with create meter reading request: ', err);
-    }
-  }
-}
+export const createMeterReadingsandInvoice = async (record) => {
+  return createRecord(Tables.MeterReadingsandInvoices, record);
+};
 
 export const createManyMeterReadingsandInvoices = async (records) => {
   const createPromises = [];
@@ -145,30 +118,9 @@ export const createManyMeterReadingsandInvoices = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: Create a payment for a customer
-export const createPayment = async (payment, customer) => {
-  // If customer does not exist, we want to search the requests objectStore
-  // to add the current meter reading to the customer request being POST'ed
-  if (!customer.rid) {
-    addToOfflineCustomer(customer, 'payments', payment);
-  } else {
-    // Customer has an rid so it is in the airtable.
-    // Make a standard request to create a payment.
-    try {
-      payment.customerId = customer.rid;
-      const resp = await fetch('http://127.0.0.1:4000/payments/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payment)
-      })
-      console.log('Response for payment: ', resp);
-    } catch (err) {
-      console.log('Error with create payment request: ', err)
-    }
-  }
-}
+export const createPayment = async (record) => {
+  return createRecord(Tables.Payments, record);
+};
 
 export const createManyPayments = async (records) => {
   const createPromises = [];
@@ -326,7 +278,7 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Payments, filterByFormula, sort);
 };
 
-export const getFinancialSummaryById = async (id) => {
+export const getFinancialSummarieById = async (id) => {
   return getRecordById(Tables.FinancialSummaries, id);
 };
 
