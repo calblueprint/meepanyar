@@ -28,6 +28,7 @@ const styles = (theme: Theme) =>
       width: '100%',
       paddingTop: '86px',
       paddingRight: '21px',
+      paddingLeft: '21px',
     },
     selectionHeader: {
       display: 'flex',
@@ -67,11 +68,24 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
     }
     setCustomers(allCustomers);
     setFullCustomers(allCustomers);
-
+    console.log(allCustomers)
     const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
     customersTrie.addAll(allCustomers);
     setAllCustomersTrie(customersTrie);
 
+  }
+
+  const calcLatestReadingDate = (curr: CustomerRecord) => {
+    //depends if the meter readings list is sorted with earliest => latest
+    let latestMeterReading = curr.meterReadings[curr.meterReadings.length - 1]
+    const dateTime = Date.parse(latestMeterReading.date)
+    let readingDate = new Date(dateTime)
+    let month = readingDate.getMonth() + 1;
+    let day = readingDate.getDate();
+    let shortDate = month.toString() + '.' + day.toString();
+    // console.log(readingDate.toLocaleDateString())
+    // console.log(shortDate)
+    return shortDate;
   }
 
   const handleSearchChange = (e: any) => {
@@ -91,6 +105,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
           <UserSearchBar searchFun={handleSearchChange} />
           <FormControl>
             <Select inputProps={{ 'aria-label': 'Without label' }}>
+              {/* placeholder sorting for now */}
               <MenuItem value={10}>Ten</MenuItem>
               <MenuItem value={20}>Twenty</MenuItem>
               <MenuItem value={30}>Thirty</MenuItem>
@@ -102,7 +117,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       <div className={classes.scrollDiv}>
         {customers.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
-            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={"11.15"} />
+            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={calcLatestReadingDate(customer)} />
           </Link>
         ))
         }
