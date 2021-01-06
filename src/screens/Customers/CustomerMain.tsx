@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { CustomerRecord, SiteRecord } from '../../utils/airtable/interface';
+import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { store } from '../../lib/redux/store';
 import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
 import UserSearchBar from '../../components/UserSearchBar';
 import CustomerCard from '../../components/CustomerCard';
-
-const TrieSearch = require('trie-search');
+import TrieTree from '../../lib/utils/TrieTree';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -48,14 +47,6 @@ interface UserProps {
   classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string };
 }
 
-let MockCustomers = [
-  { name: 'jen', outstandingBalance: '5' },
-  { name: 'emma', outstandingBalance: '6' },
-  { name: 'tiff', outstandingBalance: '7' },
-  { name: 'jul', outstandingBalance: '9' },
-]
-
-
 function CustomerMain(props: RouteComponentProps & UserProps) {
   useEffect(() => {
     getCustomers();
@@ -63,21 +54,24 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
 
   const { classes } = props;
   const [customers, setCustomers] = useState<CustomerRecord[]>([]);
+  const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
   const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
-  const trie = new TrieSearch('name');
 
   const getCustomers = () => {
-    let siteData = store.getState().siteData;
-    let sites: SiteRecord[] = siteData.sites;
-    let allCustomers: CustomerRecord[] = []
+    const siteData = store.getState().siteData;
+    const sites: SiteRecord[] = siteData.sites;
+    let allCustomers: CustomerRecord[] = [];
     for (let i = 0; i < sites.length; i++) {
       let currCustomers: CustomerRecord[] = sites[i].customers;
       allCustomers = allCustomers.concat(currCustomers)
     }
-    console.log(allCustomers);
     setCustomers(allCustomers);
-    setFullCustomers(allCustomers)
-    trie.addAll(allCustomers);
+    setFullCustomers(allCustomers);
+
+    const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
+    customersTrie.addAll(allCustomers);
+    setAllCustomersTrie(customersTrie);
+
   }
 
   const handleSearchChange = (e: any) => {
@@ -86,11 +80,9 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       setCustomers(fullCustomers);
       return;
     }
-    const customers = trie.get(searchVal);
-    console.log(customers)
+    const customers = allCustomersTrie.get(searchVal);
     setCustomers(customers);
   }
-  console.log(MockCustomers)
   return (
     <div>
       <div className={classes.headerWrapper}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import BaseHeader from '../../components/BaseComponents/BaseHeader';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import TextField from '../../components/TextField';
 import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
@@ -8,22 +8,17 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 
 const styles = (theme: Theme) =>
   createStyles({
-    root: {
-      flexGrow: 1,
-    },
     header: {
       marginTop: '20px',
       color: theme.palette.text.primary,
     },
     content: {
-      margin: '0 25px',
-      textAlign: 'left',
       color: theme.palette.text.primary,
     },
   });
 
 interface EditCustomerProps extends RouteComponentProps {
-  classes: { root: string; header: string; content: string };
+  classes: { header: string; content: string };
   location: any;
 }
 
@@ -31,10 +26,7 @@ function EditCustomer(props: EditCustomerProps) {
   const { classes } = props;
 
   return (
-    <div className={classes.root}>
-      <div className={classes.header}>
-        <BaseHeader title="Edit Customer" leftIcon="backNav" />
-      </div>
+    <BaseScreen title="Edit Customer" leftIcon="backNav">
       <form noValidate className={classes.content}>
         <TextField label={'Name'} id={'name'} primary={true} />
         <Checkbox label={'Select if customer is inactive'} />
@@ -43,7 +35,7 @@ function EditCustomer(props: EditCustomerProps) {
         <TextField label={'Reason'} id={'reason'} primary={true} />
         <Button label={'SAVE'} />
       </form>
-    </div>
+    </BaseScreen>
   );
 }
 
