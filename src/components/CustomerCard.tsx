@@ -11,24 +11,45 @@ const styles = (theme: Theme) =>
     },
     cardCon: {
       flexGrow: 1,
+      display: 'flex',
+      flexDirection: 'row',
+      margin: '0px',
+      paddingTop: '16px',
+      paddingLeft: '16px',
     },
     titleText: {
       fontFamily: 'Helvetica Neue',
       fontStyle: 'normal',
       fontWeight: 'bold',
-      fontSize: '12px',
+      fontSize: '22px',
       lineHeight: '98.1%',
       color: '#828282',
-      paddingBottom: '5.5px',
+      paddingTop: '14px'
     },
-    insideText: {
+    updatedText: {
       fontFamily: 'Helvetica Neue',
       fontStyle: 'normal',
       fontWeight: 500,
       fontSize: '12px',
-      lineHeight: '98.1%',
-      color: '#828282',
-      paddingBottom: '5.5px',
+      color: '#BDBDBD',
+    },
+    totalText: {
+      fontFamily: 'Helvetica Neue',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      fontSize: '12px',
+      color: '#6A6A6A',
+      paddingTop: '14px'
+    },
+    numberText: {
+      fontFamily: 'Helvetica Neue',
+      fontStyle: 'normal',
+      fontWeight: 'bold',
+      fontSize: '16px',
+      color: '#FF866F',
+    },
+    divSpacing: {
+      paddingLeft: '15px',
     },
     singleCard: {
       width: '310.71px',
@@ -48,18 +69,27 @@ interface CardProps {
   name: string;
   amount: string;
   date: string;
-  classes: { arrow: string; cardCon: string; insideText: string; singleCard: string; titleText: string };
+  classes: {
+    arrow: string; cardCon: string; updatedText: string;
+    singleCard: string; titleText: string; totalText: string;
+    numberText: string; divSpacing: string
+  };
 }
 
 function CustomerCard(props: CardProps) {
   const { classes } = props;
   return (
     <Card className={classes.singleCard}>
-      <CardContent className={classes.cardCon}>
-        <Typography className={classes.titleText}>{props.name}</Typography>
-        <Typography className={classes.insideText}>Total owed: {props.amount}</Typography>
-        <Typography className={classes.insideText}>Last Updated: {props.date}</Typography>
-      </CardContent>
+      <div className={classes.cardCon}>
+        <div>
+          <Typography className={classes.titleText}>{props.name}</Typography>
+          <Typography className={classes.updatedText}>Last Updated: {props.date}</Typography>
+        </div>
+        <div className={classes.divSpacing}>
+          <Typography className={classes.totalText}>Total owed: </Typography>
+          <Typography className={classes.numberText}>{props.amount} Ks</Typography>
+        </div>
+      </div>
       <CardActions>
         <IconButton>
           <ArrowForwardIosIcon className={classes.arrow} />

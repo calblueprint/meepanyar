@@ -55,6 +55,7 @@ let MockCustomers = [
   { name: 'jul', outstandingBalance: '9' },
 ]
 
+
 function CustomerMain(props: RouteComponentProps & UserProps) {
   useEffect(() => {
     getCustomers();
@@ -89,7 +90,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
     console.log(customers)
     setCustomers(customers);
   }
-
+  console.log(MockCustomers)
   return (
     <div>
       <div className={classes.headerWrapper}>
@@ -109,7 +110,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       <div className={classes.scrollDiv}>
         {customers.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
-            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={"December 10"} />
+            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={"11.15"} />
           </Link>
         ))
         }
