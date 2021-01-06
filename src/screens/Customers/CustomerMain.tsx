@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { CustomerRecord, SiteRecord } from '../../utils/airtable/interface';
-import { getAllCustomers } from '../../utils/airtable/requests';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { store } from '../../lib/redux/store';
 import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
@@ -28,6 +27,8 @@ const styles = (theme: Theme) =>
       display: 'flex',
       flexDirection: 'row',
       width: '100%',
+      paddingTop: '86px',
+      paddingRight: '21px',
     },
     selectionHeader: {
       display: 'flex',
