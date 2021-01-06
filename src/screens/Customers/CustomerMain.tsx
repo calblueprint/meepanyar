@@ -48,6 +48,12 @@ interface UserProps {
   classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string };
 }
 
+let MockCustomers = [
+  { name: 'jen', outstandingBalance: '5' },
+  { name: 'emma', outstandingBalance: '6' },
+  { name: 'tiff', outstandingBalance: '7' },
+  { name: 'jul', outstandingBalance: '9' },
+]
 
 function CustomerMain(props: RouteComponentProps & UserProps) {
   useEffect(() => {
@@ -62,17 +68,15 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   const getCustomers = () => {
     let siteData = store.getState().siteData;
     let sites: SiteRecord[] = siteData.sites;
-    console.log(siteData);
-
     let allCustomers: CustomerRecord[] = []
     for (let i = 0; i < sites.length; i++) {
       let currCustomers: CustomerRecord[] = sites[i].customers;
       allCustomers = allCustomers.concat(currCustomers)
     }
-    console.log(allCustomers)
+    console.log(allCustomers);
     setCustomers(allCustomers);
     setFullCustomers(allCustomers)
-    trie.addAll(customers);
+    trie.addAll(allCustomers);
   }
 
   const handleSearchChange = (e: any) => {
@@ -82,6 +86,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       return;
     }
     const customers = trie.get(searchVal);
+    console.log(customers)
     setCustomers(customers);
   }
 
@@ -102,7 +107,6 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         </div>
       </div>
       <div className={classes.scrollDiv}>
-        {console.log(customers)}
         {customers.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={"December 10"} />

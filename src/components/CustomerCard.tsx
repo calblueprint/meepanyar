@@ -54,20 +54,18 @@ interface CardProps {
 function CustomerCard(props: CardProps) {
   const { classes } = props;
   return (
-    <StylesProvider injectFirst>
-      <Card className={classes.singleCard}>
-        <CardContent className={classes.cardCon}>
-          <Typography className={classes.titleText}>{props.name}</Typography>
-          <Typography className={classes.insideText}>Total owed: {props.amount}</Typography>
-          <Typography className={classes.insideText}>Last Updated: {props.date}</Typography>
-        </CardContent>
-        <CardActions>
-          <IconButton>
-            <ArrowForwardIosIcon className={classes.arrow} />
-          </IconButton>
-        </CardActions>
-      </Card>
-    </StylesProvider>
+    <Card className={classes.singleCard}>
+      <CardContent className={classes.cardCon}>
+        <Typography className={classes.titleText}>{props.name}</Typography>
+        <Typography className={classes.insideText}>Total owed: {props.amount}</Typography>
+        <Typography className={classes.insideText}>Last Updated: {props.date}</Typography>
+      </CardContent>
+      <CardActions>
+        <IconButton>
+          <ArrowForwardIosIcon className={classes.arrow} />
+        </IconButton>
+      </CardActions>
+    </Card>
   );
 }
 export default withStyles(styles)(CustomerCard);
