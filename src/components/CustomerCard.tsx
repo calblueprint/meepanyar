@@ -9,7 +9,7 @@ const styles = (theme: Theme) =>
     arrow: {
       color: '#ff922e',
     },
-    cardCon: {
+    cardContent: {
       flexGrow: 1,
       display: 'flex',
       flexDirection: 'row',
@@ -87,7 +87,7 @@ interface CardProps {
   date: string;
   active: boolean;
   classes: {
-    arrow: string; cardCon: string; updatedText: string;
+    arrow: string; cardContent: string; updatedText: string;
     singleCard: string; titleText: string; totalText: string;
     numberText: string; divSpacing: string; active: string; notActive: string;
   };
@@ -97,7 +97,7 @@ function CustomerCard(props: CardProps) {
   const { classes } = props;
   return (
     <Card className={classes.singleCard}>
-      <div className={classes.cardCon}>
+      <div className={classes.cardContent}>
         {props.active ? <div className={classes.active} /> : <div className={classes.notActive} />}
         <div>
           <Typography className={classes.titleText}>{props.name}</Typography>

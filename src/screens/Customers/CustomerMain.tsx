@@ -54,48 +54,38 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   }, []);
 
   const { classes } = props;
-  const [customers, setCustomers] = useState<CustomerRecord[]>([]);
+  const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
   const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
-  const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
 
   const getCustomers = () => {
-    const siteData = store.getState().siteData;
-    const sites: SiteRecord[] = siteData.sites;
-    let allCustomers: CustomerRecord[] = [];
-    for (let i = 0; i < sites.length; i++) {
-      let currCustomers: CustomerRecord[] = sites[i].customers;
-      allCustomers = allCustomers.concat(currCustomers)
-    }
-    setCustomers(allCustomers);
-    setFullCustomers(allCustomers);
-    console.log(allCustomers)
+    const siteData = store.getState().siteData.currentSite;
+    let allCustomers: CustomerRecord[] = siteData.customers;
+    setFilteredCustomers(allCustomers);
     const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
     customersTrie.addAll(allCustomers);
     setAllCustomersTrie(customersTrie);
 
   }
 
-  const calcLatestReadingDate = (curr: CustomerRecord) => {
+  const getLatestReadingDate = (customer: CustomerRecord) => {
     //depends if the meter readings list is sorted with earliest => latest
-    let latestMeterReading = curr.meterReadings[curr.meterReadings.length - 1]
-    const dateTime = Date.parse(latestMeterReading.date)
-    let readingDate = new Date(dateTime)
-    let month = readingDate.getMonth() + 1;
-    let day = readingDate.getDate();
-    let shortDate = month.toString() + '.' + day.toString();
-    // console.log(readingDate.toLocaleDateString())
-    // console.log(shortDate)
-    return shortDate;
+    if (customer.meterReadings.length > 0) {
+      let latestMeterReading = customer.meterReadings[customer.meterReadings.length - 1]
+      const dateTime = Date.parse(latestMeterReading.date)
+      let readingDate = new Date(dateTime)
+      let month = readingDate.getMonth() + 1;
+      let day = readingDate.getDate();
+      let shortDate = month.toString() + '.' + day.toString();
+      return shortDate;
+    } else {
+      return 'No Readings'
+    }
   }
 
   const handleSearchChange = (e: any) => {
     const searchVal = e.target.value.trim();
-    if (searchVal === '') {
-      setCustomers(fullCustomers);
-      return;
-    }
     const customers = allCustomersTrie.get(searchVal);
-    setCustomers(customers);
+    setFilteredCustomers(customers);
   }
   return (
     <div>
@@ -115,9 +105,9 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         </div>
       </div>
       <div className={classes.scrollDiv}>
-        {customers.map((customer, index) => (
+        {filteredCustomers.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
-            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={calcLatestReadingDate(customer)} active={customer.isactive} />
+            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
         }
