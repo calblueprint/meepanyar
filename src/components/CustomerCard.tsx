@@ -21,7 +21,7 @@ const styles = (theme: Theme) =>
       fontFamily: 'Helvetica Neue',
       fontStyle: 'normal',
       fontWeight: 'bold',
-      fontSize: '22px',
+      fontSize: '20px',
       lineHeight: '98.1%',
       color: '#828282',
       paddingTop: '14px'
@@ -45,7 +45,7 @@ const styles = (theme: Theme) =>
       fontFamily: 'Helvetica Neue',
       fontStyle: 'normal',
       fontWeight: 'bold',
-      fontSize: '16px',
+      fontSize: '15px',
       color: '#FF866F',
     },
     divSpacing: {
@@ -64,15 +64,32 @@ const styles = (theme: Theme) =>
       flexDirection: 'row',
       marginBottom: '10px',
     },
+    active: {
+      height: '7px',
+      width: '7px',
+      borderRadius: '50%',
+      backgroundColor: '#64B676',
+      marginTop: '26px',
+      marginRight: '5px',
+    },
+    notActive: {
+      height: '7px',
+      width: '7px',
+      borderRadius: '50%',
+      backgroundColor: '#E0E0E0',
+      marginTop: '26px',
+      marginRight: '5px',
+    }
   });
 interface CardProps {
   name: string;
   amount: string;
   date: string;
+  active: boolean;
   classes: {
     arrow: string; cardCon: string; updatedText: string;
     singleCard: string; titleText: string; totalText: string;
-    numberText: string; divSpacing: string
+    numberText: string; divSpacing: string; active: string; notActive: string;
   };
 }
 
@@ -81,6 +98,7 @@ function CustomerCard(props: CardProps) {
   return (
     <Card className={classes.singleCard}>
       <div className={classes.cardCon}>
+        {props.active ? <div className={classes.active} /> : <div className={classes.notActive} />}
         <div>
           <Typography className={classes.titleText}>{props.name}</Typography>
           <Typography className={classes.updatedText}>Last Updated: {props.date}</Typography>

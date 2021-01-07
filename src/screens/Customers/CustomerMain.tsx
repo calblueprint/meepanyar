@@ -117,7 +117,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       <div className={classes.scrollDiv}>
         {customers.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
-            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={calcLatestReadingDate(customer)} />
+            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={calcLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
         }
