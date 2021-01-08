@@ -7,7 +7,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 const styles = (theme: Theme) =>
   createStyles({
     arrow: {
-      color: '#ff922e',
+      color: theme.palette.primary.main,
     },
     cardContent: {
       flexGrow: 1,
@@ -23,21 +23,21 @@ const styles = (theme: Theme) =>
       fontWeight: 'bold',
       fontSize: '20px',
       lineHeight: '98.1%',
-      color: '#828282',
+      color: theme.palette.text.primary,
       paddingTop: '14px'
     },
     updatedText: {
       fontFamily: 'Helvetica Neue',
       fontStyle: 'normal',
-      fontWeight: 500,
-      fontSize: '12px',
+      fontWeight: theme.typography.body1.fontWeight,
+      fontSize: theme.typography.body1.fontSize,
       color: '#BDBDBD',
     },
     totalText: {
       fontFamily: 'Helvetica Neue',
       fontStyle: 'normal',
-      fontWeight: 500,
-      fontSize: '12px',
+      fontWeight: theme.typography.body1.fontWeight,
+      fontSize: theme.typography.body1.fontSize,
       color: '#6A6A6A',
       paddingTop: '14px'
     },

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { store } from '../../lib/redux/store';
-import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
+import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, ThemeProvider, withStyles } from '@material-ui/core';
 import UserSearchBar from '../../components/UserSearchBar';
 import CustomerCard from '../../components/CustomerCard';
 import TrieTree from '../../lib/utils/TrieTree';
@@ -16,8 +16,8 @@ const styles = (theme: Theme) =>
       top: '96px',
       fontFamily: 'Helvetica Neue',
       fontStyle: 'normal',
-      fontWeight: 500,
-      fontSize: '30px',
+      fontWeight: theme.typography.h1.fontWeight,
+      fontSize: theme.typography.h1.fontSize,
       lineHeight: '115%',
       color: '#828282',
       flexGrow: 1,
@@ -55,12 +55,14 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
 
   const { classes } = props;
   const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
+  const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
   const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
 
   const getCustomers = () => {
     const siteData = store.getState().siteData.currentSite;
-    let allCustomers: CustomerRecord[] = siteData.customers;
+    const allCustomers: CustomerRecord[] = siteData.customers;
     setFilteredCustomers(allCustomers);
+    setFullCustomers(allCustomers);
     const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
     customersTrie.addAll(allCustomers);
     setAllCustomersTrie(customersTrie);
@@ -70,12 +72,12 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   const getLatestReadingDate = (customer: CustomerRecord) => {
     //depends if the meter readings list is sorted with earliest => latest
     if (customer.meterReadings.length > 0) {
-      let latestMeterReading = customer.meterReadings[customer.meterReadings.length - 1]
+      const latestMeterReading = customer.meterReadings[customer.meterReadings.length - 1]
       const dateTime = Date.parse(latestMeterReading.date)
-      let readingDate = new Date(dateTime)
-      let month = readingDate.getMonth() + 1;
-      let day = readingDate.getDate();
-      let shortDate = month.toString() + '.' + day.toString();
+      const readingDate = new Date(dateTime)
+      const month = readingDate.getMonth() + 1;
+      const day = readingDate.getDate();
+      const shortDate = month.toString() + '.' + day.toString();
       return shortDate;
     } else {
       return 'No Readings'
@@ -84,15 +86,20 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
 
   const handleSearchChange = (e: any) => {
     const searchVal = e.target.value.trim();
+    if (searchVal === '') {
+      setFilteredCustomers(fullCustomers);
+      return;
+    }
     const customers = allCustomersTrie.get(searchVal);
     setFilteredCustomers(customers);
   }
+
   return (
     <div>
       <div className={classes.headerWrapper}>
         <h1 className={classes.title}>Customers</h1>
         <div className={classes.selectionHeader}>
-          <UserSearchBar searchFun={handleSearchChange} />
+          <UserSearchBar onSearchChange={handleSearchChange} />
           <FormControl>
             <Select inputProps={{ 'aria-label': 'Without label' }}>
               {/* placeholder sorting for now */}
