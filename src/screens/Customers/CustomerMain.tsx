@@ -5,15 +5,15 @@ import { store } from '../../lib/redux/store';
 import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, ThemeProvider, withStyles } from '@material-ui/core';
 import UserSearchBar from '../../components/UserSearchBar';
 import CustomerCard from '../../components/CustomerCard';
+import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import TrieTree from '../../lib/utils/TrieTree';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
 
 const styles = (theme: Theme) =>
   createStyles({
     title: {
       width: '153.9px',
       height: '33.83px',
-      left: '25.6px',
-      top: '96px',
       fontFamily: 'Helvetica Neue',
       fontStyle: 'normal',
       fontWeight: theme.typography.h1.fontWeight,
@@ -21,14 +21,12 @@ const styles = (theme: Theme) =>
       lineHeight: '115%',
       color: '#828282',
       flexGrow: 1,
+      paddingRight: '20px',
     },
     headerWrapper: {
       display: 'flex',
       flexDirection: 'row',
       width: '100%',
-      paddingTop: '86px',
-      paddingRight: '21px',
-      paddingLeft: '21px',
     },
     selectionHeader: {
       display: 'flex',
@@ -36,11 +34,10 @@ const styles = (theme: Theme) =>
       flexGrow: 1,
     },
     scrollDiv: {
-      maxHeight: '380px',
-      overflow: 'auto',
       marginLeft: 'auto',
       marginRight: 'auto',
-      width: '310.71px',
+      width: '100%',
+      height: '100%'
     },
   });
 
@@ -95,12 +92,12 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   }
 
   return (
-    <div>
+    <BaseScreen>
       <div className={classes.headerWrapper}>
         <h1 className={classes.title}>Customers</h1>
         <div className={classes.selectionHeader}>
           <UserSearchBar onSearchChange={handleSearchChange} />
-          <FormControl>
+          <FormControl >
             <Select inputProps={{ 'aria-label': 'Without label' }}>
               {/* placeholder sorting for now */}
               <MenuItem value={10}>Ten</MenuItem>
@@ -119,7 +116,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         ))
         }
       </div>
-    </div>
+    </BaseScreen>
   );
 
 }

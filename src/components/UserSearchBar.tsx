@@ -13,7 +13,7 @@ const styles = (theme: Theme) =>
       color: '#828282',
     },
     searchWrapper: {
-      width: '135.45px',
+      width: '100%',
       height: '25px',
       border: '1px solid #ff922d',
       boxSizing: 'border-box',
@@ -21,7 +21,7 @@ const styles = (theme: Theme) =>
       textAlign: 'right',
     },
     inputWrapper: {
-      width: '100.45px',
+      width: '75%',
       height: '25px',
     },
   });

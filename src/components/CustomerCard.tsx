@@ -52,7 +52,7 @@ const styles = (theme: Theme) =>
       paddingLeft: '15px',
     },
     singleCard: {
-      width: '310.71px',
+      width: '100%',
       height: '93.26px',
       background: '#ffffff',
       border: '1px solid #e5e5e5',
@@ -79,7 +79,10 @@ const styles = (theme: Theme) =>
       backgroundColor: '#E0E0E0',
       marginTop: '26px',
       marginRight: '5px',
-    }
+    },
+    arrowSpacing: {
+      padding: '0px',
+    },
   });
 interface CardProps {
   name: string;
@@ -89,7 +92,8 @@ interface CardProps {
   classes: {
     arrow: string; cardContent: string; updatedText: string;
     singleCard: string; titleText: string; totalText: string;
-    numberText: string; divSpacing: string; active: string; notActive: string;
+    numberText: string; divSpacing: string; active: string;
+    notActive: string; arrowSpacing: string;
   };
 }
 
@@ -108,7 +112,7 @@ function CustomerCard(props: CardProps) {
           <Typography className={classes.numberText}>{props.amount} Ks</Typography>
         </div>
       </div>
-      <CardActions>
+      <CardActions className={classes.arrowSpacing}>
         <IconButton>
           <ArrowForwardIosIcon className={classes.arrow} />
         </IconButton>
