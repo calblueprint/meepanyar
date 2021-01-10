@@ -5,15 +5,12 @@ import { store } from '../../lib/redux/store';
 import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, ThemeProvider, withStyles } from '@material-ui/core';
 import UserSearchBar from '../../components/UserSearchBar';
 import CustomerCard from '../../components/CustomerCard';
-import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import TrieTree from '../../lib/utils/TrieTree';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 
 const styles = (theme: Theme) =>
   createStyles({
     title: {
-      width: '153.9px',
-      height: '33.83px',
       fontFamily: 'Helvetica Neue',
       fontStyle: 'normal',
       fontWeight: theme.typography.h1.fontWeight,
@@ -37,7 +34,7 @@ const styles = (theme: Theme) =>
       marginLeft: 'auto',
       marginRight: 'auto',
       width: '100%',
-      height: '100%'
+      overflow: 'scroll'
     },
   });
 
@@ -92,7 +89,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   }
 
   return (
-    <BaseScreen>
+    <BaseScreen rightIcon="user">
       <div className={classes.headerWrapper}>
         <h1 className={classes.title}>Customers</h1>
         <div className={classes.selectionHeader}>

@@ -1,18 +1,30 @@
 import React from 'react';
 
-import { Button, TextField, Typography, Link, InputBase, Paper, createStyles, Theme, withStyles } from '@material-ui/core';
+import { InputBase, Paper, createStyles, Theme, withStyles } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 interface SearchProps {
   onSearchChange: any;
-  classes: { search: string; searchWrapper: string; inputWrapper: string; };
+  classes: { search: string; searchWrapper: string; inputWrapper: string; searchWrapperFocused: string };
 }
 
-const styles = (theme: Theme) =>
+const styles = () =>
   createStyles({
     search: {
       color: '#828282',
+      height: '75%',
     },
     searchWrapper: {
+      width: '100%',
+      height: '25px',
+      border: '1px solid #BDBDBD',
+      boxSizing: 'border-box',
+      borderRadius: '10px',
+      textAlign: 'right',
+      '&:hover': {
+        border: '1px solid #ff922d',
+      },
+    },
+    searchWrapperFocused: {
       width: '100%',
       height: '25px',
       border: '1px solid #ff922d',
@@ -29,10 +41,10 @@ const styles = (theme: Theme) =>
 function UserSearchBar(props: SearchProps) {
   const { classes } = props;
   return (
-    <Paper component="form" onChange={props.onSearchChange} className={classes.searchWrapper} elevation={0}>
+    <div onChange={props.onSearchChange} className={classes.searchWrapper} >
       <InputBase className={classes.inputWrapper} />
       <SearchIcon className={classes.search} />
-    </Paper>
+    </div>
   );
 }
 

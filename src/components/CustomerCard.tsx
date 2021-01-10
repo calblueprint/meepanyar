@@ -1,6 +1,6 @@
 import React from 'react';
-import { createStyles, makeStyles, Theme, withStyles } from '@material-ui/core/styles';
-import { Card, CardActions, CardContent, Button, Typography, IconButton, StylesProvider } from '@material-ui/core';
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { Card, CardActions, Typography, IconButton } from '@material-ui/core';
 
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
@@ -12,7 +12,6 @@ const styles = (theme: Theme) =>
     cardContent: {
       flexGrow: 1,
       display: 'flex',
-      flexDirection: 'row',
       margin: '0px',
       paddingTop: '16px',
       paddingLeft: '16px',
