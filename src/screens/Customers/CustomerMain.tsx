@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
+import { CustomerRecord } from '../../lib/airtable/interface';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { store } from '../../lib/redux/store';
 import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, ThemeProvider, withStyles } from '@material-ui/core';
@@ -7,6 +7,7 @@ import UserSearchBar from '../../components/UserSearchBar';
 import CustomerCard from '../../components/CustomerCard';
 import TrieTree from '../../lib/utils/TrieTree';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
+import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -105,14 +106,14 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
           </FormControl>
         </div>
       </div>
-      <div className={classes.scrollDiv}>
+      <BaseScrollView>
         {filteredCustomers.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
         }
-      </div>
+      </BaseScrollView>
     </BaseScreen>
   );
 

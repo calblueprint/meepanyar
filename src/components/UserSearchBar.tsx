@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { InputBase, Paper, createStyles, Theme, withStyles } from '@material-ui/core';
+import { InputBase, createStyles, withStyles } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 interface SearchProps {
   onSearchChange: any;
