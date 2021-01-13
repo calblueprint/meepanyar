@@ -31,16 +31,10 @@ const styles = (theme: Theme) =>
       flexDirection: 'column',
       flexGrow: 1,
     },
-    scrollDiv: {
-      marginLeft: 'auto',
-      marginRight: 'auto',
-      width: '100%',
-      overflow: 'scroll'
-    },
   });
 
 interface UserProps {
-  classes: { title: string; headerWrapper: string; selectionHeader: string; scrollDiv: string };
+  classes: { title: string; headerWrapper: string; selectionHeader: string; };
 }
 
 function CustomerMain(props: RouteComponentProps & UserProps) {
