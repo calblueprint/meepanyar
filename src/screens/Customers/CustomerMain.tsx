@@ -102,7 +102,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       </div>
       <BaseScrollView>
         {filteredCustomers.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
+          <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
