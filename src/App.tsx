@@ -39,17 +39,17 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path="/home" component={Home} />
 
       <AuthenticatedRoute path="/customers" component={CustomerMain} exact />
-      <AuthenticatedRoute path="/customers/add" component={AddCustomer} />
-      <AuthenticatedRoute path={'/customers/:rid'} component={CustomerProfile} exact />
-      <AuthenticatedRoute path={'/customers/:rid/edit'} component={EditCustomer} />
-      <AuthenticatedRoute path="/customers/:rid/addMeter" component={AddMeterReading} />
-      <AuthenticatedRoute path={'/customers/:rid/records'} component={CustomerRecords} />
+      <AuthenticatedRoute path="/customers/create" component={AddCustomer} exact />
+      <AuthenticatedRoute path={'/customers/customer'} component={CustomerProfile} exact />
+      <AuthenticatedRoute path={'/customers/customer/edit'} component={EditCustomer} exact />
+      <AuthenticatedRoute path="/customers/customer/meter-readings/create" component={AddMeterReading} exact />
+      <AuthenticatedRoute path={'/customers/customer/records'} component={CustomerRecords} exact />
 
       <AuthenticatedRoute path="/inventory" component={Inventory} />
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 
-      <AuthenticatedRoute path="/financialsummary" component={FinancialSummary} />
+      <AuthenticatedRoute path="/financial-summary" component={FinancialSummary} exact />
       <BaseNavigation />
     </>
   );

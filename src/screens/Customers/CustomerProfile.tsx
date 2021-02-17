@@ -74,7 +74,7 @@ function CustomerProfile(props: CustomerProps) {
         <IconButton
           component={Link}
           to={{
-            pathname: `${match.url}/addMeter`,
+            pathname: `${match.url}/meter-readings/create`,
             state: { invoices: customer.meterReadings, payments: customer.payments },
           }}
           size="small"
