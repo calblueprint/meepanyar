@@ -28,17 +28,21 @@ For security reasons, this project uses secrets that are passed via environment 
     ```
 
 3. Running the development environment
-    a. Since the web client relies on the `meepanyar-node` backend server, make sure that an instance of `meepanyar-node` is running and that the environment variable `REACT_APP_AIRTABLE_ENDPOINT_URL` in the `.env` file points to it. Local setup instructions for the `meepanyar-node` server can be found at the repo [here](https://github.com/calblueprint/meepanyar-node)
-    b. run `npm install` to install the dependencies necessary to run the app.
-    c. Start the web client by running `npm start` in the terminal while in the root directory (where the `package.json` file is located)
+    1. Since the web client relies on the `meepanyar-node` backend server, make sure that an instance of `meepanyar-node` is running and that the environment variable `REACT_APP_AIRTABLE_ENDPOINT_URL` in the `.env` file points to it. Local setup instructions for the `meepanyar-node` server can be found at the repo [here](https://github.com/calblueprint/meepanyar-node)
+    2. run `npm install` to install the dependencies necessary to run the app.
+    3. Start the web client by running `npm start` in the terminal while in the root directory (where the `package.json` file is located)
 <br>
+
 4. Running the production environment
-**A production build must be used to test offline functionality of the app.** This is because service workers, which control the app logic when offline, are only active in the production build. This section will list how to create and run a production build of the app locally.
-    a. As with the development environment, a working `meepanyar-node` backend must be running. **Do step 3a (Running the development environment)**
-    b. run `npm install` to install the dependencies necessary to run the app.
-    c. In the root directory, run `npm run build` to create the production build for the app. This command creates a `build/` folder that contains the production build for the app.
-    d. Run the production build by running `serve -s build` in the root directory
-    **Note:** if you get an error when running 4d, you may need to install `serve` via `npm install -g serve`.
+
+   **A production build must be used to test offline functionality of the app.** This is because service workers, which control the app logic when offline, are only active in the production build. This section will list how to create and run a production build of the app locally.
+   
+    1. As with the development environment, a working `meepanyar-node` backend must be running. **Do step 3i (Running the development environment)**
+    2. run `npm install` to install the dependencies necessary to run the app.
+    3. In the root directory, run `npm run build` to create the production build for the app. This command creates a `build/` folder that contains the production build for the app.
+    4. Run the production build by running `serve -s build` in the root directory
+   
+    **Note:** if you get an error when running 4iv, you may need to install `serve` via `npm install -g serve`.
 
 
 ## Schema Generation
