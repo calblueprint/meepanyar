@@ -14,7 +14,7 @@ const refreshUserData = async (user: any): Promise<void> => {
   store.dispatch(saveUserData(user));
 
   try {
-    refreshSiteData(user);
+    refreshSiteData();
   } catch (err) {
     console.log('Error occurred during login: ', err);
   }
@@ -31,4 +31,15 @@ const checkOnline = (): void => {
   });
 };
 
-export { refreshUserData, checkOnline };
+const getUserId = (): string => {
+  const state = store.getState();
+  let userId = '';
+
+  if (state.userData && state.userData.user) {
+    userId = state.userData.user.id;
+  }
+
+  return userId;
+};
+
+export { refreshUserData, checkOnline, getUserId };

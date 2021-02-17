@@ -5,7 +5,7 @@ const buildSW = () => {
     // sw install rules couldn't
     // be generated. Add catch for this.
     return workboxBuild.injectManifest({
-        swSrc: "src/sw-custom.js", // custom sw rule
+        swSrc: "src/custom-sw/sw-custom.js", // custom sw rule
         swDest: "build/sw.js", // sw output file (auto-generated)
         globDirectory: "build",
         globPatterns: ["**/*.{js,css,html,png,svg}"],

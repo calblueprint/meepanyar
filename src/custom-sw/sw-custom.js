@@ -3,6 +3,8 @@ if ("function" === typeof importScripts) {
         "https://storage.googleapis.com/workbox-cdn/releases/3.5.0/workbox-sw.js"
     );
 
+    importScripts('sw-env.js');
+
     // Global workbox
     if (workbox) {
         console.log("Workbox loaded");
@@ -37,11 +39,11 @@ if ("function" === typeof importScripts) {
             })
         );
 
-        // Route will catch all failed POST requests to route.
+        // Route will catch all failed POST requests that satisfies regex.
         // Will add to bgSyncPlugin queue and will resend when network reconnect
         // TODO: Change to know routes once we know the routes needed to catch
         workbox.routing.registerRoute(
-            "",
+            new RegExp(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/(.+)`),
             new workbox.strategies.NetworkOnly({
                 plugins: [bgSyncPlugin]
             }),
