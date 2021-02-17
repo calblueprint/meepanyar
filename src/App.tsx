@@ -24,7 +24,6 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import { RootState } from './lib/redux/store';
 import LabelBottomNavigation from './components/BaseComponents/BottomNav';
 import SubmittedRecords from './screens/SubmittedRecords';
-import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { history } from './lib/redux/store';
 
