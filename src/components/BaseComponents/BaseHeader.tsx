@@ -75,9 +75,9 @@ function BaseHeader(props: HeaderProps) {
     setAnchorEl(null);
   };
 
-  const getIcon = (onClick: (event: React.MouseEvent) => void, icon: JSX.Element) => {
+  const getIcon = (onClick: (event: React.MouseEvent<HTMLElement>) => void, icon: JSX.Element) => {
     return (
-      <IconButton onClick={openMenu} color="primary">
+      <IconButton onClick={onClick} color="primary">
         {icon}
       </IconButton>
     );
@@ -91,7 +91,7 @@ function BaseHeader(props: HeaderProps) {
   const icons: { [key: string]: JSX.Element } = {
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />),
-    user: getIcon(handleLogoutClick, <AccountCircleIcon className={classes.account} fontSize="large" />),
+    user: getIcon(openMenu, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
 
   const left = leftIcon ? icons[leftIcon] : null;
