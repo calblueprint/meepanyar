@@ -1,13 +1,15 @@
+import { createStyles, Fab, FormControl, FormHelperText, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
+import AddIcon from '@material-ui/icons/Add';
 import React, { useEffect, useState } from 'react';
-import { CustomerRecord } from '../../lib/airtable/interface';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { store } from '../../lib/redux/store';
-import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, ThemeProvider, withStyles } from '@material-ui/core';
-import UserSearchBar from '../../components/UserSearchBar';
-import CustomerCard from '../../components/CustomerCard';
-import TrieTree from '../../lib/utils/TrieTree';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import CustomerCard from '../../components/CustomerCard';
+import UserSearchBar from '../../components/UserSearchBar';
+import { CustomerRecord } from '../../lib/airtable/interface';
+import { store } from '../../lib/redux/store';
+import TrieTree from '../../lib/utils/TrieTree';
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -31,10 +33,16 @@ const styles = (theme: Theme) =>
       flexDirection: 'column',
       flexGrow: 1,
     },
+    fab: {
+      position: 'absolute',
+      bottom: theme.spacing(1),
+      right: theme.spacing(2),
+      color: 'white',
+    },
   });
 
 interface UserProps {
-  classes: { title: string; headerWrapper: string; selectionHeader: string; };
+  classes: { title: string; headerWrapper: string; selectionHeader: string; fab: string; };
 }
 
 function CustomerMain(props: RouteComponentProps & UserProps) {
@@ -100,6 +108,9 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
           </FormControl>
         </div>
       </div>
+      <Fab href="/customers/create" color='primary' aria-label='add customer' className={classes.fab} size='medium'>
+        <AddIcon fontSize="large"/>
+      </Fab>
       <BaseScrollView>
         {filteredCustomers.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
