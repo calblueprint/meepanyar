@@ -1,19 +1,31 @@
-## 🖋 PR Description
+[//]: # "These comments are meant for your reference. They are invisible and don't need to be deleted!"
 
-Briefly describe what your PR does at a high level
+# What's new in this PR
 
-### 🤳Screenshots (if applicable)
+[//]: # "Describe what's new in this PR in a few lines. A description and bullet points for specifics will suffice."
 
-### 🐞 Bug Report
+## How to review
 
-If you ran into any bugs, explain how you solved them
+[//]: # 'The order in which to review files and what to expect when testing locally'
 
-### 🗺️ Next Steps
-Next steps that should be taken after this PR is merged
+## Relevant Links
 
-### 🧪 Testing
+### Online sources
 
-How do we test your feature?
+[//]: # 'Optional - copy links to any tutorial or documentation that was useful to you when working on this PR'
 
+### Related PRs
 
-cc: @julianrkung
+[//]: # "Optional - related PRs you're waiting on/ PRs that will conflict, etc; if this is a refactor, feel free to add PRs that previously modified this code"
+
+## Next steps
+
+[//]: # "What's NOT in this PR, doesn't work yet, and/or still needs to be done"
+
+### Screenshots
+
+[//]: # "Add screenshots of expected behavior - GIFs if you're feeling fancy!"
+
+CC: @julianrkung
+
+[//]: # 'This tags Julian as a default. Feel free to change, or add on anyone who you should be in on the conversation.'
