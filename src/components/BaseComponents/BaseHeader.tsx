@@ -67,14 +67,6 @@ function BaseHeader(props: HeaderProps) {
     }
   };
 
-  const openMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  
-  const closeMenu = () => {
-    setAnchorEl(null);
-  };
-
   const getIcon = (onClick: (event: React.MouseEvent<HTMLElement>) => void, icon: JSX.Element) => {
     return (
       <IconButton onClick={onClick} color="primary">
@@ -82,6 +74,23 @@ function BaseHeader(props: HeaderProps) {
       </IconButton>
     );
   };
+
+
+  const openProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const closeProfileMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const profileMenu = (
+    <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeProfileMenu}>
+      <MenuItem>{name}</MenuItem>
+      <MenuItem>{email}</MenuItem>
+      <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+    </Menu>
+  );
 
   const navigateToEdit = () => {
     history.push(`${match.url}/edit`);
@@ -91,7 +100,7 @@ function BaseHeader(props: HeaderProps) {
   const icons: { [key: string]: JSX.Element } = {
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />),
-    user: getIcon(openMenu, <AccountCircleIcon className={classes.account} fontSize="large" />),
+    user: getIcon(openProfileMenu, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
 
   const left = leftIcon ? icons[leftIcon] : null;
@@ -108,11 +117,7 @@ function BaseHeader(props: HeaderProps) {
       <div className={classes.toolbar}>
         <div className={classes.left}>{left}</div>
         <div className={classes.right}>{right}</div>
-        <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeMenu}>
-            <MenuItem>{name}</MenuItem>
-            <MenuItem>{email}</MenuItem>
-            <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-        </Menu>
+        {profileMenu}
       </div>
     </div>
   );
