@@ -108,9 +108,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
           </FormControl>
         </div>
       </div>
-      <Fab href="/customers/create" color='primary' aria-label='add customer' className={classes.fab} size='medium'>
-        <AddIcon fontSize="large"/>
-      </Fab>
+
       <BaseScrollView>
         {filteredCustomers.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
@@ -119,6 +117,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         ))
         }
       </BaseScrollView>
+      <Link to={'/customers/create'}>
+        <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>
+          <AddIcon fontSize="large"/>
+        </Fab>
+      </Link>
     </BaseScreen>
   );
 
