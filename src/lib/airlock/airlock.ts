@@ -1,5 +1,5 @@
 import { base } from '../airtable/airtable';
-import { refreshUserData } from '../redux/userData';
+import { clearUserData, refreshUserData } from '../redux/userData';
 
 const signupUser = async (username: string, password: string): Promise<{ success: boolean; message: string }> => {
   let success, message;
@@ -47,6 +47,7 @@ const logoutUser = async (): Promise<boolean> => {
     if (!res.body.success) {
       return false;
     }
+    clearUserData();
     return true;
   } catch (err) {
     console.log(err);
