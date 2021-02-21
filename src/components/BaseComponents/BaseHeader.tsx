@@ -1,12 +1,16 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import CreateIcon from '@material-ui/icons/Create';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import React from 'react';
+import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-
+import { logoutUser } from '../../lib/airlock/airlock';
+import { RootState } from '../../lib/redux/store';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -44,19 +48,49 @@ export interface HeaderProps {
   rightIcon?: string;
   classes: any;
   match?: any;
+  name?: string;
+  email?: string;
 }
 
 function BaseHeader(props: HeaderProps) {
-  const { leftIcon, title, rightIcon, classes, match } = props;
+  const { leftIcon, title, rightIcon, classes, match, name, email } = props;
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
   const history = useHistory();
 
-  const getIcon = (onClick: (event: React.MouseEvent) => void, icon: JSX.Element) => {
+  const handleLogoutClick = async () => {
+    const logoutSuccess = await logoutUser();
+    if (logoutSuccess){
+      history.push('/login');
+    } else {
+      console.warn('Logout failed');
+    }
+  };
+
+  const getIcon = (onClick: (event: React.MouseEvent<HTMLElement>) => void, icon: JSX.Element) => {
     return (
       <IconButton onClick={onClick} color="primary">
         {icon}
       </IconButton>
     );
   };
+
+
+  const openProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const closeProfileMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const profileMenu = (
+    <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeProfileMenu}>
+      <MenuItem>{name}</MenuItem>
+      <MenuItem>{email}</MenuItem>
+      <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+    </Menu>
+  );
 
   const navigateToEdit = () => {
     history.push(`${match.url}/edit`);
@@ -66,10 +100,8 @@ function BaseHeader(props: HeaderProps) {
   const icons: { [key: string]: JSX.Element } = {
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />),
-    user: getIcon(empty, <AccountCircleIcon className={classes.account} fontSize="large" />),
+    user: getIcon(openProfileMenu, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
-
-  function empty() {} //temporary empty function
 
   const left = leftIcon ? icons[leftIcon] : null;
   const header = title ? (
@@ -85,9 +117,15 @@ function BaseHeader(props: HeaderProps) {
       <div className={classes.toolbar}>
         <div className={classes.left}>{left}</div>
         <div className={classes.right}>{right}</div>
+        {profileMenu}
       </div>
     </div>
   );
 }
 
-export default withStyles(styles)(BaseHeader);
+const mapStateToProps = (state: RootState) => ({
+  name: state.userData.user?.fields.Name || '',
+  email: state.userData.user?.fields.Email || '',
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(BaseHeader));
