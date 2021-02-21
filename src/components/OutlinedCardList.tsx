@@ -1,6 +1,6 @@
-import React from 'react';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -10,21 +10,25 @@ const useStyles = makeStyles((theme: Theme) =>
       borderColor: theme.palette.divider,
       borderRadius: '6px',
     },
-    content: {
-      padding: '8px 12px',
+    content: (props: CardProps) => ({
+      flex: 1,
+      padding: '8px 8px',
       display: 'flex',
-      flexDirection: 'column',
-    },
+      flexDirection: props.columns ? 'row' : 'column'
+    }),
     itemWrapper: {
+      flex: 1,
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    items: {
-      width: '100px',
+    items: (props: CardProps) => ({
+      flex: 1,
+      flexDirection: props.columns ? 'column-reverse' : 'column',
+      display: 'flex',
       color: theme.palette.text.primary,
       margin: '5px',
-    },
+    }),
   }),
 );
 
@@ -36,10 +40,11 @@ interface CardProps {
   }[];
   primary: boolean;
   rightIcon?: JSX.Element;
+  columns?: boolean;
 }
 
-export default function OutlinedCardList(props: CardProps) {
-  const classes = useStyles();
+function OutlinedCardList(props: CardProps): JSX.Element {
+  const classes = useStyles(props);
 
   const getLabeledNumber = (
     key: number,
@@ -48,12 +53,13 @@ export default function OutlinedCardList(props: CardProps) {
     unit: string,
     primary: boolean,
     rightIcon: JSX.Element | null,
+    columns: boolean,
   ) => {
     return (
-      <div key={key} className={classes.itemWrapper}>
+      <div key={key} className={ classes.itemWrapper }>
         <div className={classes.items}>
-          <Typography variant="body1">{label}</Typography>
-          <Typography variant="h3" color={primary ? 'primary' : 'inherit'}>
+          <Typography variant="body1" align={columns ? 'center' : 'inherit'}>{label}</Typography>
+          <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
             {number} {unit}
           </Typography>
         </div>
@@ -62,14 +68,23 @@ export default function OutlinedCardList(props: CardProps) {
     );
   };
 
-  const rightIcon = props.rightIcon ? props.rightIcon : null;
+  const rightIcon = props.rightIcon || null;
+  const columns = props.columns || false;
+
   return (
     <div className={classes.root}>
       <div className={classes.content}>
         {props.info.map((info, index) =>
-          getLabeledNumber(index, info.number, info.label, info.unit, props.primary, rightIcon),
+          getLabeledNumber(index, info.number, info.label, info.unit, props.primary, rightIcon, columns),
         )}
       </div>
     </div>
   );
 }
+
+OutlinedCardList.defaultProps = {
+  rightIcon: null,
+  columns: false,
+};
+
+export default OutlinedCardList;
