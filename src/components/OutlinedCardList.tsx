@@ -2,6 +2,17 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 
+interface CardProps {
+  info: {
+    number: number;
+    label: string;
+    unit: string;
+  }[];
+  primary: boolean;
+  rightIcon?: JSX.Element;
+  columns?: boolean;
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -31,17 +42,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
   }),
 );
-
-interface CardProps {
-  info: {
-    number: number;
-    label: string;
-    unit: string;
-  }[];
-  primary: boolean;
-  rightIcon?: JSX.Element;
-  columns?: boolean;
-}
 
 function OutlinedCardList(props: CardProps): JSX.Element {
   const classes = useStyles(props);

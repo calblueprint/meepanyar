@@ -18,23 +18,31 @@ const styles = (theme: Theme) =>
     content: {
       color: theme.palette.text.primary,
     },
-    header: {
-      marginTop: '15px',
+    section: {
+      marginTop: '30px',
     },
-    button: {
+    headerWrapper: {
+      marginTop: '15px',
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    buttonPrimary: {
       borderRadius: '12px',
-      height: '30px',
       color: 'white',
       backgroundColor: theme.palette.primary.main,
     },
     buttonSecondary: {
       borderRadius: '12px',
+      color: theme.palette.primary.main,
       backgroundColor: theme.palette.secondary.main,
     },
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; header: string; button: string; buttonSecondary: string };
+  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string;};
   location: any;
 }
 
@@ -42,37 +50,40 @@ function CustomerProfile(props: CustomerProps) {
   const { classes, match } = props;
   const customer: CustomerRecord = props.location.state.customer;
 
-  const getPaymentButtons = () => {
+  const getPaymentButton = () => {
     return (
-      <>
         <Button
           variant="contained"
-          className={classes.button}
-          color="primary"
+          className={classes.buttonPrimary}
           startIcon={<AddIcon />}
           disableElevation={true}
         >
           Add Payment
         </Button>
-        <div className={classes.buttonSecondary}>
-          <IconButton
-            component={Link}
-            to={{
-              pathname: `${match.url}/records`,
-              state: { invoices: customer.meterReadings, payments: customer.payments },
-            }}
-            size="small"
-          >
-            <ListAltOutlinedIcon color="primary" />
-          </IconButton>
-        </div>
-      </>
+    );
+  };
+
+  const getRecordsButton = () => {
+    return (
+      <Button
+        variant="contained"
+        component={Link}
+        to={{
+          pathname: `${match.url}/records`,
+          state: { invoices: customer.meterReadings, payments: customer.payments },
+        }}
+        className={classes.buttonSecondary}
+        startIcon={<ListAltOutlinedIcon />}
+        disableElevation={true}
+      >
+        Records
+      </Button>
     );
   };
 
   const getAddButton = () => {
     return (
-      <div className={classes.button}>
+      <div className={classes.buttonPrimary}>
         <IconButton
           component={Link}
           to={{
@@ -127,22 +138,24 @@ function CustomerProfile(props: CustomerProps) {
       <BaseScrollView>
         <div className={classes.content}>
           <Typography variant="h1">{getSiteName()}</Typography>
-          <Typography variant="h4" color="textSecondary">
+          <Typography variant="body1" color="textSecondary">
             {customer.meterNumber}
           </Typography>
-
           <OutlinedCardList info={tariffInfo} primary={false} columns/>
-
-          <Typography className={classes.header} variant="h2">
-            Payment
-          </Typography>
-          <OutlinedCardList info={balanceInfo} primary={true} rightIcon={getPaymentButtons()} />
-
-          <Typography className={classes.header} variant="h2">
-            Meter Reading
-          </Typography>
-          <OutlinedCardList info={readingInfo} primary={true} rightIcon={getAddButton()} />
-          <OutlinedCardList info={info3} primary={false} />
+          <div className={classes.section}>
+            <div className={classes.headerWrapper}>
+              <Typography variant="h2">Payment</Typography>
+              {getRecordsButton()}
+            </div>
+            <OutlinedCardList info={balanceInfo} primary={true} rightIcon={getPaymentButton()} />
+          </div>
+          <div className={classes.section}>
+            <Typography variant="h2">
+              Meter Reading
+            </Typography>
+            <OutlinedCardList info={readingInfo} primary={true} rightIcon={getAddButton()} />
+            <OutlinedCardList info={info3} primary={false} />
+          </div>
         </div>
       </BaseScrollView>
     </BaseScreen>
