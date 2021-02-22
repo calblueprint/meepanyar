@@ -37,25 +37,42 @@ interface UserProps {
   classes: { title: string; headerWrapper: string; selectionHeader: string; };
 }
 
-function CustomerMain(props: RouteComponentProps & UserProps) {
-  useEffect(() => {
-    getCustomers();
-  }, []);
+enum SortBy {
+  name = 'Name (A - Z)' as any, 
+  meter = 'Meter Number' as any
+}
 
+function CustomerMain(props: RouteComponentProps & UserProps) {
   const { classes } = props;
   const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
   const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
   const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.name); 
+
+  useEffect(() => {
+    getCustomers();
+  }, [sortBy]);
 
   const getCustomers = () => {
     const siteData = store.getState().siteData.currentSite;
     const allCustomers: CustomerRecord[] = siteData.customers;
+    allCustomers.sort(sortByFunction())
     setFilteredCustomers(allCustomers);
     setFullCustomers(allCustomers);
     const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
     customersTrie.addAll(allCustomers);
     setAllCustomersTrie(customersTrie);
+  }
 
+  const sortByFunction = (): (a: CustomerRecord, b: CustomerRecord) => number => {
+    switch (sortBy) {
+      case (SortBy.meter): {
+        return (a: CustomerRecord, b: CustomerRecord) => { return a.meterNumber - b.meterNumber }
+      }
+      default: {
+        return (a: CustomerRecord, b: CustomerRecord) => { return a.name.localeCompare(b.name) }
+      }
+    }
   }
 
   const getLatestReadingDate = (customer: CustomerRecord) => {
@@ -83,6 +100,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
     setFilteredCustomers(customers);
   }
 
+  const handleSortByChange = (e: any) => {
+    const key: keyof typeof SortBy = e.target.value; 
+    setSortBy(SortBy[key]);
+  }
+
   return (
     <BaseScreen rightIcon="user">
       <div className={classes.headerWrapper}>
@@ -90,11 +112,9 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         <div className={classes.selectionHeader}>
           <UserSearchBar onSearchChange={handleSearchChange} />
           <FormControl >
-            <Select inputProps={{ 'aria-label': 'Without label' }}>
-              {/* placeholder sorting for now */}
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+            <Select onChange={handleSortByChange} value={SortBy[sortBy]} inputProps={{ 'aria-label': 'Without label' }}>
+              <MenuItem value="name">{SortBy.name}</MenuItem>
+              <MenuItem value="meter">{SortBy.meter}</MenuItem>
             </Select>
             <FormHelperText>Sort By</FormHelperText>
           </FormControl>
