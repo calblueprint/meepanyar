@@ -39,7 +39,7 @@ interface CardProps {
   paid: number;
 }
 
-export default function FilledCard(props: CardProps) {
+export default function PaymentCard(props: CardProps) {
   const classes = useStyles();
   const getPaymentButtons = () => {
     return (

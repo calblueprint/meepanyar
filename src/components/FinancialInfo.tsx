@@ -45,7 +45,7 @@ interface CardProps {
   balance: number;
 }
 
-export default function FilledCard(props: CardProps) {
+export default function FinancialInfo(props: CardProps) {
   const classes = useStyles();
 
   return (
