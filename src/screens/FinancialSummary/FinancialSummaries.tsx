@@ -1,7 +1,7 @@
 import React from 'react';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
 import { TextField, Typography, Button } from '@material-ui/core';
-import OutlinedColCard from '../../components/OutlinedCardList';
+import OutlinedCardList from '../../components/OutlinedCardList';
 import { RouteComponentProps } from 'react-router-dom';
 import SearchIcon from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
@@ -131,13 +131,13 @@ function FinancialSummaries(props: FinancialSummariesProps) {
           Unpaid Reports
         </Typography>
         {unpaidFinancialSummaries.map((report: any, index: number) => (
-          <OutlinedColCard key={index} info={[report]} primary={false} rightIcon={getPaymentButtons()} />
+          <OutlinedCardList key={index} info={[report]} primary={false} rightIcon={getPaymentButtons()} />
         ))}
         <Typography className={classes.title} variant="body1">
           Paid Reports
         </Typography>
         {paidFinancialSummaries.map((report: any, index: number) => (
-          <OutlinedColCard key={index} info={[report]} primary={false} rightIcon={getViewButtons()} />
+          <OutlinedCardList key={index} info={[report]} primary={false} rightIcon={getViewButtons()} />
         ))}
       </div>
     </div>
