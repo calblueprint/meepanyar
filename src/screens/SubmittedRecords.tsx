@@ -4,6 +4,8 @@ import { TextField, Typography, Button, InputAdornment } from '@material-ui/core
 import OutlinedColCard from '../components/OutlinedCardList';
 import { RouteComponentProps } from 'react-router-dom';
 import SearchIcon from '@material-ui/icons/Search';
+import { connect } from 'react-redux';
+import { RootState } from '../lib/redux/store';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 const styles = (theme: Theme) =>
@@ -67,11 +69,13 @@ interface SubmittedRecordsProps extends RouteComponentProps {
     search: string;
     title: string;
   };
+  financialSummaries?: any;
   location: any;
 }
 
 function SubmittedRecords(props: SubmittedRecordsProps) {
-  const { classes } = props;
+  const { classes, financialSummaries } = props;
+  console.log(financialSummaries);
 
   //DUMMY DATA
   const dummyData = [
@@ -133,4 +137,8 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
   );
 }
 
-export default withStyles(styles)(SubmittedRecords);
+const mapStateToProps = (state: RootState) => ({
+  financialSummaries: state.siteData.currentSite.financialSummaries || '',
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(SubmittedRecords));
