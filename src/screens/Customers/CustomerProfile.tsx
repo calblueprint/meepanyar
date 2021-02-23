@@ -1,6 +1,6 @@
 import React from 'react';
 import BaseHeader from '../../components/BaseComponents/BaseHeader';
-import OutlinedColCard from '../../components/OutlinedCardList';
+import OutlinedCardList from '../../components/OutlinedCardList';
 import { Button, IconButton, Typography } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
@@ -151,13 +151,13 @@ function CustomerProfile(props: CustomerProps) {
         <Typography className={classes.header} variant="h2">
           Payment
         </Typography>
-        <OutlinedColCard info={balanceInfo} primary={true} rightIcon={getPaymentButtons()} />
+        <OutlinedCardList info={balanceInfo} primary={true} rightIcon={getPaymentButtons()} />
 
         <Typography className={classes.header} variant="h2">
           Meter Reading
         </Typography>
-        <OutlinedColCard info={readingInfo} primary={true} rightIcon={getAddButton()} />
-        <OutlinedColCard info={meterInfo} primary={false} />
+        <OutlinedCardList info={readingInfo} primary={true} rightIcon={getAddButton()} />
+        <OutlinedCardList info={meterInfo} primary={false} />
       </div>
     </div>
   );
