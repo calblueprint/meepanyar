@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CustomerRecord } from '../../lib/airtable/interface';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { store } from '../../lib/redux/store';
-import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme, ThemeProvider, withStyles } from '@material-ui/core';
+import { createStyles, FormControl, FormHelperText, MenuItem, ListSubheader, Select, Theme, ThemeProvider, withStyles } from '@material-ui/core';
 import UserSearchBar from '../../components/UserSearchBar';
 import CustomerCard from '../../components/CustomerCard';
 import TrieTree from '../../lib/utils/TrieTree';
@@ -43,9 +43,9 @@ enum SortBy {
 }
 
 enum FilterBy {
-  payment = 'Payment Status' as any, 
-  meter = 'Meter Status' as any,
-  active = 'Active Status' as any,
+  paymentStatus = 'Payment Status' as any, 
+  meterStatus = 'Meter Status' as any,
+  activeStatus = 'Active Status' as any,
   none = 'None' as any
 }
 
@@ -55,10 +55,12 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
   const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.name); 
-  const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.active); 
+  const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.activeStatus); 
+  const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
 
   useEffect(() => {
     getCustomers();
+    setSortAndFilter([SortBy[sortBy], FilterBy[filterBy]]);
   }, [sortBy, filterBy]);
 
   const getCustomers = () => {
@@ -86,11 +88,10 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
 
   const filterByFunction = (e: CustomerRecord): boolean => {
     switch (filterBy) {
-      case (FilterBy.meter): {
+      case (FilterBy.meterStatus): {
         return e.hasmeter
       }
-      case (FilterBy.payment): {
-        // double check this one
+      case (FilterBy.paymentStatus): {
         return e.payments.length > 0
       }
       default: {
@@ -125,41 +126,53 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   }
 
   const handleSortByChange = (e: any) => {
-    const key: keyof typeof SortBy = e.target.getAttribute("data-value");
+    const key: keyof typeof SortBy = e.target.value;
     setSortBy(SortBy[key]);
   }
 
   const handleFilterByChange = (e: any) => {
-    const key: keyof typeof FilterBy = e.target.getAttribute("data-value");; 
+    const key: keyof typeof FilterBy = e.target.value; 
     setFilterBy(FilterBy[key]);
+  }
+
+  const handleMenuSelect = (e: any) => {
+    const keys: string[] = e.target.value; 
+    console.log(keys);
+    const key: string = keys[keys.length - 1]; 
+
+    const sortByKeys: string[] = Object.keys(SortBy);
+    if (sortByKeys.includes(key)) {
+      setSortBy(SortBy[key as keyof typeof SortBy]);
+      return; 
+    }
+    
+    const filterByKeys: string[] = Object.keys(FilterBy); 
+    if (filterByKeys.includes(key)) {
+      setFilterBy(FilterBy[key as keyof typeof FilterBy]);
+      return; 
+    }
   }
 
   return (
     <BaseScreen rightIcon="user">
       <div className={classes.headerWrapper}>
         <h1 className={classes.title}>Customers</h1>
-        <div className={classes.selectionHeader}>
+      </div>
+      <div className={classes.selectionHeader}>
           <UserSearchBar onSearchChange={handleSearchChange} />
-          <FormControl >
-            <Select value={SortBy[sortBy]} inputProps={{ 'aria-label': 'Without label' }}>
-              <MenuItem onClick={handleSortByChange} value="name">{SortBy.name}</MenuItem>
-              <MenuItem onClick={handleSortByChange} value="meter">{SortBy.meter}</MenuItem>
-              <MenuItem value="payment">{FilterBy.payment}</MenuItem>
-              <MenuItem value="meter">{FilterBy.meter}</MenuItem>
-              <MenuItem value="active">{FilterBy.active}</MenuItem>
+          <FormControl>
+            <Select onChange={handleMenuSelect} multiple value={sortAndFilter} inputProps={{ 'aria-label': 'Without label' }}>
+              <ListSubheader>Sort By</ListSubheader>
+              <MenuItem value="name">{SortBy.name}</MenuItem>
+              <MenuItem value="meter">{SortBy.meter}</MenuItem>
+              <ListSubheader>Filter By</ListSubheader>
+              <MenuItem value="paymentStatus">{FilterBy.paymentStatus}</MenuItem>
+              <MenuItem value="meterStatus">{FilterBy.meterStatus}</MenuItem>
+              <MenuItem value="activeStatus">{FilterBy.activeStatus}</MenuItem>
             </Select>
-            <FormHelperText>Sort By and Filter By</FormHelperText>
-          </FormControl>
-          <FormControl >
-            <Select onChange={handleFilterByChange} value={FilterBy[filterBy]} inputProps={{ 'aria-label': 'Without label' }}>
-              <MenuItem value="payment">{FilterBy.payment}</MenuItem>
-              <MenuItem value="meter">{FilterBy.meter}</MenuItem>
-              <MenuItem value="active">{FilterBy.active}</MenuItem>
-            </Select>
-            <FormHelperText>Filter By</FormHelperText>
+            <FormHelperText>Sort and Filter</FormHelperText>
           </FormControl>
         </div>
-      </div>
       <BaseScrollView>
         {filteredCustomers.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
