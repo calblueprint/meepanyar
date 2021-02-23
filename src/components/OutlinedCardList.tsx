@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
     },
     items: {
-      width: '100px',
+      width: '150px',
       color: theme.palette.text.primary,
       margin: '5px',
     },

@@ -7,6 +7,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
 import { RootState } from '../lib/redux/store';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { FinancialSummaryRecord } from '../lib/airtable/interface';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -75,15 +76,21 @@ interface SubmittedRecordsProps extends RouteComponentProps {
 
 function SubmittedRecords(props: SubmittedRecordsProps) {
   const { classes, financialSummaries } = props;
-  console.log(financialSummaries);
+  let paidFinancialSummaries: any[] = [];
+  let unpaidFinancialSummaries: any[] = [];
 
-  //DUMMY DATA
-  const dummyData = [
-    [{ number: 89, label: '01/02/2003', unit: '' }],
-    [{ number: 20, label: '02/03/2004', unit: '' }],
-    [{ number: 10, label: '04/03/2002', unit: '' }],
-    [{ number: 10, label: '04/03/2002', unit: '' }],
-  ];
+  const formatFinancialSummaries = (summaries: FinancialSummaryRecord[]) => {
+      summaries.forEach(summary => {
+        const entry = { number: summary.totalAmountBilled, label: summary.lastUpdated, unit: 'MMK'};
+        if (summary.totalCustomersBilled === summary.totalCustomersPaid) {
+          paidFinancialSummaries.push(entry);
+        } else {
+          unpaidFinancialSummaries.push(entry);
+        }
+      });
+  };
+
+  formatFinancialSummaries(financialSummaries);
 
   const getSearch = () => {
     return (
@@ -123,14 +130,14 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
         <Typography className={classes.title} variant="body1">
           Unpaid Reports
         </Typography>
-        {dummyData.map((report: any, index) => (
-          <OutlinedColCard key={index} info={report} primary={false} rightIcon={getPaymentButtons()} />
+        {unpaidFinancialSummaries.map((report: any, index: number) => (
+          <OutlinedColCard key={index} info={[report]} primary={false} rightIcon={getPaymentButtons()} />
         ))}
         <Typography className={classes.title} variant="body1">
           Paid Reports
         </Typography>
-        {dummyData.map((report: any, index) => (
-          <OutlinedColCard key={index} info={report} primary={false} rightIcon={getViewButtons()} />
+        {paidFinancialSummaries.map((report: any, index: number) => (
+          <OutlinedColCard key={index} info={[report]} primary={false} rightIcon={getViewButtons()} />
         ))}
       </div>
     </div>
