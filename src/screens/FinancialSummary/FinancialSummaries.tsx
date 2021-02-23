@@ -1,13 +1,13 @@
 import React from 'react';
-import BaseHeader from '../components/BaseComponents/BaseHeader';
-import { TextField, Typography, Button, InputAdornment } from '@material-ui/core';
-import OutlinedColCard from '../components/OutlinedCardList';
+import BaseHeader from '../../components/BaseComponents/BaseHeader';
+import { TextField, Typography, Button } from '@material-ui/core';
+import OutlinedColCard from '../../components/OutlinedCardList';
 import { RouteComponentProps } from 'react-router-dom';
 import SearchIcon from '@material-ui/icons/Search';
 import { connect } from 'react-redux';
-import { RootState } from '../lib/redux/store';
+import { RootState } from '../../lib/redux/store';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { FinancialSummaryRecord } from '../lib/airtable/interface';
+import { FinancialSummaryRecord } from '../../lib/airtable/interface';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -59,7 +59,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface SubmittedRecordsProps extends RouteComponentProps {
+interface FinancialSummariesProps extends RouteComponentProps {
   classes: {
     root: string;
     content: string;
@@ -74,7 +74,7 @@ interface SubmittedRecordsProps extends RouteComponentProps {
   location: any;
 }
 
-function SubmittedRecords(props: SubmittedRecordsProps) {
+function FinancialSummaries(props: FinancialSummariesProps) {
   const { classes, financialSummaries } = props;
   let paidFinancialSummaries: any[] = [];
   let unpaidFinancialSummaries: any[] = [];
@@ -112,7 +112,7 @@ function SubmittedRecords(props: SubmittedRecordsProps) {
 
   const getPaymentButtons = () => {
     return (
-      <Button className={classes.payButton} variant="contained" color="primary" disableElevation={true}>Pay</Button>
+      <Button className={classes.payButton} variant="contained" color="primary" disableElevation>Pay</Button>
     );
   };
 
@@ -148,4 +148,4 @@ const mapStateToProps = (state: RootState) => ({
   financialSummaries: state.siteData.currentSite.financialSummaries || '',
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(SubmittedRecords));
+export default connect(mapStateToProps)(withStyles(styles)(FinancialSummaries));
