@@ -46,7 +46,6 @@ enum FilterBy {
   paymentStatus = 'Payment Status' as any, 
   meterStatus = 'Meter Status' as any,
   activeStatus = 'Active Status' as any,
-  none = 'None' as any
 }
 
 function CustomerMain(props: RouteComponentProps & UserProps) {
@@ -80,8 +79,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       case (SortBy.meter): {
         return (a: CustomerRecord, b: CustomerRecord) => { return a.meterNumber - b.meterNumber }
       }
-      default: {
+      case (SortBy.name): {
         return (a: CustomerRecord, b: CustomerRecord) => { return a.name.localeCompare(b.name) }
+      }
+      default: {
+        return (a: CustomerRecord, b: CustomerRecord) => { return 0 }
       }
     }
   }
@@ -94,8 +96,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       case (FilterBy.paymentStatus): {
         return e.payments.length > 0
       }
+      case (FilterBy.activeStatus): {
+        return e.isactive
+      }
       default: {
-        return e.isactive;
+        return true;
       }
     }
   }
@@ -125,19 +130,8 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
     setFilteredCustomers(customers);
   }
 
-  const handleSortByChange = (e: any) => {
-    const key: keyof typeof SortBy = e.target.value;
-    setSortBy(SortBy[key]);
-  }
-
-  const handleFilterByChange = (e: any) => {
-    const key: keyof typeof FilterBy = e.target.value; 
-    setFilterBy(FilterBy[key]);
-  }
-
   const handleMenuSelect = (e: any) => {
     const keys: string[] = e.target.value; 
-    console.log(keys);
     const key: string = keys[keys.length - 1]; 
 
     const sortByKeys: string[] = Object.keys(SortBy);
