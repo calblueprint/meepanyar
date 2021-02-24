@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { CustomerRecord } from '../../lib/airtable/interface';
+import AddIcon from '@material-ui/icons/Add';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { store } from '../../lib/redux/store';
-import { createStyles, FormControl, FormHelperText, MenuItem, ListSubheader, Select, Theme, ThemeProvider, withStyles } from '@material-ui/core';
+import { createStyles, FormControl, FormHelperText, MenuItem, ListSubheader, Select, Theme, Fab, withStyles } from '@material-ui/core';
 import UserSearchBar from '../../components/UserSearchBar';
 import CustomerCard from '../../components/CustomerCard';
 import TrieTree from '../../lib/utils/TrieTree';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import { CustomerRecord } from '../../lib/airtable/interface';
+import { store } from '../../lib/redux/store';
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -35,11 +37,17 @@ const styles = (theme: Theme) =>
       display: 'flex',
       flexDirection: 'row', 
       justifyContent: 'flex-end'
-    }
-  });
+    },
+    fab: {
+      position: 'absolute',
+      bottom: theme.spacing(1),
+      right: theme.spacing(2),
+      color: 'white',
+    },
+});
 
 interface UserProps {
-  classes: { title: string; headerWrapper: string; selectionHeader: string; rightAlign: string; };
+  classes: { title: string; headerWrapper: string; selectionHeader: string; rightAlign: string; fab: string; };
 }
 
 enum SortBy {
@@ -81,16 +89,18 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
     const siteData = store.getState().siteData.currentSite;
     const allCustomers: CustomerRecord[] = siteData.customers;
     allCustomers.sort(sortByFunction);
-
-    const groupA = allCustomers.filter(filterByFunction);
-    const groupB = allCustomers.filter((customer: CustomerRecord) => !filterByFunction(customer));
-    setFilteredCustomers(groupA);
-    setFilteredCustomersAlt(groupB); 
-
+    sortAndFilterCustomers(allCustomers)
     setFullCustomers(allCustomers);
     const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
     customersTrie.addAll(allCustomers);
     setAllCustomersTrie(customersTrie);
+  }
+
+  const sortAndFilterCustomers = (customers: CustomerRecord[]) => {
+    const groupA = customers.filter(filterByFunction);
+    const groupB = customers.filter((customer: CustomerRecord) => !filterByFunction(customer));
+    setFilteredCustomers(groupA);
+    setFilteredCustomersAlt(groupB); 
   }
 
   /**
@@ -150,11 +160,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   const handleSearchChange = (e: any) => {
     const searchVal = e.target.value.trim();
     if (searchVal === '') {
-      setFilteredCustomers(fullCustomers); // todo: manage two groups
+      sortAndFilterCustomers(fullCustomers); // todo: manage two groups
       return;
     }
     const customers = allCustomersTrie.get(searchVal);
-    setFilteredCustomers(customers);
+    sortAndFilterCustomers(customers);
   }
 
   /**
@@ -205,7 +215,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       <BaseScrollView>
         <FormHelperText>{filterLabels[0]}</FormHelperText>
         {filteredCustomers.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
+          <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
@@ -218,6 +228,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         ))
         }
       </BaseScrollView>
+      <Link to={'/customers/create'}>
+        <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>
+          <AddIcon fontSize="large"/>
+        </Fab>
+      </Link>
     </BaseScreen>
   );
 

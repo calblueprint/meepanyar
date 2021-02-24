@@ -1,7 +1,7 @@
-import { store } from './store';
-import { refreshSiteData } from './siteData';
-import { saveUserData, setLoadingForUserData, setIsOnline } from './userDataSlice';
 import $ from 'jquery';
+import { refreshSiteData } from './siteData';
+import { store } from './store';
+import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
 
 // TODO: Change from any when typing introduced
 const refreshUserData = async (user: any): Promise<void> => {
@@ -40,6 +40,10 @@ const getUserId = (): string => {
   }
 
   return userId;
+};
+
+export const clearUserData = (): void => {
+  store.dispatch(deauthenticateAndClearUserData());
 };
 
 export { refreshUserData, checkOnline, getUserId };

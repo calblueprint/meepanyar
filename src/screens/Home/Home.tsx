@@ -61,11 +61,11 @@ function Home(props: HomeProps) {
           ]}
         />
       </Link>
-      <Link to={'/financialsummary'}>
+      <Link to={'/financial-summary'}>
         <HomeMenuItem label="Unpaid Reports" amount={1} />
       </Link>
       <HomeMenuItem label="Unresolved Incidents" amount={0} />
-      <Link to={'/financialsummary'}>
+      <Link to={'/financial-summary'}>
         <HomeMenuItem label="Financial Summary" noBadge={true} />
       </Link>
     </BaseScreen>
