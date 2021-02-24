@@ -30,6 +30,7 @@ export const Columns = {
 		name: {name:`Name`, type:`text`},
 		userIds: {name:`Users`, type:`foreignKey-many`},
 		customers: {name:`Customers`, type:`custom-object`},
+		financialSummaries: {name: `FinancialSummaries`, type:`custom-object`},
 		financialSummaryIds: {name:`Financial Summaries`, type:`foreignKey-many`},
 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
 	},
@@ -45,6 +46,7 @@ export const Columns = {
 	"Customers": {
 		name: {name:`Name`, type:`text`},
 		meterNumber: {name:`Meter Number`, type:`number`},
+		tariffPlans: {name: `TariffPlans`, type: `custom-object`},
 		tariffPlansId: {name:`Tariff Plans`, type:`foreignKey-one`},
 		sitesId: {name:`Sites`, type:`foreignKey-one`},
 		isactive: {name:`IsActive`, type:`checkbox`},

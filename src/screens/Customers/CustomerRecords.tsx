@@ -4,9 +4,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import TabMenu from './components/TabMenu';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
-import { PaymentRecord, MeterReadingRecord } from '../../utils/airtable/interface';
-import { connect } from 'react-redux';
-import { RootState } from '../../lib/redux/store';
+import { PaymentRecord, MeterReadingRecord } from '../../lib/airtable/interface';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -26,13 +24,13 @@ interface CustomerRecordsProps extends RouteComponentProps {
 function CustomerRecords(props: CustomerRecordsProps) {
   const { classes } = props;
   const payments: PaymentRecord[] = props.location.state.payments;
-  const meterReadings: MeterReadingRecord[] = props.location.state.meterReadings;
+  const invoices: MeterReadingRecord[] = props.location.state.invoices;
 
   return (
     <BaseScreen leftIcon="backNav">
       <div className={classes.content}>
         <Typography variant="h1">Records</Typography>
-        <TabMenu meterReadings={meterReadings} payments={payments} />
+        <TabMenu invoices={invoices} payments={payments} />
       </div>
     </BaseScreen>
   );

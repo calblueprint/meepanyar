@@ -24,8 +24,11 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100px',
       color: theme.palette.text.primary,
       margin: '5px',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
+    },
+    fullItems: {
+      width: '100%',
+      color: theme.palette.text.primary,
+      margin: '5px',
     },
   }),
 );
@@ -53,7 +56,7 @@ export default function OutlinedCardList(props: CardProps) {
   ) => {
     return (
       <div key={key} className={classes.itemWrapper}>
-        <div className={classes.items}>
+        <div className={rightIcon ? classes.items : classes.fullItems}>
           <Typography variant="body1">{label}</Typography>
           <Typography variant="h3" color={primary ? 'primary' : 'inherit'}>
             {number} {unit}
