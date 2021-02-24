@@ -33,7 +33,5 @@ export const getPeriodUsage = (currReading: MeterReadingRecord, startingMeter: M
 }
 
 export const getAmountBilled = (currReading: MeterReadingRecord) => {
-  //const tariffPlan = customer.tariffPlans[0];
-  //const amountBilled = tariffPlan.fixedTariff + tariffPlan.tariffByUnit * getPeriodUsage(customer, currReading, startingMeter);
   return currReading.amountBilled;
 };
