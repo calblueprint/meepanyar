@@ -31,31 +31,46 @@ const styles = (theme: Theme) =>
       flexDirection: 'column',
       flexGrow: 1,
     },
+    rightAlign: {
+      display: 'flex',
+      flexDirection: 'row', 
+      justifyContent: 'flex-end'
+    }
   });
 
 interface UserProps {
-  classes: { title: string; headerWrapper: string; selectionHeader: string; };
+  classes: { title: string; headerWrapper: string; selectionHeader: string; rightAlign: string; };
 }
 
 enum SortBy {
-  name = 'Name (A - Z)' as any, 
-  meter = 'Meter Number' as any
+  NAME = 'Name (A - Z)' as any, 
+  METER = 'Meter Number' as any
 }
 
 enum FilterBy {
-  paymentStatus = 'Payment Status' as any, 
-  meterStatus = 'Meter Status' as any,
-  activeStatus = 'Active Status' as any,
+  PAYMENT_STATUS = 'Payment Status' as any, 
+  METER_STATUS = 'Meter Status' as any,
+  ACTIVE_STATUS = 'Active Status' as any,
+}
+
+type FilterByLabel = Record<keyof typeof FilterBy, string[]>; 
+
+const labels: FilterByLabel = {
+  'PAYMENT_STATUS': ['Paid', 'Unpaid'], 
+  'METER_STATUS': ['Has Meter', 'No Meter'],
+  'ACTIVE_STATUS': ['Active', 'Inactive']
 }
 
 function CustomerMain(props: RouteComponentProps & UserProps) {
   const { classes } = props;
   const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
+  const [filteredCustomersAlt, setFilteredCustomersAlt] = useState<CustomerRecord[]>([]);
   const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
   const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.name); 
-  const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.activeStatus); 
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME); 
+  const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.ACTIVE_STATUS); 
   const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
+  const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]); 
 
   useEffect(() => {
     getCustomers();
@@ -65,39 +80,51 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   const getCustomers = () => {
     const siteData = store.getState().siteData.currentSite;
     const allCustomers: CustomerRecord[] = siteData.customers;
-    allCustomers.sort(sortByFunction());
-    allCustomers.filter(filterByFunction);
-    setFilteredCustomers(allCustomers);
+    allCustomers.sort(sortByFunction);
+
+    const groupA = allCustomers.filter(filterByFunction);
+    const groupB = allCustomers.filter((customer: CustomerRecord) => !filterByFunction(customer));
+    setFilteredCustomers(groupA);
+    setFilteredCustomersAlt(groupB); 
+
     setFullCustomers(allCustomers);
     const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
     customersTrie.addAll(allCustomers);
     setAllCustomersTrie(customersTrie);
   }
 
-  const sortByFunction = (): (a: CustomerRecord, b: CustomerRecord) => number => {
+  /**
+   * Comparator function for sorting two customer records. 
+   * It is conditioned by the current user selection for sorting. 
+   */
+  const sortByFunction = (customerA: CustomerRecord, customerB: CustomerRecord): number => {
     switch (sortBy) {
-      case (SortBy.meter): {
-        return (a: CustomerRecord, b: CustomerRecord) => { return a.meterNumber - b.meterNumber }
+      case (SortBy.METER): {
+        return customerA.meterNumber - customerB.meterNumber;
       }
-      case (SortBy.name): {
-        return (a: CustomerRecord, b: CustomerRecord) => { return a.name.localeCompare(b.name) }
+      case (SortBy.NAME): {
+        return customerA.name.localeCompare(customerB.name)
       }
       default: {
-        return (a: CustomerRecord, b: CustomerRecord) => { return 0 }
+        return 0
       }
     }
   }
 
-  const filterByFunction = (e: CustomerRecord): boolean => {
+  /**
+   * Comparator function for filtering customer records. 
+   * It is conditioned by the current user selection for filtering. 
+   */
+  const filterByFunction = (customer: CustomerRecord): boolean => {
     switch (filterBy) {
-      case (FilterBy.meterStatus): {
-        return e.hasmeter
+      case (FilterBy.METER_STATUS): {
+        return customer.hasmeter
       }
-      case (FilterBy.paymentStatus): {
-        return e.payments.length > 0
+      case (FilterBy.PAYMENT_STATUS): {
+        return customer.payments.length > 0
       }
-      case (FilterBy.activeStatus): {
-        return e.isactive
+      case (FilterBy.ACTIVE_STATUS): {
+        return customer.isactive
       }
       default: {
         return true;
@@ -123,26 +150,34 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   const handleSearchChange = (e: any) => {
     const searchVal = e.target.value.trim();
     if (searchVal === '') {
-      setFilteredCustomers(fullCustomers);
+      setFilteredCustomers(fullCustomers); // todo: manage two groups
       return;
     }
     const customers = allCustomersTrie.get(searchVal);
     setFilteredCustomers(customers);
   }
 
-  const handleMenuSelect = (e: any) => {
-    const keys: string[] = e.target.value; 
-    const key: string = keys[keys.length - 1]; 
+  /**
+   * onPressHandler for selecting sortBy and filterBy attributes.
+   * 
+   * NOTE: For a multi-select, event.target.value returns an array, rather than a string. 
+   * The first two lines in this function extract the new selected option, then sets the 
+   * state variable accordingly. Source: https://material-ui.com/components/selects/#multiple-select
+   */
+  const handleMenuSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const selectedOptions: string[] = event.target.value as string[]; 
+    const newlySelectedOption: string = selectedOptions[selectedOptions.length - 1]; 
 
     const sortByKeys: string[] = Object.keys(SortBy);
-    if (sortByKeys.includes(key)) {
-      setSortBy(SortBy[key as keyof typeof SortBy]);
+    if (sortByKeys.includes(newlySelectedOption)) {
+      setSortBy(SortBy[newlySelectedOption as keyof typeof SortBy]);
       return; 
     }
     
     const filterByKeys: string[] = Object.keys(FilterBy); 
-    if (filterByKeys.includes(key)) {
-      setFilterBy(FilterBy[key as keyof typeof FilterBy]);
+    if (filterByKeys.includes(newlySelectedOption)) {
+      setFilterBy(FilterBy[newlySelectedOption as keyof typeof FilterBy]);
+      setFilterLabels(labels[newlySelectedOption as keyof typeof FilterBy]); 
       return; 
     }
   }
@@ -157,18 +192,26 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
           <FormControl>
             <Select onChange={handleMenuSelect} multiple value={sortAndFilter} inputProps={{ 'aria-label': 'Without label' }}>
               <ListSubheader>Sort By</ListSubheader>
-              <MenuItem value="name">{SortBy.name}</MenuItem>
-              <MenuItem value="meter">{SortBy.meter}</MenuItem>
+              <MenuItem value="NAME">{SortBy.NAME}</MenuItem>
+              <MenuItem value="METER">{SortBy.METER}</MenuItem>
               <ListSubheader>Filter By</ListSubheader>
-              <MenuItem value="paymentStatus">{FilterBy.paymentStatus}</MenuItem>
-              <MenuItem value="meterStatus">{FilterBy.meterStatus}</MenuItem>
-              <MenuItem value="activeStatus">{FilterBy.activeStatus}</MenuItem>
+              <MenuItem value="PAYMENT_STATUS">{FilterBy.PAYMENT_STATUS}</MenuItem>
+              <MenuItem value="METER_STATUS">{FilterBy.METER_STATUS}</MenuItem>
+              <MenuItem value="ACTIVE_STATUS">{FilterBy.ACTIVE_STATUS}</MenuItem>
             </Select>
-            <FormHelperText>Sort and Filter</FormHelperText>
+            <div className={classes.rightAlign}><FormHelperText>Sort and Filter</FormHelperText></div>
           </FormControl>
         </div>
       <BaseScrollView>
+        <FormHelperText>{filterLabels[0]}</FormHelperText>
         {filteredCustomers.map((customer, index) => (
+          <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
+            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
+          </Link>
+        ))
+        }
+        <FormHelperText>{filterLabels[1]}</FormHelperText>
+        {filteredCustomersAlt.map((customer, index) => (
           <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
