@@ -11,7 +11,7 @@ import CustomerRecords from './screens/Customers/CustomerRecords';
 import AddCustomer from './screens/Customers/AddCustomer';
 import EditCustomer from './screens/Customers/EditCustomer';
 import AddMeterReading from './screens/Customers/AddMeterReading';
-import FinancialSummaries from './screens/FinancialSummary/FinancialSummaries';
+import FinancialSummariesMain from './screens/FinancialSummary/FinancialSummariesMain';
 
 import Inventory from './screens/Inventory';
 import Incidents from './screens/Incidents';
@@ -43,7 +43,7 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path={'/customers/customer/edit'} component={EditCustomer} exact />
       <AuthenticatedRoute path="/customers/customer/meter-readings/create" component={AddMeterReading} exact />
       <AuthenticatedRoute path={'/customers/customer/records'} component={CustomerRecords} exact />
-      <AuthenticatedRoute path="/financial-summaries" component={FinancialSummaries} />
+      <AuthenticatedRoute path="/financial-summaries" component={FinancialSummariesMain} />
 
       <AuthenticatedRoute path="/inventory" component={Inventory} />
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />

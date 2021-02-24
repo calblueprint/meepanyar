@@ -28,12 +28,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+export interface CardPropsInfo {
+  number: string;
+  label: string;
+  unit: string;
+}
+
 interface CardProps {
-  info: {
-    number: number;
-    label: string;
-    unit: string;
-  }[];
+  info: CardPropsInfo[];
   primary: boolean;
   rightIcon?: JSX.Element;
 }
@@ -43,7 +45,7 @@ export default function OutlinedCardList(props: CardProps) {
 
   const getLabeledNumber = (
     key: number,
-    number: number,
+    number: string,
     label: string,
     unit: string,
     primary: boolean,

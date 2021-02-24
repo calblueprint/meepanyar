@@ -88,13 +88,13 @@ function CustomerProfile(props: CustomerProps) {
   //dummy data
   //TODO: pull from Airtable and hold information in the form of Records as defined in the schema
   const info3 = [
-    { number: 0, label: 'Fixed Tariff', unit: 'kWh' },
-    { number: 0, label: 'Period Usage', unit: 'kWh' },
-    { number: 0, label: 'Amount Billed', unit: 'kS' },
+    { number: "0", label: 'Fixed Tariff', unit: 'kWh' },
+    { number: "0", label: 'Period Usage', unit: 'kWh' },
+    { number: "0", label: 'Amount Billed', unit: 'kS' },
   ];
 
-  const balanceInfo = [{ number: 0, label: 'Remaining Balance', unit: 'kS' }];
-  const readingInfo = [{ number: 0, label: 'Current Reading', unit: 'kWh' }];
+  const balanceInfo = [{ number: "0", label: 'Remaining Balance', unit: 'kS' }];
+  const readingInfo = [{ number: "0", label: 'Current Reading', unit: 'kWh' }];
 
   return (
     <BaseScreen leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
