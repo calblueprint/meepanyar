@@ -64,7 +64,7 @@ enum FilterBy {
 type FilterByLabel = Record<keyof typeof FilterBy, string[]>; 
 
 const labels: FilterByLabel = {
-  'PAYMENT_STATUS': ['Paid', 'Unpaid'], 
+  'PAYMENT_STATUS': ['Unpaid', 'Paid'], 
   'METER_STATUS': ['Has Meter', 'No Meter'],
   'ACTIVE_STATUS': ['Active', 'Inactive']
 }
@@ -131,7 +131,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         return customer.hasmeter
       }
       case (FilterBy.PAYMENT_STATUS): {
-        return customer.payments.length > 0
+        return parseInt(customer.outstandingBalance) > 0
       }
       case (FilterBy.ACTIVE_STATUS): {
         return customer.isactive
