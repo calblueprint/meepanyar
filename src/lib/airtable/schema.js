@@ -46,7 +46,6 @@ export const Columns = {
 	"Customers": {
 		name: {name:`Name`, type:`text`},
 		meterNumber: {name:`Meter Number`, type:`number`},
-		tariffPlans: {name: `TariffPlans`, type: `custom-object`},
 		tariffPlansId: {name:`Tariff Plans`, type:`foreignKey-one`},
 		sitesId: {name:`Sites`, type:`foreignKey-one`},
 		isactive: {name:`IsActive`, type:`checkbox`},

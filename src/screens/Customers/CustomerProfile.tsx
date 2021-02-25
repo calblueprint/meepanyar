@@ -1,7 +1,7 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import OutlinedColCard from '../../components/OutlinedCardList';
+import OutlinedColCard, { CardPropsInfo } from '../../components/OutlinedCardList';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import AddIcon from '@material-ui/icons/Add';
@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
 import { CustomerRecord, SiteRecord, MeterReadingRecord } from '../../lib/airtable/interface';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import { getCurrentReading, getStartingMeter, getPeriodUsage, getAmountBilled } from './customerUtils';
+import { getCurrentReading, getStartingReading, getPeriodUsage, getAmountBilled } from './customerUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,17 +47,17 @@ function CustomerProfile(props: CustomerProps) {
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
-  const startingMeter: MeterReadingRecord | undefined = getStartingMeter(customer);
-  const periodUsage: number | string = currReading ? getPeriodUsage(currReading, startingMeter) : UNDEFINED_AMOUNT;
+  const startingReading: MeterReadingRecord | undefined = getStartingReading(customer);
+  const periodUsage: number | string = currReading ? getPeriodUsage(currReading, startingReading) : UNDEFINED_AMOUNT;
   const amountBilled: number | string = currReading ? getAmountBilled(currReading) : UNDEFINED_AMOUNT;
 
-  const meterInfo = [
-    { number: startingMeter? startingMeter.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Starting Meter', unit: 'kWh' },
+  const meterInfo: CardPropsInfo[] = [
+    { number: startingReading? startingReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Starting Meter', unit: 'kWh' },
     { number: periodUsage.toString(), label: 'Period Usage', unit: 'kWh' },
     { number: amountBilled.toString(), label: 'Amount Billed', unit: 'kS' },
   ];
-  const balanceInfo = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
-  const readingInfo = [{ number: currReading? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
+  const balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
+  const readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
 
   const getPaymentButtons = () => {
     return (
@@ -130,7 +130,14 @@ function CustomerProfile(props: CustomerProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  currentSite: state.siteData.currentSite || '',
+  currentSite: state.siteData.currentSite || {
+    rid: '',
+    name: '',
+    customerIds: [],
+    customers: [],
+    financialSummaryIds: [],
+    financialSummaries: [],
+  },
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));

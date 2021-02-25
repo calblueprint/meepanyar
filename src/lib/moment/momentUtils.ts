@@ -6,15 +6,23 @@ export const formatUTCDateStringToLocal = (dateStringUTC: string): string => {
   return moment(dateStringUTC).local().format('YYYY-MM-DD HH:mm:ss');
 };
 
-// Returns month from date
-export const getThisPeriod = (date: string) => {
-  return parseInt(date.slice(5, 7));
+// Returns and calculates period from date
+// Will be formatted as YYYY-MM
+export const getPeriodFromDate = (date: string) => {
+  return date.slice(0, 7).toString();
 }
 
 export const getCurrentPeriod = () => {
-  return moment().month() + 1;
+  const year = moment().year();
+  const month = moment().month() + 1;
+  return year + "-" + month.toString().padStart(2, "0");
 }
 
 export const getLastPeriod = () => {
-  return moment().month();
+  const year = moment().year();
+  let month = moment().month();
+  if (month === 0) {
+    month = 12;
+  }
+  return year + "-" + month.toString().padStart(2, "0");
 }
