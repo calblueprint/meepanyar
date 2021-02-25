@@ -164,12 +164,6 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   const handleSearchChange = (e: any) => {
     const searchVal = e.target.value.trim();
     setSearchValue(searchVal); 
-    // if (searchVal === '') {
-    //   sortAndFilterCustomers(fullCustomers); 
-    //   return;
-    // }
-    // const customers = allCustomersTrie.get(searchVal);
-    // sortAndFilterCustomers(customers);
   }
 
   /**
