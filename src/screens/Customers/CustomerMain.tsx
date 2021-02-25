@@ -84,7 +84,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   useEffect(() => {
     getCustomers();
     setSortAndFilter([SortBy[sortBy], FilterBy[filterBy]]);
-  }, [sortBy, filterBy]);
+  }, [sortBy, filterBy, searchValue]);
 
   const getCustomers = () => {
     const siteData = store.getState().siteData.currentSite;
