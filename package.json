@@ -60,11 +60,11 @@
     "start": "react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "build-sw": "node ./src/sw-build.js",
+    "build-sw": "node ./src/custom-sw/sw-env.js && node ./src/custom-sw/sw-build.js",
     "clean-cra-sw": "rm -f build/precache-manifest.*.js && rm -f build/service-worker.js",
     "build": "react-scripts build && npm run build-sw && npm run clean-cra-sw",
     "generate-schema": "generate-airtable-schema",
-    "prettier-format": "prettier --config .prettierrc 'src/**/*.{ts,tsx,css}' --write",
+    "prettier-format": "prettier --config .prettierrc \"src/**/*.{ts,tsx,css}\" --write",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "husky": {
