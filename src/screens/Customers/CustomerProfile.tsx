@@ -48,8 +48,8 @@ function CustomerProfile(props: CustomerProps) {
   const UNDEFINED_AMOUNT = '-';
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
   const startingMeter: MeterReadingRecord | undefined = getStartingMeter(customer);
-  const periodUsage = currReading ? getPeriodUsage(currReading, startingMeter) : UNDEFINED_AMOUNT;
-  const amountBilled = currReading ? getAmountBilled(currReading) : UNDEFINED_AMOUNT;
+  const periodUsage: number | string = currReading ? getPeriodUsage(currReading, startingMeter) : UNDEFINED_AMOUNT;
+  const amountBilled: number | string = currReading ? getAmountBilled(currReading) : UNDEFINED_AMOUNT;
 
   const meterInfo = [
     { number: startingMeter? startingMeter.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Starting Meter', unit: 'kWh' },

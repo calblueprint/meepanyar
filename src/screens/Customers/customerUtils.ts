@@ -20,7 +20,7 @@ const isStartingMeter = (mr: MeterReadingRecord): boolean => {
   return period == lastPer;
 };
 
-//Returns
+//Returns reading from last period
 export const getStartingMeter = (customer: CustomerRecord): MeterReadingRecord | undefined => {
   return customer.meterReadings.find(function (mr: MeterReadingRecord) {
     return isStartingMeter(mr);
