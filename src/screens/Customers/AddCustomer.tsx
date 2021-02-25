@@ -25,10 +25,10 @@ function AddCustomer(props: AddCustomerProps) {
   return (
     <BaseScreen title="Add New Customer" leftIcon="backNav">
       <form noValidate className={classes.content}>
-        <TextField label={'Name'} id={'name'} primary={true} />
+        <TextField label={'Name'} />
         <Checkbox label={'Select if customer is inactive'} />
         <Checkbox label={'Meter:'} textField={'meter'} />
-        <TextField label={'Tariff Plan'} id={'tarrif-plan'} primary={true} />
+        <TextField label={'Tariff Plan'} />
         <Button label={'ADD'} />
       </form>
     </BaseScreen>
