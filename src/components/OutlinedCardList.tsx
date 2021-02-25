@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
     },
     items: {
-      width: '100px',
+      width: '150px',
       color: theme.palette.text.primary,
       margin: '5px',
     },
@@ -33,12 +33,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
+export interface CardPropsInfo {
+  number: string;
+  label: string;
+  unit: string;
+}
+
 interface CardProps {
-  info: {
-    number: string;
-    label: string;
-    unit: string;
-  }[];
+  info: CardPropsInfo[];
   primary: boolean;
   rightIcon?: JSX.Element;
 }

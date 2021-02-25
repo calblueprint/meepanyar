@@ -99,5 +99,6 @@ export const Columns = {
 		isapproved: {name:`isApproved`, type:`checkbox`},
 		lastUpdated: {name:`Last Updated`, type:`date`},
 		issubmitted: {name:`isSubmitted`, type:`checkbox`},
+		id: {name:`ID`, type:`formula`},
 	},
 };
