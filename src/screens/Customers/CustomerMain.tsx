@@ -79,6 +79,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.ACTIVE_STATUS); 
   const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
   const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]); 
+  const [searchValue, setSearchValue] = useState<string>(""); 
 
   useEffect(() => {
     getCustomers();
@@ -87,10 +88,13 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
 
   const getCustomers = () => {
     const siteData = store.getState().siteData.currentSite;
-    const allCustomers: CustomerRecord[] = siteData.customers;
-    allCustomers.sort(sortByFunction);
-    sortAndFilterCustomers(allCustomers)
+    let allCustomers: CustomerRecord[] = siteData.customers;
     setFullCustomers(allCustomers);
+    if (searchValue !== '') { 
+      allCustomers = allCustomersTrie.get(searchValue); 
+    }
+    allCustomers.sort(sortByFunction);
+    sortAndFilterCustomers(allCustomers); 
     const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
     customersTrie.addAll(allCustomers);
     setAllCustomersTrie(customersTrie);
@@ -159,12 +163,13 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
 
   const handleSearchChange = (e: any) => {
     const searchVal = e.target.value.trim();
-    if (searchVal === '') {
-      sortAndFilterCustomers(fullCustomers); // todo: manage two groups
-      return;
-    }
-    const customers = allCustomersTrie.get(searchVal);
-    sortAndFilterCustomers(customers);
+    setSearchValue(searchVal); 
+    // if (searchVal === '') {
+    //   sortAndFilterCustomers(fullCustomers); 
+    //   return;
+    // }
+    // const customers = allCustomersTrie.get(searchVal);
+    // sortAndFilterCustomers(customers);
   }
 
   /**
