@@ -22,6 +22,14 @@ if ("function" === typeof importScripts) {
             maxRetentionTime: 24 * 60 // Retry for max of 24 hours
         });
 
+        self.addEventListener('fetch', (event) => {
+
+            // This is just here to know when the service worker is being used
+            const clonedRequest = event.request.clone();
+            console.log("Request happening: ", clonedRequest);
+            fetch(event.request.clone())
+        })
+
         // Manual injection point for manifest files.
         // all assets under build/ and 5MB sizes are precached.
         workbox.precaching.precacheAndRoute([]);

@@ -13,6 +13,8 @@ import Typography from '@material-ui/core/Typography';
 import WifiIcon from '@material-ui/icons/Wifi';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
+import { createCustomer } from '../../lib/airtable/request';
+import { openDB } from 'idb';
 
 const styles = () =>
   createStyles({
@@ -38,9 +40,40 @@ interface HomeProps {
 function Home(props: HomeProps) {
   const { classes, lastUpdated, isOnline, currentSite } = props;
 
+  const onChangeCreateCustomer = () => {
+    const fakeCustomerPayload = {
+      fakeCustomer: "hello"
+    }
+    createCustomer(fakeCustomerPayload)
+  }
+
+  const logQueuedRequests = async () => {
+    const db = await openDB('workbox-background-sync');
+    const getTransaction = db.transaction('requests');
+    const objectStore = getTransaction.objectStore('requests');
+    let requestCursor = await objectStore.openCursor();
+    while (requestCursor) {
+      try {
+        const requestValue = requestCursor.value;
+        const requestKey = requestCursor.key;
+        console.log(requestKey, requestValue);
+
+      } catch (error) {
+        console.log('Error when iterating through cursor on key ', requestCursor.key);
+      }
+      requestCursor = await requestCursor.continue();
+    }
+  }
+
   return (
     <BaseScreen rightIcon="user">
       <div className={classes.header}>
+        <button onClick={onChangeCreateCustomer}>
+          Create Customer Button
+        </button>
+        <button onClick={logQueuedRequests}>
+          Log queued requests to console
+        </button>
         <SiteMenu currentSite={currentSite} />
         <div className={classes.network}>
           {isOnline ? <WifiIcon color="primary" /> : <WifiOffIcon color="secondary" />}
