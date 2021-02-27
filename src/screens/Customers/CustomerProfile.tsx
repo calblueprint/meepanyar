@@ -11,6 +11,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
 import { CustomerRecord, SiteRecord, MeterReadingRecord } from '../../lib/airtable/interface';
+import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import { getCurrentReading, getStartingReading, getPeriodUsage, getAmountBilled } from './customerUtils';
 
@@ -130,14 +131,7 @@ function CustomerProfile(props: CustomerProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  currentSite: state.siteData.currentSite || {
-    rid: '',
-    name: '',
-    customerIds: [],
-    customers: [],
-    financialSummaryIds: [],
-    financialSummaries: [],
-  },
+  currentSite: state.siteData.currentSite || EMPTY_SITE,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));

@@ -19,10 +19,20 @@ export const getCurrentPeriod = () => {
 }
 
 export const getLastPeriod = () => {
-  const year = moment().year();
+  let year = moment().year();
+  // Last month is retrieved directly from moment's month() because of 0 indexing
   let month = moment().month();
   if (month === 0) {
     month = 12;
+    year -= 1;
   }
   return year + "-" + month.toString().padStart(2, "0");
+}
+
+// Returns difference between two periods in milliseconds
+export const getDiffinPeriods = (x: string, y: string) => {
+  const dateX: Date = new Date(x);
+  const dateY: Date = new Date(y);
+  const diff: number = Math.abs(dateY.getTime() - dateX.getTime());
+  return diff;
 }

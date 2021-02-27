@@ -1,6 +1,6 @@
 
 import { CustomerRecord, MeterReadingRecord } from '../../lib/airtable/interface';
-import { getPeriodFromDate, getCurrentPeriod, getLastPeriod } from '../../lib/moment/momentUtils';
+import { getPeriodFromDate, getCurrentPeriod, getLastPeriod, getDiffinPeriods } from '../../lib/moment/momentUtils';
 
 const isCurrentReading = (mr: MeterReadingRecord): boolean => {
     const period: string = getPeriodFromDate(mr.date);
@@ -8,7 +8,7 @@ const isCurrentReading = (mr: MeterReadingRecord): boolean => {
     return period === currPer;
 };
 
-//Returns last reading in the period
+// Returns last reading in the period
 export const getCurrentReading = (customer: CustomerRecord): MeterReadingRecord | undefined => {
   return customer.meterReadings.find(isCurrentReading);
 };
@@ -19,9 +19,32 @@ const isStartingReading = (mr: MeterReadingRecord): boolean => {
   return period === lastPer;
 };
 
-//Returns reading from last period
+const getClosestReading = (x: MeterReadingRecord, y: MeterReadingRecord): MeterReadingRecord => {
+  const currentPeriod: string = getCurrentPeriod();
+  const diffX: number = getDiffinPeriods(currentPeriod, getPeriodFromDate(x.date));
+  const diffY: number = getDiffinPeriods(currentPeriod, getPeriodFromDate(y.date));
+  if (diffX < diffY) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+// Searches through meterReadings and find most recent reading that isn't from the current period
+// Could be undefined if no other reading exists except current
 export const getStartingReading = (customer: CustomerRecord): MeterReadingRecord | undefined => {
-  return customer.meterReadings.find(isStartingReading);
+  let mostRecentReading: MeterReadingRecord | undefined;
+  for (let i = 0; i < customer.meterReadings.length; i += 1) {
+    const thisReading = customer.meterReadings[i];
+    if (!isCurrentReading(thisReading)) {
+      if (!mostRecentReading) {
+        mostRecentReading = thisReading;
+      } else {
+        mostRecentReading = getClosestReading(thisReading, mostRecentReading);
+      }
+    }
+  }
+  return mostRecentReading;
 };
 
 export const getPeriodUsage = (currReading: MeterReadingRecord, startingMeter: MeterReadingRecord | undefined) => {
