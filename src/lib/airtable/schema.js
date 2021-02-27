@@ -83,6 +83,7 @@ export const Columns = {
 		id: { name: `ID`, type: `formula` },
 	},
 	"Financial Summaries": {
+<<<<<<< HEAD
 		name: { name: `Name`, type: `formula` },
 		siteId: { name: `Site`, type: `foreignKey-one` },
 		totalCustomers: { name: `Total Customers`, type: `number` },
@@ -99,5 +100,23 @@ export const Columns = {
 		lastUpdated: { name: `Last Updated`, type: `date` },
 		issubmitted: { name: `isSubmitted`, type: `checkbox` },
 		id: { name: `ID`, type: `formula` },
+=======
+		name: {name:`Name`, type:`formula`},
+		siteId: {name:`Site`, type:`foreignKey-one`},
+		totalCustomers: {name:`Total Customers`, type:`number`},
+		totalCustomersBilled: {name:`Total Customers Billed`, type:`number`},
+		totalCustomersPaid: {name:`Total Customers Paid`, type:`number`},
+		totalUsage: {name:`Total Usage`, type:`number`},
+		totalAmountBilled: {name:`Total Amount Billed`, type:`number`},
+		totalAmountCollected: {name:`Total Amount Collected`, type:`number`},
+		totalAmountSpent: {name:`Total Amount Spent`, type:`number`},
+		totalProfit: {name:`Total Profit`, type:`formula`},
+		period: {name:`Period`, type:`text`},
+		bankSlip: {name:`Bank Slip`, type:`multipleAttachment`},
+		isapproved: {name:`isApproved`, type:`checkbox`},
+		lastUpdated: {name:`Last Updated`, type:`date`},
+		issubmitted: {name:`isSubmitted`, type:`checkbox`},
+		id: {name:`ID`, type:`formula`},
+>>>>>>> 51e87e5929e616100143240be6e641591dc1dcd8
 	},
 };
