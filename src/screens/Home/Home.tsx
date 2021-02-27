@@ -42,8 +42,8 @@ function Home(props: HomeProps) {
     proccessData();
   }, []);
 
-  const [outStandingPayments, setOutstandingPayments] = useState<number>();
-  const [toCharge, setToCharges] = useState<number>();
+  const [numOutstandingPayments, setNumOutstandingPayments] = useState<number>();
+  const [numCustomersToCharge, setNumToCharges] = useState<number>();
   const [customerDetails, setCustomerDetails] = useState<number>();
   const [unpaidReports, setUnpaidReports] = useState<number>();
 
@@ -54,52 +54,53 @@ function Home(props: HomeProps) {
     calculateUnpaidReports(currentSite)
   }
 
-  const calculateCustomerData = (ss: SiteRecord) => {
+  const calculateCustomerData = (site: SiteRecord) => {
     // customers to charge:  haven't charged yet/ no meterreading
     // outstanding payments: done the meter reading / charged, haven't paid yet
     let toCharge = 0;
-    let outstanding = 0;
+    let outstandingPayments = 0;
     //get day
     const today = new Date();
     const currMonth = today.getUTCMonth();
-    let customers = ss.customers;
+    let customers = site.customers;
     for (let i = 0; i < customers.length; i++) {
-      let curr = customers[i]
+      const currCustomer = customers[i]
       //depends if the meter readings list is sorted with earliest => latest
-      let latestMeterReading = curr.meterReadings[curr.meterReadings.length - 1];
+      let latestMeterReading = currCustomer.meterReadings[currCustomer.meterReadings.length - 1];
       if (latestMeterReading != null) {
         const dateTime = Date.parse(latestMeterReading.date);
         let readingDate = new Date(dateTime);
         if (readingDate.getUTCMonth() < currMonth) {
           toCharge += 1;
         }
-        if (checkPayment(curr)) {
-          outstanding += 1;
+        if (checkPayment(currCustomer)) {
+          outstandingPayments += 1;
         }
       }
     }
-    setOutstandingPayments(outstanding);
-    setToCharges(toCharge);
-    setCustomerDetails(toCharge + outstanding);
+    setNumOutstandingPayments(outstandingPayments);
+    setNumToCharges(toCharge);
+    console.log(outstandingPayments);
+    console.log(toCharge + outstandingPayments);
+    setCustomerDetails(toCharge + outstandingPayments);
   }
 
   //true has outstadining false has paid
   const checkPayment = (customer: CustomerRecord) => {
-    if (parseInt(customer.outstandingBalance) > 0) {
-      return true;
-    }
-    return false;
+    return parseInt(customer.outstandingBalance) > 0;
   }
 
-  const calculateUnpaidReports = (ss: SiteRecord) => {
+  const calculateUnpaidReports = (site: SiteRecord) => {
     let unpaid = 0;
-    let summaries = ss.financialSummaries;
+    let summaries = site.financialSummaries;
     for (let i = 0; i < summaries.length; i++) {
       let singleSummary = summaries[i];
       if (singleSummary.totalCustomersBilled > singleSummary.totalCustomersPaid) {
         unpaid += 1;
       }
     }
+    console.log('unpaid')
+    console.log(unpaid)
     setUnpaidReports(unpaid);
   }
 
@@ -121,7 +122,7 @@ function Home(props: HomeProps) {
           label="Customer Alerts"
           amount={customerDetails ? customerDetails : 0}
           sublabels={[
-            { amount: 1, label: 'Customers to Charge' },
+            { amount: 2, label: 'Customers to Charge' },
             { amount: 2, label: 'Outstanding Payments' },
           ]}
         />
