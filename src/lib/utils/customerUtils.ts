@@ -13,12 +13,6 @@ export const getCurrentReading = (customer: CustomerRecord): MeterReadingRecord 
   return customer.meterReadings.find(isCurrentReading);
 };
 
-const isStartingReading = (mr: MeterReadingRecord): boolean => {
-  const period: string = getPeriodFromDate(mr.date);
-  const lastPer: string = getLastPeriod();
-  return period === lastPer;
-};
-
 const getClosestReading = (x: MeterReadingRecord | undefined, y: MeterReadingRecord | undefined): MeterReadingRecord | undefined => {
   if (!x) {
     return y;
