@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
+import { SiteRecord } from '../airtable/interface';
 
 interface siteDataSliceState {
   isLoading: boolean;
@@ -12,6 +13,15 @@ const initialState: siteDataSliceState = {
   isLoading: false,
   currentSite: null,
   sites: [],
+};
+
+export const EMPTY_SITE: SiteRecord = {
+  rid: '',
+  name: '',
+  customerIds: [],
+  customers: [],
+  financialSummaryIds: [],
+  financialSummaries: [],
 };
 
 const siteDataSlice = createSlice({
