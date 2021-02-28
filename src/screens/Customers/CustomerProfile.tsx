@@ -13,7 +13,7 @@ import { RootState } from '../../lib/redux/store';
 import { CustomerRecord, SiteRecord, MeterReadingRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import { getCurrentReading, getStartingReading, getPeriodUsage, getAmountBilled } from './customerUtils';
+import { getCurrentReading, getStartingReading, getPeriodUsage, getAmountBilled } from '../../lib/utils/customerUtils';
 
 const styles = (theme: Theme) =>
   createStyles({

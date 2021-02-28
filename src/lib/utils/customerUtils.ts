@@ -19,7 +19,13 @@ const isStartingReading = (mr: MeterReadingRecord): boolean => {
   return period === lastPer;
 };
 
-const getClosestReading = (x: MeterReadingRecord, y: MeterReadingRecord): MeterReadingRecord => {
+const getClosestReading = (x: MeterReadingRecord | undefined, y: MeterReadingRecord | undefined): MeterReadingRecord | undefined => {
+  if (!x) {
+    return y;
+  }
+  if (!y) {
+    return x;
+  }
   const currentPeriod: string = getCurrentPeriod();
   const diffX: number = getDiffinPeriods(currentPeriod, getPeriodFromDate(x.date));
   const diffY: number = getDiffinPeriods(currentPeriod, getPeriodFromDate(y.date));
@@ -37,11 +43,7 @@ export const getStartingReading = (customer: CustomerRecord): MeterReadingRecord
   for (let i = 0; i < customer.meterReadings.length; i += 1) {
     const thisReading = customer.meterReadings[i];
     if (!isCurrentReading(thisReading)) {
-      if (!mostRecentReading) {
-        mostRecentReading = thisReading;
-      } else {
-        mostRecentReading = getClosestReading(thisReading, mostRecentReading);
-      }
+      mostRecentReading = getClosestReading(thisReading, mostRecentReading);
     }
   }
   return mostRecentReading;
