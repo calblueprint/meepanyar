@@ -2,12 +2,14 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 
+export interface CardPropsInfo {
+  number: string;
+  label: string;
+  unit: string;
+}
+
 interface CardProps {
-  info: {
-    number: number;
-    label: string;
-    unit: string;
-  }[];
+  info: CardPropsInfo[];
   primary: boolean;
   rightIcon?: JSX.Element;
   columns?: boolean;
@@ -40,15 +42,21 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
       margin: '5px',
     }),
+    fullItems: {
+      width: '100%',
+      color: theme.palette.text.primary,
+      margin: '5px',
+    },
   }),
 );
 
-function OutlinedCardList(props: CardProps): JSX.Element {
+
+export default function OutlinedCardList(props: CardProps): JSX.Element {
   const classes = useStyles(props);
 
   const getLabeledNumber = (
     key: number,
-    number: number,
+    number: string,
     label: string,
     unit: string,
     primary: boolean,
@@ -57,7 +65,7 @@ function OutlinedCardList(props: CardProps): JSX.Element {
   ) => {
     return (
       <div key={key} className={ classes.itemWrapper }>
-        <div className={classes.items}>
+        <div className={rightIcon ? classes.items : classes.fullItems}>
           <Typography variant="body1" align={columns ? 'center' : 'inherit'}>{label}</Typography>
           <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
             {number} {unit}
@@ -86,5 +94,3 @@ OutlinedCardList.defaultProps = {
   rightIcon: null,
   columns: false,
 };
-
-export default OutlinedCardList;

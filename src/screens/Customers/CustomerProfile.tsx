@@ -5,12 +5,15 @@ import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import React from 'react';
+import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import OutlinedCardList from '../../components/OutlinedCardList';
-import { CustomerRecord } from '../../lib/airtable/interface';
-import { store } from '../../lib/redux/store';
+import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
+import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
+import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { RootState } from '../../lib/redux/store';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading } from '../../lib/utils/customerUtils';
 
 
 const styles = (theme: Theme) =>
@@ -43,13 +46,29 @@ const styles = (theme: Theme) =>
 
 interface CustomerProps extends RouteComponentProps {
   classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string;};
+  currentSite: SiteRecord;
   location: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
-  const { classes, match } = props;
+  const { classes, match, currentSite } = props;
   const customer: CustomerRecord = props.location.state.customer;
 
+  // data retrieval
+  const UNDEFINED_AMOUNT = '-';
+  const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
+  const startingReading: MeterReadingRecord | undefined = getStartingReading(customer);
+  const periodUsage: number | string = currReading ? getPeriodUsage(currReading, startingReading) : UNDEFINED_AMOUNT;
+  const amountBilled: number | string = currReading ? getAmountBilled(currReading) : UNDEFINED_AMOUNT;
+
+  const meterInfo: CardPropsInfo[] = [
+    { number: startingReading? startingReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Starting Meter', unit: 'kWh' },
+    { number: periodUsage.toString(), label: 'Period Usage', unit: 'kWh' },
+    { number: amountBilled.toString(), label: 'Amount Billed', unit: 'kS' },
+  ];
+  const balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
+  const readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
+  
   const getPaymentButton = () => {
     return (
         <Button
@@ -62,6 +81,7 @@ function CustomerProfile(props: CustomerProps) {
         </Button>
     );
   };
+
 
   const getRecordsButton = () => {
     return (
@@ -99,45 +119,32 @@ function CustomerProfile(props: CustomerProps) {
   };
 
   const getFixedTariff= () => {
-    return customer.tariffPlans.fixedTariff;
+    console.log(customer);
+    return 0;
+    // return customer.tariffPlans.fixedTariff;
   }
 
   const getUnitTariff= () => {
-    return customer.tariffPlans.tariffByUnit;
+    return 0.0;
+    // return customer.tariffPlans.tariffByUnit;
   }
 
   const getMinUnits= () => {
-    return customer.tariffPlans.minUnits;
+    return 10;
+    // return customer.tariffPlans.minUnits;
   }
 
-
-  //dummy data
-  //TODO: pull from Airtable and hold information in the form of Records as defined in the schema
-  const info3 = [
-    { number: 0 , label: 'Starting Meter', unit: 'kWh' },
-    { number: 0, label: 'Period Usage', unit: 'kWh' },
-    { number: 0, label: 'Amount Billed', unit: 'kS' },
-  ];
-
-  const getSiteName = () => {
-    const siteData = store.getState().siteData.currentSite;
-    return siteData.name;
-  }
-
-  const tariffInfo = [
-    { number: getFixedTariff() , label: 'Fixed Tariff', unit: 'MMK' },
-    { number: getUnitTariff(), label: 'Unit Tariff', unit: 'MMK' },
-    { number: getMinUnits(), label: 'Minimum Units Used', unit: '' },
+  const tariffInfo : CardPropsInfo[] = [
+    { number: getFixedTariff().toString() , label: 'Fixed Tariff', unit: 'MMK' },
+    { number: getUnitTariff().toString(), label: 'Unit Tariff', unit: 'MMK' },
+    { number: getMinUnits().toString(), label: 'Minimum Units Used', unit: '' },
   ]
-
-  const balanceInfo = [{ number: parseFloat(customer.outstandingBalance), label: 'Remaining Balance', unit: 'kS' }];
-  const readingInfo = [{ number: 0, label: 'Current Reading', unit: 'kWh' }];
-
+  
   return (
     <BaseScreen leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
       <BaseScrollView>
         <div className={classes.content}>
-          <Typography variant="h1">{getSiteName()}</Typography>
+          <Typography variant="h1">{currentSite.name}</Typography>
           <Typography variant="body1" color="textSecondary">
             {customer.meterNumber}
           </Typography>
@@ -154,7 +161,7 @@ function CustomerProfile(props: CustomerProps) {
               Meter Reading
             </Typography>
             <OutlinedCardList info={readingInfo} primary={true} rightIcon={getAddButton()} />
-            <OutlinedCardList info={info3} primary={false} />
+            <OutlinedCardList info={meterInfo} primary={false} />
           </div>
         </div>
       </BaseScrollView>
@@ -162,4 +169,8 @@ function CustomerProfile(props: CustomerProps) {
   );
 }
 
-export default withStyles(styles)(CustomerProfile);
+const mapStateToProps = (state: RootState) => ({
+  currentSite: state.siteData.currentSite || EMPTY_SITE,
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));

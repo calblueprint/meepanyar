@@ -28,11 +28,11 @@ function EditCustomer(props: EditCustomerProps) {
   return (
     <BaseScreen title="Edit Customer" leftIcon="backNav">
       <form noValidate className={classes.content}>
-        <TextField label={'Name'} id={'name'} primary={true} />
+        <TextField label={'Name'} />
         <Checkbox label={'Select if customer is inactive'} />
         <Checkbox label={'Select if customer has meter'} />
-        <TextField label={'Tariff Plan'} id={'tarrif-plan'} primary={true} />
-        <TextField label={'Reason'} id={'reason'} primary={true} />
+        <TextField label={'Tariff Plan'} />
+        <TextField label={'Reason'} />
         <Button label={'SAVE'} />
       </form>
     </BaseScreen>

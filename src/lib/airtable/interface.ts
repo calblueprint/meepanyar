@@ -57,6 +57,8 @@ export interface CustomerRecord {
   payments: PaymentRecord[];
   customerUpdateIds: string[];
   customerUpdates: CustomerUpdateRecord[];
+  totalAmountBilledfromInvoices: number;
+  totalAmountPaidfromPayments: number;
 }
 
 export interface CustomerUpdateRecord {
