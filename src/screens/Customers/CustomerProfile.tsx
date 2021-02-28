@@ -13,7 +13,7 @@ import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardLi
 import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading } from '../../lib/utils/customerUtils';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
 
 
 const styles = (theme: Theme) =>
@@ -56,6 +56,19 @@ function CustomerProfile(props: CustomerProps) {
 
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
+
+  const customerTariff = getTariffPlan(customer, currentSite);
+
+  const fixedTariff = customerTariff ? customerTariff?.fixedTariff : UNDEFINED_AMOUNT;
+  const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;
+  const minUnits = customerTariff ? customerTariff?.minUnits : UNDEFINED_AMOUNT;
+
+  const tariffInfo : CardPropsInfo[] = [
+    { number: fixedTariff.toString() , label: 'Fixed Tariff', unit: 'MMK' },
+    { number: unitTariff.toString(), label: 'Unit Tariff', unit: 'MMK' },
+    { number: minUnits.toString(), label: 'Minimum Units Used', unit: '' },
+  ]
+
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
   const startingReading: MeterReadingRecord | undefined = getStartingReading(customer);
   const periodUsage: number | string = currReading ? getPeriodUsage(currReading, startingReading) : UNDEFINED_AMOUNT;
@@ -117,28 +130,6 @@ function CustomerProfile(props: CustomerProps) {
       </div>
     );
   };
-
-  const getFixedTariff= () => {
-    console.log(customer);
-    return 0;
-    // return customer.tariffPlans.fixedTariff;
-  }
-
-  const getUnitTariff= () => {
-    return 0.0;
-    // return customer.tariffPlans.tariffByUnit;
-  }
-
-  const getMinUnits= () => {
-    return 10;
-    // return customer.tariffPlans.minUnits;
-  }
-
-  const tariffInfo : CardPropsInfo[] = [
-    { number: getFixedTariff().toString() , label: 'Fixed Tariff', unit: 'MMK' },
-    { number: getUnitTariff().toString(), label: 'Unit Tariff', unit: 'MMK' },
-    { number: getMinUnits().toString(), label: 'Minimum Units Used', unit: '' },
-  ]
   
   return (
     <BaseScreen leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
