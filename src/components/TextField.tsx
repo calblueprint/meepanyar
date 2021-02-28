@@ -1,6 +1,6 @@
+import { TextField, Typography } from '@material-ui/core';
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Typography, TextField } from '@material-ui/core';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -14,11 +14,13 @@ const styles = (theme: Theme) =>
     },
   });
 
+  // TODO: @wangannie: make onChange not optional
 interface TextFieldProps {
   classes: { textField: string };
   label: string;
   id: string;
   primary: boolean;
+  onChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 
 function Field(props: TextFieldProps) {
@@ -32,6 +34,7 @@ function Field(props: TextFieldProps) {
         InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
         InputLabelProps={{ shrink: true }}
         color={props.primary ? 'primary' : undefined}
+        onChange={props.onChange}
       />
     </div>
   );
