@@ -17,8 +17,6 @@ const styles = (theme: Theme) =>
 interface TextFieldProps {
   classes: { textField: string };
   label: string;
-  id: string;
-  primary: boolean;
 }
 
 function Field(props: TextFieldProps) {
@@ -28,10 +26,8 @@ function Field(props: TextFieldProps) {
       <Typography variant="body1">{props.label}</Typography>
       <TextField
         className={classes.textField}
-        id={props.id}
         InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
         InputLabelProps={{ shrink: true }}
-        color={props.primary ? 'primary' : undefined}
       />
     </div>
   );

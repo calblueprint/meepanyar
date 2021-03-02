@@ -53,8 +53,11 @@ const userDataSlice = createSlice({
       state.lastUpdated = moment().toString();
       state.isOnline = true;
     },
+    deauthenticateAndClearUserData() {
+      return { ...initialState };
+    }
   },
 });
 
-export const { setLoadingForUserData, saveUserData, setIsOnline } = userDataSlice.actions;
+export const { setLoadingForUserData, saveUserData, setIsOnline , deauthenticateAndClearUserData} = userDataSlice.actions;
 export default userDataSlice.reducer;

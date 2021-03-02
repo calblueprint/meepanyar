@@ -21,19 +21,26 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
     },
     items: {
-      width: '100px',
+      width: '150px',
+      color: theme.palette.text.primary,
+      margin: '5px',
+    },
+    fullItems: {
+      width: '100%',
       color: theme.palette.text.primary,
       margin: '5px',
     },
   }),
 );
 
+export interface CardPropsInfo {
+  number: string;
+  label: string;
+  unit: string;
+}
+
 interface CardProps {
-  info: {
-    number: number;
-    label: string;
-    unit: string;
-  }[];
+  info: CardPropsInfo[];
   primary: boolean;
   rightIcon?: JSX.Element;
 }
@@ -43,7 +50,7 @@ export default function OutlinedCardList(props: CardProps) {
 
   const getLabeledNumber = (
     key: number,
-    number: number,
+    number: string,
     label: string,
     unit: string,
     primary: boolean,
@@ -51,7 +58,7 @@ export default function OutlinedCardList(props: CardProps) {
   ) => {
     return (
       <div key={key} className={classes.itemWrapper}>
-        <div className={classes.items}>
+        <div className={rightIcon ? classes.items : classes.fullItems}>
           <Typography variant="body1">{label}</Typography>
           <Typography variant="h3" color={primary ? 'primary' : 'inherit'}>
             {number} {unit}

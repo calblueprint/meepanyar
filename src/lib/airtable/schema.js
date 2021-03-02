@@ -23,16 +23,16 @@ export const Columns = {
 		password: {name:`Password`, type:`text`},
 		name: {name:`Name`, type:`text`},
 		paymentIds: {name:`Payments`, type:`foreignKey-many`},
-		meterReadingsAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
+		meterReadingAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
 		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
 	},
 	"Sites": {
 		name: {name:`Name`, type:`text`},
 		userIds: {name:`Users`, type:`foreignKey-many`},
-		customers: {name:`Customers`, type:`custom-object`}, // Modified via patch.
-		financialSummarieIds: {name:`Financial Summaries`, type:`foreignKey-many`},
+		customers: {name:`Customers`, type:`custom-object`},
+		financialSummaries: {name: `FinancialSummaries`, type:`custom-object`},
+		financialSummaryIds: {name:`Financial Summaries`, type:`foreignKey-many`},
 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
-		field6: {name:`Field 6`, type:`text`},
 	},
 	"Tariff Plans": {
 		name: {name:`Name`, type:`text`},
@@ -98,5 +98,6 @@ export const Columns = {
 		isapproved: {name:`isApproved`, type:`checkbox`},
 		lastUpdated: {name:`Last Updated`, type:`date`},
 		issubmitted: {name:`isSubmitted`, type:`checkbox`},
+		id: {name:`ID`, type:`formula`},
 	},
 };
