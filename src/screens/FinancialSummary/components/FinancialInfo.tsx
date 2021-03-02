@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography, Button, Divider } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import TextField from './TextField';
+import TextField from '../../../components/TextField';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -83,7 +83,7 @@ export default function FinancialInfo(props: CardProps) {
         </div>
       </div>
       <div className={classes.fieldContainer}>
-        <TextField label="Payment Amount" bold={true} />
+        <TextField label="Payment Amount" />
       </div>
     </div>
   );
