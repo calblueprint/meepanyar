@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
     },
     content: {
-      marginTop: '10px',
+      margin: 10,
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: '6px',
       padding: '20px',
@@ -50,7 +50,7 @@ export default function FinancialInfo(props: CardProps) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h2" color="textSecondary">
+      <Typography variant="h2" color="textPrimary">
         Financial Info
       </Typography>
       <div className={classes.content}>
