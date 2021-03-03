@@ -4,6 +4,7 @@ import { RootState, store } from '../../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
+import { lessThanCurrentMonth } from '../../lib/moment/momentUtils';
 
 import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
@@ -13,7 +14,6 @@ import Typography from '@material-ui/core/Typography';
 import WifiIcon from '@material-ui/icons/Wifi';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import { getAllSites } from '../../lib/airtable/request';
 
 const styles = () =>
   createStyles({
@@ -68,21 +68,24 @@ function Home(props: HomeProps) {
       //depends if the meter readings list is sorted with earliest => latest
       let latestMeterReading = currCustomer.meterReadings[currCustomer.meterReadings.length - 1];
       if (latestMeterReading != null) {
-        const dateTime = Date.parse(latestMeterReading.date);
-        let readingDate = new Date(dateTime);
-        if (readingDate.getUTCMonth() < currMonth) {
+        let lessMonth = lessThanCurrentMonth(latestMeterReading.date)
+        if (lessMonth) {
           toCharge += 1;
         }
         if (checkPayment(currCustomer)) {
           outstandingPayments += 1;
         }
+      } else {
+        toCharge += 1;
       }
     }
-    setNumOutstandingPayments(outstandingPayments);
-    setNumToCharges(toCharge);
+
+    console.log('payments')
     console.log(outstandingPayments);
-    console.log(toCharge + outstandingPayments);
-    setCustomerDetails(toCharge + outstandingPayments);
+    console.log('need to charge')
+    console.log(toCharge);
+    let total = outstandingPayments + toCharge;
+    return { 'outstandingPayments': outstandingPayments, 'toCharge': toCharge, 'totalAmount': total }
   }
 
   //true has outstadining false has paid
