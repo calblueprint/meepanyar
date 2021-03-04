@@ -61,10 +61,6 @@ function Home(props: HomeProps) {
         toCharge += 1;
       }
     }
-    console.log('payments')
-    console.log(outstandingPayments);
-    console.log('need to charge')
-    console.log(toCharge);
     let total = outstandingPayments + toCharge;
     return { 'outstandingPayments': outstandingPayments, 'toCharge': toCharge, 'totalAmount': total }
   }
@@ -83,8 +79,6 @@ function Home(props: HomeProps) {
         unpaid += 1;
       }
     }
-    console.log('unpaid')
-    console.log(unpaid)
     return unpaid;
   }
 
