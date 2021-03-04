@@ -1,37 +1,6 @@
-import React from 'react';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      marginTop: '10px',
-      border: '1px solid',
-      borderColor: theme.palette.divider,
-      borderRadius: '6px',
-    },
-    content: {
-      padding: '8px 12px',
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    itemWrapper: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    items: {
-      width: '150px',
-      color: theme.palette.text.primary,
-      margin: '5px',
-    },
-    fullItems: {
-      width: '100%',
-      color: theme.palette.text.primary,
-      margin: '5px',
-    },
-  }),
-);
+import React from 'react';
 
 export interface CardPropsInfo {
   number: string;
@@ -43,10 +12,47 @@ interface CardProps {
   info: CardPropsInfo[];
   primary: boolean;
   rightIcon?: JSX.Element;
+  columns?: boolean;
 }
 
-export default function OutlinedCardList(props: CardProps) {
-  const classes = useStyles();
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      marginTop: '10px',
+      border: '1px solid',
+      borderColor: theme.palette.divider,
+      borderRadius: '6px',
+    },
+    content: (props: CardProps) => ({
+      flex: 1,
+      padding: '8px 8px',
+      display: 'flex',
+      flexDirection: props.columns ? 'row' : 'column'
+    }),
+    itemWrapper: {
+      flex: 1,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    items: (props: CardProps) => ({
+      flex: 1,
+      flexDirection: props.columns ? 'column-reverse' : 'column',
+      display: 'flex',
+      color: theme.palette.text.primary,
+      margin: '5px',
+    }),
+    fullItems: {
+      width: '100%',
+      color: theme.palette.text.primary,
+      margin: '5px',
+    },
+  }),
+);
+
+
+export default function OutlinedCardList(props: CardProps): JSX.Element {
+  const classes = useStyles(props);
 
   const getLabeledNumber = (
     key: number,
@@ -55,28 +61,42 @@ export default function OutlinedCardList(props: CardProps) {
     unit: string,
     primary: boolean,
     rightIcon: JSX.Element | null,
+    columns: boolean,
   ) => {
     return (
-      <div key={key} className={classes.itemWrapper}>
+      <div key={key} className={ classes.itemWrapper }>
         <div className={rightIcon ? classes.items : classes.fullItems}>
-          <Typography variant="body1">{label}</Typography>
-          <Typography variant="h3" color={primary ? 'primary' : 'inherit'}>
-            {number} {unit}
+          <Typography variant="body1" align={columns ? 'center' : 'inherit'}>{label}</Typography>
+          <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
+            {number} {props.columns ? '' : unit}
           </Typography>
+          {/* Split unit to new line if in column layout */}
+          {props.columns && 
+            <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
+              {unit}
+            </Typography>
+          }
         </div>
         {rightIcon}
       </div>
     );
   };
 
-  const rightIcon = props.rightIcon ? props.rightIcon : null;
+  const rightIcon = props.rightIcon || null;
+  const columns = props.columns || false;
+
   return (
     <div className={classes.root}>
       <div className={classes.content}>
         {props.info.map((info, index) =>
-          getLabeledNumber(index, info.number, info.label, info.unit, props.primary, rightIcon),
+          getLabeledNumber(index, info.number, info.label, info.unit, props.primary, rightIcon, columns),
         )}
       </div>
     </div>
   );
 }
+
+OutlinedCardList.defaultProps = {
+  rightIcon: null,
+  columns: false,
+};

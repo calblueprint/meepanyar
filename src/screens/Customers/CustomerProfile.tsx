@@ -1,42 +1,51 @@
-import React from 'react';
-import Typography from '@material-ui/core/Typography';
-import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import OutlinedColCard, { CardPropsInfo } from '../../components/OutlinedCardList';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import React from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '../../lib/redux/store';
-import { CustomerRecord, SiteRecord, MeterReadingRecord } from '../../lib/airtable/interface';
-import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import { getCurrentReading, getStartingReading, getPeriodUsage, getAmountBilled } from '../../lib/utils/customerUtils';
+import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
+import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
+import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { RootState } from '../../lib/redux/store';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
+
 
 const styles = (theme: Theme) =>
   createStyles({
     content: {
       color: theme.palette.text.primary,
     },
-    header: {
-      marginTop: '15px',
+    section: {
+      marginTop: '30px',
     },
-    button: {
+    headerWrapper: {
+      marginTop: '15px',
+      display: 'flex',
+      flexDirection: 'row',
+      width: '100%',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    buttonPrimary: {
       borderRadius: '12px',
-      height: '30px',
       color: 'white',
       backgroundColor: theme.palette.primary.main,
     },
     buttonSecondary: {
       borderRadius: '12px',
+      color: theme.palette.primary.main,
       backgroundColor: theme.palette.secondary.main,
     },
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; header: string; button: string; buttonSecondary: string };
+  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string;};
   currentSite: SiteRecord;
   location: any;
 }
@@ -47,6 +56,19 @@ function CustomerProfile(props: CustomerProps) {
 
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
+
+  const customerTariff = getTariffPlan(customer, currentSite);
+
+  const fixedTariff = customerTariff ? customerTariff?.fixedTariff : UNDEFINED_AMOUNT;
+  const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;
+  const minUnits = customerTariff ? customerTariff?.minUnits : UNDEFINED_AMOUNT;
+
+  const tariffInfo : CardPropsInfo[] = [
+    { number: fixedTariff.toString() , label: 'Fixed Tariff', unit: 'MMK' },
+    { number: unitTariff.toString(), label: 'Unit Tariff', unit: 'MMK' },
+    { number: minUnits.toString(), label: 'Minimum Units Used', unit: '' },
+  ]
+
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
   const startingReading: MeterReadingRecord | undefined = getStartingReading(customer);
   const periodUsage: number | string = currReading ? getPeriodUsage(currReading, startingReading) : UNDEFINED_AMOUNT;
@@ -59,38 +81,42 @@ function CustomerProfile(props: CustomerProps) {
   ];
   const balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
   const readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
-
-  const getPaymentButtons = () => {
+  
+  const getPaymentButton = () => {
     return (
-      <>
         <Button
           variant="contained"
-          className={classes.button}
-          color="primary"
+          className={classes.buttonPrimary}
           startIcon={<AddIcon />}
           disableElevation={true}
         >
           Add Payment
         </Button>
-        <div className={classes.buttonSecondary}>
-          <IconButton
-            component={Link}
-            to={{
-              pathname: `${match.url}/records`,
-              state: { invoices: customer.meterReadings, payments: customer.payments },
-            }}
-            size="small"
-          >
-            <ListAltOutlinedIcon color="primary" />
-          </IconButton>
-        </div>
-      </>
+    );
+  };
+
+
+  const getRecordsButton = () => {
+    return (
+      <Button
+        variant="contained"
+        component={Link}
+        to={{
+          pathname: `${match.url}/records`,
+          state: { invoices: customer.meterReadings, payments: customer.payments },
+        }}
+        className={classes.buttonSecondary}
+        startIcon={<ListAltOutlinedIcon />}
+        disableElevation={true}
+      >
+        Records
+      </Button>
     );
   };
 
   const getAddButton = () => {
     return (
-      <div className={classes.button}>
+      <div className={classes.buttonPrimary}>
         <IconButton
           component={Link}
           to={{
@@ -104,26 +130,30 @@ function CustomerProfile(props: CustomerProps) {
       </div>
     );
   };
-
+  
   return (
     <BaseScreen leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
       <BaseScrollView>
         <div className={classes.content}>
           <Typography variant="h1">{currentSite.name}</Typography>
-          <Typography variant="h4" color="textSecondary">
+          <Typography variant="body1" color="textSecondary">
             {customer.meterNumber}
           </Typography>
-
-          <Typography className={classes.header} variant="h2">
-            Payment
-          </Typography>
-          <OutlinedColCard info={balanceInfo} primary={true} rightIcon={getPaymentButtons()} />
-
-          <Typography className={classes.header} variant="h2">
-            Meter Reading
-          </Typography>
-          <OutlinedColCard info={readingInfo} primary={true} rightIcon={getAddButton()} />
-          <OutlinedColCard info={meterInfo} primary={false} />
+          <OutlinedCardList info={tariffInfo} primary={false} columns/>
+          <div className={classes.section}>
+            <div className={classes.headerWrapper}>
+              <Typography variant="h2">Payment</Typography>
+              {getRecordsButton()}
+            </div>
+            <OutlinedCardList info={balanceInfo} primary={true} rightIcon={getPaymentButton()} />
+          </div>
+          <div className={classes.section}>
+            <Typography variant="h2">
+              Meter Reading
+            </Typography>
+            <OutlinedCardList info={readingInfo} primary={true} rightIcon={getAddButton()} />
+            <OutlinedCardList info={meterInfo} primary={false} />
+          </div>
         </div>
       </BaseScrollView>
     </BaseScreen>

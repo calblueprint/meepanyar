@@ -1,6 +1,6 @@
 
-import { CustomerRecord, MeterReadingRecord } from '../../lib/airtable/interface';
-import { getPeriodFromDate, getCurrentPeriod, getLastPeriod, getDiffinPeriods } from '../../lib/moment/momentUtils';
+import { CustomerRecord, MeterReadingRecord, SiteRecord, TariffPlanRecord } from '../../lib/airtable/interface';
+import { getCurrentPeriod, getDiffinPeriods, getPeriodFromDate } from '../../lib/moment/momentUtils';
 
 const isCurrentReading = (mr: MeterReadingRecord): boolean => {
     const period: string = getPeriodFromDate(mr.date);
@@ -51,3 +51,9 @@ export const getPeriodUsage = (currReading: MeterReadingRecord, startingMeter: M
 export const getAmountBilled = (currReading: MeterReadingRecord) => {
   return currReading.amountBilled;
 };
+
+// TODO: add better error handling
+export const getTariffPlan = (customer: CustomerRecord, currentSite: SiteRecord): TariffPlanRecord | undefined => {
+  const tariffPlanId = customer.tariffPlansId;
+  return currentSite.tariffPlans.find((plan:TariffPlanRecord) => plan.id === tariffPlanId);
+}
