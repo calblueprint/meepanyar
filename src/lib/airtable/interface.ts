@@ -47,8 +47,8 @@ export interface TariffPlanRecord {
 export interface CustomerRecord {
   name: string;
   meterNumber: number;
-  tariffPlansId: string;
-  tariffPlans: TariffPlanRecord;
+  tariffPlanId: string;
+  tariffPlan: TariffPlanRecord;
   isactive: boolean;
   hasmeter: boolean;
   outstandingBalance: string;
