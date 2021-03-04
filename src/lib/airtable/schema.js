@@ -33,6 +33,7 @@ export const Columns = {
 		financialSummaries: {name: `FinancialSummaries`, type:`custom-object`},
 		financialSummaryIds: {name:`Financial Summaries`, type:`foreignKey-many`},
 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
+		tariffPlans: {name:`TariffPlans`, type:`custom-object`},
 	},
 	"Tariff Plans": {
 		name: {name:`Name`, type:`text`},

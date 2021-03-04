@@ -1,0 +1,12 @@
+diff --git a/src/lib/airtable/schema.js b/src/lib/airtable/schema.js
+index 581a427..c740bd4 100644
+--- a/src/lib/airtable/schema.js
++++ b/src/lib/airtable/schema.js
+@@ -33,6 +33,7 @@ export const Columns = {
+ 		financialSummaries: {name: `FinancialSummaries`, type:`custom-object`},
+ 		financialSummaryIds: {name:`Financial Summaries`, type:`foreignKey-many`},
+ 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
++		tariffPlans: {name:`TariffPlans`, type:`custom-object`},
+ 	},
+ 	"Tariff Plans": {
+ 		name: {name:`Name`, type:`text`},
