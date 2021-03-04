@@ -1,6 +1,6 @@
-import { store } from './store';
-import { setLoadingForSiteData, setCurrSite, saveSiteData } from './siteDataSlice';
 import { getAllSites } from '../airtable/request';
+import { addNewCustomer, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
+import { store } from './store';
 
 const refreshSiteData = async (): Promise<void> => {
   store.dispatch(setLoadingForSiteData());
@@ -25,4 +25,8 @@ const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrSite(newSite));
 };
 
-export { refreshSiteData, setCurrentSite };
+const addCustomer = (customer: any): void => {
+  store.dispatch(addNewCustomer(customer));
+};
+
+export { refreshSiteData, setCurrentSite, addCustomer };

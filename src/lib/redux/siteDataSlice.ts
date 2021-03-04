@@ -30,8 +30,19 @@ const siteDataSlice = createSlice({
     setCurrSite(state, action) {
       state.currentSite = action.payload;
     },
+    addNewCustomer(state, action) {
+      return {
+      ...state,
+      currentSite:{
+        ...state.currentSite,
+        customers:[
+          ...state.currentSite.customers, action.payload
+        ]
+        }
+      }
+      }
   },
 });
 
-export const { setLoadingForSiteData, saveSiteData, setCurrSite } = siteDataSlice.actions;
+export const { setLoadingForSiteData, saveSiteData, setCurrSite, addNewCustomer } = siteDataSlice.actions;
 export default siteDataSlice.reducer;

@@ -7,8 +7,27 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
-import { SiteRecord } from '../../lib/airtable/interface';
+import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
+import { createCustomer } from '../../lib/airtable/request';
+import { addCustomer } from '../../lib/redux/siteData';
 import { RootState } from '../../lib/redux/store';
+
+// TODO: Move to utils file?
+const EMPTY_CUSTOMER : CustomerRecord= {
+    name: '',
+    meterNumber: 0,
+    tariffPlansId: [],
+    tariffPlans: [],
+    isactive: false,
+    hasmeter: false,
+    outstandingBalance: '',
+    meterReadingIds: [],
+    meterReadings: [],
+    paymentIds: [],
+    payments: [],
+    customerUpdateIds: [],
+    customerUpdates: []
+}
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -38,8 +57,22 @@ function AddCustomer(props: AddCustomerProps) {
     setSelectedTariffPlan(event.target.value as string);
   }
 
-  const handleSubmit = () => {
-    console.log("NEW CUSTOMER SUBMITTED:", customerName, " Meter: ", meter, " | Inactive:", customerInactive, " | Tariff plan", selectedTariffPlan);
+  const handleSubmit = (event: React.MouseEvent) => {
+    // Prevent page refresh on submit
+    event.preventDefault();
+
+    const customer = EMPTY_CUSTOMER;
+    customer.name = customerName;
+    customer.meterNumber = parseInt(meter);
+    customer.isactive = !customerInactive;
+    customer.tariffPlansId.push(selectedTariffPlan);
+    addCustomer(customer);
+    
+    const cust = customer as any;
+    cust.sitesId = currentSite.rid;
+    cust.totalAmountBilledfromInvoices = 0;
+    cust.totalAmountPaidfromPayments = 0;
+    createCustomer(cust);
   }
 
   const handleNameInput = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -66,7 +99,7 @@ function AddCustomer(props: AddCustomerProps) {
         </FormControl>
         <Checkbox label={'Meter:'} textField={meterChecked ? 'meter': null} checkboxOnChange={() => setMeterChecked(!meterChecked)}textFieldOnChange={handleMeterInput}/>
         <Checkbox label={'Customer is inactive'} checkboxOnChange = {() => setCustomerInactive(!customerInactive)}/>
-        <Button label={'Add'} onClick={handleSubmit} />
+        <Button label={'Add'} onClick={(event) => handleSubmit(event)} />
       </form>
     </BaseScreen>
   );
