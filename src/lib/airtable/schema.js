@@ -47,8 +47,8 @@ export const Columns = {
 	"Customers": {
 		name: {name:`Name`, type:`text`},
 		meterNumber: {name:`Meter Number`, type:`number`},
-		tariffPlansId: {name:`Tariff Plans`, type:`foreignKey-one`},
-		sitesId: {name:`Sites`, type:`foreignKey-one`},
+		tariffPlanId: {name:`Tariff Plan`, type:`foreignKey-one`},
+		siteId: {name:`Site`, type:`foreignKey-one`},
 		isactive: {name:`IsActive`, type:`checkbox`},
 		hasmeter: {name:`HasMeter`, type:`checkbox`},
 		outstandingBalance: {name:`Outstanding Balance`, type:`formula`},
