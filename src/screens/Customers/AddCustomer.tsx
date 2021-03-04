@@ -1,4 +1,4 @@
-import { createStyles, FormControl, FormHelperText, MenuItem, Select, Theme } from '@material-ui/core';
+import { createStyles, FormControl, InputLabel, MenuItem, Select, Theme } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -35,10 +35,13 @@ const styles = (theme: Theme) =>
     content: {
       color: theme.palette.text.primary,
     },
+    formControl: {
+      width: '100%',
+    },
   });
 
 interface AddCustomerProps extends RouteComponentProps {
-  classes: { content: string };
+  classes: { content: string, formControl: string};
   location: any;
   currentSite: SiteRecord;
 }
@@ -54,7 +57,6 @@ function AddCustomer(props: AddCustomerProps) {
   const [customerInactive, setCustomerInactive] = useState(false);
 
   const handleSelectTariffPlan = (event: React.ChangeEvent<{ value: unknown }>) => {
-    console.log("handling select!");
     setSelectedTariffPlan(event.target.value as string);
   }
 
@@ -91,13 +93,13 @@ function AddCustomer(props: AddCustomerProps) {
     <BaseScreen title="Add New Customer" leftIcon="backNav">
       <form noValidate className={classes.content} onSubmit={() => false}>
         <TextField label={'Name'} id={'name'} primary={true} onChange={handleNameInput} />
-        <FormControl>
-            <Select inputProps={{ 'aria-label': 'Tariff Plan' }} onChange={handleSelectTariffPlan}>
-              {tariffPlans.map((plan, index) =>
+        <FormControl variant="outlined" className={classes.formControl}>
+          <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
+          <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId = "select-tariff-plan-label" onChange={handleSelectTariffPlan}>
+            {tariffPlans.map((plan, index) =>
                 <MenuItem key={index} value={plan.id}>{plan.name}</MenuItem>
-                )}
-            </Select>
-            <FormHelperText>Tariff Plan {tariffPlans.length}</FormHelperText>
+            )}
+          </Select>
         </FormControl>
         <Checkbox label={'Meter:'} textField={meterChecked ? 'meter': null} checkboxOnChange={() => setMeterChecked(!meterChecked)}textFieldOnChange={handleMeterInput}/>
         <Checkbox label={'Customer is inactive'} checkboxOnChange = {() => setCustomerInactive(!customerInactive)}/>
