@@ -38,31 +38,13 @@ interface HomeProps {
 
 function Home(props: HomeProps) {
   const { classes, lastUpdated, isOnline, currentSite } = props;
-  useEffect(() => {
-    proccessData();
-  }, []);
 
-  const [numOutstandingPayments, setNumOutstandingPayments] = useState<number>();
-  const [numCustomersToCharge, setNumToCharges] = useState<number>();
-  const [customerDetails, setCustomerDetails] = useState<number>();
-  const [unpaidReports, setUnpaidReports] = useState<number>();
-
-
-
-  const proccessData = () => {
-    calculateCustomerData(currentSite);
-    calculateUnpaidReports(currentSite)
-  }
-
-  const calculateCustomerData = (site: SiteRecord) => {
+  const calculateCustomerData = () => {
     // customers to charge:  haven't charged yet/ no meterreading
     // outstanding payments: done the meter reading / charged, haven't paid yet
     let toCharge = 0;
     let outstandingPayments = 0;
-    //get day
-    const today = new Date();
-    const currMonth = today.getUTCMonth();
-    let customers = site.customers;
+    let customers = currentSite.customers;
     for (let i = 0; i < customers.length; i++) {
       const currCustomer = customers[i]
       //depends if the meter readings list is sorted with earliest => latest
@@ -79,7 +61,6 @@ function Home(props: HomeProps) {
         toCharge += 1;
       }
     }
-
     console.log('payments')
     console.log(outstandingPayments);
     console.log('need to charge')
@@ -93,9 +74,9 @@ function Home(props: HomeProps) {
     return parseInt(customer.outstandingBalance) > 0;
   }
 
-  const calculateUnpaidReports = (site: SiteRecord) => {
+  const calculateUnpaidReports = () => {
     let unpaid = 0;
-    let summaries = site.financialSummaries;
+    let summaries = currentSite.financialSummaries;
     for (let i = 0; i < summaries.length; i++) {
       let singleSummary = summaries[i];
       if (singleSummary.totalCustomersBilled > singleSummary.totalCustomersPaid) {
@@ -104,9 +85,10 @@ function Home(props: HomeProps) {
     }
     console.log('unpaid')
     console.log(unpaid)
-    setUnpaidReports(unpaid);
+    return unpaid;
   }
 
+  const customerData = calculateCustomerData();
   return (
     <BaseScreen rightIcon="user">
       <div className={classes.header}>
@@ -123,15 +105,15 @@ function Home(props: HomeProps) {
       <Link to={'/customers'}>
         <HomeMenuItem
           label="Customer Alerts"
-          amount={customerDetails ? customerDetails : 0}
+          amount={customerData.totalAmount}
           sublabels={[
-            { amount: 2, label: 'Customers to Charge' },
-            { amount: 2, label: 'Outstanding Payments' },
+            { amount: customerData.toCharge, label: 'Customers to Charge' },
+            { amount: customerData.outstandingPayments, label: 'Outstanding Payments' },
           ]}
         />
       </Link>
       <Link to={'/financial-summary'}>
-        <HomeMenuItem label="Unpaid Reports" amount={unpaidReports} />
+        <HomeMenuItem label="Unpaid Reports" amount={calculateUnpaidReports()} />
       </Link>
       <HomeMenuItem label="Unresolved Incidents" amount={0} />
       <Link to={'/financial-summary'}>
