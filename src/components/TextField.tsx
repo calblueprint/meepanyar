@@ -1,4 +1,4 @@
-import { TextField, Typography } from '@material-ui/core';
+import { InputLabel, TextField } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React from 'react';
 
@@ -19,7 +19,7 @@ interface TextFieldProps {
   classes: { textField: string };
   label: string;
   id: string;
-  primary: boolean;
+  primary?: boolean;
   onChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 
@@ -27,10 +27,10 @@ function Field(props: TextFieldProps) {
   const { classes } = props;
   return (
     <div>
-      <Typography variant="body1">{props.label}</Typography>
+      <InputLabel htmlFor={props.id} >{props.label}</InputLabel>
       <TextField
-        className={classes.textField}
         id={props.id}
+        className={classes.textField}
         InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
         InputLabelProps={{ shrink: true }}
         color={props.primary ? 'primary' : undefined}

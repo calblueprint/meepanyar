@@ -1,10 +1,10 @@
-import React from 'react';
-import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import TextField from '../../components/TextField';
-import Button from '../../components/Button';
 import { Typography } from '@material-ui/core';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
+import Button from '../../components/Button';
+import TextField from '../../components/TextField';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -51,7 +51,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
             <Typography variant="body1" style={{ marginBottom: 15 }}>
               00.00.0000
             </Typography>
-            <TextField label={'New Meter Reading (kWh)'} id={'meter-reading'} primary={true} />
+            <TextField label={'New Meter Reading (kWh)'} id={'new-meter-reading'}/>
           </div>
           <Button label={'ADD'} />
         </form>

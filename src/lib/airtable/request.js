@@ -23,7 +23,7 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
-import { addToOfflineCustomer } from '../utils/customerUtils';
+import { addToOfflineCustomer } from '../utils/offlineUtils';
 
 /*
  ******* CREATE RECORDS *******

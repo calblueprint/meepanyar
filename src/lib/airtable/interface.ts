@@ -47,8 +47,7 @@ export interface TariffPlanRecord {
 export interface CustomerRecord {
   name: string;
   meterNumber: number;
-  tariffPlansId: string[];
-  tariffPlans: TariffPlanRecord[];
+  tariffPlansId: string;
   isactive: boolean;
   hasmeter: boolean;
   outstandingBalance: string;
@@ -58,6 +57,8 @@ export interface CustomerRecord {
   payments: PaymentRecord[];
   customerUpdateIds: string[];
   customerUpdates: CustomerUpdateRecord[];
+  totalAmountBilledfromInvoices: number;
+  totalAmountPaidfromPayments: number;
 }
 
 export interface CustomerUpdateRecord {

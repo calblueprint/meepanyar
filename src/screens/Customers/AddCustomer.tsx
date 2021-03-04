@@ -16,8 +16,7 @@ import { RootState } from '../../lib/redux/store';
 const EMPTY_CUSTOMER : CustomerRecord= {
     name: '',
     meterNumber: 0,
-    tariffPlansId: [],
-    tariffPlans: [],
+    tariffPlansId: '',
     isactive: false,
     hasmeter: false,
     outstandingBalance: '',
@@ -26,7 +25,9 @@ const EMPTY_CUSTOMER : CustomerRecord= {
     paymentIds: [],
     payments: [],
     customerUpdateIds: [],
-    customerUpdates: []
+    customerUpdates: [],
+    totalAmountBilledfromInvoices: 0,
+    totalAmountPaidfromPayments: 0,
 }
 
 const styles = (theme: Theme) =>
@@ -65,13 +66,14 @@ function AddCustomer(props: AddCustomerProps) {
     customer.name = customerName;
     customer.meterNumber = parseInt(meter);
     customer.isactive = !customerInactive;
-    customer.tariffPlansId.push(selectedTariffPlan);
+    customer.tariffPlansId = selectedTariffPlan;
     addCustomer(customer);
     
-    const cust = customer as any;
-    cust.sitesId = currentSite.rid;
-    cust.totalAmountBilledfromInvoices = 0;
-    cust.totalAmountPaidfromPayments = 0;
+    const cust = {
+      ...customer,
+      sitesId: currentSite.rid
+    }
+    
     createCustomer(cust);
   }
 

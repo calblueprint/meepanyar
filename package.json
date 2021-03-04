@@ -64,7 +64,8 @@
     "clean-cra-sw": "rm -f build/precache-manifest.*.js && rm -f build/service-worker.js",
     "build": "react-scripts build && npm run build-sw && npm run clean-cra-sw",
     "generate-schema": "generate-airtable-schema",
-    "prettier-format": "prettier --config .prettierrc 'src/**/*.{ts,tsx,css}' --write",
+    "apply-schema-patches": "git apply --reject --whitespace=fix src/lib/airtable/patches/*.patch",
+    "prettier-format": "prettier --config .prettierrc \"src/**/*.{ts,tsx,css}\" --write",
     "lint": "eslint . --ext .ts,.tsx"
   },
   "husky": {
