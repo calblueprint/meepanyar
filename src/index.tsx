@@ -12,7 +12,7 @@ import { checkOnline, refreshData } from './lib/redux/userData';
 
 // Check if online every 10 seconds
 setInterval(checkOnline, 10000);
-setInterval(refreshData, 30000);
+//setInterval(refreshData, 30000);
 
 ReactDOM.render(
   <Provider store={store}>

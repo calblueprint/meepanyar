@@ -43,6 +43,7 @@ const checkOnline = (): void => {
       if (!state.userData.isOnline) {
         //refresh data code here
         console.log('Im refreshing data!')
+        refreshData();
       }
       store.dispatch(setIsOnline({ isOnline: true }))
 
