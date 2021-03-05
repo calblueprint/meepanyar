@@ -33,10 +33,11 @@ export interface SiteRecord {
   customers: CustomerRecord[];
   financialSummaryIds: string[];
   financialSummaries: FinancialSummaryRecord[];
+  tariffPlans: TariffPlanRecord[];
 }
 
 export interface TariffPlanRecord {
-  rid: string;
+  id: string;
   name: string;
   fixedTariff: number;
   tariffByUnit: number;
@@ -46,8 +47,8 @@ export interface TariffPlanRecord {
 export interface CustomerRecord {
   name: string;
   meterNumber: number;
-  tariffPlansId: string[];
-  tariffPlans: TariffPlanRecord[];
+  tariffPlanId: string;
+  tariffPlan: TariffPlanRecord;
   isactive: boolean;
   hasmeter: boolean;
   outstandingBalance: string;
