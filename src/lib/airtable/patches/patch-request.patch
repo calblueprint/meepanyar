@@ -242,25 +242,3 @@ index 7b68055..25078e7 100644
 +export const deleteFinancialSummary = async (id) => {
    return deleteRecord(Tables.FinancialSummaries, id);
  };
-diff --git a/src/lib/airtable/schema.js b/src/lib/airtable/schema.js
-index cde4903..90e5c21 100644
---- a/src/lib/airtable/schema.js
-+++ b/src/lib/airtable/schema.js
-@@ -23,14 +23,14 @@ export const Columns = {
- 		password: {name:`Password`, type:`text`},
- 		name: {name:`Name`, type:`text`},
- 		paymentIds: {name:`Payments`, type:`foreignKey-many`},
--		meterReadingsAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
-+		meterReadingAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
- 		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
- 	},
- 	"Sites": {
- 		name: {name:`Name`, type:`text`},
- 		userIds: {name:`Users`, type:`foreignKey-many`},
--		customerIds: {name:`Customers`, type:`foreignKey-many`},
--		financialSummarieIds: {name:`Financial Summaries`, type:`foreignKey-many`},
-+		customers: {name:`Customers`, type:`custom-object`},
-+		financialSummaryIds: {name:`Financial Summaries`, type:`foreignKey-many`},
- 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
- 	},
- 	"Tariff Plans": {

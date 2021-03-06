@@ -16,7 +16,7 @@ const initialState: siteDataSliceState = {
 };
 
 export const EMPTY_SITE: SiteRecord = {
-  rid: '',
+  id: '',
   name: '',
   customerIds: [],
   customers: [],

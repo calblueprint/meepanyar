@@ -25,6 +25,7 @@ export const Columns = {
 		paymentIds: {name:`Payments`, type:`foreignKey-many`},
 		meterReadingAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
 		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
+		id: {name:`ID`, type:`formula`},
 	},
 	"Sites": {
 		name: {name:`Name`, type:`text`},
@@ -34,6 +35,7 @@ export const Columns = {
 		financialSummaryIds: {name:`Financial Summaries`, type:`foreignKey-many`},
 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
 		tariffPlans: {name:`TariffPlans`, type:`custom-object`},
+		id: {name:`ID`, type:`formula`},
 	},
 	"Tariff Plans": {
 		name: {name:`Name`, type:`text`},
@@ -64,6 +66,7 @@ export const Columns = {
 		customerIds: {name:`Customer`, type:`foreignKey-many`},
 		explanation: {name:`Explanation`, type:`multilineText`},
 		userId: {name:`User`, type:`foreignKey-one`},
+		id: {name:`ID`, type:`formula`},
 	},
 	"Meter Readings and Invoices": {
 		meterReadingName: {name:`Meter Reading Name`, type:`formula`},
