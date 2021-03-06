@@ -14,9 +14,10 @@ import { RootState } from '../../lib/redux/store';
 
 // TODO: Move to utils file?
 const EMPTY_CUSTOMER : CustomerRecord= {
+    id: '',
     name: '',
     meterNumber: 0,
-    tariffPlansId: '',
+    tariffPlanId: '',
     isactive: false,
     hasmeter: false,
     outstandingBalance: '',
@@ -68,12 +69,12 @@ function AddCustomer(props: AddCustomerProps) {
     customer.name = customerName;
     customer.meterNumber = parseInt(meter);
     customer.isactive = !customerInactive;
-    customer.tariffPlansId = selectedTariffPlan;
+    customer.tariffPlanId = selectedTariffPlan;
     addCustomer(customer);
     
     const cust = {
       ...customer,
-      sitesId: currentSite.rid
+      siteId: currentSite.id
     }
     
     createCustomer(cust);

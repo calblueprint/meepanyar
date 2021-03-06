@@ -16,7 +16,7 @@ export type Row = {
 };
 
 export interface UserRecord {
-  rid: string;
+  id: string;
   username: string;
   email: string;
   photo?: Airtable.Attachment[];
@@ -27,7 +27,7 @@ export interface UserRecord {
 }
 
 export interface SiteRecord {
-  rid: string;
+  id: string;
   name: string;
   customerIds: string[];
   customers: CustomerRecord[];
@@ -45,9 +45,10 @@ export interface TariffPlanRecord {
 }
 
 export interface CustomerRecord {
+  id: string;
   name: string;
   meterNumber: number;
-  tariffPlansId: string;
+  tariffPlanId: string;
   isactive: boolean;
   hasmeter: boolean;
   outstandingBalance: string;
@@ -62,6 +63,7 @@ export interface CustomerRecord {
 }
 
 export interface CustomerUpdateRecord {
+  id: string;
   dateUpdated: string;
   customerId: string[];
   explanation: string;
@@ -69,6 +71,7 @@ export interface CustomerUpdateRecord {
 }
 
 export interface MeterReadingRecord {
+  id: string;
   reading: number;
   amountBilled: number;
   date: string;
@@ -76,11 +79,13 @@ export interface MeterReadingRecord {
 }
 
 export interface PaymentRecord {
+  id: string;
   amount: number;
   date: string;
 }
 
 export interface FinancialSummaryRecord {
+  id: string;
   name: string;
   totalCustomers: number;
   totalCustomersBilled: number;
