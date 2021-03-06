@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Button, Divider } from '@material-ui/core';
+import { Typography, Divider } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import TextField from '../../../components/TextField';
 
@@ -9,7 +9,6 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
     },
     content: {
-      margin: 10,
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: '6px',
       padding: '20px',
@@ -30,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     balanceText: {
       fontWeight: 700,
-      color: theme.palette.primary.main,
+      color: theme.palette.info.main,
     },
     fieldContainer: {
       marginTop: '10px',
@@ -38,14 +37,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-interface CardProps {
+interface FinancialInfoProps {
   bankName: string;
   accountNumber: number;
   accountName: string;
   balance: number;
 }
 
-export default function FinancialInfo(props: CardProps) {
+export default function FinancialInfo(props: FinancialInfoProps) {
   const classes = useStyles();
 
   return (
@@ -68,7 +67,7 @@ export default function FinancialInfo(props: CardProps) {
           </div>
           <div className={classes.right}>
             <Typography variant="body1">{props.bankName}</Typography>
-            <Typography variant="body1">**** **** {props.accountNumber}</Typography>
+            <Typography variant="body1">{props.accountNumber}</Typography>
             <Typography variant="body1">{props.accountName}</Typography>
           </div>
         </div>

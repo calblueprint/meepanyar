@@ -18,7 +18,7 @@ import Incidents from './screens/Incidents';
 import Maintenance from './screens/Maintenance';
 
 import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
-import ConfirmPayment from './screens/FinancialSummary/ConfirmPayment';
+import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummaryPayment';
 
 import { ConnectedRouter } from 'connected-react-router';
 import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
@@ -45,7 +45,11 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path="/customers/customer/meter-readings/create" component={AddMeterReading} exact />
       <AuthenticatedRoute path={'/customers/customer/records'} component={CustomerRecords} exact />
       <AuthenticatedRoute path="/financial-summaries" component={FinancialSummariesMain} />
-      <AuthenticatedRoute path="/confirm-payment" component={ConfirmPayment} />
+
+      {
+        //TODO: change path to ~"/financial-summaries/financial-summary/payment/create" once other screens are built out
+      }
+      <AuthenticatedRoute path="/confirm-payment" component={FinancialSummaryPayment} />
 
       <AuthenticatedRoute path="/inventory" component={Inventory} />
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
