@@ -49,9 +49,6 @@ export default function FinancialInfo(props: FinancialInfoProps) {
 
   return (
     <div className={classes.root}>
-      <Typography variant="h2" color="textPrimary">
-        Financial Info
-      </Typography>
       <div className={classes.content}>
         <div className={classes.itemWrapper}>
           <div>

@@ -36,10 +36,14 @@ const styles = (theme: Theme) =>
       border: `3.5px dashed ${theme.palette.divider}`,
       radius: '6px',
     },
+    header: {
+      marginTop: 5,
+      marginBottom: 10,
+    },
 });
 
 interface FinancialSummaryPaymentProps extends RouteComponentProps {
-  classes: { content: string; confirmButton: string; cameraButton: string; };
+  classes: { content: string; confirmButton: string; cameraButton: string; header: string; };
   financialSummaries: FinancialSummaryRecord[]; //TODO: change later to take in one financial summary
   location: any;
 }
@@ -52,8 +56,11 @@ function FinancialSummaryPayment(props: FinancialSummaryPaymentProps) {
     <BaseScreen leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.content}>
+          <Typography variant="h2" color="textPrimary" className={classes.header}>
+            Financial Info
+          </Typography>
           <FinancialInfo bankName={"Aurora"} accountNumber={203203203203} accountName={"Mee"} balance={financialSummary.totalAmountBilled} />
-          <Typography variant="h2" color="textPrimary">
+          <Typography variant="h2" color="textPrimary" className={classes.header}>
             Add Photo of Payslip
           </Typography>
           <Button className={classes.cameraButton} variant="contained" color="primary" disableElevation={true}>
