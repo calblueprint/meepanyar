@@ -52,7 +52,7 @@ function FinancialSummaryPayment(props: FinancialSummaryPaymentProps) {
     <BaseScreen leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.content}>
-          <FinancialInfo bankName={"Aurora"} accountNumber={203203203203} accountName={"Mee"} balance={financialSummary.totalAmountBilled} /> //TOOD: change this with actual info
+          <FinancialInfo bankName={"Aurora"} accountNumber={203203203203} accountName={"Mee"} balance={financialSummary.totalAmountBilled} />
           <Typography variant="h2" color="textPrimary">
             Add Photo of Payslip
           </Typography>
