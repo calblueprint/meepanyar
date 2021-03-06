@@ -57,3 +57,21 @@ export const getTariffPlan = (customer: CustomerRecord, currentSite: SiteRecord)
   const tariffPlanId = customer.tariffPlanId;
   return currentSite.tariffPlans.find((plan:TariffPlanRecord) => plan.id === tariffPlanId);
 }
+
+export const EMPTY_CUSTOMER : CustomerRecord = {
+  id: '',
+  name: '',
+  meterNumber: 0,
+  tariffPlanId: '',
+  isactive: false,
+  hasmeter: false,
+  outstandingBalance: '',
+  meterReadingIds: [],
+  meterReadings: [],
+  paymentIds: [],
+  payments: [],
+  customerUpdateIds: [],
+  customerUpdates: [],
+  totalAmountBilledfromInvoices: 0,
+  totalAmountPaidfromPayments: 0,
+}

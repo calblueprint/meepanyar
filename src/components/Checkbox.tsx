@@ -29,7 +29,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-  // TODO: @wangannie look into renaming the onChange props
+
 interface CheckBoxProps {
   classes: { root: string; checkIcon: string; checkedIcon: string; textField: string };
   label: string;
@@ -38,6 +38,7 @@ interface CheckBoxProps {
   textFieldOnChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 
+// TODO: Rename component
 function CheckBox(props: CheckBoxProps) {
   const { classes } = props;
   return (
