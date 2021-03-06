@@ -22,6 +22,7 @@ export const EMPTY_SITE: SiteRecord = {
   customers: [],
   financialSummaryIds: [],
   financialSummaries: [],
+  tariffPlans: [],
 };
 
 export const EMPTY_FINANCIAL_SUMMARY: FinancialSummaryRecord = {

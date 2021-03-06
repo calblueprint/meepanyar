@@ -3,7 +3,7 @@ This folder contains patches that should be run after regenerating the airtable 
 
 ## Directions to apply patch
 - Navigate to the root directory `meepanyar/`.
-- Apply patch in the `src/lib/airtable/patches/` directory by running the following command: `git apply --reject --whitespace=fix src/lib/airtable/patches/*.patch`
+- Apply patch in the `src/lib/airtable/patches/` directory by running the following command in the root directory `meepanyar/`: `npm run apply-schema-patches`.
 - Any patches that have failed to be applied will be present in a `.rej` file. They should be manually applied instead.
 - For explanations on what `--reject` and `--whitespace=fix` do, see [here](https://stackoverflow.com/a/15375869)
 
