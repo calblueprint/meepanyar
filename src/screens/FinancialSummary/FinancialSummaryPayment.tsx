@@ -44,13 +44,12 @@ const styles = (theme: Theme) =>
 
 interface FinancialSummaryPaymentProps extends RouteComponentProps {
   classes: { content: string; confirmButton: string; cameraButton: string; header: string; };
-  financialSummaries: FinancialSummaryRecord[]; //TODO: change later to take in one financial summary
+  financialSummary: FinancialSummaryRecord; //TODO: change later to take in one financial summary
   location: any;
 }
 
 function FinancialSummaryPayment(props: FinancialSummaryPaymentProps) {
-  const { classes, financialSummaries } = props;
-  const financialSummary: FinancialSummaryRecord = financialSummaries[0]; //TODO: change later to take in one financial summary
+  const { classes, financialSummary } = props;
 
   return (
     <BaseScreen leftIcon="backNav">
@@ -84,7 +83,7 @@ function FinancialSummaryPayment(props: FinancialSummaryPaymentProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  financialSummaries: state.siteData.currentSite.financialSummaries || [EMPTY_FINANCIAL_SUMMARY],  //TODO: change later to take in one financial summary
+  financialSummary: state.siteData.currentSite.financialSummaries ? state.siteData.currentSite.financialSummaries[0] : EMPTY_FINANCIAL_SUMMARY,  //TODO: change later to take in one financial summary
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(FinancialSummaryPayment));
