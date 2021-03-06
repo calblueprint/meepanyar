@@ -2,7 +2,7 @@ import { createStyles, FormControl, InputLabel, MenuItem, Select, Theme } from '
 import { withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
@@ -33,6 +33,7 @@ interface AddCustomerProps extends RouteComponentProps {
 
 function AddCustomer(props: AddCustomerProps) {
   const { classes, currentSite } = props;
+  const history = useHistory();
 
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState("");
   const [customerName, setCustomerName] = useState("");
@@ -45,6 +46,7 @@ function AddCustomer(props: AddCustomerProps) {
     setSelectedTariffPlanId(event.target.value as string);
   }
 
+  // TODO: Add form input validation and error messaging
   const handleSubmit = (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
@@ -61,6 +63,9 @@ function AddCustomer(props: AddCustomerProps) {
       ...customer,
       siteId: currentSite.id
     });
+
+    // Navigate to the new customer's profile page
+    history.replace(`customer`, { customer });
   }
 
   const handleNameInput = (event: React.ChangeEvent<{ value: unknown }>) => {
