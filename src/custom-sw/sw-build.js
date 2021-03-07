@@ -9,7 +9,7 @@ const buildSW = () => {
         swDest: "build/sw.js", // sw output file (auto-generated)
         globDirectory: "build",
         globPatterns: ["**/*.{js,css,html,png,svg}"],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 102,
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
     })
     .then(({count, size, warnings}) => {
         warnings.forEach(console.warn);

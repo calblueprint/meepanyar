@@ -45,7 +45,8 @@ export const theme = createMuiTheme({
     },
     button: {
       fontSize: '12px',
-      fontWeight: 'bold',
+      fontWeight: 500,
+      letterSpacing: '.14em',
     },
   },
 });

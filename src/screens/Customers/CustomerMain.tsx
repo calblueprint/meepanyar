@@ -35,7 +35,7 @@ const styles = (theme: Theme) =>
     },
     rightAlign: {
       display: 'flex',
-      flexDirection: 'row', 
+      flexDirection: 'row',
       justifyContent: 'flex-end'
     },
     fab: {
@@ -51,7 +51,7 @@ interface UserProps {
 }
 
 enum SortBy {
-  NAME = 'Name (A - Z)' as any, 
+  NAME = 'Name (A - Z)' as any,
   METER = 'Meter Number' as any
 }
 
@@ -61,10 +61,10 @@ enum FilterBy {
   ACTIVE_STATUS = 'Active Status' as any,
 }
 
-type FilterByLabel = Record<keyof typeof FilterBy, string[]>; 
+type FilterByLabel = Record<keyof typeof FilterBy, string[]>;
 
 const labels: FilterByLabel = {
-  'PAYMENT_STATUS': ['Unpaid', 'Paid'], 
+  'PAYMENT_STATUS': ['Unpaid', 'Paid'],
   'METER_STATUS': ['Has Meter', 'No Meter'],
   'ACTIVE_STATUS': ['Active', 'Inactive']
 }
@@ -75,11 +75,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   const [filteredCustomersAlt, setFilteredCustomersAlt] = useState<CustomerRecord[]>([]);
   const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
   const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME); 
-  const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.ACTIVE_STATUS); 
+  const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME);
+  const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.ACTIVE_STATUS);
   const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
-  const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]); 
-  const [searchValue, setSearchValue] = useState<string>(""); 
+  const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]);
+  const [searchValue, setSearchValue] = useState<string>("");
 
   useEffect(() => {
     getCustomers();
@@ -90,11 +90,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
     const siteData = store.getState().siteData.currentSite;
     let allCustomers: CustomerRecord[] = siteData.customers;
     setFullCustomers(allCustomers);
-    if (searchValue !== '') { 
-      allCustomers = allCustomersTrie.get(searchValue); 
+    if (searchValue !== '') {
+      allCustomers = allCustomersTrie.get(searchValue);
     }
     allCustomers.sort(sortByFunction);
-    sortAndFilterCustomers(allCustomers); 
+    sortAndFilterCustomers(allCustomers);
     const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
     customersTrie.addAll(allCustomers);
     setAllCustomersTrie(customersTrie);
@@ -104,12 +104,12 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
     const groupA = customers.filter(filterByFunction);
     const groupB = customers.filter((customer: CustomerRecord) => !filterByFunction(customer));
     setFilteredCustomers(groupA);
-    setFilteredCustomersAlt(groupB); 
+    setFilteredCustomersAlt(groupB);
   }
 
   /**
-   * Comparator function for sorting two customer records. 
-   * It is conditioned by the current user selection for sorting. 
+   * Comparator function for sorting two customer records.
+   * It is conditioned by the current user selection for sorting.
    */
   const sortByFunction = (customerA: CustomerRecord, customerB: CustomerRecord): number => {
     switch (sortBy) {
@@ -126,8 +126,8 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   }
 
   /**
-   * Comparator function for filtering customer records. 
-   * It is conditioned by the current user selection for filtering. 
+   * Comparator function for filtering customer records.
+   * It is conditioned by the current user selection for filtering.
    */
   const filterByFunction = (customer: CustomerRecord): boolean => {
     switch (filterBy) {
@@ -163,31 +163,31 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
 
   const handleSearchChange = (e: any) => {
     const searchVal = e.target.value.trim();
-    setSearchValue(searchVal); 
+    setSearchValue(searchVal);
   }
 
   /**
    * onPressHandler for selecting sortBy and filterBy attributes.
-   * 
-   * NOTE: For a multi-select, event.target.value returns an array, rather than a string. 
-   * The first two lines in this function extract the new selected option, then sets the 
+   *
+   * NOTE: For a multi-select, event.target.value returns an array, rather than a string.
+   * The first two lines in this function extract the new selected option, then sets the
    * state variable accordingly. Source: https://material-ui.com/components/selects/#multiple-select
    */
   const handleMenuSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const selectedOptions: string[] = event.target.value as string[]; 
-    const newlySelectedOption: string = selectedOptions[selectedOptions.length - 1]; 
+    const selectedOptions: string[] = event.target.value as string[];
+    const newlySelectedOption: string = selectedOptions[selectedOptions.length - 1];
 
     const sortByKeys: string[] = Object.keys(SortBy);
     if (sortByKeys.includes(newlySelectedOption)) {
       setSortBy(SortBy[newlySelectedOption as keyof typeof SortBy]);
-      return; 
+      return;
     }
-    
-    const filterByKeys: string[] = Object.keys(FilterBy); 
+
+    const filterByKeys: string[] = Object.keys(FilterBy);
     if (filterByKeys.includes(newlySelectedOption)) {
       setFilterBy(FilterBy[newlySelectedOption as keyof typeof FilterBy]);
-      setFilterLabels(labels[newlySelectedOption as keyof typeof FilterBy]); 
-      return; 
+      setFilterLabels(labels[newlySelectedOption as keyof typeof FilterBy]);
+      return;
     }
   }
 

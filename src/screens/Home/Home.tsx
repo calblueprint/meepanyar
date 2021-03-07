@@ -42,9 +42,9 @@ function Home(props: HomeProps) {
   const calculateCustomerData = () => {
     // customers to charge:  haven't charged yet/ no meterreading
     // outstanding payments: done the meter reading / charged, haven't paid yet
-    let toCharge = 0;
-    let outstandingPayments = 0;
-    let customers = currentSite.customers;
+    let numCustomersToCharge = 0;
+    let numOutstandingPayments = 0;
+    const customers = currentSite.customers;
     for (let i = 0; i < customers.length; i++) {
       const currCustomer = customers[i]
       //depends if the meter readings list is sorted with earliest => latest
@@ -52,17 +52,17 @@ function Home(props: HomeProps) {
       if (latestMeterReading != null) {
         let lessMonth = lessThanCurrentMonth(latestMeterReading.date)
         if (lessMonth) {
-          toCharge += 1;
+          numCustomersToCharge += 1;
         }
         if (checkPayment(currCustomer)) {
-          outstandingPayments += 1;
+          numOutstandingPayments += 1;
         }
       } else {
-        toCharge += 1;
+        numCustomersToCharge += 1;
       }
     }
-    let total = outstandingPayments + toCharge;
-    return { 'outstandingPayments': outstandingPayments, 'toCharge': toCharge, 'totalAmount': total }
+    let total = numOutstandingPayments + numCustomersToCharge;
+    return { 'numOutstandingPayments': numOutstandingPayments, 'numCustomersToCharge': numCustomersToCharge, 'totalAmount': total }
   }
 
   //true has outstadining false has paid
@@ -101,8 +101,8 @@ function Home(props: HomeProps) {
           label="Customer Alerts"
           amount={customerData.totalAmount}
           sublabels={[
-            { amount: customerData.toCharge, label: 'Customers to Charge' },
-            { amount: customerData.outstandingPayments, label: 'Outstanding Payments' },
+            { amount: customerData.numCustomersToCharge, label: 'Customers to Charge' },
+            { amount: customerData.numOutstandingPayments, label: 'Outstanding Payments' },
           ]}
         />
       </Link>

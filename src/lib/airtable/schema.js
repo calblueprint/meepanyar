@@ -16,6 +16,7 @@ export const Tables = {
 
 export const Columns = {
 	"Users": {
+<<<<<<< HEAD
 		username: { name: `Username`, type: `text` },
 		email: { name: `Email`, type: `text` },
 		photo: { name: `Photo`, type: `multipleAttachment` },
@@ -33,6 +34,28 @@ export const Columns = {
 		financialSummaries: { name: `FinancialSummaries`, type: `custom-object` },
 		financialSummaryIds: { name: `Financial Summaries`, type: `foreignKey-many` },
 		tariffPlanIds: { name: `Tariff Plans`, type: `foreignKey-many` },
+=======
+		username: {name:`Username`, type:`text`},
+		email: {name:`Email`, type:`text`},
+		photo: {name:`Photo`, type:`multipleAttachment`},
+		siteIds: {name:`Sites`, type:`foreignKey-many`},
+		password: {name:`Password`, type:`text`},
+		name: {name:`Name`, type:`text`},
+		paymentIds: {name:`Payments`, type:`foreignKey-many`},
+		meterReadingAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
+		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
+		id: {name:`ID`, type:`formula`},
+	},
+	"Sites": {
+		name: {name:`Name`, type:`text`},
+		userIds: {name:`Users`, type:`foreignKey-many`},
+		customers: {name:`Customers`, type:`custom-object`},
+		financialSummaries: {name: `FinancialSummaries`, type:`custom-object`},
+		financialSummaryIds: {name:`Financial Summaries`, type:`foreignKey-many`},
+		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
+		tariffPlans: {name:`TariffPlans`, type:`custom-object`},
+		id: {name:`ID`, type:`formula`},
+>>>>>>> main
 	},
 	"Tariff Plans": {
 		name: { name: `Name`, type: `text` },
@@ -44,6 +67,7 @@ export const Columns = {
 		id: { name: `ID`, type: `formula` },
 	},
 	"Customers": {
+<<<<<<< HEAD
 		name: { name: `Name`, type: `text` },
 		meterNumber: { name: `Meter Number`, type: `number` },
 		tariffPlansId: { name: `Tariff Plans`, type: `foreignKey-one` },
@@ -63,6 +87,28 @@ export const Columns = {
 		customerIds: { name: `Customer`, type: `foreignKey-many` },
 		explanation: { name: `Explanation`, type: `multilineText` },
 		userId: { name: `User`, type: `foreignKey-one` },
+=======
+		name: {name:`Name`, type:`text`},
+		meterNumber: {name:`Meter Number`, type:`number`},
+		tariffPlanId: {name:`Tariff Plan`, type:`foreignKey-one`},
+		siteId: {name:`Site`, type:`foreignKey-one`},
+		isactive: {name:`IsActive`, type:`checkbox`},
+		hasmeter: {name:`HasMeter`, type:`checkbox`},
+		outstandingBalance: {name:`Outstanding Balance`, type:`formula`},
+		meterReadingIds: {name:`Meter Readings`, type:`foreignKey-many`},
+		totalAmountBilledfromInvoices: {name:`Total Amount Billed (from Invoices)`, type:`rollup`},
+		totalAmountPaidfromPayments: {name:`Total Amount Paid (from Payments)`, type:`rollup`},
+		paymentIds: {name:`Payments`, type:`foreignKey-many`},
+		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
+		id: {name:`ID`, type:`formula`},
+	},
+	"Customer Updates": {
+		dateUpdated: {name:`Date Updated`, type:`date`},
+		customerIds: {name:`Customer`, type:`foreignKey-many`},
+		explanation: {name:`Explanation`, type:`multilineText`},
+		userId: {name:`User`, type:`foreignKey-one`},
+		id: {name:`ID`, type:`formula`},
+>>>>>>> main
 	},
 	"Meter Readings and Invoices": {
 		meterReadingName: { name: `Meter Reading Name`, type: `formula` },
