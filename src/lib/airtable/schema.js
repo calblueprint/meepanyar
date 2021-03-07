@@ -35,7 +35,7 @@ export const Columns = {
 		inventoryUpdateIds: {name:`Inventory Updates`, type:`foreignKey-many`},
 	},
 	"Sites": {
-		customers: {name:`Customers`, type:`custom-object`},
+		customers: {name:`CustomerData`, type:`custom-object`},
 		financialSummaries: {name: `FinancialSummaries`, type:`custom-object`},
 		tariffPlans: {name:`TariffPlans`, type:`custom-object`},
 		name: {name:`Name`, type:`text`},
