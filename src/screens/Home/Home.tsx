@@ -4,7 +4,7 @@ import { RootState, store } from '../../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import { lessThanCurrentMonth } from '../../lib/moment/momentUtils';
+import { lessThanCurrentMonth, getCurrentPeriod } from '../../lib/moment/momentUtils';
 
 import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
@@ -61,8 +61,7 @@ function Home(props: HomeProps) {
         numCustomersToCharge += 1;
       }
     }
-    let total = numOutstandingPayments + numCustomersToCharge;
-    return { 'numOutstandingPayments': numOutstandingPayments, 'numCustomersToCharge': numCustomersToCharge, 'totalAmount': total }
+    return { 'numOutstandingPayments': numOutstandingPayments, 'numCustomersToCharge': numCustomersToCharge }
   }
 
   //true has outstadining false has paid
@@ -72,9 +71,9 @@ function Home(props: HomeProps) {
 
   const calculateUnpaidReports = () => {
     let unpaid = 0;
-    let summaries = currentSite.financialSummaries;
+    const summaries = currentSite.financialSummaries;
     for (let i = 0; i < summaries.length; i++) {
-      let singleSummary = summaries[i];
+      const singleSummary = summaries[i];
       if (singleSummary.totalCustomersBilled > singleSummary.totalCustomersPaid) {
         unpaid += 1;
       }
@@ -99,7 +98,7 @@ function Home(props: HomeProps) {
       <Link to={'/customers'}>
         <HomeMenuItem
           label="Customer Alerts"
-          amount={customerData.totalAmount}
+          amount={customerData.numCustomersToCharge + customerData.numOutstandingPayments}
           sublabels={[
             { amount: customerData.numCustomersToCharge, label: 'Customers to Charge' },
             { amount: customerData.numOutstandingPayments, label: 'Outstanding Payments' },
