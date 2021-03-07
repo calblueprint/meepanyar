@@ -1,7 +1,7 @@
 import $ from 'jquery';
-import { refreshSiteData } from './siteData';
+import { refreshSiteData, refreshSiteDataBackground } from './siteData';
 import { store } from './store';
-import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
+import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData, } from './userDataSlice';
 
 // TODO: Change from any when typing introduced
 const refreshUserData = async (user: any): Promise<void> => {
@@ -22,10 +22,14 @@ const refreshUserData = async (user: any): Promise<void> => {
 
 //Function is called at a set interval and repulls data from backend 
 // set interval is 15 min/900000 ms
-const refreshData = async (): Promise<void> => {
-  console.log('refreshing data!')
+const refreshDataBackground = async (): Promise<void> => {
   try {
-    refreshSiteData();
+    const state = store.getState();
+    //need to refresh data in the back ground
+    if (state.userData.isOnline) {
+      //refresh data code here
+      refreshSiteDataBackground();
+    }
   } catch (err) {
     console.log('Error occurred pulling data', err);
   }
@@ -42,8 +46,8 @@ const checkOnline = (): void => {
       const state = store.getState();
       if (!state.userData.isOnline) {
         //refresh data code here
-        console.log('Im refreshing data!')
-        refreshData();
+        store.dispatch(setIsOnline({ isOnline: true }))
+        refreshDataBackground();
       }
       store.dispatch(setIsOnline({ isOnline: true }))
 
@@ -68,4 +72,4 @@ export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());
 };
 
-export { refreshUserData, checkOnline, getUserId, refreshData };
+export { refreshUserData, checkOnline, getUserId, refreshDataBackground };
