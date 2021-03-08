@@ -12,6 +12,7 @@ import AddCustomer from './screens/Customers/AddCustomer';
 import EditCustomer from './screens/Customers/EditCustomer';
 import AddMeterReading from './screens/Customers/AddMeterReading';
 import FinancialSummariesMain from './screens/FinancialSummary/FinancialSummariesMain';
+import Camera from './screens/Camera/Camera';
 
 import Inventory from './screens/Inventory';
 import Incidents from './screens/Incidents';
@@ -71,6 +72,7 @@ function App(isSignedIn: AppProps) {
               </Route>
               <Route exact path="/(login)" component={Login} />
               <Route component={Container} />
+              <Route path="/camera" component={Camera} />
             </Switch>
           </ConnectedRouter>
         </ThemeProvider>
