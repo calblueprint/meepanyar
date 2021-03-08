@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { SiteRecord } from '../airtable/interface';
+import { SiteRecord, FinancialSummaryRecord } from '../airtable/interface';
 
 interface siteDataSliceState {
   isLoading: boolean;
@@ -24,6 +24,23 @@ export const EMPTY_SITE: SiteRecord = {
   financialSummaries: [],
   tariffPlans: [],
 };
+
+export const EMPTY_FINANCIAL_SUMMARY: FinancialSummaryRecord = {
+  id: '',
+  name: '',
+  totalCustomers: 0,
+  totalCustomersBilled: 0,
+  totalCustomersPaid: 0,
+  totalUsage: 0,
+  totalAmountBilled: 0,
+  totalAmountCollected: 0,
+  totalAmountSpent: 0,
+  totalProfit: 0,
+  period: '',
+  isapproved: true,
+  lastUpdated: '',
+  issubmitted: false,
+}
 
 const siteDataSlice = createSlice({
   name: 'siteData',
