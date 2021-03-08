@@ -70,9 +70,9 @@ function App(isSignedIn: AppProps) {
               <Route exact path="/">
                 <Redirect to={homeRedirect} />
               </Route>
+              <Route path="/camera" component={Camera} exact />
               <Route exact path="/(login)" component={Login} />
               <Route component={Container} />
-              <Route path="/camera" component={Camera} />
             </Switch>
           </ConnectedRouter>
         </ThemeProvider>
