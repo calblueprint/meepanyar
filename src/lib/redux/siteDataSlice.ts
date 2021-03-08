@@ -26,6 +26,7 @@ export const EMPTY_SITE: SiteRecord = {
 };
 
 export const EMPTY_FINANCIAL_SUMMARY: FinancialSummaryRecord = {
+  id: '',
   name: '',
   totalCustomers: 0,
   totalCustomersBilled: 0,
