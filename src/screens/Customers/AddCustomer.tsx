@@ -51,13 +51,16 @@ function AddCustomer(props: AddCustomerProps) {
     // Prevent page refresh on submit
     event.preventDefault();
 
+    // Make a deep copy of an empty customer record
     const customer = JSON.parse(JSON.stringify(EMPTY_CUSTOMER));
     customer.name = customerName;
     customer.meterNumber = parseInt(meterNumber);
     customer.isactive = !customerInactive;
     customer.tariffPlanId = selectedTariffPlanId;
+
+    // TODO: add error handling
     addCustomerToRedux(customer);
-    
+
     // Add other info necessary to create the Airtable record
     createCustomer({
       ...customer,

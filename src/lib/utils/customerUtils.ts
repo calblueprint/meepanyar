@@ -65,7 +65,7 @@ export const EMPTY_CUSTOMER : CustomerRecord = {
   tariffPlanId: '',
   isactive: false,
   hasmeter: false,
-  outstandingBalance: '',
+  outstandingBalance: '0',
   meterReadingIds: [],
   meterReadings: [],
   paymentIds: [],
