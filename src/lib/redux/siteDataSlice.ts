@@ -61,15 +61,15 @@ const siteDataSlice = createSlice({
     // TODO: @julianrkung move to customerDataSlice
     addCustomer(state, action) {
       return {
-      ...state,
-      currentSite:{
-        ...state.currentSite,
-        customers:[
-          ...state.currentSite.customers, action.payload
-        ]
+        ...state,
+        currentSite: {
+          ...state.currentSite,
+          customers: [
+            ...state.currentSite.customers, action.payload
+          ]
         }
       }
-      }
+    }
   },
 });
 

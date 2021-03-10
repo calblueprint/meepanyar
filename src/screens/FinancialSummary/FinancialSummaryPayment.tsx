@@ -1,4 +1,5 @@
 import React from 'react';
+import { navigateToCamera } from '../../lib/utils/cameraUtils';
 import { RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
@@ -40,7 +41,12 @@ const styles = (theme: Theme) =>
       marginTop: 5,
       marginBottom: 10,
     },
-});
+  });
+
+interface FinancialSummaryState {
+  financialSummary: FinancialSummaryRecord;
+  photo?: string;
+}
 
 interface FinancialSummaryPaymentProps extends RouteComponentProps {
   classes: { content: string; confirmButton: string; cameraButton: string; header: string; };
@@ -62,7 +68,13 @@ function FinancialSummaryPayment(props: FinancialSummaryPaymentProps) {
           <Typography variant="h2" color="textPrimary" className={classes.header}>
             Add Photo of Payslip
           </Typography>
-          <Button className={classes.cameraButton} variant="contained" color="primary" disableElevation={true}>
+          <Button
+            className={classes.cameraButton}
+            variant="contained"
+            color="primary"
+            disableElevation={true}
+            onClick={() => navigateToCamera({})}
+          >
             <div>
               <Typography color="primary"><PhotoLibraryIcon /></Typography>
               <Typography variant="h2" color="primary">Upload Photo</Typography>
