@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { refreshSiteData, refreshSiteDataBackground } from './siteData';
+import { refreshSiteData } from './siteData';
 import { store } from './store';
 import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData, } from './userDataSlice';
 
@@ -14,7 +14,7 @@ const refreshUserData = async (user: any): Promise<void> => {
   store.dispatch(saveUserData(user));
 
   try {
-    refreshSiteData();
+    refreshSiteData(false);
   } catch (err) {
     console.log('Error occurred during login: ', err);
   }
@@ -23,12 +23,15 @@ const refreshUserData = async (user: any): Promise<void> => {
 //Function is called at a set interval and repulls data from backend 
 // set interval is 15 min/900000 ms
 const refreshDataBackground = async (): Promise<void> => {
+  const state = store.getState();
+  if (!state.userData.user) {
+    return;
+  }
   try {
-    const state = store.getState();
     //need to refresh data in the back ground
     if (state.userData.isOnline) {
       //refresh data code here
-      refreshSiteDataBackground();
+      refreshSiteData(true);
     }
   } catch (err) {
     console.log('Error occurred pulling data', err);
@@ -45,8 +48,8 @@ const checkOnline = (): void => {
       //check if the prior state was offline, if state changes from offline -> online, reload data
       const state = store.getState();
       if (!state.userData.isOnline) {
+        console.log("I AM REFRESHING")
         //refresh data code here
-        store.dispatch(setIsOnline({ isOnline: true }))
         refreshDataBackground();
       }
       store.dispatch(setIsOnline({ isOnline: true }))
