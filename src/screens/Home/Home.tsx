@@ -4,7 +4,7 @@ import { RootState, store } from '../../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import { lessThanCurrentMonth, getCurrentPeriod } from '../../lib/moment/momentUtils';
+import { lessThanCurrentPeriod } from '../../lib/moment/momentUtils';
 
 import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
@@ -50,11 +50,11 @@ function Home(props: HomeProps) {
       //depends if the meter readings list is sorted with earliest => latest
       let latestMeterReading = currCustomer.meterReadings[currCustomer.meterReadings.length - 1];
       if (latestMeterReading != null) {
-        let lessMonth = lessThanCurrentMonth(latestMeterReading.date)
+        let lessMonth = lessThanCurrentPeriod(latestMeterReading.date);
         if (lessMonth) {
           numCustomersToCharge += 1;
         }
-        if (checkPayment(currCustomer)) {
+        if (parseInt(currCustomer.outstandingBalance) > 0) {
           numOutstandingPayments += 1;
         }
       } else {
@@ -64,10 +64,6 @@ function Home(props: HomeProps) {
     return { 'numOutstandingPayments': numOutstandingPayments, 'numCustomersToCharge': numCustomersToCharge }
   }
 
-  //true has outstadining false has paid
-  const checkPayment = (customer: CustomerRecord) => {
-    return parseInt(customer.outstandingBalance) > 0;
-  }
 
   const calculateUnpaidReports = () => {
     let unpaid = 0;
