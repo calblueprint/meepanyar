@@ -158,8 +158,20 @@ export const createPayment = async (payment, customer) => {
   }
 }
 
-export const createFinancialSummary = async (record) => {
-  return createRecord(Tables.FinancialSummaries, record);
+export const createFinancialSummary = async (financialSummary) => {
+  try {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/financial-summaries/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(financialSummary)
+    })
+
+    console.log(resp);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export const createManyFinancialSummaries = async (records) => {
@@ -385,7 +397,7 @@ export const getProductById = async (id) => {
   return getRecordById(Tables.Products, id);
 };
 
-export const getProductsByIds = async ( ids, filterByFormula = '', sort = []
+export const getProductsByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -403,7 +415,7 @@ export const getInventoryById = async (id) => {
   return getRecordById(Tables.Inventory, id);
 };
 
-export const getInventorysByIds = async ( ids, filterByFormula = '', sort = []
+export const getInventorysByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -421,7 +433,7 @@ export const getPurchaseRequestById = async (id) => {
   return getRecordById(Tables.PurchaseRequests, id);
 };
 
-export const getPurchaseRequestsByIds = async ( ids, filterByFormula = '', sort = []
+export const getPurchaseRequestsByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -439,7 +451,7 @@ export const getInventoryUpdateById = async (id) => {
   return getRecordById(Tables.InventoryUpdates, id);
 };
 
-export const getInventoryUpdatesByIds = async ( ids, filterByFormula = '', sort = []
+export const getInventoryUpdatesByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
