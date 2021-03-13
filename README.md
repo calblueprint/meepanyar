@@ -11,7 +11,8 @@ This is the repository that holds the web client for Mee Panyar.
 1. Clone Repository
     a. Click on the green `Code` button and copy the https URL in the dropdown
     b. In your terminal, cd to the desired directory and do `git clone {COPIED URL}`
-<br>
+<br />
+
 2. Setting Up Environment Variables
 For security reasons, this project uses secrets that are passed via environment variables held in a `.env` file. You will create and set up your `.env` file in the following steps.
     a. In the top level directory (where `.env.example` is located), create a copy of `.env.example` and rename the copied file `.env`.
