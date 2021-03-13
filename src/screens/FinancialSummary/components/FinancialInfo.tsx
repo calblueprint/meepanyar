@@ -79,7 +79,7 @@ export default function FinancialInfo(props: FinancialInfoProps) {
         </div>
       </div>
       <div className={classes.fieldContainer}>
-        <TextField label="Payment Amount" id="payment-amount" />
+        <TextField label="Payment Amount" />
       </div>
     </div>
   );
