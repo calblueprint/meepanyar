@@ -14,7 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import CheckIcon from '@material-ui/icons/Check';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import { FinancialSummaryRecord } from '../../lib/airtable/interface';
-import { getFinancialSummaryById } from '../../lib/airtable/request';
+import { getFinancialSummarieById } from '../../lib/airtable/request';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -82,7 +82,7 @@ export default function FinancialSummary(): JSX.Element {
   }, []);
 
   const getFinancialSummary = async () => {
-    const financialSummary: FinancialSummaryRecord = await getFinancialSummaryById('recMuHpJFsLrNzX01');
+    const financialSummary: FinancialSummaryRecord = await getFinancialSummarieById('recMuHpJFsLrNzX01');
     setCustomerNumbers(getCustomerNumbers(financialSummary));
     setFinancialSummaryNumbers(getFinancialSummaryNumbers(financialSummary));
     setProfitNumbers(getProfitNumbers(financialSummary));
