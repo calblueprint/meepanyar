@@ -1,5 +1,5 @@
 diff --git a/src/lib/airtable/request.js b/src/lib/airtable/request.js
-index 7b68055..25078e7 100644
+index ae23270..867b6af 100644
 --- a/src/lib/airtable/request.js
 +++ b/src/lib/airtable/request.js
 @@ -23,6 +23,7 @@ import {
@@ -134,7 +134,7 @@ index 7b68055..25078e7 100644
    return createRecord(Tables.FinancialSummaries, record);
  };
  
-@@ -156,7 +181,7 @@ export const getUserById = async (id) => {
+@@ -216,7 +241,7 @@ export const getUserById = async (id) => {
    return getRecordById(Tables.Users, id);
  };
  
@@ -143,7 +143,7 @@ index 7b68055..25078e7 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -174,7 +199,7 @@ export const getSiteById = async (id) => {
+@@ -234,7 +259,7 @@ export const getSiteById = async (id) => {
    return getRecordById(Tables.Sites, id);
  };
  
@@ -152,7 +152,7 @@ index 7b68055..25078e7 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -192,7 +217,7 @@ export const getTariffPlanById = async (id) => {
+@@ -252,7 +277,7 @@ export const getTariffPlanById = async (id) => {
    return getRecordById(Tables.TariffPlans, id);
  };
  
@@ -161,7 +161,7 @@ index 7b68055..25078e7 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -210,7 +235,7 @@ export const getCustomerById = async (id) => {
+@@ -270,7 +295,7 @@ export const getCustomerById = async (id) => {
    return getRecordById(Tables.Customers, id);
  };
  
@@ -170,7 +170,7 @@ index 7b68055..25078e7 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -228,7 +253,7 @@ export const getCustomerUpdateById = async (id) => {
+@@ -288,7 +313,7 @@ export const getCustomerUpdateById = async (id) => {
    return getRecordById(Tables.CustomerUpdates, id);
  };
  
@@ -179,7 +179,7 @@ index 7b68055..25078e7 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -242,11 +267,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
+@@ -302,11 +327,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
    return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
  };
  
@@ -193,7 +193,7 @@ index 7b68055..25078e7 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -264,7 +289,7 @@ export const getPaymentById = async (id) => {
+@@ -324,7 +349,7 @@ export const getPaymentById = async (id) => {
    return getRecordById(Tables.Payments, id);
  };
  
@@ -202,7 +202,7 @@ index 7b68055..25078e7 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -278,11 +303,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
+@@ -338,11 +363,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
    return getAllRecords(Tables.Payments, filterByFormula, sort);
  };
  
@@ -216,7 +216,67 @@ index 7b68055..25078e7 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -375,7 +400,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
+@@ -360,7 +385,7 @@ export const getProductById = async (id) => {
+   return getRecordById(Tables.Products, id);
+ };
+ 
+-export const getProductsByIds = async ( ids, filterByFormula = '', sort = []
++export const getProductsByIds = async (ids, filterByFormula = '', sort = []
+ ) => {
+   let formula = `OR(${ids.reduce(
+     (f, id) => `${f} {ID}='${id}',`,
+@@ -378,7 +403,7 @@ export const getInventoryById = async (id) => {
+   return getRecordById(Tables.Inventory, id);
+ };
+ 
+-export const getInventorysByIds = async ( ids, filterByFormula = '', sort = []
++export const getInventorysByIds = async (ids, filterByFormula = '', sort = []
+ ) => {
+   let formula = `OR(${ids.reduce(
+     (f, id) => `${f} {ID}='${id}',`,
+@@ -396,7 +421,7 @@ export const getPurchaseRequestById = async (id) => {
+   return getRecordById(Tables.PurchaseRequests, id);
+ };
+ 
+-export const getPurchaseRequestsByIds = async ( ids, filterByFormula = '', sort = []
++export const getPurchaseRequestsByIds = async (ids, filterByFormula = '', sort = []
+ ) => {
+   let formula = `OR(${ids.reduce(
+     (f, id) => `${f} {ID}='${id}',`,
+@@ -414,7 +439,7 @@ export const getInventoryUpdateById = async (id) => {
+   return getRecordById(Tables.InventoryUpdates, id);
+ };
+ 
+-export const getInventoryUpdatesByIds = async ( ids, filterByFormula = '', sort = []
++export const getInventoryUpdatesByIds = async (ids, filterByFormula = '', sort = []
+ ) => {
+   let formula = `OR(${ids.reduce(
+     (f, id) => `${f} {ID}='${id}',`,
+@@ -481,6 +506,23 @@ export const updateCustomer = async (id, recordUpdates) => {
+   return updateRecord(Tables.Customers, id, recordUpdates);
+ };
+ 
++// NONGENERATED: Edit customer
++export const editCustomer = async (customer) => {
++  try {
++    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/customer/edit`, {
++      method: 'POST',
++      headers: {
++        'Content-Type': 'application/json'
++      },
++      body: JSON.stringify(customer)
++    })
++
++    console.log(resp);
++  } catch (err) {
++    console.log(err);
++  }
++}
++
+ export const updateManyCustomers = async (recordUpdates) => {
+   const updatePromises = [];
+   const numCalls = Math.ceil(recordUpdates.length / 10);
+@@ -507,7 +549,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -225,7 +285,7 @@ index 7b68055..25078e7 100644
    return updateRecord(Tables.MeterReadingsandInvoices, id, recordUpdates);
  };
  
-@@ -405,7 +430,7 @@ export const updateManyPayments = async (recordUpdates) => {
+@@ -537,7 +579,7 @@ export const updateManyPayments = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -234,7 +294,7 @@ index 7b68055..25078e7 100644
    return updateRecord(Tables.FinancialSummaries, id, recordUpdates);
  };
  
-@@ -445,6 +470,6 @@ export const deleteMeterReadingsandInvoice = async (id) => {
+@@ -637,7 +679,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
  export const deletePayment = async (id) => {
    return deleteRecord(Tables.Payments, id);
  };
@@ -242,3 +302,4 @@ index 7b68055..25078e7 100644
 +export const deleteFinancialSummary = async (id) => {
    return deleteRecord(Tables.FinancialSummaries, id);
  };
+ export const deleteProduct = async (id) => {
