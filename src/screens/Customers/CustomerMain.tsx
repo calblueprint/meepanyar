@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { createStyles, Fab, FormControl, FormHelperText, ListSubheader, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { createStyles, FormControl, FormHelperText, MenuItem, ListSubheader, Select, Theme, Fab, withStyles } from '@material-ui/core';
-import UserSearchBar from '../../components/UserSearchBar';
-import CustomerCard from '../../components/CustomerCard';
-import TrieTree from '../../lib/utils/TrieTree';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import CustomerCard from '../../components/CustomerCard';
+import UserSearchBar from '../../components/UserSearchBar';
 import { CustomerRecord } from '../../lib/airtable/interface';
 import { store } from '../../lib/redux/store';
+import TrieTree from '../../lib/utils/TrieTree';
 
 
 const styles = (theme: Theme) =>
@@ -221,7 +221,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         }
         <FormHelperText>{filterLabels[1]}</FormHelperText>
         {filteredCustomersAlt.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
+          <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))

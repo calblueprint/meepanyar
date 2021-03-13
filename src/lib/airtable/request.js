@@ -173,6 +173,66 @@ export const createManyFinancialSummaries = async (records) => {
   return Promise.all(createPromises);
 };
 
+export const createProduct = async (record) => {
+  return createRecord(Tables.Products, record);
+};
+
+export const createManyProducts = async (records) => {
+  const createPromises = [];
+  const numCalls = Math.ceil(records.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = records.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      createPromises.push(createRecords(Tables.Products, subset));
+  }
+  return Promise.all(createPromises);
+};
+
+export const createInventory = async (record) => {
+  return createRecord(Tables.Inventory, record);
+};
+
+export const createManyInventorys = async (records) => {
+  const createPromises = [];
+  const numCalls = Math.ceil(records.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = records.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      createPromises.push(createRecords(Tables.Inventory, subset));
+  }
+  return Promise.all(createPromises);
+};
+
+export const createPurchaseRequest = async (record) => {
+  return createRecord(Tables.PurchaseRequests, record);
+};
+
+export const createManyPurchaseRequests = async (records) => {
+  const createPromises = [];
+  const numCalls = Math.ceil(records.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = records.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      createPromises.push(createRecords(Tables.PurchaseRequests, subset));
+  }
+  return Promise.all(createPromises);
+};
+
+export const createInventoryUpdate = async (record) => {
+  return createRecord(Tables.InventoryUpdates, record);
+};
+
+export const createManyInventoryUpdates = async (records) => {
+  const createPromises = [];
+  const numCalls = Math.ceil(records.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = records.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      createPromises.push(createRecords(Tables.InventoryUpdates, subset));
+  }
+  return Promise.all(createPromises);
+};
+
 /*
  ******* READ RECORDS *******
  */
@@ -321,6 +381,78 @@ export const getAllFinancialSummaries = async (filterByFormula = '', sort = []) 
   return getAllRecords(Tables.FinancialSummaries, filterByFormula, sort);
 };
 
+export const getProductById = async (id) => {
+  return getRecordById(Tables.Products, id);
+};
+
+export const getProductsByIds = async ( ids, filterByFormula = '', sort = []
+) => {
+  let formula = `OR(${ids.reduce(
+    (f, id) => `${f} {ID}='${id}',`,
+    ''
+  )} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Products, formula, sort);
+};
+
+export const getAllProducts = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Products, filterByFormula, sort);
+};
+
+export const getInventoryById = async (id) => {
+  return getRecordById(Tables.Inventory, id);
+};
+
+export const getInventorysByIds = async ( ids, filterByFormula = '', sort = []
+) => {
+  let formula = `OR(${ids.reduce(
+    (f, id) => `${f} {ID}='${id}',`,
+    ''
+  )} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.Inventory, formula, sort);
+};
+
+export const getAllInventorys = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.Inventory, filterByFormula, sort);
+};
+
+export const getPurchaseRequestById = async (id) => {
+  return getRecordById(Tables.PurchaseRequests, id);
+};
+
+export const getPurchaseRequestsByIds = async ( ids, filterByFormula = '', sort = []
+) => {
+  let formula = `OR(${ids.reduce(
+    (f, id) => `${f} {ID}='${id}',`,
+    ''
+  )} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.PurchaseRequests, formula, sort);
+};
+
+export const getAllPurchaseRequests = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.PurchaseRequests, filterByFormula, sort);
+};
+
+export const getInventoryUpdateById = async (id) => {
+  return getRecordById(Tables.InventoryUpdates, id);
+};
+
+export const getInventoryUpdatesByIds = async ( ids, filterByFormula = '', sort = []
+) => {
+  let formula = `OR(${ids.reduce(
+    (f, id) => `${f} {ID}='${id}',`,
+    ''
+  )} 1 < 0)`;
+  formula = filterByFormula ? `AND(${filterByFormula}, ${formula})` : formula;
+  return getAllRecords(Tables.InventoryUpdates, formula, sort);
+};
+
+export const getAllInventoryUpdates = async (filterByFormula = '', sort = []) => {
+  return getAllRecords(Tables.InventoryUpdates, filterByFormula, sort);
+};
+
 /*
  ******* UPDATE RECORDS *******
  */
@@ -445,6 +577,66 @@ export const updateManyFinancialSummaries = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
+export const updateProduct = async (id, recordUpdates) => {
+  return updateRecord(Tables.Products, id, recordUpdates);
+};
+
+export const updateManyProducts = async (recordUpdates) => {
+  const updatePromises = [];
+  const numCalls = Math.ceil(recordUpdates.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = recordUpdates.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      updatePromises.push(updateRecords(Tables.Products, subset));
+  }
+  return Promise.all(updatePromises);
+};
+
+export const updateInventory = async (id, recordUpdates) => {
+  return updateRecord(Tables.Inventory, id, recordUpdates);
+};
+
+export const updateManyInventorys = async (recordUpdates) => {
+  const updatePromises = [];
+  const numCalls = Math.ceil(recordUpdates.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = recordUpdates.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      updatePromises.push(updateRecords(Tables.Inventory, subset));
+  }
+  return Promise.all(updatePromises);
+};
+
+export const updatePurchaseRequest = async (id, recordUpdates) => {
+  return updateRecord(Tables.PurchaseRequests, id, recordUpdates);
+};
+
+export const updateManyPurchaseRequests = async (recordUpdates) => {
+  const updatePromises = [];
+  const numCalls = Math.ceil(recordUpdates.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = recordUpdates.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      updatePromises.push(updateRecords(Tables.PurchaseRequests, subset));
+  }
+  return Promise.all(updatePromises);
+};
+
+export const updateInventoryUpdate = async (id, recordUpdates) => {
+  return updateRecord(Tables.InventoryUpdates, id, recordUpdates);
+};
+
+export const updateManyInventoryUpdates = async (recordUpdates) => {
+  const updatePromises = [];
+  const numCalls = Math.ceil(recordUpdates.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = recordUpdates.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      updatePromises.push(updateRecords(Tables.InventoryUpdates, subset));
+  }
+  return Promise.all(updatePromises);
+};
+
 /*
  ******* DELETE RECORDS *******
  */
@@ -472,4 +664,16 @@ export const deletePayment = async (id) => {
 };
 export const deleteFinancialSummary = async (id) => {
   return deleteRecord(Tables.FinancialSummaries, id);
+};
+export const deleteProduct = async (id) => {
+  return deleteRecord(Tables.Products, id);
+};
+export const deleteInventory = async (id) => {
+  return deleteRecord(Tables.Inventory, id);
+};
+export const deletePurchaseRequest = async (id) => {
+  return deleteRecord(Tables.PurchaseRequests, id);
+};
+export const deleteInventoryUpdate = async (id) => {
+  return deleteRecord(Tables.InventoryUpdates, id);
 };

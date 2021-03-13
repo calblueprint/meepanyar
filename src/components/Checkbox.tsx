@@ -1,8 +1,8 @@
-import React from 'react';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { TextField, Checkbox } from '@material-ui/core';
+import { Checkbox, TextField } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import CheckIcon from '@material-ui/icons/Check';
+import React from 'react';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -29,12 +29,16 @@ const styles = (theme: Theme) =>
     },
   });
 
+
 interface CheckBoxProps {
   classes: { root: string; checkIcon: string; checkedIcon: string; textField: string };
   label: string;
+  checkboxOnChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   textField?: string | null;
+  textFieldOnChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 
+// TODO: Rename component
 function CheckBox(props: CheckBoxProps) {
   const { classes } = props;
   return (
@@ -45,6 +49,7 @@ function CheckBox(props: CheckBoxProps) {
             color="primary"
             icon={<div className={classes.checkIcon} />}
             checkedIcon={<CheckIcon className={`${classes.checkIcon} ${classes.checkedIcon}`} />}
+            onChange={props.checkboxOnChange}
           />
         }
         label={props.label}
@@ -57,6 +62,7 @@ function CheckBox(props: CheckBoxProps) {
           InputLabelProps={{ shrink: true }}
           color="primary"
           type="meter"
+          onChange={props.textFieldOnChange}
         />
       ) : null}
     </div>

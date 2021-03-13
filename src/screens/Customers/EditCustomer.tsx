@@ -1,10 +1,10 @@
+import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import TextField from '../../components/TextField';
-import Checkbox from '../../components/Checkbox';
 import Button from '../../components/Button';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import Checkbox from '../../components/Checkbox';
+import TextField from '../../components/TextField';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,11 +28,11 @@ function EditCustomer(props: EditCustomerProps) {
   return (
     <BaseScreen title="Edit Customer" leftIcon="backNav">
       <form noValidate className={classes.content}>
-        <TextField label={'Name'} />
+        <TextField label={'Name'} id={'name'}/>
         <Checkbox label={'Select if customer is inactive'} />
         <Checkbox label={'Select if customer has meter'} />
-        <TextField label={'Tariff Plan'} />
-        <TextField label={'Reason'} />
+        <TextField label={'Tariff Plan'} id={'tariff-plan'}/>
+        <TextField label={'Reason'} id={'reason'}/>
         <Button label={'SAVE'} />
       </form>
     </BaseScreen>
