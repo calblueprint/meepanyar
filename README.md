@@ -11,7 +11,6 @@ This is the repository that holds the web client for Mee Panyar.
 1. Clone Repository
     a. Click on the green `Code` button and copy the https URL in the dropdown
     b. In your terminal, cd to the desired directory and do `git clone {COPIED URL}`
-<br>
 2. Setting Up Environment Variables
 For security reasons, this project uses secrets that are passed via environment variables held in a `.env` file. You will create and set up your `.env` file in the following steps.
     a. In the top level directory (where `.env.example` is located), create a copy of `.env.example` and rename the copied file `.env`.
@@ -31,9 +30,8 @@ For security reasons, this project uses secrets that are passed via environment 
     1. Since the web client relies on the `meepanyar-node` backend server, make sure that an instance of `meepanyar-node` is running and that the environment variable `REACT_APP_AIRTABLE_ENDPOINT_URL` in the `.env` file points to it. Local setup instructions for the `meepanyar-node` server can be found at the repo [here](https://github.com/calblueprint/meepanyar-node)
     2. run `npm install` to install the dependencies necessary to run the app.
     3. Start the web client by running `npm start` in the terminal while in the root directory (where the `package.json` file is located)
-<br>
 
-4. Running the production environment
+4. Running the production environment (Not usually necessary for standard develop)
 
    **A production build must be used to test offline functionality of the app.** This is because service workers, which control the app logic when offline, are only active in the production build. This section will list how to create and run a production build of the app locally.
    
