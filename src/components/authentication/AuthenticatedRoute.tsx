@@ -1,7 +1,7 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { RootState } from '../../lib/redux/store';
 import { connect } from 'react-redux';
+import { Redirect, Route } from 'react-router-dom';
+import { RootState } from '../../lib/redux/store';
 import LoadingComponent from '../BaseComponents/LoadingComponent';
 
 interface AuthenticatedRouteProps {
@@ -27,7 +27,7 @@ const AuthenticatedRoute = ({ isLoading, isSignedIn, path, component, exact }: A
 };
 
 const mapStateToProps = (state: RootState) => ({
-  isLoading: state.userData.isLoading || state.siteData.isLoading,
+  isLoading: state.userData.isLoading || state.siteData.isLoading || state.inventoryData.isLoading,
   isSignedIn: state.userData.user !== null,
 });
 

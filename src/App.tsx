@@ -1,31 +1,31 @@
+import { StylesProvider, ThemeProvider } from '@material-ui/core/styles';
+import { ConnectedRouter } from 'connected-react-router';
 import React from 'react';
-import { theme } from './styles/ThemeStyles';
-import { ThemeProvider, StylesProvider } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
+import { Redirect, Route, Switch } from 'react-router-dom';
+import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 import BaseNavigation from './components/BaseComponents/BaseNavigation';
-import Login from './screens/Login';
-import Home from './screens/Home/Home';
-
+import { history, RootState } from './lib/redux/store';
+import AddCustomer from './screens/Customers/AddCustomer';
+import AddMeterReading from './screens/Customers/AddMeterReading';
 import CustomerMain from './screens/Customers/CustomerMain';
 import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
-import AddCustomer from './screens/Customers/AddCustomer';
 import EditCustomer from './screens/Customers/EditCustomer';
-import AddMeterReading from './screens/Customers/AddMeterReading';
 import FinancialSummariesMain from './screens/FinancialSummary/FinancialSummariesMain';
-
-import Inventory from './screens/Inventory';
-import Incidents from './screens/Incidents';
-import Maintenance from './screens/Maintenance';
-
 import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummaryPayment';
+import Home from './screens/Home/Home';
+import Incidents from './screens/Incidents';
+import AddInventory from './screens/Inventory/AddInventory';
+import Inventory from './screens/Inventory/Inventory';
+import Login from './screens/Login';
+import Maintenance from './screens/Maintenance';
+import { theme } from './styles/ThemeStyles';
 
-import { ConnectedRouter } from 'connected-react-router';
-import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
-import { Switch, Route, Redirect } from 'react-router-dom';
-import { RootState } from './lib/redux/store';
-import { connect } from 'react-redux';
-import { history } from './lib/redux/store';
+
+
+
 
 interface AppProps {
   isSignedIn: boolean;
@@ -52,6 +52,7 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path="/confirm-payment" component={FinancialSummaryPayment} />
 
       <AuthenticatedRoute path="/inventory" component={Inventory} />
+      <AuthenticatedRoute path="/inventory/create" component={AddInventory} />
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 

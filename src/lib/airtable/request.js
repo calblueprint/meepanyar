@@ -12,18 +12,21 @@
 
 */
 
-import { Tables, Columns } from './schema';
+import { addToOfflineCustomer } from '../utils/offlineUtils';
 import {
   createRecord,
   createRecords,
-  updateRecord,
-  updateRecords,
-  getAllRecords,
-  getRecordsByAttribute,
-  getRecordById,
-  deleteRecord,
+
+
+
+
+
+  deleteRecord, getAllRecords,
+
+  getRecordById, updateRecord,
+  updateRecords
 } from './airtable';
-import { addToOfflineCustomer } from '../utils/offlineUtils';
+import { Tables } from './schema';
 
 /*
  ******* CREATE RECORDS *******
@@ -188,9 +191,23 @@ export const createManyProducts = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createInventory = async (record) => {
-  return createRecord(Tables.Inventory, record);
-};
+// NONGENERATED: Create an inventory record (add product to site)
+export const createInventory = async (inventory) => {
+  // Site and product must already exist in Airtable.
+  // Make a standard request to create an inventory item.
+  try {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inventory)
+    })
+    console.log('Response for inventory: ', resp);
+  } catch (err) {
+    console.log('Error with create inventory request: ', err);
+  }
+}
 
 export const createManyInventorys = async (records) => {
   const createPromises = [];

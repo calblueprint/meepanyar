@@ -1,4 +1,5 @@
 import { getAllSites } from '../airtable/request';
+import { refreshInventoryData } from './inventoryData';
 import { addCustomer, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
 import { store } from './store';
 
@@ -19,6 +20,7 @@ const refreshSiteData = async (): Promise<void> => {
   };
 
   store.dispatch(saveSiteData(siteData));
+  refreshInventoryData(currentSite);
 };
 
 const setCurrentSite = (newSite: any): void => {

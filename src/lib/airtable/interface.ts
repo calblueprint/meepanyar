@@ -8,7 +8,10 @@ export type TableRecord =
   | CustomerUpdateRecord
   | MeterReadingRecord
   | PaymentRecord
-  | FinancialSummaryRecord;
+  | FinancialSummaryRecord
+  | PurchaseRequestRecord
+  | InventoryRecord
+  | InventoryUpdateRecord;
 
 export type Row = {
   get: (key: string) => TableValues;
@@ -34,6 +37,7 @@ export interface SiteRecord {
   financialSummaryIds: string[];
   financialSummaries: FinancialSummaryRecord[];
   tariffPlans: TariffPlanRecord[];
+  inventoryIds: string[];
 }
 
 export interface TariffPlanRecord {
@@ -100,4 +104,46 @@ export interface FinancialSummaryRecord {
   isapproved: boolean;
   lastUpdated: string;
   issubmitted: boolean;
+}
+
+export interface PurchaseRequestRecord {
+  id: string;
+  period: number;
+  notes?: string;
+  status: string;
+  requesterId: string;
+  reviewerId?: string;
+  createdAt: string;
+  approvedAt?: string;
+  amountPurchased: number;
+  amountSpent: number;
+  receipt?: Airtable.Attachment[];
+  inventoryId: string;
+}
+
+
+export interface InventoryRecord {
+  id: string;
+  siteId: string;
+  currentQuantity: number;
+  productId: string;
+  purchaseRequestIds?: string[];
+  inventoryUpdateIds?: string[];
+  periodStartQuantity: number;
+}
+
+export interface InventoryUpdateRecord {
+  id: string;
+  userId: string;
+  previousQuantity: number;
+  updatedQuantity: number;
+  inventoryId: string;
+  period: number;
+}
+
+export interface ProductRecord {
+  id: string;
+  unit: number;
+  name: string;
+  inventoryIds?: string[];
 }
