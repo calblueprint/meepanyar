@@ -1,5 +1,5 @@
 import { getAllSites } from '../airtable/request';
-import { addCustomer, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
+import { addCustomer, editCustomer, saveSiteData, setCurrSite, setCurrCustomer, setLoadingForSiteData } from './siteDataSlice';
 import { store } from './store';
 
 const refreshSiteData = async (): Promise<void> => {
@@ -25,9 +25,17 @@ const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrSite(newSite));
 };
 
+const setCurrentCustomer = (newCustomer: any): void => {
+  store.dispatch(setCurrCustomer(newCustomer));
+}
+
 // TODO: @julianrkung move to customerData
 const addCustomerToRedux = (customer: any): void => {
   store.dispatch(addCustomer(customer));
 };
 
-export { refreshSiteData, setCurrentSite, addCustomerToRedux };
+const editCustomerInRedux = (customer: any): void => {
+  store.dispatch(editCustomer(customer));
+};
+
+export { refreshSiteData, setCurrentSite, setCurrentCustomer, addCustomerToRedux, editCustomerInRedux };

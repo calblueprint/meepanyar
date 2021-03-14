@@ -13,8 +13,8 @@ import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardLi
 import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
+import { setCurrentCustomer } from '../../lib/redux/siteData';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
-
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -54,6 +54,8 @@ function CustomerProfile(props: CustomerProps) {
   const { classes, match, currentSite } = props;
   const customer: CustomerRecord = props.location.state.customer;
 
+  setCurrentCustomer(customer);
+
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
 
@@ -81,7 +83,7 @@ function CustomerProfile(props: CustomerProps) {
   ];
   const balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
   const readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
-  
+
   const getPaymentButton = () => {
     return (
         <Button
@@ -130,7 +132,7 @@ function CustomerProfile(props: CustomerProps) {
       </div>
     );
   };
-  
+
   return (
     <BaseScreen leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
       <BaseScrollView>

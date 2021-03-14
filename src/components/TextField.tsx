@@ -19,6 +19,7 @@ interface TextFieldProps {
   classes: { textField: string };
   label: string;
   id: string;
+  value?: string;
   primary?: boolean;
   onChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
@@ -35,6 +36,7 @@ function Field(props: TextFieldProps) {
         InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
         InputLabelProps={{ shrink: true }}
         color={props.primary ? 'primary' : undefined}
+        value={props.value ? props.value : undefined}
         onChange={props.onChange}
       />
     </div>
