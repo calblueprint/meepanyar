@@ -518,6 +518,23 @@ export const updateCustomer = async (id, recordUpdates) => {
   return updateRecord(Tables.Customers, id, recordUpdates);
 };
 
+// NONGENERATED: Edit customer
+export const editCustomer = async (customer) => {
+  try {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(customer)
+    })
+
+    console.log(resp);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 export const updateManyCustomers = async (recordUpdates) => {
   const updatePromises = [];
   const numCalls = Math.ceil(recordUpdates.length / 10);
