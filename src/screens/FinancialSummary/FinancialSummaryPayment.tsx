@@ -43,11 +43,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface FinancialSummaryState {
-  financialSummary: FinancialSummaryRecord;
-  photo?: string;
-}
-
 interface FinancialSummaryPaymentProps extends RouteComponentProps {
   classes: { content: string; confirmButton: string; cameraButton: string; header: string; };
   financialSummary: FinancialSummaryRecord; //TODO: change later to take in one financial summary

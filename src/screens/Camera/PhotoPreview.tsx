@@ -3,7 +3,7 @@ import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import { withStyles } from '@material-ui/core/styles';
-import { createStyles, Theme } from '@material-ui/core';
+import { createStyles } from '@material-ui/core';
 import { PreservedCameraState } from './Camera';
 import { createFinancialSummary } from '../../lib/airtable/request';
 
@@ -15,7 +15,7 @@ interface PhotoPreviewProps extends RouteComponentProps<{}, {}, PhotoPreviewStat
     classes: { photo: string }
 }
 
-const styles = (theme: Theme) => createStyles({
+const styles = () => createStyles({
     photo: {
         width: '100%',
     }
@@ -33,9 +33,10 @@ function PhotoPreview(props: PhotoPreviewProps) {
     }
 
     const handleConfirm = async () => {
-        const finSum = await createFinancialSummary({ bankSlip: [{ url: photoUri }] });
 
-        console.log(finSum);
+        const financialSummary = await createFinancialSummary({ bankSlip: [{ url: photoUri }] });
+
+        console.log(financialSummary);
         history.replace(returnLink, { ...preservedState, photo: photoUri })
     }
 
