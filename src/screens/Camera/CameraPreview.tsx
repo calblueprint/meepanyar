@@ -34,6 +34,7 @@ function CameraPreview(props: CameraPreviewProps) {
 
     const handleConfirm = async () => {
 
+        // TODO: Remove this before merging PR. This is for testing purposes only
         const financialSummary = await createFinancialSummary({ bankSlip: [{ url: photoUri }] });
 
         console.log(financialSummary);
