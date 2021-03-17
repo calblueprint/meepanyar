@@ -8,14 +8,11 @@ export const formatUTCDateStringToLocal = (dateStringUTC: string): string => {
 
 
 export const lessThanCurrentPeriod = (dateString: string): boolean => {
-  const currentDate = moment(dateString);
+  const inputDate = moment(dateString);
   const currentMonth = moment().startOf('month');
-  const currentDatePeriod = currentDate.valueOf();
+  const currentDatePeriod = inputDate.valueOf();
   const currentPeriod = currentMonth.valueOf();
-  if (currentDatePeriod < currentPeriod) {
-    return true;
-  }
-  return false;
+  return (currentDatePeriod < currentPeriod);
 }
 
 // Returns and calculates period from date

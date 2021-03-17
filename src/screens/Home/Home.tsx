@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { RootState, store } from '../../lib/redux/store';
+import { RootState } from '../../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import { lessThanCurrentPeriod } from '../../lib/moment/momentUtils';
 
-import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
+import { SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
 
@@ -50,8 +50,7 @@ function Home(props: HomeProps) {
       //depends if the meter readings list is sorted with earliest => latest
       let latestMeterReading = currCustomer.meterReadings[currCustomer.meterReadings.length - 1];
       if (latestMeterReading != null) {
-        let lessMonth = lessThanCurrentPeriod(latestMeterReading.date);
-        if (lessMonth) {
+        if (lessThanCurrentPeriod(latestMeterReading.date)) {
           numCustomersToCharge += 1;
         }
         if (parseInt(currCustomer.outstandingBalance) > 0) {
@@ -64,18 +63,6 @@ function Home(props: HomeProps) {
     return { 'numOutstandingPayments': numOutstandingPayments, 'numCustomersToCharge': numCustomersToCharge }
   }
 
-
-  const calculateUnpaidReports = () => {
-    let unpaid = 0;
-    const summaries = currentSite.financialSummaries;
-    for (let i = 0; i < summaries.length; i++) {
-      const singleSummary = summaries[i];
-      if (singleSummary.totalCustomersBilled > singleSummary.totalCustomersPaid) {
-        unpaid += 1;
-      }
-    }
-    return unpaid;
-  }
 
   const customerData = calculateCustomerData();
   return (
@@ -102,7 +89,7 @@ function Home(props: HomeProps) {
         />
       </Link>
       <Link to={'/financial-summary'}>
-        <HomeMenuItem label="Unpaid Reports" amount={calculateUnpaidReports()} />
+        <HomeMenuItem label="Unpaid Reports" amount={0} />
       </Link>
       <HomeMenuItem label="Unresolved Incidents" amount={0} />
       <Link to={'/financial-summary'}>
