@@ -2,10 +2,10 @@ import { getAllSites } from '../airtable/request';
 import { addCustomer, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
 import { store } from './store';
 
-const refreshSiteData = async (background: boolean): Promise<void> => {
+const refreshSiteData = async (loadSilently: boolean): Promise<void> => {
 
   //if background is true then dont set loading parameter.
-  if (!background) {
+  if (!loadSilently) {
     store.dispatch(setLoadingForSiteData());
   }
   let currentSite = null;
@@ -21,7 +21,6 @@ const refreshSiteData = async (background: boolean): Promise<void> => {
     sites,
     currentSite,
   };
-
   store.dispatch(saveSiteData(siteData));
 };
 

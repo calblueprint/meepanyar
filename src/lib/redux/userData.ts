@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import { refreshSiteData } from './siteData';
 import { store } from './store';
-import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData, } from './userDataSlice';
+import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
 
 // TODO: Change from any when typing introduced
 const refreshUserData = async (user: any): Promise<void> => {
@@ -21,16 +21,13 @@ const refreshUserData = async (user: any): Promise<void> => {
 };
 
 //Function is called at a set interval and repulls data from backend 
-// set interval is 15 min/900000 ms
 const refreshDataBackground = async (): Promise<void> => {
   const state = store.getState();
   if (!state.userData.user) {
     return;
   }
   try {
-    //need to refresh data in the back ground
     if (state.userData.isOnline) {
-      //refresh data code here
       refreshSiteData(true);
     }
   } catch (err) {
@@ -48,7 +45,6 @@ const checkOnline = (): void => {
       //check if the prior state was offline, if state changes from offline -> online, reload data
       const state = store.getState();
       if (!state.userData.isOnline) {
-        console.log("I AM REFRESHING")
         //refresh data code here
         refreshDataBackground();
       }
