@@ -13,7 +13,7 @@ import EditCustomer from './screens/Customers/EditCustomer';
 import AddMeterReading from './screens/Customers/AddMeterReading';
 import FinancialSummariesMain from './screens/FinancialSummary/FinancialSummariesMain';
 import Camera from './screens/Camera/Camera';
-import PhotoPreview from './screens/Camera/PhotoPreview';
+import CameraPreview from './screens/Camera/CameraPreview';
 
 import Inventory from './screens/Inventory';
 import Incidents from './screens/Incidents';
@@ -71,8 +71,8 @@ function App(isSignedIn: AppProps) {
               <Route exact path="/">
                 <Redirect to={homeRedirect} />
               </Route>
-              <Route path="/photo-preview" component={PhotoPreview} exact />
               <Route path="/camera" component={Camera} exact />
+              <Route path="/camera/preview" component={CameraPreview} exact />
               <Route exact path="/(login)" component={Login} />
               <Route component={Container} />
             </Switch>

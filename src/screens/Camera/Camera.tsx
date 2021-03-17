@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { createStyles, Theme } from '@material-ui/core';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 // Preset styles for camera
 import 'react-html5-camera-photo/build/css/index.css';
 
-const styles = (theme: Theme) => createStyles({
-
-})
-
 export interface PreservedCameraState {
     preservedState: object;
     returnLink: string;
 }
+
+// TODO: @julianrkung Styling for camera once deployment occurs and you can access on phone
 
 type CameraProps = RouteComponentProps<{}, {}, PreservedCameraState>;
 
@@ -32,7 +28,7 @@ function CameraScreen(props: CameraProps) {
 
     // We navigate to a new screen and pass all state
     const onTakePhoto = (photoUri: string) => {
-        history.push('/photo-preview', { ...preservedState, returnLink, photoUri })
+        history.push('/camera/preview', { ...preservedState, returnLink, photoUri })
     }
 
     const onCameraError = (error: Error) => {
@@ -74,4 +70,4 @@ function CameraScreen(props: CameraProps) {
     )
 }
 
-export default withStyles(styles)(CameraScreen);
+export default CameraScreen;

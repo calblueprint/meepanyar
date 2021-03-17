@@ -7,11 +7,11 @@ import { createStyles } from '@material-ui/core';
 import { PreservedCameraState } from './Camera';
 import { createFinancialSummary } from '../../lib/airtable/request';
 
-interface PhotoPreviewState extends PreservedCameraState {
+interface CameraPreviewState extends PreservedCameraState {
     photoUri: string;
 }
 
-interface PhotoPreviewProps extends RouteComponentProps<{}, {}, PhotoPreviewState> {
+interface CameraPreviewProps extends RouteComponentProps<{}, {}, CameraPreviewState> {
     classes: { photo: string }
 }
 
@@ -21,7 +21,7 @@ const styles = () => createStyles({
     }
 })
 
-function PhotoPreview(props: PhotoPreviewProps) {
+function CameraPreview(props: CameraPreviewProps) {
     const history = useHistory();
     const { preservedState, returnLink, photoUri } = props.location.state;
 
@@ -51,4 +51,4 @@ function PhotoPreview(props: PhotoPreviewProps) {
     );
 };
 
-export default withStyles(styles)(PhotoPreview);
+export default withStyles(styles)(CameraPreview);
