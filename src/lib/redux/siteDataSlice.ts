@@ -95,7 +95,7 @@ const siteDataSlice = createSlice({
     },
     editCustomer(state, action) {
       const stateCopy = JSON.parse(JSON.stringify(state));
-      const index = stateCopy.currentSite.customers.indexOf((e: CustomerRecord) => e.id === action.payload.id);
+      const index = stateCopy.currentSite.customers.findIndex((e: CustomerRecord) => e.id === action.payload.id);
       stateCopy.currentSite.customers[index] = action.payload;
       return stateCopy;
     }

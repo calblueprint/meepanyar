@@ -61,7 +61,7 @@ function EditCustomer(props: EditCustomerProps) {
     let customerUpdate: CustomerUpdateRecord = {
       id: '',
       dateUpdated: formatUTCDateStringToLocal((new Date()).toString()),
-      customerId: [currentCustomer.id],
+      customerIds: [currentCustomer.id],
       explanation: reason,
       userId: [user.id],
     };
@@ -81,10 +81,13 @@ function EditCustomer(props: EditCustomerProps) {
 
     // TODO: add error handling
     editCustomerInRedux(customer);
-    editCustomer(customer);
+    editCustomer({
+      ...customer,
+      customerUpdate: customerUpdate
+    });
 
     // Navigate to the new customer's profile page
-    history.replace(`customer`, { customer });
+    history.replace(`/customers/customer`, { customer });
   }
 
   const handleNameInput = (event: React.ChangeEvent<{ value: unknown }>) => {
