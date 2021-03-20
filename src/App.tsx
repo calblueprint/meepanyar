@@ -51,7 +51,7 @@ function App(isSignedIn: AppProps) {
       }
       <AuthenticatedRoute path="/confirm-payment" component={FinancialSummaryPayment} />
 
-      <AuthenticatedRoute path="/inventory" component={Inventory} />
+      <AuthenticatedRoute path="/inventory" component={Inventory} exact/>
       <AuthenticatedRoute path="/inventory/create" component={AddInventory} />
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
