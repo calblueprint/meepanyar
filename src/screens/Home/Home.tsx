@@ -48,7 +48,7 @@ function Home(props: HomeProps) {
     for (let i = 0; i < customers.length; i++) {
       const currCustomer = customers[i]
       //depends if the meter readings list is sorted with earliest => latest
-      let latestMeterReading = currCustomer.meterReadings[currCustomer.meterReadings.length - 1];
+      const latestMeterReading = currCustomer.meterReadings[currCustomer.meterReadings.length - 1];
       if (latestMeterReading != null) {
         if (lessThanCurrentPeriod(latestMeterReading.date)) {
           numCustomersToCharge += 1;
