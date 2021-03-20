@@ -67,7 +67,7 @@ export interface CustomerUpdateRecord {
   dateUpdated: string;
   customerIds: string[];
   explanation: string;
-  userId: string[];
+  userId: string;
 }
 
 export interface MeterReadingRecord {

@@ -63,7 +63,7 @@ function EditCustomer(props: EditCustomerProps) {
       dateUpdated: formatUTCDateStringToLocal((new Date()).toString()),
       customerIds: [currentCustomer.id],
       explanation: reason,
-      userId: [user.id],
+      userId: user.id,
     };
 
     // Make a deep copy of an empty customer record
