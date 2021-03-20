@@ -18,7 +18,8 @@ import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummary
 import Home from './screens/Home/Home';
 import Incidents from './screens/Incidents';
 import AddInventory from './screens/Inventory/AddInventory';
-import Inventory from './screens/Inventory/Inventory';
+import InventoryMain from './screens/Inventory/InventoryMain';
+import InventoryProfile from './screens/Inventory/InventoryProfile';
 import Login from './screens/Login';
 import Maintenance from './screens/Maintenance';
 import { theme } from './styles/ThemeStyles';
@@ -51,8 +52,10 @@ function App(isSignedIn: AppProps) {
       }
       <AuthenticatedRoute path="/confirm-payment" component={FinancialSummaryPayment} />
 
-      <AuthenticatedRoute path="/inventory" component={Inventory} exact/>
+      <AuthenticatedRoute path="/inventory" component={InventoryMain} exact/>
       <AuthenticatedRoute path="/inventory/create" component={AddInventory} />
+      {/* TODO rename */}
+      <AuthenticatedRoute path="/inventory/item" component={InventoryProfile} /> 
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 
