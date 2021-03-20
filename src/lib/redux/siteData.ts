@@ -1,6 +1,7 @@
 import { store } from './store';
 import { setLoadingForSiteData, setCurrSite, saveSiteData } from './siteDataSlice';
 import { getAllSites } from '../airtable/request';
+import { MeterReadingRecord } from '../airtable/interface';
 
 const refreshSiteData = async (): Promise<void> => {
   store.dispatch(setLoadingForSiteData());
@@ -11,6 +12,14 @@ const refreshSiteData = async (): Promise<void> => {
 
   if (sites.length > 0) {
     currentSite = sites[0];
+  }
+
+  for (let i = 0; i < sites.length; i++) {
+    const singleSite = sites[i];
+    let singleReading = singleSite.meterReadingIds;
+    if (singleReading) {
+      singleReading.sort((a: MeterReadingRecord, b: MeterReadingRecord) => (Date.parse(a.date) > Date.parse(b.date)) ? -1 : 1);
+    }
   }
 
   const siteData = {
