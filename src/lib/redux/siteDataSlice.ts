@@ -24,6 +24,10 @@ export const EMPTY_SITE: SiteRecord = {
   financialSummaries: [],
   tariffPlans: [],
   inventoryIds: [],
+  products: [],
+  inventory: [],
+  purchaseRequests: [],
+  inventoryUpdates: [],
 };
 
 export const EMPTY_FINANCIAL_SUMMARY: FinancialSummaryRecord = {

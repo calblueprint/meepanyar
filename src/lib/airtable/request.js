@@ -12,22 +12,17 @@
 
 */
 
-import { addToOfflineCustomer } from '../utils/offlineUtils';
+import { Tables } from './schema';
 import {
   createRecord,
   createRecords,
-
-
-
-
-
-  deleteRecord, getAllRecords,
-
-  getRecordById, updateRecord,
-  updateRecords
+  updateRecord,
+  updateRecords,
+  getAllRecords,
+  getRecordById,
+  deleteRecord,
 } from './airtable';
-import { Tables } from './schema';
-
+import { addToOfflineCustomer } from '../utils/offlineUtils';
 /*
  ******* CREATE RECORDS *******
  */

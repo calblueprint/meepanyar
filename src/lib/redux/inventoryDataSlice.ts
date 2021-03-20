@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { InventoryRecord, InventoryUpdateRecord, PurchaseRequestRecord } from '../airtable/interface';
+import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
 
 interface inventoryDataSliceState {
   isLoading: boolean;
-  products: any[];
+  products: ProductRecord[];
   siteInventory: InventoryRecord[];
   purchaseRequests: PurchaseRequestRecord[];
   inventoryUpdates: InventoryUpdateRecord[];
@@ -53,8 +53,16 @@ const inventoryDataSlice = createSlice({
       state.inventoryUpdates = inventoryUpdates;
       state.isLoading = false;
     },
-  },
+    addInventory(state, action){
+      return {
+        ...state,
+        siteInventory:[
+          ...state.siteInventory, action.payload
+        ]
+      }
+    },
+  }
 });
 
-export const { setLoadingForInventoryData, saveInventoryData } = inventoryDataSlice.actions;
+export const { setLoadingForInventoryData, saveInventoryData,addInventory } = inventoryDataSlice.actions;
 export default inventoryDataSlice.reducer;

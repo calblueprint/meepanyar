@@ -6,8 +6,9 @@ import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
-import { SiteRecord } from '../../lib/airtable/interface';
+import { ProductRecord, SiteRecord } from '../../lib/airtable/interface';
 import { createInventory } from '../../lib/airtable/request';
+import { addInventoryToRedux } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
@@ -26,7 +27,7 @@ interface AddInventoryProps extends RouteComponentProps {
   classes: { content: string, formControl: string};
   location: any;
   currentSite: SiteRecord;
-  products: any[];
+  products: ProductRecord[];
   userId: string;
 }
 
@@ -49,6 +50,7 @@ function AddInventory(props: AddInventoryProps) {
     inventory.siteId = currentSite.id;
     inventory.currentQuantity = startingAmount;
     inventory.periodStartQuantity = startingAmount;
+    addInventoryToRedux(inventory);
 
     createInventory(inventory);
 

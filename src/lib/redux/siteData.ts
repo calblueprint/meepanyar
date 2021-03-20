@@ -18,9 +18,15 @@ const refreshSiteData = async (): Promise<void> => {
     sites,
     currentSite,
   };
-
-  store.dispatch(saveSiteData(siteData));
+  // Extract to inventoryData
   refreshInventoryData(currentSite);
+
+  // Clear inventory fields from currentSite
+  delete currentSite.products;
+  delete currentSite.inventory;
+  delete currentSite.inventoryUpdates;
+  delete currentSite.purchaseRequests;
+  store.dispatch(saveSiteData(siteData));
 };
 
 const setCurrentSite = (newSite: any): void => {
