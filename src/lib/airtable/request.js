@@ -484,7 +484,7 @@ export const updateCustomer = async (id, recordUpdates) => {
 // NONGENERATED: Edit customer
 export const editCustomer = async (customer) => {
   try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/customer/edit`, {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
