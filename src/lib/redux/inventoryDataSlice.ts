@@ -1,12 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { InventoryRecord, InventoryUpdateRecord, ProductRecord } from '../airtable/interface';
+import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
 
 export interface SiteInventoryData {
-  siteInventory: [],
-  purchaseRequests: [],
-  inventoryUpdates: [],
+  siteInventory: InventoryRecord[],
+  purchaseRequests: PurchaseRequestRecord[],
+  inventoryUpdates: InventoryUpdateRecord[],
 }
 
 const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
@@ -60,19 +60,7 @@ const inventoryDataSlice = createSlice({
       state.sitesInventory[siteId] = siteData;
     },
     addInventory(state, action) {
-      return {
-        ...state,
-        sitesInventory: {
-          ...state.sitesInventory, 
-          [action.payload.siteId]: {
-            ...state.sitesInventory[action.payload.siteId],
-              siteInventory: [
-                ...state.sitesInventory[action.payload.siteId].siteInventory,
-                action.payload
-              ]
-            }
-          }
-        }
+      state.sitesInventory[action.payload.siteId].siteInventory.push(action.payload);
     },
   }
 });
