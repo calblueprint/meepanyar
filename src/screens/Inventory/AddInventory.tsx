@@ -1,5 +1,6 @@
-import { createStyles, FormControl, InputLabel, MenuItem, Select, Theme } from '@material-ui/core';
+import { createStyles, FormControl, TextField as MaterialTextField, Theme } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import { Autocomplete } from '@material-ui/lab';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
@@ -36,8 +37,10 @@ interface AddInventoryProps extends RouteComponentProps {
 function AddInventory(props: AddInventoryProps) {
   const { classes, currentSite, products, userId, sitesInventory } = props;
   const history = useHistory();
-
+  // Products that the site already has inventory for
   const currentSiteProducts = sitesInventory[currentSite.id].siteInventory.map((inventory: InventoryRecord) => inventory.productId);
+  {/* Only show products that the site doesn't already have */}
+  const productOptions = Object.entries(products).filter(([id, _]) => !currentSiteProducts.includes(id)).map(item => item[0]);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [startingAmount, setStartingAmount] = useState(0);
 
@@ -53,17 +56,15 @@ function AddInventory(props: AddInventoryProps) {
     inventory.currentQuantity = startingAmount;
     inventory.periodStartQuantity = startingAmount;
     addInventoryToRedux(inventory);
-
     createInventory(inventory);
 
     // TODO create inventory update
     history.replace(`item`, { inventoryItem: inventory });
   }
-
-  const handleSelectItem = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSelectedProductId(event.target.value as string);
+  const handleSelectItem = (event: React.ChangeEvent<{ }>, value: string | null) => {
+      setSelectedProductId(value || "");
   }
-  
+
   const handleStartingAmountInput = (event: React.ChangeEvent<{ value: unknown }>) => {
     setStartingAmount(parseFloat(event.target.value as string));
   }
@@ -72,15 +73,16 @@ function AddInventory(props: AddInventoryProps) {
     <BaseScreen title="New Inventory" leftIcon="backNav">
       <form noValidate className={classes.content} onSubmit={() => false}>
         <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel id="select-item-label">Item</InputLabel>
-          <Select label={"Select Item"} id={'select-item'} labelId = "select-item-label" onChange={handleSelectItem}>
-            {/* Only show products that the site doesn't already have */}
-            {Object.entries(products).filter( ([id, _]) => !currentSiteProducts.includes(id)).map(([id, product]) =>
-              <MenuItem key={id} value={id}>{`${product.name} (${product.unit})`}</MenuItem>
-            )}
-          </Select>
+          <Autocomplete
+            id = "select-item"
+            options = {productOptions}
+            style = {{ marginBottom: 24 }}
+            getOptionLabel={(productId) => products[productId]?.name + ' (' + products[productId]?.unit + ')'}
+            renderInput={(params) => <MaterialTextField {...params} label="Item" variant="outlined"/>}
+            onChange={handleSelectItem}
+          />
         </FormControl>
-          <TextField label={'Starting Amount'} id={'starting-amount'} primary={true} onChange={handleStartingAmountInput} />
+        <TextField label={'Starting Amount'} id={'starting-amount'} primary={true} onChange={handleStartingAmountInput} />
         <Button label={'Add'} onClick={handleSubmit} />
       </form>
     </BaseScreen>

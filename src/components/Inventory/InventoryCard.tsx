@@ -103,7 +103,7 @@ function InventoryCard(props: InventoryCardProps) {
     <Card className={classes.singleCard}>
       <div className={classes.cardContent}>
         <div>
-          <Typography className={classes.titleText}>{products[inventoryItem.productId].name || "no name"}</Typography>
+          <Typography className={classes.titleText}>{products[inventoryItem.productId]?.name}</Typography>
           <Typography className={classes.updatedText}>Last Updated: 00.00</Typography>
         </div>
       </div>
