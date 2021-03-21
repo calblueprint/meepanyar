@@ -16,7 +16,7 @@ const styles = (theme: Theme) =>
       flex: 1,
       padding: 16,
     },
-    singleCard: {
+    cardContainer: {
       border: `1px solid ${theme.palette.divider}`,
       boxShadow: 'none',
       borderRadius: 10,
@@ -30,9 +30,7 @@ const styles = (theme: Theme) =>
 interface InventoryCardProps {
   inventoryItem: InventoryRecord;
   classes: {
-    arrow: string; cardContent: string;
-    singleCard: string;
-    arrowSpacing: string;
+    arrow: string; cardContent: string; cardContainer: string; arrowSpacing: string;
   };
   products: Record<string, ProductRecord>;
 }
@@ -40,12 +38,10 @@ interface InventoryCardProps {
 function InventoryCard(props: InventoryCardProps) {
   const { classes, inventoryItem, products} = props;
   return (
-    <Card className={classes.singleCard}>
+    <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>
-        <div>
-          <Typography variant="body1">{products[inventoryItem.productId]?.name}</Typography>
-          <Typography variant="body1" color="textSecondary">Last Updated: 00.00</Typography>
-        </div>
+        <Typography variant="body1">{products[inventoryItem.productId]?.name}</Typography>
+        <Typography variant="body1" color="textSecondary">Last Updated: 00.00</Typography>
       </div>
       <CardActions>
         <IconButton size="small">

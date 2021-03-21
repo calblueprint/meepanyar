@@ -18,28 +18,10 @@ const styles = (theme: Theme) =>
     section: {
       marginTop: '30px',
     },
-    headerWrapper: {
-      marginTop: '15px',
-      display: 'flex',
-      flexDirection: 'row',
-      width: '100%',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    buttonPrimary: {
-      borderRadius: '12px',
-      color: 'white',
-      backgroundColor: theme.palette.primary.main,
-    },
-    buttonSecondary: {
-      borderRadius: '12px',
-      color: theme.palette.primary.main,
-      backgroundColor: theme.palette.secondary.main,
-    },
   });
 
 interface InventoryProps extends RouteComponentProps {
-  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string;};
+  classes: { content: string; section: string; };
   currentSite: SiteRecord;
   location: any;
   products: Record<string, ProductRecord>;
@@ -49,8 +31,6 @@ function InventoryProfile(props: InventoryProps) {
   const { classes, products } = props;
   const inventoryItem: InventoryRecord = props.location.state.inventoryItem;
 
-  // data retrieval
-  
   return (
     <BaseScreen leftIcon="backNav" title={products[inventoryItem.productId].name}>
       <BaseScrollView>
