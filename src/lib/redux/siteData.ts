@@ -1,3 +1,4 @@
+import { SiteRecord } from '../airtable/interface';
 import { getAllSites } from '../airtable/request';
 import { refreshInventoryData } from './inventoryData';
 import { addCustomer, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
@@ -18,14 +19,16 @@ const refreshSiteData = async (): Promise<void> => {
     sites,
     currentSite,
   };
-  // Extract to inventoryData
-  refreshInventoryData(currentSite);
 
-  // Clear inventory fields from currentSite
-  delete currentSite.products;
-  delete currentSite.inventory;
-  delete currentSite.inventoryUpdates;
-  delete currentSite.purchaseRequests;
+  // Extract to inventoryData, delete extra fields
+  sites.map((site: SiteRecord) => {
+    refreshInventoryData(site);
+    delete site.products;
+    delete site.inventory;
+    delete site.inventoryUpdates;
+    delete site.purchaseRequests;
+});
+
   store.dispatch(saveSiteData(siteData));
 };
 

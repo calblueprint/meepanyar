@@ -38,10 +38,10 @@ export interface SiteRecord {
   financialSummaries: FinancialSummaryRecord[];
   tariffPlans: TariffPlanRecord[];
   inventoryIds: string[];
-  products: ProductRecord[];
-  inventory: InventoryRecord[];
-  purchaseRequests: PurchaseRequestRecord[];
-  inventoryUpdates: InventoryUpdateRecord[];
+  products?: ProductRecord[];
+  inventory?: InventoryRecord[];
+  purchaseRequests?: PurchaseRequestRecord[];
+  inventoryUpdates?: InventoryUpdateRecord[];
 }
 
 export interface TariffPlanRecord {

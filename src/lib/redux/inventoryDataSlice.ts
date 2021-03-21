@@ -3,25 +3,26 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { InventoryRecord, InventoryUpdateRecord, ProductRecord } from '../airtable/interface';
 
-interface siteInventoryData {
+export interface SiteInventoryData {
   siteInventory: [],
   purchaseRequests: [],
   inventoryUpdates: [],
 }
-// const EMPTY_SITE_INVENTORY_DATA : siteInventoryData=  {
-//   siteInventory: [],
-//   purchaseRequests: [],
-//   inventoryUpdates: [],
-// }
+
+const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
+  siteInventory: [],
+  purchaseRequests: [],
+  inventoryUpdates: [],
+}
 
 interface inventoryDataSliceState {
   products: ProductRecord[];
-  sites: Record<string, siteInventoryData>;
+  sitesInventory: Record<string, SiteInventoryData>;
 }
 
 const initialState: inventoryDataSliceState = {
   products: [],
-  sites: {}
+  sitesInventory: {}
 };
 
 export const EMPTY_INVENTORY: InventoryRecord = {
@@ -50,23 +51,29 @@ const inventoryDataSlice = createSlice({
     saveInventoryData(state, action) {
       const {siteId, products, currentSiteInventory, purchaseRequests, inventoryUpdates} = action.payload;
       state.products = products;
-      // const siteData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
-      // siteData.siteInventory = currentSiteInventory;
-      // siteData.purchaseRequests = purchaseRequests;
-      // siteData.inventoryUpdates = inventoryUpdates;
-      // state.sites[siteId] = siteData;
+      const siteData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
+      siteData.siteInventory = currentSiteInventory;
+      siteData.purchaseRequests = purchaseRequests;
+      siteData.inventoryUpdates = inventoryUpdates;
+      state.sitesInventory[siteId] = siteData;
     },
     addInventory(state, action) {
-      console.log("ADD INVENTORY");
-      // return {
-      //   ...state,
-      //   siteInventory:[
-      //     ...state.siteInventory, action.payload
-      //   ]
-      // }
+      return {
+        ...state,
+        sitesInventory: {
+          ...state.sitesInventory, 
+          [action.payload.siteId]: {
+            ...state.sitesInventory[action.payload.siteId],
+              siteInventory: [
+                ...state.sitesInventory[action.payload.siteId].siteInventory,
+                action.payload
+              ]
+            }
+          }
+        }
     },
   }
 });
 
-export const { saveInventoryData,addInventory } = inventoryDataSlice.actions;
+export const { saveInventoryData, addInventory } = inventoryDataSlice.actions;
 export default inventoryDataSlice.reducer;

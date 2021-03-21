@@ -47,19 +47,14 @@ interface InventoryProps extends RouteComponentProps {
 function InventoryProfile(props: InventoryProps) {
   const { classes } = props;
   const inventoryItem: InventoryRecord = props.location.state.inventoryItem;
-  console.log("in inventory profile", inventoryItem);
 
   // data retrieval
-  const UNDEFINED_AMOUNT = '-';
   
   return (
     <BaseScreen leftIcon="backNav" title={"PROFILE"}>
       <BaseScrollView>
         <div className={classes.content}>
-          <Typography variant="h1">{inventoryItem.productId}</Typography>
-          <Typography variant="body1" color="textSecondary">
-            "WOW"
-          </Typography>
+          <Typography variant="h1">{inventoryItem.id}</Typography>
           <div className={classes.section}>
             <Typography variant="h2">
               Meter Reading
