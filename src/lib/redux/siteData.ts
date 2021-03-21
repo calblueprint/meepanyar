@@ -1,4 +1,5 @@
 import { getAllSites } from '../airtable/request';
+import { CustomerRecord } from '../airtable/interface';
 import { addCustomer, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
 import { store } from './store';
 
@@ -25,9 +26,14 @@ const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrSite(newSite));
 };
 
+const getCurrentSiteId = (): string => {
+  return store.getState().siteData.currentSite.id;
+}
+
 // TODO: @julianrkung move to customerData
-const addCustomerToRedux = (customer: any): void => {
+const addCustomerToRedux = (customer: CustomerRecord): void => {
   store.dispatch(addCustomer(customer));
 };
 
-export { refreshSiteData, setCurrentSite, addCustomerToRedux };
+
+export { refreshSiteData, setCurrentSite, addCustomerToRedux, getCurrentSiteId };
