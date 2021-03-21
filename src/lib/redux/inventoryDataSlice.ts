@@ -1,22 +1,27 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
+import { InventoryRecord, InventoryUpdateRecord, ProductRecord } from '../airtable/interface';
 
-interface inventoryDataSliceState {
-  isLoading: boolean;
-  products: ProductRecord[];
-  siteInventory: InventoryRecord[];
-  purchaseRequests: PurchaseRequestRecord[];
-  inventoryUpdates: InventoryUpdateRecord[];
-}
-
-const initialState: inventoryDataSliceState = {
-  isLoading: false,
-  products: [],
+interface siteInventoryData {
   siteInventory: [],
   purchaseRequests: [],
   inventoryUpdates: [],
+}
+// const EMPTY_SITE_INVENTORY_DATA : siteInventoryData=  {
+//   siteInventory: [],
+//   purchaseRequests: [],
+//   inventoryUpdates: [],
+// }
+
+interface inventoryDataSliceState {
+  products: ProductRecord[];
+  sites: Record<string, siteInventoryData>;
+}
+
+const initialState: inventoryDataSliceState = {
+  products: [],
+  sites: {}
 };
 
 export const EMPTY_INVENTORY: InventoryRecord = {
@@ -42,27 +47,26 @@ const inventoryDataSlice = createSlice({
   name: 'inventoryData',
   initialState,
   reducers: {
-    setLoadingForInventoryData(state) {
-      state.isLoading = true;
-    },
     saveInventoryData(state, action) {
-      const {products, currentSiteInventory, purchaseRequests, inventoryUpdates} = action.payload;
+      const {siteId, products, currentSiteInventory, purchaseRequests, inventoryUpdates} = action.payload;
       state.products = products;
-      state.siteInventory = currentSiteInventory;
-      state.purchaseRequests = purchaseRequests;
-      state.inventoryUpdates = inventoryUpdates;
-      state.isLoading = false;
+      // const siteData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
+      // siteData.siteInventory = currentSiteInventory;
+      // siteData.purchaseRequests = purchaseRequests;
+      // siteData.inventoryUpdates = inventoryUpdates;
+      // state.sites[siteId] = siteData;
     },
-    addInventory(state, action){
-      return {
-        ...state,
-        siteInventory:[
-          ...state.siteInventory, action.payload
-        ]
-      }
+    addInventory(state, action) {
+      console.log("ADD INVENTORY");
+      // return {
+      //   ...state,
+      //   siteInventory:[
+      //     ...state.siteInventory, action.payload
+      //   ]
+      // }
     },
   }
 });
 
-export const { setLoadingForInventoryData, saveInventoryData,addInventory } = inventoryDataSlice.actions;
+export const { saveInventoryData,addInventory } = inventoryDataSlice.actions;
 export default inventoryDataSlice.reducer;
