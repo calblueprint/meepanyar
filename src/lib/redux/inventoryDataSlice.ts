@@ -16,12 +16,12 @@ const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
 }
 
 interface inventoryDataSliceState {
-  products: ProductRecord[];
+  products: Record<string, ProductRecord>;
   sitesInventory: Record<string, SiteInventoryData>;
 }
 
 const initialState: inventoryDataSliceState = {
-  products: [],
+  products: {},
   sitesInventory: {}
 };
 
@@ -50,7 +50,9 @@ const inventoryDataSlice = createSlice({
   reducers: {
     saveInventoryData(state, action) {
       const {siteId, products, currentSiteInventory, purchaseRequests, inventoryUpdates} = action.payload;
-      state.products = products;
+      products.map((product: ProductRecord) => 
+        state.products[product.id] = product
+      );
       const siteData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
       siteData.siteInventory = currentSiteInventory;
       siteData.purchaseRequests = purchaseRequests;

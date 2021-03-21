@@ -6,10 +6,10 @@ import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
-import { ProductRecord, SiteRecord } from '../../lib/airtable/interface';
+import { InventoryRecord, ProductRecord, SiteRecord } from '../../lib/airtable/interface';
 import { createInventory } from '../../lib/airtable/request';
 import { addInventoryToRedux } from '../../lib/redux/inventoryData';
-import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
+import { EMPTY_INVENTORY, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
 
@@ -27,15 +27,17 @@ interface AddInventoryProps extends RouteComponentProps {
   classes: { content: string, formControl: string};
   location: any;
   currentSite: SiteRecord;
-  products: ProductRecord[];
+  products: Record<string, ProductRecord>;
   userId: string;
+  sitesInventory: Record<string, SiteInventoryData>;
 }
 
 
 function AddInventory(props: AddInventoryProps) {
-  const { classes, currentSite, products, userId} = props;
+  const { classes, currentSite, products, userId, sitesInventory } = props;
   const history = useHistory();
 
+  const currentSiteProducts = sitesInventory[currentSite.id].siteInventory.map((inventory: InventoryRecord) => inventory.productId);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [startingAmount, setStartingAmount] = useState(0);
 
@@ -55,8 +57,7 @@ function AddInventory(props: AddInventoryProps) {
     createInventory(inventory);
 
     // TODO create inventory update
-    // TOOD: navigate to new inventory profile page
-    history.goBack();
+    history.replace(`item`, { inventoryItem: inventory });
   }
 
   const handleSelectItem = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -73,9 +74,9 @@ function AddInventory(props: AddInventoryProps) {
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="select-item-label">Item</InputLabel>
           <Select label={"Select Item"} id={'select-item'} labelId = "select-item-label" onChange={handleSelectItem}>
-            {products.map((plan) =>
-                // TOOD @wangannie filter out products that the site already has
-                <MenuItem key={plan.id} value={plan.id}>{plan.name}</MenuItem>
+            {/* Only show products that the site doesn't already have */}
+            {Object.entries(products).filter( ([id, _]) => !currentSiteProducts.includes(id)).map(([id, product]) =>
+              <MenuItem key={id} value={id}>{`${product.name} (${product.unit})`}</MenuItem>
             )}
           </Select>
         </FormControl>
@@ -88,8 +89,9 @@ function AddInventory(props: AddInventoryProps) {
 
 const mapStateToProps = (state: RootState) => ({
   currentSite: state.siteData.currentSite || EMPTY_SITE,
-  products: state.inventoryData.products || [],
+  products: state.inventoryData.products || {},
   userId: state.userData.user?.id || '',
+  sitesInventory: state.inventoryData.sitesInventory || {},
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(AddInventory));

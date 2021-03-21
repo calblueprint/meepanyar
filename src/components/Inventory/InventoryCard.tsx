@@ -5,7 +5,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
 import { RootState } from '../../lib/redux/store';
-import { getProductInfo } from '../../lib/utils/inventoryUtils';
 
 
 const styles = (theme: Theme) =>
@@ -95,7 +94,7 @@ interface InventoryCardProps {
     numberText: string; divSpacing: string; active: string;
     notActive: string; arrowSpacing: string;
   };
-  products: ProductRecord[];
+  products: Record<string, ProductRecord>;
 }
 
 function InventoryCard(props: InventoryCardProps) {
@@ -104,8 +103,8 @@ function InventoryCard(props: InventoryCardProps) {
     <Card className={classes.singleCard}>
       <div className={classes.cardContent}>
         <div>
-          <Typography className={classes.titleText}>{getProductInfo(inventoryItem.productId, products)?.name}</Typography>
-          <Typography className={classes.updatedText}>Last Updated: 1223</Typography>
+          <Typography className={classes.titleText}>{products[inventoryItem.productId].name || "no name"}</Typography>
+          <Typography className={classes.updatedText}>Last Updated: 00.00</Typography>
         </div>
       </div>
       <CardActions className={classes.arrowSpacing}>
@@ -118,7 +117,7 @@ function InventoryCard(props: InventoryCardProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-    products: state.inventoryData.products || []
+  products: state.inventoryData.products || {}
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(InventoryCard));

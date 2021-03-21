@@ -16,7 +16,6 @@ const refreshInventoryData = async (currentSite: SiteRecord): Promise<void> => {
       purchaseRequests,
       inventoryUpdates
     }
-    console.log("in refresh inventory data", inventoryData);
     store.dispatch(saveInventoryData(inventoryData));
   }
 };
