@@ -10,9 +10,10 @@ import TextField from '../../components/TextField';
 import { InventoryRecord, ProductRecord, SiteRecord } from '../../lib/airtable/interface';
 import { createInventory } from '../../lib/airtable/request';
 import { addInventoryToRedux } from '../../lib/redux/inventoryData';
-import { EMPTY_INVENTORY, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
+import { EMPTY_INVENTORY, productIdString, siteIdString, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
+import { generateOfflineInventoryId } from '../../lib/utils/inventoryUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,9 +29,9 @@ interface AddInventoryProps extends RouteComponentProps {
   classes: { content: string, formControl: string};
   location: any;
   currentSite: SiteRecord;
-  products: Record<string, ProductRecord>;
+  products: Record<productIdString, ProductRecord>;
   userId: string;
-  sitesInventory: Record<string, SiteInventoryData>;
+  sitesInventory: Record<siteIdString, SiteInventoryData>;
 }
 
 
@@ -45,7 +46,7 @@ function AddInventory(props: AddInventoryProps) {
   const [startingAmount, setStartingAmount] = useState(0);
 
   // TODO: Add form input validation and error messaging
-  const handleSubmit = (event: React.MouseEvent) => {
+  const handleSubmit = async (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
 
@@ -55,10 +56,21 @@ function AddInventory(props: AddInventoryProps) {
     inventory.siteId = currentSite.id;
     inventory.currentQuantity = startingAmount;
     inventory.periodStartQuantity = startingAmount;
+    
+    let inventoryId = "";
+    // Grab new inventory id from API response or generate temporary ID if offline
+    try {
+      await createInventory(inventory).then(resp => resp?.json()).then(data => inventoryId = data.id);
+    } catch (err) {
+      inventoryId = generateOfflineInventoryId();
+      console.error("[AddInventory] (handleSubmit) ", err);
+    }
+    inventory.id = inventoryId;
     addInventoryToRedux(inventory);
-    createInventory(inventory);
 
-    // TODO create inventory update
+    // TODO: @wangannie create inventory update
+
+    // Navigate to new inventory item's profile page
     history.replace(`item`, { inventoryItem: inventory });
   }
   const handleSelectItem = (event: React.ChangeEvent<{ }>, value: string | null) => {

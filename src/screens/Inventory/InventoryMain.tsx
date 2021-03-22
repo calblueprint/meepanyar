@@ -7,7 +7,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import InventoryCard from '../../components/Inventory/InventoryCard';
 import { InventoryRecord, SiteRecord } from '../../lib/airtable/interface';
-import { SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
+import { siteIdString, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
 
@@ -23,7 +23,7 @@ const styles = (theme: Theme) =>
 
 interface InventoryProps extends RouteComponentProps {
   classes: { fab: string };
-  sitesInventory: Record<string, SiteInventoryData>;
+  sitesInventory: Record<siteIdString, SiteInventoryData>;
   currentSite: SiteRecord;
 }
 

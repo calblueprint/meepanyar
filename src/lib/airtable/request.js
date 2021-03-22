@@ -199,6 +199,7 @@ export const createInventory = async (inventory) => {
       body: JSON.stringify(inventory)
     })
     console.log('Response for inventory: ', resp);
+    return resp;
   } catch (err) {
     console.log('Error with create inventory request: ', err);
   }

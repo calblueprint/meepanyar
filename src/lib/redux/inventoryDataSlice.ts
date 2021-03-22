@@ -15,9 +15,13 @@ const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
   inventoryUpdates: [],
 }
 
+// Aliases for readability
+export type siteIdString = string;
+export type productIdString = string; 
+
 interface inventoryDataSliceState {
-  products: Record<string, ProductRecord>;
-  sitesInventory: Record<string, SiteInventoryData>;
+  products: Record<productIdString, ProductRecord>;
+  sitesInventory: Record<siteIdString, SiteInventoryData>;
 }
 
 const initialState: inventoryDataSliceState = {
@@ -49,12 +53,12 @@ const inventoryDataSlice = createSlice({
   initialState,
   reducers: {
     saveInventoryData(state, action) {
-      const {siteId, products, currentSiteInventory, purchaseRequests, inventoryUpdates} = action.payload;
+      const {siteId, products, inventory, purchaseRequests, inventoryUpdates} = action.payload;
       products.map((product: ProductRecord) => 
         state.products[product.id] = product
       );
       const siteData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
-      siteData.siteInventory = currentSiteInventory;
+      siteData.siteInventory = inventory;
       siteData.purchaseRequests = purchaseRequests;
       siteData.inventoryUpdates = inventoryUpdates;
       state.sitesInventory[siteId] = siteData;

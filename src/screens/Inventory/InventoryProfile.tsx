@@ -6,6 +6,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import { InventoryRecord, ProductRecord, SiteRecord } from '../../lib/airtable/interface';
+import { productIdString } from '../../lib/redux/inventoryDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
 
@@ -24,7 +25,7 @@ interface InventoryProps extends RouteComponentProps {
   classes: { content: string; section: string; };
   currentSite: SiteRecord;
   location: any;
-  products: Record<string, ProductRecord>;
+  products: Record<productIdString, ProductRecord>;
 }
 
 function InventoryProfile(props: InventoryProps) {

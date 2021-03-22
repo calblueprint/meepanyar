@@ -37,7 +37,7 @@ export interface SiteRecord {
   financialSummaryIds: string[];
   financialSummaries: FinancialSummaryRecord[];
   tariffPlans: TariffPlanRecord[];
-  inventoryIds: string[];
+  inventoryIds?: string[];
   products?: ProductRecord[];
   inventory?: InventoryRecord[];
   purchaseRequests?: PurchaseRequestRecord[];

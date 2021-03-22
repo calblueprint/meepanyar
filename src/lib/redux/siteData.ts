@@ -27,7 +27,7 @@ const refreshSiteData = async (): Promise<void> => {
     delete site.inventory;
     delete site.inventoryUpdates;
     delete site.purchaseRequests;
-});
+  });
 
   store.dispatch(saveSiteData(siteData));
 };

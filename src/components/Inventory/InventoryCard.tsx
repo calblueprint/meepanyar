@@ -4,6 +4,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { connect } from 'react-redux';
 import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
+import { productIdString } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 
 
@@ -32,7 +33,7 @@ interface InventoryCardProps {
   classes: {
     arrow: string; cardContent: string; cardContainer: string; arrowSpacing: string;
   };
-  products: Record<string, ProductRecord>;
+  products: Record<productIdString, ProductRecord>;
 }
 
 function InventoryCard(props: InventoryCardProps) {
