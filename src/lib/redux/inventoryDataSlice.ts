@@ -9,19 +9,19 @@ export interface SiteInventoryData {
   inventoryUpdates: InventoryUpdateRecord[],
 }
 
-const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
+export const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
   siteInventory: [],
   purchaseRequests: [],
   inventoryUpdates: [],
 }
 
 // Aliases for readability
-export type siteIdString = string;
-export type productIdString = string; 
+export type SiteIdString = string;
+export type ProductIdString = string; 
 
 interface inventoryDataSliceState {
-  products: Record<productIdString, ProductRecord>;
-  sitesInventory: Record<siteIdString, SiteInventoryData>;
+  products: Record<ProductIdString, ProductRecord>;
+  sitesInventory: Record<SiteIdString, SiteInventoryData>;
 }
 
 const initialState: inventoryDataSliceState = {
@@ -57,11 +57,11 @@ const inventoryDataSlice = createSlice({
       products.map((product: ProductRecord) => 
         state.products[product.id] = product
       );
-      const siteData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
-      siteData.siteInventory = inventory;
-      siteData.purchaseRequests = purchaseRequests;
-      siteData.inventoryUpdates = inventoryUpdates;
-      state.sitesInventory[siteId] = siteData;
+      const siteInventoryData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
+      siteInventoryData.siteInventory = inventory;
+      siteInventoryData.purchaseRequests = purchaseRequests;
+      siteInventoryData.inventoryUpdates = inventoryUpdates;
+      state.sitesInventory[siteId] = siteInventoryData;
     },
     addInventory(state, action) {
       state.sitesInventory[action.payload.siteId].siteInventory.push(action.payload);

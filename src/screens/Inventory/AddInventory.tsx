@@ -9,11 +9,9 @@ import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { InventoryRecord, ProductRecord, SiteRecord } from '../../lib/airtable/interface';
 import { createInventory } from '../../lib/airtable/request';
-import { addInventoryToRedux } from '../../lib/redux/inventoryData';
-import { EMPTY_INVENTORY, productIdString, siteIdString, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
+import { EMPTY_INVENTORY, EMPTY_SITE_INVENTORY_DATA, ProductIdString, SiteIdString, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { generateOfflineInventoryId } from '../../lib/utils/inventoryUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -29,19 +27,21 @@ interface AddInventoryProps extends RouteComponentProps {
   classes: { content: string, formControl: string};
   location: any;
   currentSite: SiteRecord;
-  products: Record<productIdString, ProductRecord>;
+  products: Record<ProductIdString, ProductRecord>;
   userId: string;
-  sitesInventory: Record<siteIdString, SiteInventoryData>;
+  sitesInventory: Record<SiteIdString, SiteInventoryData>;
+  currentSiteInventory: SiteInventoryData;
 }
 
 
 function AddInventory(props: AddInventoryProps) {
-  const { classes, currentSite, products, userId, sitesInventory } = props;
+  const { classes, currentSite, products, userId, currentSiteInventory } = props;
   const history = useHistory();
-  // Products that the site already has inventory for
-  const currentSiteProducts = sitesInventory[currentSite.id].siteInventory.map((inventory: InventoryRecord) => inventory.productId);
-  {/* Only show products that the site doesn't already have */}
-  const productOptions = Object.entries(products).filter(([id, _]) => !currentSiteProducts.includes(id)).map(item => item[0]);
+  // Product IDs for items that the site already has inventory for
+  const currentSiteProductIds = currentSiteInventory.siteInventory.map((inventory: InventoryRecord) => inventory.productId);
+  // Filter to only show products that the site doesn't already have
+  const productOptions = Object.entries(products).filter(([id, _]) => !currentSiteProductIds.includes(id)).map(item => item[0]);
+  
   const [selectedProductId, setSelectedProductId] = useState("");
   const [startingAmount, setStartingAmount] = useState(0);
 
@@ -51,22 +51,14 @@ function AddInventory(props: AddInventoryProps) {
     event.preventDefault();
 
     // Make a deep copy of an empty inventory record
-    const inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY));
+    let inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY));
     inventory.productId = selectedProductId;
     inventory.siteId = currentSite.id;
     inventory.currentQuantity = startingAmount;
     inventory.periodStartQuantity = startingAmount;
     
-    let inventoryId = "";
-    // Grab new inventory id from API response or generate temporary ID if offline
-    try {
-      await createInventory(inventory).then(resp => resp?.json()).then(data => inventoryId = data.id);
-    } catch (err) {
-      inventoryId = generateOfflineInventoryId();
-      console.error("[AddInventory] (handleSubmit) ", err);
-    }
-    inventory.id = inventoryId;
-    addInventoryToRedux(inventory);
+    // createInventory returns the inventory item with an id
+    inventory = await createInventory(inventory);
 
     // TODO: @wangannie create inventory update
 
@@ -89,7 +81,7 @@ function AddInventory(props: AddInventoryProps) {
             id = "select-item"
             options = {productOptions}
             style = {{ marginBottom: 24 }}
-            getOptionLabel={(productId) => products[productId]?.name + ' (' + products[productId]?.unit + ')'}
+            getOptionLabel={(productId) => `${products[productId]?.name} (${products[productId]?.unit})`}
             renderInput={(params) => <MaterialTextField {...params} label="Item" variant="outlined"/>}
             onChange={handleSelectItem}
           />
@@ -105,7 +97,7 @@ const mapStateToProps = (state: RootState) => ({
   currentSite: state.siteData.currentSite || EMPTY_SITE,
   products: state.inventoryData.products || {},
   userId: state.userData.user?.id || '',
-  sitesInventory: state.inventoryData.sitesInventory || {},
+  currentSiteInventory: state.inventoryData.sitesInventory[state.siteData.currentSite?.id || ""] || EMPTY_SITE_INVENTORY_DATA,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(AddInventory));

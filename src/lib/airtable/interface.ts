@@ -37,6 +37,7 @@ export interface SiteRecord {
   financialSummaryIds: string[];
   financialSummaries: FinancialSummaryRecord[];
   tariffPlans: TariffPlanRecord[];
+  // These are extracted to InventoryDataSlice and deleted from SiteRecord
   inventoryIds?: string[];
   products?: ProductRecord[];
   inventory?: InventoryRecord[];

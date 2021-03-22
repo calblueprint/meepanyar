@@ -23,6 +23,7 @@ const refreshSiteData = async (): Promise<void> => {
   // Extract to inventoryData, delete extra fields
   sites.map((site: SiteRecord) => {
     refreshInventoryData(site);
+    delete site.inventoryIds;
     delete site.products;
     delete site.inventory;
     delete site.inventoryUpdates;

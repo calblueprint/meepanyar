@@ -7,8 +7,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import InventoryCard from '../../components/Inventory/InventoryCard';
 import { InventoryRecord, SiteRecord } from '../../lib/airtable/interface';
-import { siteIdString, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
-import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { EMPTY_SITE_INVENTORY_DATA, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 
 const styles = (theme: Theme) =>
@@ -23,13 +22,13 @@ const styles = (theme: Theme) =>
 
 interface InventoryProps extends RouteComponentProps {
   classes: { fab: string };
-  sitesInventory: Record<siteIdString, SiteInventoryData>;
   currentSite: SiteRecord;
+  currentSiteInventory: SiteInventoryData;
 }
 
+// TODO @wangannie: address empty state
 function InventoryMain (props: InventoryProps) {
-    const { classes, sitesInventory, currentSite } = props;
-    const currentSiteInventory = sitesInventory[currentSite.id];
+    const { classes, currentSiteInventory } = props;
     return (
       <BaseScreen title="Inventory">
         <BaseScrollView>
@@ -49,8 +48,7 @@ function InventoryMain (props: InventoryProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  currentSite: state.siteData.currentSite || EMPTY_SITE,
-  sitesInventory: state.inventoryData.sitesInventory || {},
+  currentSiteInventory: state.inventoryData.sitesInventory[state.siteData.currentSite?.id || ""] || EMPTY_SITE_INVENTORY_DATA,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(InventoryMain));
