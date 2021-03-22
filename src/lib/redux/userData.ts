@@ -14,11 +14,26 @@ const refreshUserData = async (user: any): Promise<void> => {
   store.dispatch(saveUserData(user));
 
   try {
-    refreshData();
+    refreshData(false);
   } catch (err) {
     console.log('Error occurred during login: ', err);
   }
 };
+
+//Function is called at a set interval and repulls data from backend 
+const refreshDataBackground = async (): Promise<void> => {
+  const state = store.getState();
+  if (!state.userData.user) {
+    return;
+  }
+  try {
+    if (state.userData.isOnline) {
+      refreshData(true);
+    }
+  } catch (err) {
+    console.log('Error occurred pulling data', err);
+  }
+}
 
 // Function is called at a set interval and updates redux's
 // isOnline value depending on if it gets a response from airlock
@@ -26,7 +41,17 @@ const checkOnline = (): void => {
   $.ajax({
     url: process.env.REACT_APP_AIRTABLE_ENDPOINT_URL,
     type: 'GET',
-    success: () => store.dispatch(setIsOnline({ isOnline: true })),
+    success: () => {
+      //check if the prior state was offline, if state changes from offline -> online, reload data
+      const state = store.getState();
+      if (!state.userData.isOnline) {
+        //refresh data code here
+        refreshDataBackground();
+      }
+      store.dispatch(setIsOnline({ isOnline: true }))
+
+    }
+    ,
     error: () => store.dispatch(setIsOnline({ isOnline: false })),
   });
 };
@@ -46,4 +71,4 @@ export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());
 };
 
-export { refreshUserData, checkOnline, getUserId };
+export { refreshUserData, checkOnline, getUserId, refreshDataBackground };

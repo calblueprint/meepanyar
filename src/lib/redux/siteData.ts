@@ -5,8 +5,12 @@ import { saveCustomerData } from './customerDataSlice';
 import { store } from './store';
 
 //  TODO: DON'T KNOW WHERE TO PUT THIS????? Shouldn't be here.
-const refreshData = async (): Promise<void> => {
-  store.dispatch(setLoadingForSiteData());
+const refreshData = async (loadSilently: boolean): Promise<void> => {
+
+  //if background is true then dont set loading parameter.
+  if (!loadSilently) {
+    store.dispatch(setLoadingForSiteData());
+  }
   let currentSite = null;
 
   // Sites authentication is done on backend
