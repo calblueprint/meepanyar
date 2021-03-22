@@ -54,7 +54,6 @@ function App(isSignedIn: AppProps) {
 
       <AuthenticatedRoute path="/inventory" component={InventoryMain} exact/>
       <AuthenticatedRoute path="/inventory/create" component={AddInventory} />
-      {/* TODO rename */}
       <AuthenticatedRoute path="/inventory/item" component={InventoryProfile} /> 
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
