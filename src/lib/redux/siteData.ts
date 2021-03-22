@@ -1,9 +1,11 @@
 import { getAllSites } from '../airtable/request';
-import { CustomerRecord } from '../airtable/interface';
-import { addCustomer, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
+import { SiteRecord, CustomerRecord, SiteId } from '../airtable/interface';
+import { EMPTY_SITE, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
+import { saveCustomerData } from './customerDataSlice';
 import { store } from './store';
 
-const refreshSiteData = async (): Promise<void> => {
+//  TODO: DON'T KNOW WHERE TO PUT THIS????? Shouldn't be here.
+const refreshData = async (): Promise<void> => {
   store.dispatch(setLoadingForSiteData());
   let currentSite = null;
 
@@ -16,11 +18,25 @@ const refreshSiteData = async (): Promise<void> => {
 
   const siteData = {
     sites,
-    currentSite,
-  };
+    currentSite
+  }
 
+  const customerData = extractCustomerDataFromSite(sites);
+
+  store.dispatch(saveCustomerData(customerData));
   store.dispatch(saveSiteData(siteData));
 };
+
+const extractCustomerDataFromSite = (sites: SiteRecord[]): Record<SiteId, CustomerRecord[]> => {
+
+  const siteIdsToCustomers: Record<SiteId, CustomerRecord[]> = {};
+  sites.map((site: SiteRecord) => {
+    siteIdsToCustomers[site.id] = site.customers || [];
+    delete site.customers;
+  })
+
+  return siteIdsToCustomers;
+}
 
 const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrSite(newSite));
@@ -30,10 +46,4 @@ const getCurrentSiteId = (): string => {
   return store.getState().siteData.currentSite.id;
 }
 
-// TODO: @julianrkung move to customerData
-const addCustomerToRedux = (customer: CustomerRecord): void => {
-  store.dispatch(addCustomer(customer));
-};
-
-
-export { refreshSiteData, setCurrentSite, addCustomerToRedux, getCurrentSiteId };
+export { refreshData, setCurrentSite, getCurrentSiteId };

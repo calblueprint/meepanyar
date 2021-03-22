@@ -30,7 +30,7 @@ export interface SiteRecord {
   id: string;
   name: string;
   customerIds: string[];
-  customers: CustomerRecord[];
+  customers?: CustomerRecord[];
   financialSummaryIds: string[];
   financialSummaries: FinancialSummaryRecord[];
   tariffPlans: TariffPlanRecord[];
@@ -101,3 +101,6 @@ export interface FinancialSummaryRecord {
   lastUpdated: string;
   issubmitted: boolean;
 }
+
+export type SiteId = string;
+export type CustomerId = string;

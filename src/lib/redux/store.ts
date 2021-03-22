@@ -8,12 +8,14 @@ import { connectRouter, routerMiddleware } from 'connected-react-router';
 
 import userDataSlice from './userDataSlice';
 import siteDataSlice from './siteDataSlice';
+import customerDataSlice from './customerDataSlice';
 
 const history = createBrowserHistory();
 
 const allReducers = combineReducers({
   userData: userDataSlice,
   siteData: siteDataSlice,
+  customerData: customerDataSlice,
   router: connectRouter(history),
 });
 

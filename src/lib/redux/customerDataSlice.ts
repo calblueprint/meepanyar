@@ -1,17 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { CustomerRecord } from '../airtable/interface';
+import { CustomerRecord, SiteId, CustomerId } from '../airtable/interface';
 import { setCurrSite } from './siteDataSlice';
 
-type siteId = string;
-type customerId = string;
-
 interface customerDataSliceState {
-    // Unable to clarify siteIdsToCustomers keys due to: https://github.com/microsoft/TypeScript/issues/1778 but types are below
-    /** @type {Object.<siteId, Object.<customerId, CustomerRecord>>} */
-    siteIdsToCustomers: { [key: string]: { [key: string]: CustomerRecord } };
-    currentCustomerId: string;
+    siteIdsToCustomers: Record<SiteId, Record<CustomerId, CustomerRecord>>;
+    currentCustomerId: CustomerId;
 }
 
 const initialState: customerDataSliceState = {
@@ -51,8 +46,8 @@ const customerDataSlice = createSlice({
         },
         addCustomer(state, action) {
             const customer: CustomerRecord = action.payload.customer;
-            const siteId: siteId = action.payload.siteId;
-            const customerId: customerId = customer.id;
+            const siteId: SiteId = action.payload.siteId;
+            const customerId: CustomerId = customer.id;
 
             if (siteId && customerId) {
                 state.siteIdsToCustomers[siteId][customerId] = customer;
@@ -62,7 +57,8 @@ const customerDataSlice = createSlice({
         }
     },
     extraReducers: {
-        // When current site is changed, current customer id needs to be reset because it's no longer valid.
+        // When current site is changed, current customer id needs to be reset 
+        // because it's no longer valid in the new site context.
         [setCurrSite.type]: (state, action) => {
             state.currentCustomerId = initialState.currentCustomerId;
         }
