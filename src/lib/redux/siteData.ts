@@ -25,9 +25,9 @@ const refreshData = async (loadSilently: boolean): Promise<void> => {
     currentSite
   }
 
-  const customerData = extractCustomerDataFromSite(sites);
+  const siteIdsToCustomers = extractCustomerDataFromSite(sites);
 
-  store.dispatch(saveCustomerData(customerData));
+  store.dispatch(saveCustomerData({ siteIdsToCustomers }));
   store.dispatch(saveSiteData(siteData));
 };
 

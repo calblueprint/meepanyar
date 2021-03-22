@@ -9,10 +9,10 @@ import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 import { SiteRecord } from '../../lib/airtable/interface';
 import { createCustomer } from '../../lib/airtable/request';
-import { addCustomerToRedux } from '../../lib/redux/siteData';
+import { addCustomerToRedux, setCurrentCustomerInRedux } from '../../lib/redux/customerData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { EMPTY_CUSTOMER } from '../../lib/utils/customerUtils';
+import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,6 +60,7 @@ function AddCustomer(props: AddCustomerProps) {
   
     // TODO: add error handling
     addCustomerToRedux(customer);
+    setCurrentCustomerInRedux(customer);
     
     // Add other info necessary to create the Airtable record
     createCustomer({

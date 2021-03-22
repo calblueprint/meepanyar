@@ -7,7 +7,7 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import CustomerCard from '../../components/CustomerCard';
 import UserSearchBar from '../../components/UserSearchBar';
 import { CustomerRecord } from '../../lib/airtable/interface';
-import { store } from '../../lib/redux/store';
+import { getAllCustomersInSite, setCurrentCustomerInRedux } from '../../lib/redux/customerData';
 import TrieTree from '../../lib/utils/TrieTree';
 
 
@@ -87,12 +87,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   }, [sortBy, filterBy, searchValue]);
 
   const getCustomers = () => {
-    const siteData = store.getState().siteData.currentSite;
     // TODO: It'd be better to slice once and store the sliced list somewhere.
     // We need to slice here because redux freezes objects to prevent mutation.
     // The slice occurs during each component update, so it's inefficient as number of
     // customers or updates grows. This isn't predicted to be a huge issue but may be in the future.
-    let allCustomers: CustomerRecord[] = siteData.customers.slice();
+    let allCustomers: CustomerRecord[] = getAllCustomersInSite().slice();
     setFullCustomers(allCustomers);
     if (searchValue !== '') {
       allCustomers = allCustomersTrie.get(searchValue);
@@ -218,14 +217,14 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       <BaseScrollView>
         <FormHelperText>{filterLabels[0]}</FormHelperText>
         {filteredCustomers.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
+          <Link key={index} to={{ pathname: `${props.match.url}/customer` }} onClick={() => setCurrentCustomerInRedux(customer)} >
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
         }
         <FormHelperText>{filterLabels[1]}</FormHelperText>
         {filteredCustomersAlt.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
+          <Link key={index} to={{ pathname: `${props.match.url}/customer` }} onClick={() => setCurrentCustomerInRedux(customer)} >
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))

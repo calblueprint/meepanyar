@@ -1,18 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { CustomerRecord, SiteId, CustomerId } from '../airtable/interface';
+import { CustomerRecord, SiteId } from '../airtable/interface';
 import { setCurrSite } from './siteDataSlice';
-
-interface customerDataSliceState {
-    siteIdsToCustomers: Record<SiteId, Record<CustomerId, CustomerRecord>>;
-    currentCustomerId: CustomerId;
-}
-
-const initialState: customerDataSliceState = {
-    siteIdsToCustomers: {},
-    currentCustomerId: ''
-};
 
 export const EMPTY_CUSTOMER: CustomerRecord = {
     id: '',
@@ -32,6 +22,18 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     totalAmountPaidfromPayments: 0,
 }
 
+// TODO: @julianrkung, We should eventually make this a Record<SiteId, Record<CustomerId, CustomerRecord>> map for efficiency
+// We can't do this yet because customers created while offline do not receive an id yet
+interface customerDataSliceState {
+    siteIdsToCustomers: Record<SiteId, CustomerRecord[]>;
+    currentCustomer: CustomerRecord;
+}
+
+const initialState: customerDataSliceState = {
+    siteIdsToCustomers: {},
+    currentCustomer: EMPTY_CUSTOMER,
+};
+
 const customerDataSlice = createSlice({
     name: 'customerData',
     initialState,
@@ -40,17 +42,15 @@ const customerDataSlice = createSlice({
             const { siteIdsToCustomers } = action.payload;
             state.siteIdsToCustomers = siteIdsToCustomers;
         },
-        setCurrentCustomerId(state, action) {
-            const { id } = action.payload;
-            state.currentCustomerId = id;
+        setCurrentCustomer(state, action) {
+            state.currentCustomer = action.payload;
         },
         addCustomer(state, action) {
             const customer: CustomerRecord = action.payload.customer;
             const siteId: SiteId = action.payload.siteId;
-            const customerId: CustomerId = customer.id;
 
-            if (siteId && customerId) {
-                state.siteIdsToCustomers[siteId][customerId] = customer;
+            if (siteId) {
+                state.siteIdsToCustomers[siteId].push(customer);
             } else {
                 console.log("Error occurred when adding a customer. No siteId or customerId passed")
             }
@@ -60,10 +60,10 @@ const customerDataSlice = createSlice({
         // When current site is changed, current customer id needs to be reset 
         // because it's no longer valid in the new site context.
         [setCurrSite.type]: (state, action) => {
-            state.currentCustomerId = initialState.currentCustomerId;
+            state.currentCustomer = initialState.currentCustomer;
         }
     }
 });
 
-export const { saveCustomerData, setCurrentCustomerId, addCustomer } = customerDataSlice.actions;
+export const { saveCustomerData, setCurrentCustomer, addCustomer } = customerDataSlice.actions;
 export default customerDataSlice.reducer;
