@@ -204,7 +204,7 @@ export const createInventory = async (inventory) => {
       body: JSON.stringify(inventory)
     })
     console.log('Response for inventory: ', resp);
-    resp.then(resp => resp?.json()).then(data => inventoryId = data.id);
+    await resp.json().then(data => inventoryId = data.id);
   } catch (err) {
     inventoryId = generateOfflineInventoryId();
     console.log('Error with create inventory request: ', err);

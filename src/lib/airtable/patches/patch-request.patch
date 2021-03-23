@@ -1,5 +1,5 @@
 diff --git a/src/lib/airtable/request.js b/src/lib/airtable/request.js
-index ae23270..4710338 100644
+index ae23270..7ac55a8 100644
 --- a/src/lib/airtable/request.js
 +++ b/src/lib/airtable/request.js
 @@ -23,6 +23,9 @@ import {
@@ -157,7 +157,7 @@ index ae23270..4710338 100644
 +      body: JSON.stringify(inventory)
 +    })
 +    console.log('Response for inventory: ', resp);
-+    resp.then(resp => resp?.json()).then(data => inventoryId = data.id);
++    await resp.json().then(data => inventoryId = data.id);
 +  } catch (err) {
 +    inventoryId = generateOfflineInventoryId();
 +    console.log('Error with create inventory request: ', err);
@@ -251,7 +251,67 @@ index ae23270..4710338 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -507,7 +554,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
+@@ -360,7 +407,7 @@ export const getProductById = async (id) => {
+   return getRecordById(Tables.Products, id);
+ };
+ 
+-export const getProductsByIds = async ( ids, filterByFormula = '', sort = []
++export const getProductsByIds = async (ids, filterByFormula = '', sort = []
+ ) => {
+   let formula = `OR(${ids.reduce(
+     (f, id) => `${f} {ID}='${id}',`,
+@@ -378,7 +425,7 @@ export const getInventoryById = async (id) => {
+   return getRecordById(Tables.Inventory, id);
+ };
+ 
+-export const getInventorysByIds = async ( ids, filterByFormula = '', sort = []
++export const getInventorysByIds = async (ids, filterByFormula = '', sort = []
+ ) => {
+   let formula = `OR(${ids.reduce(
+     (f, id) => `${f} {ID}='${id}',`,
+@@ -396,7 +443,7 @@ export const getPurchaseRequestById = async (id) => {
+   return getRecordById(Tables.PurchaseRequests, id);
+ };
+ 
+-export const getPurchaseRequestsByIds = async ( ids, filterByFormula = '', sort = []
++export const getPurchaseRequestsByIds = async (ids, filterByFormula = '', sort = []
+ ) => {
+   let formula = `OR(${ids.reduce(
+     (f, id) => `${f} {ID}='${id}',`,
+@@ -414,7 +461,7 @@ export const getInventoryUpdateById = async (id) => {
+   return getRecordById(Tables.InventoryUpdates, id);
+ };
+ 
+-export const getInventoryUpdatesByIds = async ( ids, filterByFormula = '', sort = []
++export const getInventoryUpdatesByIds = async (ids, filterByFormula = '', sort = []
+ ) => {
+   let formula = `OR(${ids.reduce(
+     (f, id) => `${f} {ID}='${id}',`,
+@@ -481,6 +528,23 @@ export const updateCustomer = async (id, recordUpdates) => {
+   return updateRecord(Tables.Customers, id, recordUpdates);
+ };
+ 
++// NONGENERATED: Edit customer
++export const editCustomer = async (customer) => {
++  try {
++    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
++      method: 'POST',
++      headers: {
++        'Content-Type': 'application/json'
++      },
++      body: JSON.stringify(customer)
++    })
++
++    console.log(resp);
++  } catch (err) {
++    console.log(err);
++  }
++}
++
+ export const updateManyCustomers = async (recordUpdates) => {
+   const updatePromises = [];
+   const numCalls = Math.ceil(recordUpdates.length / 10);
+@@ -507,7 +571,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -260,7 +320,7 @@ index ae23270..4710338 100644
    return updateRecord(Tables.MeterReadingsandInvoices, id, recordUpdates);
  };
  
-@@ -537,7 +584,7 @@ export const updateManyPayments = async (recordUpdates) => {
+@@ -537,7 +601,7 @@ export const updateManyPayments = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -269,7 +329,7 @@ index ae23270..4710338 100644
    return updateRecord(Tables.FinancialSummaries, id, recordUpdates);
  };
  
-@@ -637,7 +684,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
+@@ -637,7 +701,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
  export const deletePayment = async (id) => {
    return deleteRecord(Tables.Payments, id);
  };
