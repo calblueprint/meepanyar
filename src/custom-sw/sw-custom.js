@@ -1,6 +1,6 @@
 if ("function" === typeof importScripts) {
     importScripts(
-        "https://storage.googleapis.com/workbox-cdn/releases/3.5.0/workbox-sw.js"
+        "https://storage.googleapis.com/workbox-cdn/releases/6.1.1/workbox-sw.js"
     );
 
     importScripts('sw-env.js');
@@ -18,7 +18,7 @@ if ("function" === typeof importScripts) {
             self.skipWaiting();
         });
 
-        const bgSyncPlugin = new workbox.backgroundSync.Plugin('PostQueue', {
+        const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('PostQueue', {
             maxRetentionTime: 24 * 60 // Retry for max of 24 hours
         });
 
@@ -27,15 +27,17 @@ if ("function" === typeof importScripts) {
         workbox.precaching.precacheAndRoute([]);
 
         // React is an SPA, so all routes we define are cached and mapped into index.html
-        workbox.routing.registerNavigationRoute('/index.html')
+        const handler = workbox.precaching.createHandlerBoundToURL('/index.html');
+        const navigationRoute = new workbox.routing.NavigationRoute(handler);
+        workbox.routing.registerRoute(navigationRoute);
 
         // Font caching
         workbox.routing.registerRoute(
             new RegExp("https://fonts.(?:.googlepis|gstatic).com/(.*)"),
-            workbox.strategies.cacheFirst({
+            new workbox.strategies.CacheFirst({
                 cacheName: "googleapis",
                 plugins: [
-                    new workbox.expiration.Plugin({
+                    new workbox.expiration.ExpirationPlugin({
                         maxEntries: 30,
                     }),
                 ],
@@ -56,10 +58,10 @@ if ("function" === typeof importScripts) {
         // Image caching
         workbox.routing.registerRoute(
             /\.(?:png|gif|jpg|jpeg|svg)$/,
-            workbox.strategies.cacheFirst({
+            new workbox.strategies.CacheFirst({
                 cacheName: "images",
                 plugins: [
-                    new workbox.expiration.Plugin({
+                    new workbox.expiration.ExpirationPlugin({
                         maxEntries: 60,
                         maxAgeSeconds: 30 * 24 * 60 * 60, // 30 Days
                     }),
@@ -70,10 +72,10 @@ if ("function" === typeof importScripts) {
         // JS, CSS caching
         workbox.routing.registerRoute(
             /\.(?:js|css)$/,
-            workbox.strategies.staleWhileRevalidate({
+            new workbox.strategies.StaleWhileRevalidate({
                 cacheName: "static-resources",
                 plugins: [
-                    new workbox.expiration.Plugin({
+                    new workbox.expiration.ExpirationPlugin({
                         maxEntries: 60,
                         maxAgeSeconds: 20 * 24 * 60 * 60, // 20 Days
                     }),
