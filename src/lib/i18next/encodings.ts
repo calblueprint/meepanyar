@@ -22,7 +22,7 @@ type TranslitRule = {
     revisit?: number;
 };
 
-
+/* Helper function for applying a subset of rules on a given input string. */
 function runPhase(rules: TranslitRule[], inString: string): string {
     let outString = "";
     let midString = inString;
@@ -57,7 +57,7 @@ function runPhase(rules: TranslitRule[], inString: string): string {
     // End of phase
 }
 
-
+/* Helper function for applying a transliteration converter on a given input string. */
 function runAllPhases(allRules: TranslitRule[][], inString: string): string {
     let outString = inString;
     for (const rules of allRules) {
@@ -66,8 +66,7 @@ function runAllPhases(allRules: TranslitRule[][], inString: string): string {
     return outString;
 }
 
-// TRANSLITERATION RULES for Unicode to Zawgyi 
-// Input path: genconvert/input/my-t-my-d0-zawgyi.txt
+/* Returns transliteration converter for Unicode to Zawgyi */
 function getAllRulesU2Z() {
     var rules0 = [
       {
@@ -750,10 +749,10 @@ function getAllRulesU2Z() {
       },
     ];
     return [rules0, rules1, rules2, rules3, rules4, rules5];
-  }
-// END OF TRANSLITERATION RULES
+}
 
-export class ZawgyiConverter {
+/* Wrapper class for handling encoding conversions. */
+export class EncodingConverter {
     constructor() {
     }
 

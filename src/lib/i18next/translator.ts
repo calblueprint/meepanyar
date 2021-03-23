@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
 /* Encoder between Zawgyi and Unicode */ 
-import { ZawgyiConverter } from './encodings'; 
-const converter = new ZawgyiConverter(); 
+import { EncodingConverter } from './encodings'; 
+const converter = new EncodingConverter(); 
 
 enum LanguageEncoding { 
     UNICODE,
@@ -13,7 +13,8 @@ enum LanguageEncoding {
 // TODO Step 4: Interpret encoding based on user settings
 let userEncoding: LanguageEncoding = LanguageEncoding.UNICODE; 
 
-export const useIntl = () => {
+/* Custom React hook to handle language internationalization */
+export const useInternationalization = () => {
     const { t } = useTranslation();
     const intl = (text: string) => {
         switch (userEncoding) {
