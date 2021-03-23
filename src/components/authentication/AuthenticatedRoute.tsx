@@ -1,7 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Redirect, Route } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import { RootState } from '../../lib/redux/store';
+import { connect } from 'react-redux';
 import LoadingComponent from '../BaseComponents/LoadingComponent';
 
 interface AuthenticatedRouteProps {
