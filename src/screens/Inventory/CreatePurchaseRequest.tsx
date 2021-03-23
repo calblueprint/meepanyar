@@ -30,7 +30,7 @@ const styles = (theme: Theme) =>
     },
 });
 
-interface PurchaseRequestProps extends RouteComponentProps {
+interface CreatePurchaseRequestProps extends RouteComponentProps {
   classes: { content: string; cameraButton: string; };
   location: any;
   products: Record<ProductIdString, ProductRecord>;
@@ -38,7 +38,7 @@ interface PurchaseRequestProps extends RouteComponentProps {
 
 }
 
-function PurchaseRequest(props: PurchaseRequestProps) {
+function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const { classes, products, userId } = props;
   const inventory: InventoryRecord = props.location.state.inventory;
   const product: ProductRecord = products[inventory.productId];
@@ -109,4 +109,4 @@ const mapStateToProps = (state: RootState) => ({
   products: state.inventoryData.products || {},
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(PurchaseRequest));
+export default connect(mapStateToProps)(withStyles(styles)(CreatePurchaseRequest));
