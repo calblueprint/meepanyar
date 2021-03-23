@@ -26,6 +26,9 @@ if ("function" === typeof importScripts) {
         // all assets under build/ and 5MB sizes are precached.
         workbox.precaching.precacheAndRoute([]);
 
+        // React is an SPA, so all routes we define are cached and mapped into index.html
+        workbox.routing.registerNavigationRoute('/index.html')
+
         // Font caching
         workbox.routing.registerRoute(
             new RegExp("https://fonts.(?:.googlepis|gstatic).com/(.*)"),
