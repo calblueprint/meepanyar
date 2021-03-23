@@ -10,6 +10,7 @@ import { InventoryRecord, ProductRecord, SiteRecord } from '../../lib/airtable/i
 import { ProductIdString } from '../../lib/redux/inventoryDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
+import InventoryInfo from './component/InventoryInfo';
 
 
 const styles = (theme: Theme) =>
@@ -40,14 +41,16 @@ const getPurchaseRequestButton = (inventory: InventoryRecord) => {
 
 function InventoryProfile(props: InventoryProps) {
   const { classes, products } = props;
-  const inventoryItem: InventoryRecord = props.location.state.inventoryItem;
+  const inventory: InventoryRecord = props.location.state.inventoryItem;
+  const product = products[inventory.productId];
 
   return (
-    <BaseScreen leftIcon="backNav" title={products[inventoryItem.productId].name}>
+    <BaseScreen leftIcon="backNav" title={product.name}>
       <BaseScrollView>
         <div className={classes.content}>
-          {getPurchaseRequestButton(inventoryItem)}
-          <Typography variant="h1">{`${inventoryItem.currentQuantity} ${products[inventoryItem.productId].unit}`}</Typography>
+          <InventoryInfo product={product} inventory={inventory} />
+          {getPurchaseRequestButton(inventory)}
+          <Typography variant="h1">{`${inventory.currentQuantity} ${product.unit}`}</Typography>
           <div className={classes.section}>
           </div>
         </div>

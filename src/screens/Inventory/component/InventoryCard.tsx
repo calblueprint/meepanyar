@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { InventoryRecord, ProductRecord } from '../../../lib/airtable/interface';
 import { ProductIdString } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
+import { lastUpdated } from '../../../lib/utils/inventoryUtils';
 
 
 const styles = (theme: Theme) =>
@@ -42,7 +43,7 @@ function InventoryCard(props: InventoryCardProps) {
     <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>
         <Typography variant="body1">{products[inventoryItem.productId]?.name}</Typography>
-        <Typography variant="body1" color="textSecondary">Last Updated: 00.00</Typography>
+        <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated(inventoryItem)}`} </Typography>
       </div>
       <CardActions>
         <IconButton size="small">

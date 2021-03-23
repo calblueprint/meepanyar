@@ -83,7 +83,7 @@ function PurchaseRequest(props: PurchaseRequestProps) {
     <BaseScreen title="Inventory Purchase" leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.content}>
-          <InventoryInfo productName={product.name} lastUpdated={"3/10/20 9pm"} currentQuantity={inventory.currentQuantity} unit={product.unit} />
+          <InventoryInfo product={product} inventory={inventory} />
           {/* TODO fix requred/optional fields */}
           <TextField label={`Amount Purchased (${product.unit})`} id={'amount-purchased'} primary={true} onChange={handleAmountPurchasedInput} />
           <TextField label={'Amount Spent (ks)'} id={'amount-spent'} primary={true} onChange={handleAmountSpentInput} />
