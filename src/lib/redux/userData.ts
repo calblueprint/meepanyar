@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import { refreshData } from './siteData';
+import refreshData from './refreshData';
 import { store } from './store';
 import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
 
