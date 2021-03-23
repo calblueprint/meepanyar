@@ -45,6 +45,10 @@ export const Columns = {
 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
 		id: {name:`ID`, type:`formula`},
 		inventoryIds: {name:`Inventory`, type:`foreignKey-many`},
+		products: {name: `Products`, type: `custom-object`},
+		inventory: {name: `SiteInventory`, type: `custom-object`},
+		purchaseRequests: {name: `PurchaseRequests`, type: `custom-object`},
+		inventoryUpdates: {name: `InventoryUpdates`, type: `custom-object`},
 	},
 	"Tariff Plans": {
 		name: {name:`Name`, type:`text`},

@@ -6,6 +6,7 @@ import { getAllSites } from '../airtable/request';
 import { SiteRecord, CustomerRecord, SiteId } from '../airtable/interface';
 import { saveSiteData, setLoadingForSiteData } from './siteDataSlice';
 import { saveCustomerData } from './customerDataSlice';
+import { refreshInventoryData } from './inventoryData'
 
 const refreshData = async (loadSilently: boolean): Promise<void> => {
 
@@ -26,14 +27,25 @@ const refreshData = async (loadSilently: boolean): Promise<void> => {
         currentSite
     }
 
-    const siteIdsToCustomers = extractCustomerDataFromSite(sites);
+    extractCustomerDataFromSite(sites);
+    extractInventoryDataFromSite(sites);
 
-    store.dispatch(saveCustomerData({ siteIdsToCustomers }));
     store.dispatch(saveSiteData(siteData));
 };
 
+const extractInventoryDataFromSite = (sites: SiteRecord[]) => {
+    // Extract to inventoryData, delete extra fields
+    sites.map((site: SiteRecord) => {
+        refreshInventoryData(site);
+        delete site.inventoryIds;
+        delete site.products;
+        delete site.inventory;
+        delete site.inventoryUpdates;
+        delete site.purchaseRequests;
+    });
+}
 
-const extractCustomerDataFromSite = (sites: SiteRecord[]): Record<SiteId, CustomerRecord[]> => {
+const extractCustomerDataFromSite = (sites: SiteRecord[]) => {
 
     const siteIdsToCustomers: Record<SiteId, CustomerRecord[]> = {};
     sites.map((site: SiteRecord) => {
@@ -43,7 +55,7 @@ const extractCustomerDataFromSite = (sites: SiteRecord[]): Record<SiteId, Custom
         delete site.customers;
     })
 
-    return siteIdsToCustomers;
+    store.dispatch(saveCustomerData({ siteIdsToCustomers }))
 }
 
 export default refreshData;

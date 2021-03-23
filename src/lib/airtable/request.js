@@ -24,6 +24,8 @@ import {
   deleteRecord,
 } from './airtable';
 import { addToOfflineCustomer } from '../utils/offlineUtils';
+import { addInventoryToRedux } from '../redux/inventoryData';
+import { generateOfflineInventoryId } from '../utils/inventoryUtils';
 
 /*
  ******* CREATE RECORDS *******
@@ -188,9 +190,29 @@ export const createManyProducts = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createInventory = async (record) => {
-  return createRecord(Tables.Inventory, record);
-};
+// NONGENERATED: Create an inventory record (add product to site)
+export const createInventory = async (inventory) => {
+  // Site and product must already exist in Airtable.
+  // Make a standard request to create an inventory item.
+  let inventoryId = "";
+  try {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inventory)
+    })
+    console.log('Response for inventory: ', resp);
+    await resp.json().then(data => inventoryId = data.id);
+  } catch (err) {
+    inventoryId = generateOfflineInventoryId();
+    console.log('Error with create inventory request: ', err);
+  }
+  inventory.id = inventoryId;
+  addInventoryToRedux(inventory);
+  return inventory;
+}
 
 export const createManyInventorys = async (records) => {
   const createPromises = [];
