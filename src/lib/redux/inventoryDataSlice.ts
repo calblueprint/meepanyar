@@ -39,6 +39,12 @@ export const EMPTY_INVENTORY: InventoryRecord = {
   periodStartQuantity: 0,
 };
 
+export const EMPTY_PRODUCT: ProductRecord = {
+  id: '',
+  unit: '',
+  name: '',
+};
+
 export const EMPTY_INVENTORY_UPDATE: InventoryUpdateRecord = {
   id: '',
   userId: '',

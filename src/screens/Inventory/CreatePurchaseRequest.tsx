@@ -13,7 +13,7 @@ import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
 import { createPurchaseRequest } from '../../lib/airtable/request';
 import { EMPTY_PURCHASE_REQUEST, ProductIdString } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
-import InventoryInfo from './component/InventoryInfo';
+import InventoryInfo from './components/InventoryInfo';
 
 const styles = (theme: Theme) =>
   createStyles({

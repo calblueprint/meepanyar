@@ -10,7 +10,7 @@ import { InventoryRecord, ProductRecord, SiteRecord } from '../../lib/airtable/i
 import { ProductIdString } from '../../lib/redux/inventoryDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
-import InventoryInfo from './component/InventoryInfo';
+import InventoryInfo from './components/InventoryInfo';
 
 
 const styles = (theme: Theme) =>
@@ -32,9 +32,7 @@ interface InventoryProps extends RouteComponentProps {
 const getPurchaseRequestButton = (inventory: InventoryRecord) => {
   return (
     <Link to={{ pathname: `purchase-requests/create`, state: { inventory } }}> 
-      <Button label={"Purchase"}>
-        Add Payment
-      </Button>
+      <Button label={"Purchase"}/>
     </Link>
   );
 };

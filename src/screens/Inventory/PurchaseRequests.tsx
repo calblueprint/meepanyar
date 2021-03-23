@@ -1,15 +1,14 @@
-import { createStyles, Fab, Theme, withStyles } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import { createStyles, Theme, withStyles } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
-import { InventoryRecord, SiteRecord } from '../../lib/airtable/interface';
+import { PurchaseRequestRecord, SiteRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE_INVENTORY_DATA, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
-import InventoryCard from './components/InventoryCard';
+import PurchaseRequestCard from './components/PurchaseRequestCard';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -21,32 +20,27 @@ const styles = (theme: Theme) =>
     },
 });
 
-interface InventoryProps extends RouteComponentProps {
+interface PurchaseRequestsProps extends RouteComponentProps {
   classes: { fab: string };
   currentSite: SiteRecord;
   currentSiteInventory: SiteInventoryData;
 }
 
 // TODO @wangannie: address empty state
-function InventoryMain (props: InventoryProps) {
+function PurchaseRequests (props: PurchaseRequestsProps) {
     const { classes, currentSiteInventory } = props;
     return (
-      <BaseScreen title="Inventory">
+      <BaseScreen title="Purchase Requests">
         <BaseScrollView>
-          <Link to={'/inventory/purchase-requests'}>
-            <Button label="Purchase Requests"/>
+          <Link to={'/inventory'}>
+            <Button label="Back to Inventory"/>
           </Link>
-          {currentSiteInventory.siteInventory.map((inventory: InventoryRecord) =>  (
-            <Link key={inventory.id} to={{ pathname: `/inventory/item`, state: { inventoryItem: inventory }}}>
-              <InventoryCard key={inventory.id} inventoryItem={inventory}/>
+          {currentSiteInventory.purchaseRequests.map((purchaseRequest: PurchaseRequestRecord) =>  (
+            <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest: purchaseRequest }}}>
+              <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
             </Link>
           ))}
         </BaseScrollView>
-        <Link to={'/inventory/create'}>
-          <Fab color='primary' aria-label='add inventory' className={classes.fab} size='medium'>
-            <AddIcon fontSize="large"/>
-          </Fab>
-        </Link>
       </BaseScreen>
     );
 }
@@ -55,4 +49,4 @@ const mapStateToProps = (state: RootState) => ({
   currentSiteInventory: state.inventoryData.sitesInventory[state.siteData.currentSite?.id || ""] || EMPTY_SITE_INVENTORY_DATA,
 });
 
-export default connect(mapStateToProps)(withStyles(styles)(InventoryMain));
+export default connect(mapStateToProps)(withStyles(styles)(PurchaseRequests));

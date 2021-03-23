@@ -21,6 +21,8 @@ import AddInventory from './screens/Inventory/AddInventory';
 import CreatePurchaseRequest from './screens/Inventory/CreatePurchaseRequest';
 import InventoryMain from './screens/Inventory/InventoryMain';
 import InventoryProfile from './screens/Inventory/InventoryProfile';
+import PurchaseRequest from './screens/Inventory/PurchaseRequest';
+import PurchaseRequests from './screens/Inventory/PurchaseRequests';
 import Login from './screens/Login';
 import Maintenance from './screens/Maintenance';
 import { theme } from './styles/ThemeStyles';
@@ -56,7 +58,9 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path="/inventory" component={InventoryMain} exact/>
       <AuthenticatedRoute path="/inventory/create" component={AddInventory} />
       <AuthenticatedRoute path="/inventory/item" component={InventoryProfile} /> 
+      <AuthenticatedRoute path="/inventory/purchase-requests" component={PurchaseRequests} exact/> 
       <AuthenticatedRoute path="/inventory/purchase-requests/create" component={CreatePurchaseRequest} /> 
+      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} /> 
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 

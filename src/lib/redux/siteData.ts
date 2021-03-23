@@ -42,9 +42,13 @@ const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrSite(newSite));
 };
 
+const getCurrentSite = (): SiteRecord => {
+  return store.getState().siteData.currentSite;
+};
+
 // TODO: @julianrkung move to customerData
 const addCustomerToRedux = (customer: any): void => {
   store.dispatch(addCustomer(customer));
 };
 
-export { refreshSiteData, setCurrentSite, addCustomerToRedux };
+export { refreshSiteData, setCurrentSite, getCurrentSite, addCustomerToRedux };
