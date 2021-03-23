@@ -11,8 +11,8 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
-import { getCurrentCustomer } from '../../lib/redux/customerData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
 
@@ -163,7 +163,7 @@ function CustomerProfile(props: CustomerProps) {
 
 const mapStateToProps = (state: RootState) => ({
   currentSite: state.siteData.currentSite || EMPTY_SITE,
-  customer: getCurrentCustomer(),
+  customer: state.customerData.currentCustomer || EMPTY_CUSTOMER,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));

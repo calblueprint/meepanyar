@@ -12,14 +12,10 @@ const setCurrentCustomerInRedux = (customer: CustomerRecord): void => {
     store.dispatch(setCurrentCustomer(customer))
 }
 
-const getCurrentCustomer = (): CustomerRecord => {
-    return store.getState().customerData.currentCustomer
-}
-
 const getAllCustomersInSite = (): CustomerRecord[] => {
     const siteId = getCurrentSiteId();
     const siteIdsToCustomers = store.getState().customerData.siteIdsToCustomers[siteId] || {};
     return Object.values(siteIdsToCustomers);
 }
 
-export { setCurrentCustomerInRedux, addCustomerToRedux, getCurrentCustomer, getAllCustomersInSite };
+export { setCurrentCustomerInRedux, addCustomerToRedux, getAllCustomersInSite };

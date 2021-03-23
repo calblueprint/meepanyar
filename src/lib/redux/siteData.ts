@@ -1,13 +1,11 @@
 import { getAllSites } from '../airtable/request';
 import { SiteRecord, CustomerRecord, SiteId } from '../airtable/interface';
-import { EMPTY_SITE, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
+import { saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
 import { saveCustomerData } from './customerDataSlice';
 import { store } from './store';
 
-//  TODO: DON'T KNOW WHERE TO PUT THIS????? Shouldn't be here.
 const refreshData = async (loadSilently: boolean): Promise<void> => {
 
-  //if background is true then dont set loading parameter.
   if (!loadSilently) {
     store.dispatch(setLoadingForSiteData());
   }
@@ -36,6 +34,8 @@ const extractCustomerDataFromSite = (sites: SiteRecord[]): Record<SiteId, Custom
   const siteIdsToCustomers: Record<SiteId, CustomerRecord[]> = {};
   sites.map((site: SiteRecord) => {
     siteIdsToCustomers[site.id] = site.customers || [];
+    // We delete customers here so that there is no duplicate data
+    // between the siteDataSlice and customerDataSlice
     delete site.customers;
   })
 
