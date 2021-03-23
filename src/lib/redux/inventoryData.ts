@@ -1,5 +1,5 @@
-import { InventoryRecord, SiteRecord } from '../airtable/interface';
-import { addInventory, saveInventoryData } from './inventoryDataSlice';
+import { InventoryRecord, PurchaseRequestRecord, SiteRecord } from '../airtable/interface';
+import { addInventory, addPurchaseRequest, saveInventoryData } from './inventoryDataSlice';
 import { store } from './store';
 
 const refreshInventoryData = (site: SiteRecord) : void => {
@@ -21,5 +21,13 @@ const addInventoryToRedux = (inventory: InventoryRecord): void => {
   store.dispatch(addInventory(inventory));
 };
 
-export { refreshInventoryData, addInventoryToRedux };
+const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord, siteId: string): void => {
+  const purchaseRequestData = {
+    ...purchaseRequest,
+    siteId: siteId
+  }
+  store.dispatch(addPurchaseRequest(purchaseRequestData));
+}
+
+export { refreshInventoryData, addInventoryToRedux, addPurchaseRequestToRedux };
 

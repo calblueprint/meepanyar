@@ -111,11 +111,17 @@ export interface FinancialSummaryRecord {
   issubmitted: boolean;
 }
 
+export enum PurchaseRequestStatus {
+  Approved = "Approved",
+  Denied = "Denied",
+  Pending = "Pending",
+}
+
 export interface PurchaseRequestRecord {
   id: string;
   period: number;
   notes?: string;
-  status: string;
+  status: PurchaseRequestStatus;
   requesterId: string;
   reviewerId?: string;
   createdAt: string;
@@ -148,7 +154,7 @@ export interface InventoryUpdateRecord {
 
 export interface ProductRecord {
   id: string;
-  unit: number;
+  unit: string;
   name: string;
   inventoryIds?: string[];
 }

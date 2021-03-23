@@ -24,7 +24,7 @@ import {
   deleteRecord,
 } from './airtable';
 import { addToOfflineCustomer } from '../utils/offlineUtils';
-import { addInventoryToRedux } from '../redux/inventoryData';
+import { addInventoryToRedux, addPurchaseRequestToRedux } from '../redux/inventoryData';
 import { generateOfflineInventoryId } from '../utils/inventoryUtils';
 
 /*
@@ -225,8 +225,27 @@ export const createManyInventorys = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createPurchaseRequest = async (record) => {
-  return createRecord(Tables.PurchaseRequests, record);
+// NONGENERATED: Create an inventory record (add product to site)
+export const createPurchaseRequest = async (purchaseRequest, siteId) => {
+  console.log("IN create purchaseRequest, here it is", purchaseRequest);
+  let purchaseRequestId = "";
+  try {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/purchase-request/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(purchaseRequest)
+    })
+    console.log('Response for purchase request: ', resp);
+    resp.then(resp => resp?.json()).then(data => purchaseRequestId = data.id);
+  } catch (err) {
+    purchaseRequestId = generateOfflineInventoryId(); // TODO: update to purchase request Id?
+    console.log('Error with create purchase req. request: ', err);
+  }
+  purchaseRequest.id = purchaseRequestId;
+  addPurchaseRequestToRedux(purchaseRequest, siteId);
+  return purchaseRequest;
 };
 
 export const createManyPurchaseRequests = async (records) => {

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
+import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord, PurchaseRequestStatus } from '../airtable/interface';
 
 export interface SiteInventoryData {
   siteInventory: InventoryRecord[],
@@ -48,6 +48,18 @@ export const EMPTY_INVENTORY_UPDATE: InventoryUpdateRecord = {
   period: 0,
 };
 
+export const EMPTY_PURCHASE_REQUEST: PurchaseRequestRecord = {
+  id: '',
+  period: 0,
+  notes: '',
+  status: PurchaseRequestStatus.Pending,
+  requesterId: '',
+  createdAt: '',
+  amountPurchased: 0.0,
+  amountSpent: 0.0,
+  inventoryId: '',
+};
+
 const inventoryDataSlice = createSlice({
   name: 'inventoryData',
   initialState,
@@ -66,8 +78,13 @@ const inventoryDataSlice = createSlice({
     addInventory(state, action) {
       state.sitesInventory[action.payload.siteId].siteInventory.push(action.payload);
     },
+    addPurchaseRequest(state, action) {
+      const siteId = action.payload.siteId;
+      delete action.payload.siteId;
+      state.sitesInventory[siteId].purchaseRequests.push(action.payload);
+    },
   }
 });
 
-export const { saveInventoryData, addInventory } = inventoryDataSlice.actions;
+export const { saveInventoryData, addInventory, addPurchaseRequest } = inventoryDataSlice.actions;
 export default inventoryDataSlice.reducer;

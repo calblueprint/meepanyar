@@ -3,9 +3,9 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { connect } from 'react-redux';
-import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
-import { ProductIdString } from '../../lib/redux/inventoryDataSlice';
-import { RootState } from '../../lib/redux/store';
+import { InventoryRecord, ProductRecord } from '../../../lib/airtable/interface';
+import { ProductIdString } from '../../../lib/redux/inventoryDataSlice';
+import { RootState } from '../../../lib/redux/store';
 
 
 const styles = (theme: Theme) =>

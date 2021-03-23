@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import InventoryCard from '../../components/Inventory/InventoryCard';
 import { InventoryRecord, SiteRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE_INVENTORY_DATA, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
+import InventoryCard from './component/InventoryCard';
 
 const styles = (theme: Theme) =>
   createStyles({

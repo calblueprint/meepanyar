@@ -2,9 +2,10 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import Button from '../../components/Button';
 import { InventoryRecord, ProductRecord, SiteRecord } from '../../lib/airtable/interface';
 import { ProductIdString } from '../../lib/redux/inventoryDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
@@ -27,6 +28,15 @@ interface InventoryProps extends RouteComponentProps {
   location: any;
   products: Record<ProductIdString, ProductRecord>;
 }
+const getPurchaseRequestButton = (inventory: InventoryRecord) => {
+  return (
+    <Link to={{ pathname: `purchase-requests/create`, state: { inventory } }}> 
+      <Button label={"Purchase"}>
+        Add Payment
+      </Button>
+    </Link>
+  );
+};
 
 function InventoryProfile(props: InventoryProps) {
   const { classes, products } = props;
@@ -36,6 +46,7 @@ function InventoryProfile(props: InventoryProps) {
     <BaseScreen leftIcon="backNav" title={products[inventoryItem.productId].name}>
       <BaseScrollView>
         <div className={classes.content}>
+          {getPurchaseRequestButton(inventoryItem)}
           <Typography variant="h1">{`${inventoryItem.currentQuantity} ${products[inventoryItem.productId].unit}`}</Typography>
           <div className={classes.section}>
           </div>
