@@ -27,7 +27,9 @@ const refreshSiteData = async (): Promise<void> => {
     if (customers) {
       for (let j = 0; j < sites.length; j++) {
         let customerMeterReadings = customers.meterReadings;
-        customerMeterReadings.sort((a: MeterReadingRecord, b: MeterReadingRecord) => (Date.parse(a.date) > Date.parse(b.date)) ? -1 : 1);
+        if (customerMeterReadings) {
+          customerMeterReadings.sort((a: MeterReadingRecord, b: MeterReadingRecord) => (Date.parse(a.date) > Date.parse(b.date)) ? -1 : 1);
+        }
       }
     }
   }
