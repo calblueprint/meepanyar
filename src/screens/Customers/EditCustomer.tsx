@@ -1,4 +1,4 @@
-import { createStyles, FormControl, InputLabel, Theme, MenuItem, Select } from '@material-ui/core';
+import { createStyles, FormControl, InputLabel, MenuItem, Select, Theme } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
@@ -7,13 +7,12 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
+import { CustomerRecord, CustomerUpdateRecord, SiteRecord } from '../../lib/airtable/interface';
 import { editCustomer } from '../../lib/airtable/request';
-import { RootState } from '../../lib/redux/store';
-import { CustomerRecord, SiteRecord, CustomerUpdateRecord } from '../../lib/airtable/interface';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
-import { EMPTY_CUSTOMER } from '../../lib/utils/customerUtils';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { User, EMPTY_USER } from '../../lib/redux/userDataSlice';
+import { RootState } from '../../lib/redux/store';
+import { EMPTY_USER, User } from '../../lib/redux/userDataSlice';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -32,15 +31,14 @@ const styles = (theme: Theme) =>
 interface EditCustomerProps extends RouteComponentProps {
   classes: { header: string; content: string; formControl: string; };
   location: any;
-  currentCustomer: CustomerRecord;
   currentSite: SiteRecord;
   user: User;
 }
 
 function EditCustomer(props: EditCustomerProps) {
-  const { classes, currentCustomer, currentSite, user } = props;
+  const { classes, currentSite, user } = props;
   const history = useHistory();
-
+  const currentCustomer: CustomerRecord = props.location.state.customer;
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState(currentCustomer.tariffPlanId);
   const [customerName, setCustomerName] = useState(currentCustomer.name);
   const [explanation, setExplanation] = useState("");
@@ -114,7 +112,6 @@ function EditCustomer(props: EditCustomerProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  currentCustomer: state.siteData.currentCustomer || EMPTY_CUSTOMER,
   currentSite: state.siteData.currentSite || EMPTY_SITE,
   user: state.userData.user || EMPTY_USER,
 });

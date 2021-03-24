@@ -46,6 +46,7 @@ export interface HeaderProps {
   leftIcon?: string;
   title?: string;
   rightIcon?: string;
+  editAction? : (event: React.MouseEvent<HTMLElement>) => void;
   classes: any;
   match?: any;
   name?: string;
@@ -53,7 +54,8 @@ export interface HeaderProps {
 }
 
 function BaseHeader(props: HeaderProps) {
-  const { leftIcon, title, rightIcon, classes, match, name, email } = props;
+  const { leftIcon, title, rightIcon, classes, match, name, email, editAction } = props;
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const history = useHistory();
@@ -92,14 +94,15 @@ function BaseHeader(props: HeaderProps) {
     </Menu>
   );
 
-  const navigateToEdit = () => {
+  // Default edit action if no custom editAction is passed in
+  const navigateToEditDefault = () => {
     history.push(`${match.url}/edit`);
   };
 
   //TODO: allow users to input icons rather than map strings to icons
   const icons: { [key: string]: JSX.Element } = {
     backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
-    edit: getIcon(navigateToEdit, <CreateIcon />),
+    edit: getIcon(editAction || navigateToEditDefault, <CreateIcon />),
     user: getIcon(openProfileMenu, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
 
