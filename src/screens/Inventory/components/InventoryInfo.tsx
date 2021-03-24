@@ -50,7 +50,7 @@ function InventoryInfo(props: InventoryInfoProps) {
         </Typography>
       </div>
       <div className={classes.rightColumnContainer}>
-          <Typography variant="body2">{`${inventory.currentQuantity} ${product.unit}(s)`}</Typography>
+        <Typography variant="body2">{`${inventory.currentQuantity} ${product.unit}(s)`}</Typography>
       </div>
     </div>
   );

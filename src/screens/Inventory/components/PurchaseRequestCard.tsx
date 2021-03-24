@@ -38,7 +38,6 @@ interface PurchaseRequestCardProps {
 // TODO: sort by creation date/status
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
   const { classes, purchaseRequest, product} = props;
-  console.log(product);
   return (
     <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>

@@ -73,7 +73,7 @@ function PurchaseRequest (props: PurchaseRequestsProps) {
   );
 }
 
-const mapStateToProps = (state: RootState, ownProps: { location: { state: { purchaseRequest: { inventoryId: string; }; }; }; }) => ({
+const mapStateToProps = (state: RootState, ownProps: { location: { state: { purchaseRequest: PurchaseRequestRecord }; }; }) => ({
     product: getProductByInventoryId(ownProps.location.state.purchaseRequest.inventoryId),
 });
 

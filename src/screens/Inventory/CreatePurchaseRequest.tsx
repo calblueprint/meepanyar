@@ -35,7 +35,6 @@ interface CreatePurchaseRequestProps extends RouteComponentProps {
   location: any;
   products: Record<ProductIdString, ProductRecord>;
   userId: string;
-
 }
 
 function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {

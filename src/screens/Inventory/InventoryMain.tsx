@@ -24,21 +24,21 @@ const styles = (theme: Theme) =>
 interface InventoryProps extends RouteComponentProps {
   classes: { fab: string };
   currentSite: SiteRecord;
-  currentSiteInventory: SiteInventoryData;
+  siteInventoryData: SiteInventoryData;
 }
 
 // TODO @wangannie: address empty state
 function InventoryMain (props: InventoryProps) {
-    const { classes, currentSiteInventory } = props;
+    const { classes, siteInventoryData } = props;
     return (
       <BaseScreen title="Inventory">
         <BaseScrollView>
           <Link to={'/inventory/purchase-requests'}>
             <Button label="Purchase Requests"/>
           </Link>
-          {currentSiteInventory.siteInventory.map((inventory: InventoryRecord) =>  (
-            <Link key={inventory.id} to={{ pathname: `/inventory/item`, state: { inventoryItem: inventory }}}>
-              <InventoryCard key={inventory.id} inventoryItem={inventory}/>
+          {siteInventoryData.siteInventory.map((inventory: InventoryRecord) =>  (
+            <Link key={inventory.id} to={{ pathname: `/inventory/item`, state: { inventory: inventory }}}>
+              <InventoryCard key={inventory.id} inventory={inventory}/>
             </Link>
           ))}
         </BaseScrollView>
@@ -52,7 +52,7 @@ function InventoryMain (props: InventoryProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  currentSiteInventory: state.inventoryData.sitesInventory[state.siteData.currentSite?.id || ""] || EMPTY_SITE_INVENTORY_DATA,
+  siteInventoryData: state.inventoryData.sitesInventory[state.siteData.currentSite?.id || ""] || EMPTY_SITE_INVENTORY_DATA,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(InventoryMain));

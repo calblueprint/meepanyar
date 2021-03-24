@@ -8,7 +8,6 @@ import { ProductIdString } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 import { lastUpdated } from '../../../lib/utils/inventoryUtils';
 
-
 const styles = (theme: Theme) =>
   createStyles({
     arrow: {
@@ -25,25 +24,21 @@ const styles = (theme: Theme) =>
       display: 'flex',
       marginBottom: 10
     },
-    arrowSpacing: {
-      padding: 0
-    },
   });
+  
 interface InventoryCardProps {
-  inventoryItem: InventoryRecord;
-  classes: {
-    arrow: string; cardContent: string; cardContainer: string; arrowSpacing: string;
-  };
+  inventory: InventoryRecord;
+  classes: { arrow: string; cardContent: string; cardContainer: string; };
   products: Record<ProductIdString, ProductRecord>;
 }
 
 function InventoryCard(props: InventoryCardProps) {
-  const { classes, inventoryItem, products} = props;
+  const { classes, inventory, products} = props;
   return (
     <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>
-        <Typography variant="body1">{products[inventoryItem.productId]?.name}</Typography>
-        <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated(inventoryItem)}`} </Typography>
+        <Typography variant="body1">{products[inventory.productId]?.name}</Typography>
+        <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated(inventory)}`} </Typography>
       </div>
       <CardActions>
         <IconButton size="small">
