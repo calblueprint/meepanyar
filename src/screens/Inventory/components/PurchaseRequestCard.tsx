@@ -45,6 +45,7 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
         <Typography variant="body1">{`${product.name}, ${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
         <Typography variant="body1">{`Created at: ${purchaseRequest.createdAt}`}</Typography>
         <Typography variant="body1">{`Requested by: ${purchaseRequest.requesterId}`}</Typography>
+        <Typography variant="body1">{`Status: ${purchaseRequest.status}`}</Typography>
       </div>
       <CardActions>
         <IconButton size="small">

@@ -1,5 +1,5 @@
 import { InventoryRecord, ProductRecord, PurchaseRequestRecord, SiteRecord } from '../airtable/interface';
-import { addInventory, addPurchaseRequest, EMPTY_PRODUCT, saveInventoryData } from './inventoryDataSlice';
+import { addInventory, addPurchaseRequest, EMPTY_PRODUCT, saveInventoryData, updatePurchaseRequest } from './inventoryDataSlice';
 import { getCurrentSite } from './siteData';
 import { store } from './store';
 
@@ -22,12 +22,20 @@ const addInventoryToRedux = (inventory: InventoryRecord): void => {
   store.dispatch(addInventory(inventory));
 };
 
-const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord, siteId: string): void => {
+const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord): void => {
   const purchaseRequestData = {
     ...purchaseRequest,
-    siteId: siteId
+    siteId: getCurrentSite().id
   }
   store.dispatch(addPurchaseRequest(purchaseRequestData));
+}
+
+const updatePurchaseRequestInRedux = (purchaseRequest: PurchaseRequestRecord): void => {
+  const purchaseRequestData = {
+    ...purchaseRequest,
+    siteId: getCurrentSite().id
+  }
+  store.dispatch(updatePurchaseRequest(purchaseRequestData));
 }
 
 // Returns a product record by an inventory ID
@@ -42,5 +50,5 @@ const getProductByInventoryId = (inventoryId: string): ProductRecord => {
   return EMPTY_PRODUCT;
 }
 
-export { refreshInventoryData, addInventoryToRedux, addPurchaseRequestToRedux, getProductByInventoryId };
+export { refreshInventoryData, addInventoryToRedux, addPurchaseRequestToRedux, getProductByInventoryId, updatePurchaseRequestInRedux };
 

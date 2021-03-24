@@ -1,4 +1,4 @@
-import { createStyles, Theme, withStyles } from '@material-ui/core';
+import { createStyles, Theme, Typography, withStyles } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -6,7 +6,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { PurchaseRequestRecord, SiteRecord } from '../../lib/airtable/interface';
-import { EMPTY_SITE_INVENTORY_DATA, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
+import { EMPTY_SITE_INVENTORY_DATA, PurchaseRequestStatus, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 import PurchaseRequestCard from './components/PurchaseRequestCard';
 
@@ -35,7 +35,20 @@ function PurchaseRequests (props: PurchaseRequestsProps) {
           <Link to={'/inventory'}>
             <Button label="Back to Inventory"/>
           </Link>
-          {currentSiteInventory.purchaseRequests.map((purchaseRequest: PurchaseRequestRecord) =>  (
+          <Typography variant="h1">Pending Review</Typography>
+          {currentSiteInventory.purchaseRequests.filter(pr => pr.status == PurchaseRequestStatus.Pending).map((purchaseRequest: PurchaseRequestRecord) =>  (
+            <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest: purchaseRequest }}}>
+              <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
+            </Link>
+          ))}
+          <Typography variant="h1">Approved</Typography>
+          {currentSiteInventory.purchaseRequests.filter(pr => pr.status == PurchaseRequestStatus.Approved).map((purchaseRequest: PurchaseRequestRecord) =>  (
+            <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest: purchaseRequest }}}>
+              <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
+            </Link>
+          ))}
+          <Typography variant="h1">Denied</Typography>
+          {currentSiteInventory.purchaseRequests.filter(pr => pr.status !== PurchaseRequestStatus.Denied).map((purchaseRequest: PurchaseRequestRecord) =>  (
             <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest: purchaseRequest }}}>
               <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
             </Link>

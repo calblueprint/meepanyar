@@ -24,7 +24,7 @@ import {
   deleteRecord,
 } from './airtable';
 import { addToOfflineCustomer } from '../utils/offlineUtils';
-import { addInventoryToRedux, addPurchaseRequestToRedux } from '../redux/inventoryData';
+import { addInventoryToRedux, addPurchaseRequestToRedux,updatePurchaseRequestInRedux } from '../redux/inventoryData';
 import { generateOfflineInventoryId } from '../utils/inventoryUtils';
 
 /*
@@ -226,8 +226,7 @@ export const createManyInventorys = async (records) => {
 };
 
 // NONGENERATED: Create an inventory record (add product to site)
-export const createPurchaseRequest = async (purchaseRequest, siteId) => {
-  console.log("IN create purchaseRequest, here it is", purchaseRequest);
+export const createPurchaseRequest = async (purchaseRequest) => {
   let purchaseRequestId = "";
   try {
     const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/purchase-request/create`, {
@@ -244,7 +243,7 @@ export const createPurchaseRequest = async (purchaseRequest, siteId) => {
     console.log('Error with create purchase req. request: ', err);
   }
   purchaseRequest.id = purchaseRequestId;
-  addPurchaseRequestToRedux(purchaseRequest, siteId);
+  addPurchaseRequestToRedux(purchaseRequest);
   return purchaseRequest;
 };
 
@@ -664,6 +663,30 @@ export const updateManyInventorys = async (recordUpdates) => {
   }
   return Promise.all(updatePromises);
 };
+
+// NONGENERATED: Review purchase request
+export const reviewPurchaseRequest = async (purchaseRequest) => {
+  try {
+    // Extract details relevant to reviewing the purchase request
+    const reviewData = {
+      id: purchaseRequest.id,
+      reviewerId: purchaseRequest.reviewerId,
+      approvedAt: purchaseRequest.approvedAt,
+      status: purchaseRequest.status,
+    }
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/purchase-request/review`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(reviewData)
+    })
+    updatePurchaseRequestInRedux(purchaseRequest);
+    console.log("Review Purchase Request Response: ", resp);
+  } catch (err) {
+    console.log("Error in Review Purchase Request: ", err);
+  }
+}
 
 export const updatePurchaseRequest = async (id, recordUpdates) => {
   return updateRecord(Tables.PurchaseRequests, id, recordUpdates);

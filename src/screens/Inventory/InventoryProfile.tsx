@@ -1,5 +1,4 @@
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
@@ -48,7 +47,6 @@ function InventoryProfile(props: InventoryProps) {
         <div className={classes.content}>
           <InventoryInfo product={product} inventory={inventory} />
           {getPurchaseRequestButton(inventory)}
-          <Typography variant="h1">{`${inventory.currentQuantity} ${product.unit}`}</Typography>
           <div className={classes.section}>
           </div>
         </div>

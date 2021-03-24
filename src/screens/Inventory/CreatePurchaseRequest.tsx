@@ -4,7 +4,7 @@ import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
@@ -40,6 +40,7 @@ interface CreatePurchaseRequestProps extends RouteComponentProps {
 
 function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const { classes, products, userId } = props;
+  const history = useHistory();
   const inventory: InventoryRecord = props.location.state.inventory;
   const product: ProductRecord = products[inventory.productId];
 
@@ -63,7 +64,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     // Prevent page refresh on submit
     event.preventDefault();
     // Make a deep copy of an empty purchase request record
-    let purchaseRequest = JSON.parse(JSON.stringify(EMPTY_PURCHASE_REQUEST));
+    const purchaseRequest = JSON.parse(JSON.stringify(EMPTY_PURCHASE_REQUEST));
     purchaseRequest.requesterId = userId;
     purchaseRequest.createdAt = moment().toISOString();
     purchaseRequest.amountPurchased = amountPurchased;
@@ -72,11 +73,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     purchaseRequest.inventoryId = inventory.id;
     // TODO: add image upload
 
-    // createPurchaseRequest returns the Purchase Request with an id
-    purchaseRequest = await createPurchaseRequest(purchaseRequest, inventory.siteId);
-
-    // TODO: @wangannie navigate
-    // history.replace(`item`, { inventoryItem: inventory });
+    await createPurchaseRequest(purchaseRequest);
+    history.goBack();
   }
 
   return (

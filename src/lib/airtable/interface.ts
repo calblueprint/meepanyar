@@ -1,3 +1,5 @@
+import { PurchaseRequestStatus } from "../redux/inventoryDataSlice";
+
 export type TableValues = string | boolean | number | Array<unknown> | Airtable.Attachment;
 
 export type TableRecord =
@@ -109,12 +111,6 @@ export interface FinancialSummaryRecord {
   isapproved: boolean;
   lastUpdated: string;
   issubmitted: boolean;
-}
-
-export enum PurchaseRequestStatus {
-  Approved = "Approved",
-  Denied = "Denied",
-  Pending = "Pending",
 }
 
 export interface PurchaseRequestRecord {
