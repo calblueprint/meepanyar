@@ -65,7 +65,7 @@ export interface CustomerRecord {
 export interface CustomerUpdateRecord {
   id: string;
   dateUpdated: string;
-  customerIds: string[];
+  customerId: string;
   explanation: string;
   userId: string;
 }

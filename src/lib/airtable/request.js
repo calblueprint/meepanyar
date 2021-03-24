@@ -23,6 +23,7 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
+import { editCustomerInRedux } from '../../lib/redux/siteData';
 import { addToOfflineCustomer } from '../utils/offlineUtils';
 
 /*
@@ -508,18 +509,22 @@ export const updateCustomer = async (id, recordUpdates) => {
 
 // NONGENERATED: Edit customer
 export const editCustomer = async (customer) => {
-  try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(customer)
-    })
-
-    console.log(resp);
-  } catch (err) {
-    console.log(err);
+  if (!customer.id) {
+    addToOfflineCustomer(customer, 'edits', customer.customerUpdate);
+  } else {
+    try {
+      const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(customer)
+      })
+      editCustomerInRedux(customer);
+      console.log(resp);
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 

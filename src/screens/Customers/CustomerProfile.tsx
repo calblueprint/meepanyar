@@ -1,10 +1,10 @@
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import React, { useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
-import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
@@ -54,7 +54,9 @@ function CustomerProfile(props: CustomerProps) {
   const { classes, match, currentSite } = props;
   const customer: CustomerRecord = props.location.state.customer;
 
-  setCurrentCustomer(customer);
+  useEffect(() => {
+    setCurrentCustomer(customer); //TODO: @julianrkung need to make customer data retrieval consistent (Link vs Redux)
+  },[]);
 
   // data retrieval
   const UNDEFINED_AMOUNT = '-';

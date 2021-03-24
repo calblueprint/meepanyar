@@ -8,7 +8,6 @@ import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 import { editCustomer } from '../../lib/airtable/request';
-import { editCustomerInRedux } from '../../lib/redux/siteData';
 import { RootState } from '../../lib/redux/store';
 import { CustomerRecord, SiteRecord, CustomerUpdateRecord } from '../../lib/airtable/interface';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
@@ -44,9 +43,9 @@ function EditCustomer(props: EditCustomerProps) {
 
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState(currentCustomer.tariffPlanId);
   const [customerName, setCustomerName] = useState(currentCustomer.name);
-  const [reason, setReason] = useState("");
+  const [explanation, setExplanation] = useState("");
   const [hasMeter, setHasMeter] = useState(currentCustomer.hasmeter);
-  const [customerInactive, setCustomerInactive] = useState(currentCustomer.isactive);
+  const [customerInactive, setCustomerInactive] = useState(!currentCustomer.isactive);
 
   const handleSelectTariffPlan = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedTariffPlanId(event.target.value as string);
@@ -58,11 +57,11 @@ function EditCustomer(props: EditCustomerProps) {
     event.preventDefault();
 
     // Add other info necessary to create the Airtable record
-    let customerUpdate: CustomerUpdateRecord = {
+    const customerUpdate: CustomerUpdateRecord = {
       id: '',
       dateUpdated: formatUTCDateStringToLocal((new Date()).toString()),
-      customerIds: [currentCustomer.id],
-      explanation: reason,
+      customerId: currentCustomer.id, //TODO: may need to change Airtable from foreign-key-many
+      explanation: explanation,
       userId: user.id,
     };
 
@@ -73,14 +72,7 @@ function EditCustomer(props: EditCustomerProps) {
     customer.isactive = !customerInactive;
     customer.tariffPlanId = selectedTariffPlanId;
 
-    if (customer.customerUpdates === undefined) {
-      customer.customerUpdates = [customerUpdate];
-    } else {
-      customer.customerUpdates.push(customerUpdate);
-    }
-
     // TODO: add error handling
-    editCustomerInRedux(customer);
     editCustomer({
       ...customer,
       customerUpdate: customerUpdate
@@ -94,8 +86,8 @@ function EditCustomer(props: EditCustomerProps) {
     setCustomerName(event.target.value as string);
   }
 
-  const handleReasonInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setReason(event.target.value as string);
+  const handleExplanationInput = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setExplanation(event.target.value as string);
   }
 
   const tariffPlans = currentSite.tariffPlans;
@@ -114,7 +106,7 @@ function EditCustomer(props: EditCustomerProps) {
             )}
           </Select>
         </FormControl>
-        <TextField label={'Reason'} id={'reason'} onChange={handleReasonInput}/>
+        <TextField label={'Explanation'} id={'explanation'} onChange={handleExplanationInput}/>
         <Button label={'SAVE'} onClick={handleSubmit} />
       </form>
     </BaseScreen>

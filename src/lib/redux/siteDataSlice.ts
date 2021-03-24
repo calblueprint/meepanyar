@@ -5,8 +5,8 @@ import { SiteRecord, CustomerRecord, FinancialSummaryRecord } from '../airtable/
 
 interface siteDataSliceState {
   isLoading: boolean;
-  currentSite: any;
-  currentCustomer: any;
+  currentSite: any; //TODO: Set as SiteRecord | null and resolve errors
+  currentCustomer: CustomerRecord | null;
   sites: any[];
 }
 
@@ -25,24 +25,6 @@ export const EMPTY_SITE: SiteRecord = {
   financialSummaryIds: [],
   financialSummaries: [],
   tariffPlans: [],
-};
-
-export const EMPTY_CUSTOMER: CustomerRecord = {
-  id: '',
-  name: '',
-  meterNumber: 0,
-  tariffPlanId: '',
-  isactive: true,
-  hasmeter: true,
-  outstandingBalance: '',
-  meterReadingIds: [],
-  meterReadings: [],
-  paymentIds: [],
-  payments: [],
-  customerUpdateIds: [],
-  customerUpdates: [],
-  totalAmountBilledfromInvoices: 0,
-  totalAmountPaidfromPayments: 0,
 };
 
 export const EMPTY_FINANCIAL_SUMMARY: FinancialSummaryRecord = {
@@ -94,10 +76,9 @@ const siteDataSlice = createSlice({
       }
     },
     editCustomer(state, action) {
-      const stateCopy = JSON.parse(JSON.stringify(state));
-      const index = stateCopy.currentSite.customers.findIndex((e: CustomerRecord) => e.id === action.payload.id);
-      stateCopy.currentSite.customers[index] = action.payload;
-      return stateCopy;
+      const index = state.currentSite.customers.findIndex((e: CustomerRecord) => e.id === action.payload.id);
+      state.currentSite.customers[index] = action.payload;
+      state.currentCustomer = action.payload;
     }
   },
 });
