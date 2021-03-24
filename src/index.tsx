@@ -10,6 +10,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { store, persistor } from './lib/redux/store';
 import { checkOnline, refreshDataBackground } from './lib/redux/userData';
 
+import './lib/i18next/i18n';
+
 // Check if online every 10 seconds
 setInterval(checkOnline, 10000);
 //refreshes data in the background every 15 min
