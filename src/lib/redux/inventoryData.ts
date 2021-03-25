@@ -1,5 +1,5 @@
 import { InventoryRecord, ProductRecord, PurchaseRequestRecord, SiteRecord } from '../airtable/interface';
-import { addInventory, addPurchaseRequest, EMPTY_PRODUCT, saveInventoryData, updatePurchaseRequest } from './inventoryDataSlice';
+import { addInventory, addPurchaseRequest, EMPTY_PRODUCT, saveInventoryData, updateInventoryQuantity, updatePurchaseRequest } from './inventoryDataSlice';
 import { getCurrentSite } from './siteData';
 import { store } from './store';
 
@@ -50,5 +50,25 @@ const getProductByInventoryId = (inventoryId: string): ProductRecord => {
   return EMPTY_PRODUCT;
 }
 
-export { refreshInventoryData, addInventoryToRedux, addPurchaseRequestToRedux, getProductByInventoryId, updatePurchaseRequestInRedux };
+const updateCurrentQuantityInRedux = (inventoryId: string, newQuantity: number) : void => {
+  const updateData = {
+    inventoryId,
+    newQuantity,
+    siteId: getCurrentSite().id,
+  }
+  store.dispatch(updateInventoryQuantity(updateData));
+}
+
+// Gets the current quantity of an inventory item given its id
+const getInventoryCurrentQuantity = (inventoryId: string): number => {
+  const state = store.getState();
+  const siteInventoryData = state.inventoryData.sitesInventory[getCurrentSite().id];
+  const inventoryRecord = siteInventoryData.siteInventory.find((inv: InventoryRecord) => inv.id == inventoryId) || "";
+  if (inventoryRecord) {
+    return inventoryRecord.currentQuantity;
+  }
+  return 0;
+}
+
+export { refreshInventoryData, addInventoryToRedux, addPurchaseRequestToRedux, getProductByInventoryId, updatePurchaseRequestInRedux, updateCurrentQuantityInRedux, getInventoryCurrentQuantity };
 

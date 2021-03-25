@@ -12,20 +12,24 @@
 
 */
 
-import { Tables, Columns } from './schema';
+import { addInventoryToRedux, addPurchaseRequestToRedux, getInventoryCurrentQuantity, updateCurrentQuantityInRedux, updatePurchaseRequestInRedux } from '../redux/inventoryData';
+import { PurchaseRequestStatus } from '../redux/inventoryDataSlice';
+import { generateOfflineInventoryId } from '../utils/inventoryUtils';
+import { addToOfflineCustomer } from '../utils/offlineUtils';
 import {
   createRecord,
   createRecords,
-  updateRecord,
-  updateRecords,
-  getAllRecords,
-  getRecordsByAttribute,
-  getRecordById,
-  deleteRecord,
+
+
+
+
+
+  deleteRecord, getAllRecords,
+
+  getRecordById, updateRecord,
+  updateRecords
 } from './airtable';
-import { addToOfflineCustomer } from '../utils/offlineUtils';
-import { addInventoryToRedux, addPurchaseRequestToRedux,updatePurchaseRequestInRedux } from '../redux/inventoryData';
-import { generateOfflineInventoryId } from '../utils/inventoryUtils';
+import { Tables } from './schema';
 
 /*
  ******* CREATE RECORDS *******
@@ -682,6 +686,14 @@ export const reviewPurchaseRequest = async (purchaseRequest) => {
       body: JSON.stringify(reviewData)
     })
     updatePurchaseRequestInRedux(purchaseRequest);
+
+    // If the request was approved, update the Inventory quantity in Airtable and Redux
+    if (reviewData.status === PurchaseRequestStatus.Approved) {
+      const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
+      updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
+      updateCurrentQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
+    }
+    
     console.log("Review Purchase Request Response: ", resp);
   } catch (err) {
     console.log("Error in Review Purchase Request: ", err);

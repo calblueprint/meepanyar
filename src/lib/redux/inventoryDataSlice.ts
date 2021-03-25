@@ -99,11 +99,15 @@ const inventoryDataSlice = createSlice({
       const siteId = action.payload.siteId;
       delete action.payload.siteId;
       const index = state.sitesInventory[siteId].purchaseRequests.findIndex(pr => pr.id === action.payload.id);
-      console.log("INDEX IS", index);
       state.sitesInventory[siteId].purchaseRequests[index] = action.payload;
+    },
+    updateInventoryQuantity(state, action) {
+      const siteId = action.payload.siteId;
+      const inventoryIndex = state.sitesInventory[action.payload.siteId].siteInventory.findIndex(inv => inv.id === action.payload.inventoryId);
+      state.sitesInventory[siteId].siteInventory[inventoryIndex].currentQuantity = action.payload.newQuantity;
     }
   }
 });
 
-export const { saveInventoryData, addInventory, addPurchaseRequest, updatePurchaseRequest } = inventoryDataSlice.actions;
+export const { saveInventoryData, addInventory, addPurchaseRequest, updatePurchaseRequest, updateInventoryQuantity } = inventoryDataSlice.actions;
 export default inventoryDataSlice.reducer;
