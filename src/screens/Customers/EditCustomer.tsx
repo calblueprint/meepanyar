@@ -45,6 +45,8 @@ function EditCustomer(props: EditCustomerProps) {
   const [customerName, setCustomerName] = useState(currentCustomer.name);
   const [explanation, setExplanation] = useState("");
   const [hasMeter, setHasMeter] = useState(currentCustomer.hasmeter);
+  // TODO: @julianrkung Look into constraints on meter number input.
+  const [meterNumber, setMeterNumber] = useState(currentCustomer.meterNumber);
   const [customerInactive, setCustomerInactive] = useState(!currentCustomer.isactive);
 
   const handleSelectTariffPlan = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -60,7 +62,7 @@ function EditCustomer(props: EditCustomerProps) {
     const customerUpdate: CustomerUpdateRecord = {
       id: '',
       dateUpdated: formatUTCDateStringToLocal((new Date()).toString()),
-      customerId: currentCustomer.id, //TODO: may need to change Airtable from foreign-key-many
+      customerId: currentCustomer.id,
       explanation: explanation,
       userId: user.id,
     };
@@ -73,10 +75,7 @@ function EditCustomer(props: EditCustomerProps) {
     customer.tariffPlanId = selectedTariffPlanId;
 
     // TODO: add error handling
-    editCustomer({
-      ...customer,
-      customerUpdate: customerUpdate
-    });
+    editCustomer(customer, customerUpdate);
 
     // Navigate to the new customer's profile page
     history.replace(`/customers/customer`, { customer });
@@ -90,6 +89,10 @@ function EditCustomer(props: EditCustomerProps) {
     setExplanation(event.target.value as string);
   }
 
+  const handleMeterInput = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setMeterNumber(event.target.value as number);
+  }
+
   const tariffPlans = currentSite.tariffPlans;
 
   return (
@@ -97,7 +100,7 @@ function EditCustomer(props: EditCustomerProps) {
       <form noValidate className={classes.content}>
         <TextField label={'Name'} id={'name'} value={customerName} onChange={handleNameInput} />
         <Checkbox label={'Select if customer is inactive'} checked={customerInactive} checkboxOnChange = {() => setCustomerInactive(!customerInactive)} />
-        <Checkbox label={'Select if customer has meter'} checked={hasMeter} checkboxOnChange={() => setHasMeter(!hasMeter)} />
+        <Checkbox label={'Select if customer has meter'} checked={hasMeter} textField={hasMeter} textFieldValue={meterNumber} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput}/>
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
           <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId = "select-tariff-plan-label" value={selectedTariffPlanId} onChange={handleSelectTariffPlan}>

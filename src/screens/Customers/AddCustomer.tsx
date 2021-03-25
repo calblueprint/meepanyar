@@ -93,7 +93,7 @@ function AddCustomer(props: AddCustomerProps) {
             )}
           </Select>
         </FormControl>
-        <Checkbox label={'Meter:'} textField={hasMeter ? 'meter': null} checkboxOnChange={() => setHasMeter(!hasMeter)}textFieldOnChange={handleMeterInput}/>
+        <Checkbox label={'Meter:'} textField={hasMeter} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput}/>
         <Checkbox label={'Customer is inactive'} checkboxOnChange = {() => setCustomerInactive(!customerInactive)}/>
         <Button label={'Add'} onClick={handleSubmit} />
       </form>
