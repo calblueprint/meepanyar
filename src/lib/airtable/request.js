@@ -12,24 +12,21 @@
 
 */
 
-import { addInventoryToRedux, addPurchaseRequestToRedux, getInventoryCurrentQuantity, updateCurrentQuantityInRedux, updatePurchaseRequestInRedux } from '../redux/inventoryData';
-import { PurchaseRequestStatus } from '../redux/inventoryDataSlice';
-import { generateOfflineInventoryId } from '../utils/inventoryUtils';
-import { addToOfflineCustomer } from '../utils/offlineUtils';
+import { Tables, Columns } from './schema';
 import {
   createRecord,
   createRecords,
-
-
-
-
-
-  deleteRecord, getAllRecords,
-
-  getRecordById, updateRecord,
-  updateRecords
+  updateRecord,
+  updateRecords,
+  getAllRecords,
+  getRecordsByAttribute,
+  getRecordById,
+  deleteRecord,
 } from './airtable';
-import { Tables } from './schema';
+import { addToOfflineCustomer } from '../utils/offlineUtils';
+import { generateOfflineInventoryId } from '../utils/inventoryUtils';
+import { addInventoryToRedux, addPurchaseRequestToRedux, getInventoryCurrentQuantity, updateCurrentQuantityInRedux, updatePurchaseRequestInRedux } from '../redux/inventoryData';
+import { PurchaseRequestStatus } from '../redux/inventoryDataSlice';
 
 /*
  ******* CREATE RECORDS *******
@@ -673,18 +670,11 @@ export const reviewPurchaseRequest = async (purchaseRequest) => {
   try {
     // Extract details relevant to reviewing the purchase request
     const reviewData = {
-      id: purchaseRequest.id,
       reviewerId: purchaseRequest.reviewerId,
       approvedAt: purchaseRequest.approvedAt,
       status: purchaseRequest.status,
     }
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/purchase-request/review`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(reviewData)
-    })
+    updatePurchaseRequest(purchaseRequest.id, reviewData);
     updatePurchaseRequestInRedux(purchaseRequest);
 
     // If the request was approved, update the Inventory quantity in Airtable and Redux
@@ -694,7 +684,7 @@ export const reviewPurchaseRequest = async (purchaseRequest) => {
       updateCurrentQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
     }
     
-    console.log("Review Purchase Request Response: ", resp);
+    console.log("Successfully reviewed purchase request!");
   } catch (err) {
     console.log("Error in Review Purchase Request: ", err);
   }
