@@ -1,6 +1,6 @@
 /**
  * Detect and return user device language. 
- * @returns string shorthand for device language (e.g. "en-US" or "my_MM")
+ * @returns string shorthand for device language (e.g. "en-US" or "my")
  */
 export const detectLanguage = (): string => {
     return navigator.language;
