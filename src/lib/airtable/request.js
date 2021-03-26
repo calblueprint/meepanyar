@@ -23,10 +23,11 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
-import { editCustomerInRedux } from '../../lib/redux/customerData';
+import { addCustomerToRedux, editCustomerInRedux, setCurrentCustomerInRedux } from '../../lib/redux/customerData';
 import { addToOfflineCustomer } from '../utils/offlineUtils';
 import { addInventoryToRedux } from '../redux/inventoryData';
 import { generateOfflineInventoryId } from '../utils/inventoryUtils';
+import { generateOfflineId } from '../utils/offlineUtils'
 
 /*
  ******* CREATE RECORDS *******
@@ -81,6 +82,7 @@ export const createManyTariffPlans = async (records) => {
 // that hits a special endpoint because we require additional logic to
 // handle offline functionality
 export const createCustomer = async (customer) => {
+  let customerId = '';
   try {
     const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/create`, {
       method: 'POST',
@@ -89,11 +91,16 @@ export const createCustomer = async (customer) => {
       },
       body: JSON.stringify(customer)
     })
-
     console.log(resp);
+    await resp.json().then(data => customerId = data.id);
   } catch (err) {
     console.log(err);
+    customerId = generateOfflineId();
   }
+  customer.id = customerId;
+  addCustomerToRedux(customer);
+  setCurrentCustomerInRedux(customer);
+
 }
 
 export const createCustomerUpdate = async (record) => {

@@ -58,8 +58,6 @@ function AddCustomer(props: AddCustomerProps) {
     customer.isactive = !customerInactive;
     customer.tariffPlanId = selectedTariffPlanId;
 
-    // TODO: add error handling
-    addCustomerToRedux(customer);
     // Add other info necessary to create the Airtable record
     createCustomer({
       ...customer,
