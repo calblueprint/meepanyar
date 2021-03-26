@@ -26,7 +26,6 @@ import {
 import { addToOfflineCustomer } from '../utils/offlineUtils';
 import { generateOfflineInventoryId } from '../utils/inventoryUtils';
 import { addInventoryToRedux, addPurchaseRequestToRedux, getInventoryCurrentQuantity, updateInventoryQuantityInRedux, updatePurchaseRequestInRedux } from '../redux/inventoryData';
-import { PurchaseRequestStatus } from '../redux/inventoryDataSlice';
 
 /*
  ******* CREATE RECORDS *******
@@ -226,9 +225,10 @@ export const createManyInventorys = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: Create an inventory record (add product to site)
+// NONGENERATED: Create a Purchase Request and update the inventory's current qty (regardless of approval status)
 export const createPurchaseRequest = async (purchaseRequest) => {
   let purchaseRequestId = "";
+  const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
   try {
     const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/purchase-request/create`, {
       method: 'POST',
@@ -239,12 +239,14 @@ export const createPurchaseRequest = async (purchaseRequest) => {
     })
     console.log('Response for purchase request: ', resp);
     await resp.json().then(data => purchaseRequestId = data.id);
+    updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
   } catch (err) {
     purchaseRequestId = generateOfflineInventoryId(); // TODO: update to purchase request Id?
     console.log('Error with create purchase req. request: ', err);
   }
   purchaseRequest.id = purchaseRequestId;
   addPurchaseRequestToRedux(purchaseRequest);
+  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
   return purchaseRequest;
 };
 
@@ -676,17 +678,9 @@ export const updatePurchaseRequestAndInventory = async (purchaseRequest) => {
     }
     updatePurchaseRequest(purchaseRequest.id, reviewData);
     updatePurchaseRequestInRedux(purchaseRequest);
-
-    // If the request was approved, update the Inventory quantity in Airtable and Redux
-    if (reviewData.status === PurchaseRequestStatus.APPROVED) {
-      const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
-      updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
-      updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
-    }
-    
-    console.log("Successfully reviewed purchase request!");
+    console.log("(updatePurchaseRequestAndInventory) Successfully reviewed purchase request - purchase request and inventory updated!");
   } catch (err) {
-    console.log("Error in Review Purchase Request: ", err);
+    console.log("Error in updatePurchaseRequestAndInventory: ", err);
   }
 }
 
