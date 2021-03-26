@@ -2,8 +2,8 @@
 import { Typography, withStyles } from '@material-ui/core';
 import { createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
-import { InventoryRecord, ProductRecord } from '../../../lib/airtable/interface';
-import { getInventoryLastUpdated } from '../../../lib/utils/inventoryUtils';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../lib/redux/store';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,13 +28,14 @@ const styles = (theme: Theme) =>
 
 interface InventoryInfoProps {
   classes: { content: string; leftColumnContainer: string; rightColumnContainer: string; };
-  product: ProductRecord;
-  inventory: InventoryRecord; // TODO: calculate last updated
+  productId: string,
+  lastUpdated: string,
+  currentQuantity: number,
 }
 
 function InventoryInfo(props: InventoryInfoProps) {
-  // TODO: better to pass in individual vars or whole inventory record?
-  const { classes, product, inventory } = props;
+  const { classes, productId, lastUpdated, currentQuantity} = props;
+  const product = useSelector((state: RootState) => state.inventoryData.products[productId]);
 
   return (
     <div className={classes.content}>
@@ -46,11 +47,11 @@ function InventoryInfo(props: InventoryInfoProps) {
           Last Updated
         </Typography>
         <Typography variant="caption">
-          {getInventoryLastUpdated(inventory)}
+          {lastUpdated}
         </Typography>
       </div>
       <div className={classes.rightColumnContainer}>
-        <Typography variant="body2">{`${inventory.currentQuantity} ${product.unit}(s)`}</Typography>
+        <Typography variant="body2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
       </div>
     </div>
   );

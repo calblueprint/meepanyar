@@ -14,6 +14,7 @@ import { createPurchaseRequest } from '../../lib/airtable/request';
 import { getProductByInventoryId } from '../../lib/redux/inventoryData';
 import { EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
+import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
 
 const styles = (theme: Theme) =>
@@ -80,7 +81,11 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     <BaseScreen title="Inventory Purchase" leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.content}>
-          <InventoryInfo product={product} inventory={inventory} />
+          <InventoryInfo 
+            productId={inventory.productId} 
+            lastUpdated={getInventoryLastUpdated(inventory)} 
+            currentQuantity={inventory.currentQuantity}
+          />
           {/* TODO fix requred/optional fields */}
           <TextField label={`Amount Purchased (${product.unit})`} id={'amount-purchased'} primary={true} onChange={handleAmountPurchasedInput} />
           <TextField label={'Amount Spent (ks)'} id={'amount-spent'} primary={true} onChange={handleAmountSpentInput} />

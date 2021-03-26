@@ -24,18 +24,16 @@ interface PurchaseRequestsProps extends RouteComponentProps {
 function PurchaseRequests (props: PurchaseRequestsProps) {
     const { classes, siteInventoryData } = props;
 
-    const getPurchaseRequestsSection = (status: PurchaseRequestStatus) => {
-      return (
-        <div>
-          <Typography variant="body1">{PurchaseRequestStatus[status]}</Typography>
-          {siteInventoryData.purchaseRequests.filter(pr => String(pr.status) == PurchaseRequestStatus[status]).map((purchaseRequest: PurchaseRequestRecord) =>  (
-            <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest }}}>
-              <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
-            </Link>
-          ))}
-        </div>
-      )
-    }
+    const getPurchaseRequestsSection = (status: PurchaseRequestStatus) => (
+      <div>
+        <Typography variant="body1">{status}</Typography>
+        {siteInventoryData.purchaseRequests.filter(pr => pr.status == status).map((purchaseRequest: PurchaseRequestRecord) =>  (
+          <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest }}}>
+            <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
+          </Link>
+        ))}
+      </div>
+    );
 
     return (
       <BaseScreen title="Purchase Requests">

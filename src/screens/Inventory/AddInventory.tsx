@@ -9,6 +9,7 @@ import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
 import { createInventory } from '../../lib/airtable/request';
+import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY, EMPTY_SITE_INVENTORY_DATA, ProductIdString, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { getCurrentSite } from '../../lib/redux/siteData';
 import { RootState } from '../../lib/redux/store';
@@ -60,7 +61,8 @@ function AddInventory(props: AddInventoryProps) {
     // TODO: @wangannie create inventory update
 
     // Navigate to new inventory item's profile page
-    history.replace(`item`, { inventory: inventory });
+    setCurrentInventoryIdInRedux(inventory.id);
+    history.replace(`item`);
   }
   const handleSelectItem = (event: React.ChangeEvent<{ }>, value: string | null) => {
       setSelectedProductId(value || "");

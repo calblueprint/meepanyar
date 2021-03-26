@@ -7,6 +7,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { InventoryRecord, SiteRecord } from '../../lib/airtable/interface';
+import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
 import { EMPTY_SITE_INVENTORY_DATA, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 import InventoryCard from './components/InventoryCard';
@@ -37,7 +38,7 @@ function InventoryMain (props: InventoryProps) {
             <Button label="Purchase Requests"/>
           </Link>
           {siteInventoryData.siteInventory.map((inventory: InventoryRecord) =>  (
-            <Link key={inventory.id} to={{ pathname: `/inventory/item`, state: { inventory: inventory }}}>
+            <Link key={inventory.id} to={{ pathname: `/inventory/item`}} onClick={() => setCurrentInventoryIdInRedux(inventory.id)}>
               <InventoryCard key={inventory.id} inventory={inventory}/>
             </Link>
           ))}

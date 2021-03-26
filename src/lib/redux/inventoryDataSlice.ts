@@ -1,7 +1,14 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
+import { RootState } from './store';
+
+
+export const currentInventorySelector = (state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].siteInventory.find(inv => inv.id == state.inventoryData.currentInventoryId) || EMPTY_INVENTORY;
+export const allProductsSelector = (state: RootState) => state.inventoryData.products;
+export const currentInventoryProductSelector = createSelector(currentInventorySelector, allProductsSelector, (inventory, products) => products[inventory.productId]);
+
 export interface SiteInventoryData {
   siteInventory: InventoryRecord[],
   purchaseRequests: PurchaseRequestRecord[],
@@ -21,11 +28,13 @@ export type ProductIdString = string;
 interface inventoryDataSliceState {
   products: Record<ProductIdString, ProductRecord>;
   sitesInventory: Record<SiteIdString, SiteInventoryData>;
+  currentInventoryId: string,
 }
 
 const initialState: inventoryDataSliceState = {
   products: {},
-  sitesInventory: {}
+  sitesInventory: {},
+  currentInventoryId: '',
 };
 
 export const EMPTY_INVENTORY: InventoryRecord = {
@@ -54,9 +63,9 @@ export const EMPTY_INVENTORY_UPDATE: InventoryUpdateRecord = {
 };
 
 export enum PurchaseRequestStatus {
-  APPROVED,
-  DENIED,
-  PENDING,
+  APPROVED = "Approved",
+  DENIED = "Denied",
+  PENDING = "Pending",
 }
 
 export const EMPTY_PURCHASE_REQUEST: PurchaseRequestRecord = {
@@ -104,9 +113,12 @@ const inventoryDataSlice = createSlice({
       const siteId = action.payload.siteId;
       const inventoryIndex = state.sitesInventory[siteId].siteInventory.findIndex(inv => inv.id === action.payload.inventoryId);
       state.sitesInventory[siteId].siteInventory[inventoryIndex].currentQuantity = action.payload.newQuantity;
+    },
+    setCurrInventoryId(state, action) {
+      state.currentInventoryId = action.payload;
     }
   }
 });
 
-export const { saveInventoryData, addInventory, addPurchaseRequest, updatePurchaseRequest, updateInventoryQuantity } = inventoryDataSlice.actions;
+export const { saveInventoryData, addInventory, addPurchaseRequest, updatePurchaseRequest, updateInventoryQuantity, setCurrInventoryId } = inventoryDataSlice.actions;
 export default inventoryDataSlice.reducer;

@@ -1,5 +1,5 @@
 import { InventoryRecord, ProductRecord, PurchaseRequestRecord, SiteRecord } from '../airtable/interface';
-import { addInventory, addPurchaseRequest, EMPTY_PRODUCT, saveInventoryData, updateInventoryQuantity, updatePurchaseRequest } from './inventoryDataSlice';
+import { addInventory, addPurchaseRequest, EMPTY_PRODUCT, saveInventoryData, setCurrInventoryId, updateInventoryQuantity, updatePurchaseRequest } from './inventoryDataSlice';
 import { getCurrentSite } from './siteData';
 import { store } from './store';
 
@@ -70,5 +70,9 @@ const getInventoryCurrentQuantity = (inventoryId: string): number => {
   return 0;
 }
 
-export { refreshInventoryData, addInventoryToRedux, addPurchaseRequestToRedux, getProductByInventoryId, updatePurchaseRequestInRedux, updateInventoryQuantityInRedux, getInventoryCurrentQuantity };
+const setCurrentInventoryIdInRedux = (inventoryId: string): void => {
+  store.dispatch(setCurrInventoryId(inventoryId));
+}
+
+export { refreshInventoryData, addInventoryToRedux, addPurchaseRequestToRedux, getProductByInventoryId, updatePurchaseRequestInRedux, updateInventoryQuantityInRedux, getInventoryCurrentQuantity, setCurrentInventoryIdInRedux };
 
