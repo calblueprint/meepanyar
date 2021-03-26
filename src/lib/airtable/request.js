@@ -23,7 +23,7 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
-import { editCustomerInRedux } from '../../lib/redux/siteData';
+import { editCustomerInRedux } from '../../lib/redux/customerData';
 import { addToOfflineCustomer } from '../utils/offlineUtils';
 import { addInventoryToRedux } from '../redux/inventoryData';
 import { generateOfflineInventoryId } from '../utils/inventoryUtils';

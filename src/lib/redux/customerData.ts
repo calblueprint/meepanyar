@@ -1,5 +1,5 @@
 import { CustomerRecord } from '../airtable/interface';
-import { addCustomer, setCurrentCustomer } from './customerDataSlice';
+import { addCustomer, setCurrentCustomerId, editCustomer, EMPTY_CUSTOMER } from './customerDataSlice';
 import { getCurrentSiteId } from './siteData';
 import { store } from './store';
 
@@ -13,7 +13,14 @@ const editCustomerInRedux = (customer: any): void => {
 };
 
 const setCurrentCustomerInRedux = (customer: CustomerRecord): void => {
-    store.dispatch(setCurrentCustomer(customer))
+    store.dispatch(setCurrentCustomerId(customer.id))
+}
+
+const getCurrentCustomer = (): CustomerRecord | undefined => {
+    // TODO: When changing to entity adapter, we can speed this up / use a Selector instead
+    const customers = getAllCustomersInSite();
+    const currentCustomerId = store.getState().customerData.currentCustomerId;
+    return customers.find(customer => customer.id === currentCustomerId);
 }
 
 const getAllCustomersInSite = (): CustomerRecord[] => {
@@ -22,4 +29,4 @@ const getAllCustomersInSite = (): CustomerRecord[] => {
     return Object.values(siteIdsToCustomers);
 }
 
-export { setCurrentCustomerInRedux, addCustomerToRedux, getAllCustomersInSite };
+export { setCurrentCustomerInRedux, addCustomerToRedux, getAllCustomersInSite, editCustomerInRedux, getCurrentCustomer };

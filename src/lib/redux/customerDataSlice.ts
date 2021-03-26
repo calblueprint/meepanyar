@@ -26,12 +26,12 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
 // We can't do this yet because customers created while offline do not receive an id yet
 interface customerDataSliceState {
     siteIdsToCustomers: Record<SiteId, CustomerRecord[]>;
-    currentCustomer: CustomerRecord;
+    currentCustomerId: string;
 }
 
 const initialState: customerDataSliceState = {
     siteIdsToCustomers: {},
-    currentCustomer: EMPTY_CUSTOMER,
+    currentCustomerId: EMPTY_CUSTOMER.id,
 };
 
 const customerDataSlice = createSlice({
@@ -42,8 +42,8 @@ const customerDataSlice = createSlice({
             const { siteIdsToCustomers } = action.payload;
             state.siteIdsToCustomers = siteIdsToCustomers;
         },
-        setCurrentCustomer(state, action) {
-            state.currentCustomer = action.payload;
+        setCurrentCustomerId(state, action) {
+            state.currentCustomerId = action.payload
         },
         addCustomer(state, action) {
             const customer: CustomerRecord = action.payload.customer;
@@ -60,7 +60,7 @@ const customerDataSlice = createSlice({
             const index = state.siteIdsToCustomers[siteId].findIndex((e: CustomerRecord) => e.id === action.payload.id);
             if (index !== -1) {
                 state.siteIdsToCustomers[siteId][index] = action.payload;
-                state.currentCustomer = action.payload;
+                state.currentCustomerId = action.payload.id;
             } else {
                 console.error(`No matching ID was found when attempting to edit customer ${action.payload}`)
             }
@@ -70,10 +70,10 @@ const customerDataSlice = createSlice({
         // When current site is changed, current customer id needs to be reset 
         // because it's no longer valid in the new site context.
         [setCurrSite.type]: (state, action) => {
-            state.currentCustomer = initialState.currentCustomer;
+            state.currentCustomerId = initialState.currentCustomerId;
         }
     }
 });
 
-export const { saveCustomerData, setCurrentCustomer, addCustomer } = customerDataSlice.actions;
+export const { saveCustomerData, setCurrentCustomerId, addCustomer, editCustomer } = customerDataSlice.actions;
 export default customerDataSlice.reducer;

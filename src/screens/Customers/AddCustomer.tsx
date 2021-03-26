@@ -64,10 +64,7 @@ function AddCustomer(props: AddCustomerProps) {
     createCustomer({
       ...customer,
       siteId: currentSite.id
-    });
-
-    // Navigate to the new customer's profile page
-    history.replace(`customer`, { customer });
+    }).then(() => history.replace(`customer`));
   }
 
   const handleNameInput = (event: React.ChangeEvent<{ value: unknown }>) => {
