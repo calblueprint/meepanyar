@@ -11,7 +11,8 @@ import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
 import { createPurchaseRequest } from '../../lib/airtable/request';
-import { EMPTY_PURCHASE_REQUEST, ProductIdString } from '../../lib/redux/inventoryDataSlice';
+import { getProductByInventoryId } from '../../lib/redux/inventoryData';
+import { EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 import InventoryInfo from './components/InventoryInfo';
 
@@ -33,15 +34,14 @@ const styles = (theme: Theme) =>
 interface CreatePurchaseRequestProps extends RouteComponentProps {
   classes: { content: string; cameraButton: string; };
   location: any;
-  products: Record<ProductIdString, ProductRecord>;
+  product: ProductRecord;
   userId: string;
 }
 
 function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
-  const { classes, products, userId } = props;
+  const { classes, product, userId } = props;
   const history = useHistory();
   const inventory: InventoryRecord = props.location.state.inventory;
-  const product: ProductRecord = products[inventory.productId];
 
   const [amountPurchased, setAmountPurchased] = useState(0.0);
   const [amountSpent, setAmountSpent] = useState(0.0);
@@ -101,9 +101,9 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
+const mapStateToProps = (state: RootState, ownProps: { location: { state: { inventory: InventoryRecord }; }; }) => ({
   userId: state.userData.user?.fields.ID || '',
-  products: state.inventoryData.products || {},
+  product: getProductByInventoryId(ownProps.location.state.inventory.id),
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(CreatePurchaseRequest));

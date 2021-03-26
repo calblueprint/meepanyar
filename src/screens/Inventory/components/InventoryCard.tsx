@@ -4,9 +4,9 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { connect } from 'react-redux';
 import { InventoryRecord, ProductRecord } from '../../../lib/airtable/interface';
-import { ProductIdString } from '../../../lib/redux/inventoryDataSlice';
+import { getProductByInventoryId } from '../../../lib/redux/inventoryData';
 import { RootState } from '../../../lib/redux/store';
-import { lastUpdated } from '../../../lib/utils/inventoryUtils';
+import { getInventoryLastUpdated } from '../../../lib/utils/inventoryUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -27,18 +27,19 @@ const styles = (theme: Theme) =>
   });
   
 interface InventoryCardProps {
-  inventory: InventoryRecord;
   classes: { arrow: string; cardContent: string; cardContainer: string; };
-  products: Record<ProductIdString, ProductRecord>;
+  inventory: InventoryRecord;
+  product: ProductRecord;
 }
 
 function InventoryCard(props: InventoryCardProps) {
-  const { classes, inventory, products} = props;
+  const { classes, product, inventory } = props;
+
   return (
     <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>
-        <Typography variant="body1">{products[inventory.productId]?.name}</Typography>
-        <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated(inventory)}`} </Typography>
+        <Typography variant="body1">{product.name}</Typography>
+        <Typography variant="body1" color="textSecondary">{`Last Updated: ${getInventoryLastUpdated(inventory)}`} </Typography>
       </div>
       <CardActions>
         <IconButton size="small">
@@ -49,8 +50,8 @@ function InventoryCard(props: InventoryCardProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  products: state.inventoryData.products || {}
+const mapStateToProps = (state: RootState, ownProps: { inventory: InventoryRecord }) => ({
+  product: getProductByInventoryId(ownProps.inventory.id),
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(InventoryCard));

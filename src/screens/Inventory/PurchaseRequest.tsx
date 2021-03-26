@@ -8,7 +8,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { ProductRecord, PurchaseRequestRecord } from '../../lib/airtable/interface';
-import { reviewPurchaseRequest } from '../../lib/airtable/request';
+import { updatePurchaseRequestAndInventory } from '../../lib/airtable/request';
 import { getProductByInventoryId } from '../../lib/redux/inventoryData';
 import { PurchaseRequestStatus } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
@@ -41,10 +41,10 @@ function PurchaseRequest (props: PurchaseRequestsProps) {
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
     // Make a deep copy of the existing purchase request record
     const reviewedPurchaseRequest = JSON.parse(JSON.stringify(purchaseRequest));
-    reviewedPurchaseRequest.status = approved ? PurchaseRequestStatus.Approved : PurchaseRequestStatus.Denied;
+    reviewedPurchaseRequest.status = approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED;
     reviewedPurchaseRequest.reviewerId = getUserId();
     reviewedPurchaseRequest.approvedAt = moment().toISOString();
-    reviewPurchaseRequest(reviewedPurchaseRequest);
+    updatePurchaseRequestAndInventory(reviewedPurchaseRequest);
     history.goBack();
   }
 
@@ -59,9 +59,9 @@ function PurchaseRequest (props: PurchaseRequestsProps) {
           <Typography variant="body1">{`Created at ${purchaseRequest.createdAt}`}</Typography>
           <Typography variant="body1">{`Submitted by ${purchaseRequest.requesterId}`}</Typography>
           {purchaseRequest.notes && <Typography variant="body1">{`Notes: ${purchaseRequest.notes}`}</Typography>}
-          {/* TODO: lookup user by id */}
+          {/* TODO: admins lookup user info by id */}
           {/* TODO: Add image */}
-          {purchaseRequest.status == PurchaseRequestStatus.Pending &&
+          {purchaseRequest.status == PurchaseRequestStatus.PENDING &&
             <div>
               <Button onClick={() => handleSubmit(purchaseRequest, true)} label={"Approve"}/>
               <Button onClick={() => handleSubmit(purchaseRequest, false)} label={"Deny"}/>

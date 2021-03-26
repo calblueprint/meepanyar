@@ -7,6 +7,7 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE_INVENTORY_DATA, PurchaseRequestStatus, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
+import { getCurrentSite } from '../../lib/redux/siteData';
 import { RootState } from '../../lib/redux/store';
 import PurchaseRequestCard from './components/PurchaseRequestCard';
 
@@ -22,37 +23,36 @@ interface PurchaseRequestsProps extends RouteComponentProps {
 // TODO @wangannie: address empty state
 function PurchaseRequests (props: PurchaseRequestsProps) {
     const { classes, siteInventoryData } = props;
+
+    const getPurchaseRequestsSection = (status: PurchaseRequestStatus) => {
+      return (
+        <div>
+          <Typography variant="body1">{PurchaseRequestStatus[status]}</Typography>
+          {siteInventoryData.purchaseRequests.filter(pr => String(pr.status) == PurchaseRequestStatus[status]).map((purchaseRequest: PurchaseRequestRecord) =>  (
+            <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest }}}>
+              <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
+            </Link>
+          ))}
+        </div>
+      )
+    }
+
     return (
       <BaseScreen title="Purchase Requests">
         <BaseScrollView>
           <Link to={'/inventory'}>
             <Button label="Back to Inventory"/>
           </Link>
-          <Typography variant="h3">Pending Review</Typography>
-          {siteInventoryData.purchaseRequests.filter(pr => pr.status == PurchaseRequestStatus.Pending).map((purchaseRequest: PurchaseRequestRecord) =>  (
-            <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest: purchaseRequest }}}>
-              <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
-            </Link>
-          ))}
-          <Typography variant="h3">Approved</Typography>
-          {siteInventoryData.purchaseRequests.filter(pr => pr.status == PurchaseRequestStatus.Approved).map((purchaseRequest: PurchaseRequestRecord) =>  (
-            <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest: purchaseRequest }}}>
-              <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
-            </Link>
-          ))}
-          <Typography variant="h3">Denied</Typography>
-          {siteInventoryData.purchaseRequests.filter(pr => pr.status !== PurchaseRequestStatus.Denied).map((purchaseRequest: PurchaseRequestRecord) =>  (
-            <Link key={purchaseRequest.id} to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest: purchaseRequest }}}>
-              <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest}/>
-            </Link>
-          ))}
+          {getPurchaseRequestsSection(PurchaseRequestStatus.PENDING)}
+          {getPurchaseRequestsSection(PurchaseRequestStatus.APPROVED)}
+          {getPurchaseRequestsSection(PurchaseRequestStatus.DENIED)}
         </BaseScrollView>
       </BaseScreen>
     );
 }
 
 const mapStateToProps = (state: RootState) => ({
-  siteInventoryData: state.inventoryData.sitesInventory[state.siteData.currentSite?.id || ""] || EMPTY_SITE_INVENTORY_DATA,
+  siteInventoryData: state.inventoryData.sitesInventory[getCurrentSite().id] || EMPTY_SITE_INVENTORY_DATA,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(PurchaseRequests));

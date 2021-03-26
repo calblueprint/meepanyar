@@ -50,7 +50,7 @@ const getProductByInventoryId = (inventoryId: string): ProductRecord => {
   return EMPTY_PRODUCT;
 }
 
-const updateCurrentQuantityInRedux = (inventoryId: string, newQuantity: number) : void => {
+const updateInventoryQuantityInRedux = (inventoryId: string, newQuantity: number) : void => {
   const updateData = {
     inventoryId,
     newQuantity,
@@ -70,5 +70,5 @@ const getInventoryCurrentQuantity = (inventoryId: string): number => {
   return 0;
 }
 
-export { refreshInventoryData, addInventoryToRedux, addPurchaseRequestToRedux, getProductByInventoryId, updatePurchaseRequestInRedux, updateCurrentQuantityInRedux, getInventoryCurrentQuantity };
+export { refreshInventoryData, addInventoryToRedux, addPurchaseRequestToRedux, getProductByInventoryId, updatePurchaseRequestInRedux, updateInventoryQuantityInRedux, getInventoryCurrentQuantity };
 

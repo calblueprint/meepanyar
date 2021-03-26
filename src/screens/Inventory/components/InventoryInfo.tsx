@@ -3,7 +3,7 @@ import { Typography, withStyles } from '@material-ui/core';
 import { createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import { InventoryRecord, ProductRecord } from '../../../lib/airtable/interface';
-import { lastUpdated } from '../../../lib/utils/inventoryUtils';
+import { getInventoryLastUpdated } from '../../../lib/utils/inventoryUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,7 +46,7 @@ function InventoryInfo(props: InventoryInfoProps) {
           Last Updated
         </Typography>
         <Typography variant="caption">
-          {lastUpdated(inventory)}
+          {getInventoryLastUpdated(inventory)}
         </Typography>
       </div>
       <div className={classes.rightColumnContainer}>

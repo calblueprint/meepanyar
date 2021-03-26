@@ -54,16 +54,16 @@ export const EMPTY_INVENTORY_UPDATE: InventoryUpdateRecord = {
 };
 
 export enum PurchaseRequestStatus {
-  Approved = "Approved",
-  Denied = "Denied",
-  Pending = "Pending",
+  APPROVED,
+  DENIED,
+  PENDING,
 }
 
 export const EMPTY_PURCHASE_REQUEST: PurchaseRequestRecord = {
   id: '',
   period: 0,
   notes: '',
-  status: PurchaseRequestStatus.Pending,
+  status: PurchaseRequestStatus.PENDING,
   requesterId: '',
   createdAt: '',
   amountPurchased: 0.0,
@@ -94,7 +94,6 @@ const inventoryDataSlice = createSlice({
       delete action.payload.siteId;
       state.sitesInventory[siteId].purchaseRequests.push(action.payload);
     },
-    // NOTE: name conflicts with request.js
     updatePurchaseRequest(state, action) {
       const siteId = action.payload.siteId;
       delete action.payload.siteId;
@@ -103,7 +102,7 @@ const inventoryDataSlice = createSlice({
     },
     updateInventoryQuantity(state, action) {
       const siteId = action.payload.siteId;
-      const inventoryIndex = state.sitesInventory[action.payload.siteId].siteInventory.findIndex(inv => inv.id === action.payload.inventoryId);
+      const inventoryIndex = state.sitesInventory[siteId].siteInventory.findIndex(inv => inv.id === action.payload.inventoryId);
       state.sitesInventory[siteId].siteInventory[inventoryIndex].currentQuantity = action.payload.newQuantity;
     }
   }

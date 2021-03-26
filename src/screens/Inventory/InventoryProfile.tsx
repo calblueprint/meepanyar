@@ -6,7 +6,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
-import { ProductIdString } from '../../lib/redux/inventoryDataSlice';
+import { getProductByInventoryId } from '../../lib/redux/inventoryData';
 import { RootState } from '../../lib/redux/store';
 import InventoryInfo from './components/InventoryInfo';
 
@@ -24,7 +24,7 @@ const styles = (theme: Theme) =>
 interface InventoryProps extends RouteComponentProps {
   classes: { content: string; section: string; };
   location: any;
-  products: Record<ProductIdString, ProductRecord>;
+  product: ProductRecord;
 }
 const getPurchaseRequestButton = (inventory: InventoryRecord) => {
   return (
@@ -35,9 +35,8 @@ const getPurchaseRequestButton = (inventory: InventoryRecord) => {
 };
 
 function InventoryProfile(props: InventoryProps) {
-  const { classes, products } = props;
+  const { classes, product } = props;
   const inventory: InventoryRecord = props.location.state.inventory;
-  const product = products[inventory.productId];
 
   return (
     <BaseScreen leftIcon="backNav" title={product.name}>
@@ -53,8 +52,8 @@ function InventoryProfile(props: InventoryProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  products: state.inventoryData.products || {}
+const mapStateToProps = (state: RootState, ownProps: { location: { state: { inventory: InventoryRecord }; }; }) => ({
+  product: getProductByInventoryId(ownProps.location.state.inventory.id),
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(InventoryProfile));

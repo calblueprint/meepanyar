@@ -93,7 +93,7 @@ function AddInventory(props: AddInventoryProps) {
 const mapStateToProps = (state: RootState) => ({
   products: state.inventoryData.products || {},
   userId: state.userData.user?.id || '',
-  siteInventory: state.inventoryData.sitesInventory[state.siteData.currentSite?.id || ""] || EMPTY_SITE_INVENTORY_DATA,
+  siteInventory: state.inventoryData.sitesInventory[getCurrentSite().id] || EMPTY_SITE_INVENTORY_DATA,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(AddInventory));
