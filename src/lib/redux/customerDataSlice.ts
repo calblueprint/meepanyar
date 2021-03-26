@@ -54,6 +54,16 @@ const customerDataSlice = createSlice({
             } else {
                 console.log("Error occurred when adding a customer. No siteId or customerId passed")
             }
+        },
+        editCustomer(state, action) {
+            const siteId = action.payload.siteId;
+            const index = state.siteIdsToCustomers[siteId].findIndex((e: CustomerRecord) => e.id === action.payload.id);
+            if (index !== -1) {
+                state.siteIdsToCustomers[siteId][index] = action.payload;
+                state.currentCustomer = action.payload;
+            } else {
+                console.error(`No matching ID was found when attempting to edit customer ${action.payload}`)
+            }
         }
     },
     extraReducers: {

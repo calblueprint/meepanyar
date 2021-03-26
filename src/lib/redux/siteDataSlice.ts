@@ -1,11 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { SiteRecord, FinancialSummaryRecord } from '../airtable/interface';
+import { SiteRecord, CustomerRecord, FinancialSummaryRecord } from '../airtable/interface';
 
 interface siteDataSliceState {
   isLoading: boolean;
-  currentSite: any;
+  currentSite: any; //TODO: Set as SiteRecord | null and resolve errors
+  currentCustomer: CustomerRecord | null;
   sites: any[];
 }
 
@@ -13,6 +14,7 @@ interface siteDataSliceState {
 const initialState: siteDataSliceState = {
   isLoading: false,
   currentSite: null,
+  currentCustomer: null,
   sites: [],
 };
 

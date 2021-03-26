@@ -3,9 +3,9 @@ import { CustomerRecord, MeterReadingRecord, SiteRecord, TariffPlanRecord } from
 import { getCurrentPeriod, getDiffinPeriods, getPeriodFromDate } from '../../lib/moment/momentUtils';
 
 const isCurrentReading = (mr: MeterReadingRecord): boolean => {
-    const period: string = getPeriodFromDate(mr.date);
-    const currPer: string = getCurrentPeriod();
-    return period === currPer;
+  const period: string = getPeriodFromDate(mr.date);
+  const currPer: string = getCurrentPeriod();
+  return period === currPer;
 };
 
 // Returns last reading in the period
@@ -44,7 +44,7 @@ export const getStartingReading = (customer: CustomerRecord): MeterReadingRecord
 };
 
 export const getPeriodUsage = (currReading: MeterReadingRecord, startingMeter: MeterReadingRecord | undefined) => {
-  const periodUsage = currReading.reading - (startingMeter? startingMeter.reading : 0);
+  const periodUsage = currReading.reading - (startingMeter ? startingMeter.reading : 0);
   return periodUsage;
 }
 
@@ -55,5 +55,5 @@ export const getAmountBilled = (currReading: MeterReadingRecord) => {
 // TODO: add better error handling
 export const getTariffPlan = (customer: CustomerRecord, currentSite: SiteRecord): TariffPlanRecord | undefined => {
   const tariffPlanId = customer.tariffPlanId;
-  return currentSite.tariffPlans.find((plan:TariffPlanRecord) => plan.id === tariffPlanId);
+  return currentSite.tariffPlans.find((plan: TariffPlanRecord) => plan.id === tariffPlanId);
 }

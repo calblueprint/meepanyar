@@ -8,6 +8,10 @@ const addCustomerToRedux = (customer: CustomerRecord): void => {
     store.dispatch(addCustomer({ siteId, customer }));
 };
 
+const editCustomerInRedux = (customer: any): void => {
+    store.dispatch(editCustomer(customer));
+};
+
 const setCurrentCustomerInRedux = (customer: CustomerRecord): void => {
     store.dispatch(setCurrentCustomer(customer))
 }

@@ -1,10 +1,10 @@
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import React, { useEffect } from 'react';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
-import React from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
@@ -14,8 +14,8 @@ import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtab
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
+import { setCurrentCustomer } from '../../lib/redux/siteData';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
-
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -55,6 +55,10 @@ interface CustomerProps extends RouteComponentProps {
 function CustomerProfile(props: CustomerProps) {
   const { classes, match, currentSite, customer } = props;
 
+  useEffect(() => {
+    setCurrentCustomer(customer); //TODO: @julianrkung need to make customer data retrieval consistent (Link vs Redux)
+  },[]);
+
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
 
@@ -82,7 +86,7 @@ function CustomerProfile(props: CustomerProps) {
   ];
   const balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
   const readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
-  
+
   const getPaymentButton = () => {
     return (
         <Button
@@ -131,7 +135,7 @@ function CustomerProfile(props: CustomerProps) {
       </div>
     );
   };
-  
+
   return (
     <BaseScreen leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
       <BaseScrollView>
