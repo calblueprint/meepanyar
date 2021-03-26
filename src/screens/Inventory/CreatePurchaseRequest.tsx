@@ -3,17 +3,16 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import moment from 'moment';
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
-import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
 import { createPurchaseRequest } from '../../lib/airtable/request';
-import { getProductByInventoryId } from '../../lib/redux/inventoryData';
+import { currentInventoryProductSelector, currentInventorySelector } from '../../lib/redux/inventoryData';
 import { EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
-import { RootState } from '../../lib/redux/store';
+import { userIdSelector } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
 
@@ -34,15 +33,14 @@ const styles = (theme: Theme) =>
 
 interface CreatePurchaseRequestProps extends RouteComponentProps {
   classes: { content: string; cameraButton: string; };
-  location: any;
-  product: ProductRecord;
-  userId: string;
 }
 
 function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
-  const { classes, product, userId } = props;
+  const { classes } = props;
   const history = useHistory();
-  const inventory: InventoryRecord = props.location.state.inventory;
+  const userId = useSelector(userIdSelector);
+  const inventory = useSelector(currentInventorySelector);
+  const product = useSelector(currentInventoryProductSelector);
 
   const [amountPurchased, setAmountPurchased] = useState(0.0);
   const [amountSpent, setAmountSpent] = useState(0.0);
@@ -106,9 +104,4 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   );
 }
 
-const mapStateToProps = (state: RootState, ownProps: { location: { state: { inventory: InventoryRecord }; }; }) => ({
-  userId: state.userData.user?.fields.ID || '',
-  product: getProductByInventoryId(ownProps.location.state.inventory.id),
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(CreatePurchaseRequest));
+export default withStyles(styles)(CreatePurchaseRequest);

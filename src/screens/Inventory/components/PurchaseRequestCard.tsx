@@ -3,8 +3,9 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { connect } from 'react-redux';
-import { ProductRecord, PurchaseRequestRecord } from '../../../lib/airtable/interface';
+import { ProductRecord } from '../../../lib/airtable/interface';
 import { getProductByInventoryId } from '../../../lib/redux/inventoryData';
+import { PurchaseRequestStatus } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 
 const styles = (theme: Theme) =>
@@ -27,24 +28,28 @@ const styles = (theme: Theme) =>
       padding: 0
     },
   });
-interface PurchaseRequestCardProps {
-  purchaseRequest: PurchaseRequestRecord;
-  classes: {
-    arrow: string; cardContent: string; cardContainer: string; arrowSpacing: string;
-  };
-  product: ProductRecord;
-}
+
+  interface PurchaseRequestCardProps {
+    classes: { arrow: string; cardContent: string; cardContainer: string; arrowSpacing: string; };
+    inventoryId: string;
+    product: ProductRecord;
+    amountPurchased: number;
+    createdAt: string;
+    requesterId: string;
+    status: PurchaseRequestStatus;
+  }
 
 // TODO: sort by creation date/status
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
-  const { classes, purchaseRequest, product} = props;
+  const { classes, product, amountPurchased, createdAt, requesterId, status } = props;
+  
   return (
     <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>
-        <Typography variant="body1">{`${product.name}, ${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
-        <Typography variant="body1">{`Created at: ${purchaseRequest.createdAt}`}</Typography>
-        <Typography variant="body1">{`Requested by: ${purchaseRequest.requesterId}`}</Typography>
-        <Typography variant="body1">{`Status: ${purchaseRequest.status}`}</Typography>
+        <Typography variant="body1">{`${product.name}, ${amountPurchased} ${product.unit}(s)`}</Typography>
+        <Typography variant="body1">{`Created at: ${createdAt}`}</Typography>
+        <Typography variant="body1">{`Requested by: ${requesterId}`}</Typography>
+        <Typography variant="body1">{`Status: ${status}`}</Typography>
       </div>
       <CardActions>
         <IconButton size="small">
@@ -55,8 +60,8 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
   );
 }
 
-const mapStateToProps = (state: RootState, ownProps: { purchaseRequest: { inventoryId: string; }; }) => ({
-  product: getProductByInventoryId(ownProps.purchaseRequest.inventoryId),
+const mapStateToProps = (state: RootState, ownProps: { inventoryId: string; }) => ({
+  product: getProductByInventoryId(ownProps.inventoryId),
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(PurchaseRequestCard));

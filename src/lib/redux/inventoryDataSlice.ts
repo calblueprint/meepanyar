@@ -1,13 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
-import { createSelector, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
-import { RootState } from './store';
 
-
-export const currentInventorySelector = (state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].siteInventory.find(inv => inv.id == state.inventoryData.currentInventoryId) || EMPTY_INVENTORY;
-export const allProductsSelector = (state: RootState) => state.inventoryData.products;
-export const currentInventoryProductSelector = createSelector(currentInventorySelector, allProductsSelector, (inventory, products) => products[inventory.productId]);
 
 export interface SiteInventoryData {
   siteInventory: InventoryRecord[],

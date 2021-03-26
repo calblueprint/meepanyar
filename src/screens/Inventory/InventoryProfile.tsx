@@ -5,8 +5,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
-import { InventoryRecord } from '../../lib/airtable/interface';
-import { currentInventoryProductSelector, currentInventorySelector } from '../../lib/redux/inventoryDataSlice';
+import { currentInventoryProductSelector, currentInventorySelector } from '../../lib/redux/inventoryData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
 
@@ -24,8 +23,8 @@ interface InventoryProps extends RouteComponentProps {
   classes: { content: string; section: string; };
 }
 
-const getPurchaseRequestButton = (inventory: InventoryRecord) => (
-  <Link to={{ pathname: `purchase-requests/create`, state: { inventory } }}> 
+const getPurchaseRequestButton = () => (
+  <Link to={'purchase-requests/create'}> 
     <Button label={"Purchase"}/>
   </Link>
 )
@@ -44,7 +43,7 @@ function InventoryProfile(props: InventoryProps) {
             lastUpdated={getInventoryLastUpdated(inventory)} 
             currentQuantity={inventory.currentQuantity}
           />
-          {getPurchaseRequestButton(inventory)}
+          {getPurchaseRequestButton()}
           <div className={classes.section}>
           </div>
         </div>

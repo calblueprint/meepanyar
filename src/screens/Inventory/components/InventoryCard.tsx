@@ -2,11 +2,8 @@ import { Card, CardActions, IconButton, Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
-import { connect } from 'react-redux';
-import { InventoryRecord, ProductRecord } from '../../../lib/airtable/interface';
-import { getProductByInventoryId } from '../../../lib/redux/inventoryData';
-import { RootState } from '../../../lib/redux/store';
-import { getInventoryLastUpdated } from '../../../lib/utils/inventoryUtils';
+import { useSelector } from 'react-redux';
+import { allProductsSelector } from '../../../lib/redux/inventoryData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,18 +25,19 @@ const styles = (theme: Theme) =>
   
 interface InventoryCardProps {
   classes: { arrow: string; cardContent: string; cardContainer: string; };
-  inventory: InventoryRecord;
-  product: ProductRecord;
+  lastUpdated: string,
+  productId: string,
 }
 
 function InventoryCard(props: InventoryCardProps) {
-  const { classes, product, inventory } = props;
+  const { classes, lastUpdated, productId } = props;
+  const product = useSelector(allProductsSelector)[productId];
 
   return (
     <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>
         <Typography variant="body1">{product.name}</Typography>
-        <Typography variant="body1" color="textSecondary">{`Last Updated: ${getInventoryLastUpdated(inventory)}`} </Typography>
+        <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated}`} </Typography>
       </div>
       <CardActions>
         <IconButton size="small">
@@ -50,8 +48,4 @@ function InventoryCard(props: InventoryCardProps) {
   );
 }
 
-const mapStateToProps = (state: RootState, ownProps: { inventory: InventoryRecord }) => ({
-  product: getProductByInventoryId(ownProps.inventory.id),
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(InventoryCard));
+export default withStyles(styles)(InventoryCard);

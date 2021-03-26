@@ -1,7 +1,19 @@
+import { createSelector } from '@reduxjs/toolkit';
 import { InventoryRecord, ProductRecord, PurchaseRequestRecord, SiteRecord } from '../airtable/interface';
-import { addInventory, addPurchaseRequest, EMPTY_PRODUCT, saveInventoryData, setCurrInventoryId, updateInventoryQuantity, updatePurchaseRequest } from './inventoryDataSlice';
+import { addInventory, addPurchaseRequest, EMPTY_INVENTORY, EMPTY_PRODUCT, saveInventoryData, setCurrInventoryId, updateInventoryQuantity, updatePurchaseRequest } from './inventoryDataSlice';
 import { getCurrentSite } from './siteData';
-import { store } from './store';
+import { RootState, store } from './store';
+
+export const currentSiteSelector = (state: RootState) => state.siteData.currentSite;
+export const sitesInventorySelector = (state: RootState) => state.inventoryData.sitesInventory;
+export const allProductsSelector = (state: RootState) => state.inventoryData.products;
+export const currentInventoryIdSelector = (state: RootState) => state.inventoryData.currentInventoryId;
+
+export const currentSiteInventoryDataSelector = createSelector(currentSiteSelector, sitesInventorySelector, (currentSite, sitesInventory) => sitesInventory[currentSite.id]);
+export const currentSiteInventorySelector = createSelector(currentSiteInventoryDataSelector, (siteInventoryData) => siteInventoryData.siteInventory);
+export const currentSitePurchaseRequestsSelector = createSelector(currentSiteInventoryDataSelector, (siteInventoryData) => siteInventoryData.purchaseRequests);
+export const currentInventorySelector = createSelector(currentSiteInventorySelector, currentInventoryIdSelector , (currentSiteInventory, currentInventoryId) => currentSiteInventory.find(inv => inv.id == currentInventoryId) || EMPTY_INVENTORY);
+export const currentInventoryProductSelector = createSelector(currentInventorySelector, allProductsSelector, (inventory, products) => products[inventory.productId]);
 
 const refreshInventoryData = (site: SiteRecord) : void => {
   if (site) { // TODO @wangannie what to do if site null

@@ -2,17 +2,16 @@ import { createStyles, FormControl, TextField as MaterialTextField, Theme } from
 import { withStyles } from '@material-ui/core/styles';
 import { Autocomplete } from '@material-ui/lab';
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
-import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
+import { InventoryRecord } from '../../lib/airtable/interface';
 import { createInventory } from '../../lib/airtable/request';
-import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
-import { EMPTY_INVENTORY, EMPTY_SITE_INVENTORY_DATA, ProductIdString, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
+import { allProductsSelector, currentSiteInventorySelector, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
 import { getCurrentSite } from '../../lib/redux/siteData';
-import { RootState } from '../../lib/redux/store';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -26,17 +25,16 @@ const styles = (theme: Theme) =>
 
 interface AddInventoryProps extends RouteComponentProps {
   classes: { content: string, formControl: string};
-  location: any;
-  products: Record<ProductIdString, ProductRecord>;
-  userId: string;
-  siteInventory: SiteInventoryData;
 }
 
-function AddInventory(props: AddInventoryProps) {
-  const { classes, products, userId, siteInventory } = props;
+function AddInventory (props: AddInventoryProps) {
+  const { classes } = props;
+  const products = useSelector(allProductsSelector);
+  const siteInventory = useSelector(currentSiteInventorySelector);
   const history = useHistory();
+
   // Product IDs for items that the site already has inventory for
-  const currentSiteProductIds = siteInventory.siteInventory.map((inventory: InventoryRecord) => inventory.productId);
+  const currentSiteProductIds = siteInventory.map((inventory: InventoryRecord) => inventory.productId);
   // Filter to only show products that the site doesn't already have
   const productOptions = Object.entries(products).filter(([id, _]) => !currentSiteProductIds.includes(id)).map(item => item[0]);
   
@@ -92,10 +90,4 @@ function AddInventory(props: AddInventoryProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  products: state.inventoryData.products || {},
-  userId: state.userData.user?.id || '',
-  siteInventory: state.inventoryData.sitesInventory[getCurrentSite().id] || EMPTY_SITE_INVENTORY_DATA,
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(AddInventory));
+export default withStyles(styles)(AddInventory);
