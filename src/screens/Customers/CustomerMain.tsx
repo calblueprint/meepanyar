@@ -1,13 +1,14 @@
 import { createStyles, Fab, FormControl, FormHelperText, ListSubheader, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import CustomerCard from '../../components/CustomerCard';
 import UserSearchBar from '../../components/UserSearchBar';
 import { CustomerRecord } from '../../lib/airtable/interface';
-import { store } from '../../lib/redux/store';
+import { RootState } from '../../lib/redux/store';
 import TrieTree from '../../lib/utils/TrieTree';
 
 
@@ -46,8 +47,9 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface UserProps {
+interface CustomerMainProps extends RouteComponentProps {
   classes: { title: string; headerWrapper: string; selectionHeader: string; rightAlign: string; fab: string; };
+  customers: CustomerRecord[];
 }
 
 enum SortBy {
@@ -69,8 +71,8 @@ const labels: FilterByLabel = {
   'ACTIVE_STATUS': ['Active', 'Inactive']
 }
 
-function CustomerMain(props: RouteComponentProps & UserProps) {
-  const { classes } = props;
+function CustomerMain(props: CustomerMainProps) {
+  const { classes, customers } = props;
   const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
   const [filteredCustomersAlt, setFilteredCustomersAlt] = useState<CustomerRecord[]>([]);
   const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
@@ -87,12 +89,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   }, [sortBy, filterBy, searchValue]);
 
   const getCustomers = () => {
-    const siteData = store.getState().siteData.currentSite;
     // TODO: It'd be better to slice once and store the sliced list somewhere.
     // We need to slice here because redux freezes objects to prevent mutation.
     // The slice occurs during each component update, so it's inefficient as number of
     // customers or updates grows. This isn't predicted to be a huge issue but may be in the future.
-    let allCustomers: CustomerRecord[] = siteData.customers.slice();
+    let allCustomers: CustomerRecord[] = customers.slice();
     setFullCustomers(allCustomers);
     if (searchValue !== '') {
       allCustomers = allCustomersTrie.get(searchValue);
@@ -241,4 +242,8 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
 
 }
 
-export default withStyles(styles)(CustomerMain);
+const mapStateToProps = (state: RootState) => ({
+  customers: state.siteData.currentSite.customers,
+})
+
+export default connect(mapStateToProps)(withStyles(styles)(CustomerMain));

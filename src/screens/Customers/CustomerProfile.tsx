@@ -1,19 +1,19 @@
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory, Redirect } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { EMPTY_CUSTOMER } from '../../lib/utils/customerUtils';
 import { RootState } from '../../lib/redux/store';
-import { setCurrentCustomer } from '../../lib/redux/siteData';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
 
 const styles = (theme: Theme) =>
@@ -45,18 +45,20 @@ const styles = (theme: Theme) =>
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string;};
+  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string; };
   currentSite: SiteRecord;
   location: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
   const { classes, match, currentSite } = props;
-  const customer: CustomerRecord = props.location.state.customer;
+  const customer: CustomerRecord = props.location.state ? props.location.state.customer : null;
+  const history = useHistory();
 
-  useEffect(() => {
-    setCurrentCustomer(customer); //TODO: @julianrkung need to make customer data retrieval consistent (Link vs Redux)
-  },[]);
+  // Redirect to main customers page if no customer was passed
+  if (!customer) {
+    return <Redirect to='/customers' />;
+  }
 
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
@@ -67,8 +69,8 @@ function CustomerProfile(props: CustomerProps) {
   const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;
   const minUnits = customerTariff ? customerTariff?.minUnits : UNDEFINED_AMOUNT;
 
-  const tariffInfo : CardPropsInfo[] = [
-    { number: fixedTariff.toString() , label: 'Fixed Tariff', unit: 'MMK' },
+  const tariffInfo: CardPropsInfo[] = [
+    { number: fixedTariff.toString(), label: 'Fixed Tariff', unit: 'MMK' },
     { number: unitTariff.toString(), label: 'Unit Tariff', unit: 'MMK' },
     { number: minUnits.toString(), label: 'Minimum Units Used', unit: '' },
   ]
@@ -79,23 +81,23 @@ function CustomerProfile(props: CustomerProps) {
   const amountBilled: number | string = currReading ? getAmountBilled(currReading) : UNDEFINED_AMOUNT;
 
   const meterInfo: CardPropsInfo[] = [
-    { number: startingReading? startingReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Starting Meter', unit: 'kWh' },
+    { number: startingReading ? startingReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Starting Meter', unit: 'kWh' },
     { number: periodUsage.toString(), label: 'Period Usage', unit: 'kWh' },
     { number: amountBilled.toString(), label: 'Amount Billed', unit: 'kS' },
   ];
   const balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
-  const readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
+  const readingInfo: CardPropsInfo[] = [{ number: currReading ? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
 
   const getPaymentButton = () => {
     return (
-        <Button
-          variant="contained"
-          className={classes.buttonPrimary}
-          startIcon={<AddIcon />}
-          disableElevation={true}
-        >
-          Add Payment
-        </Button>
+      <Button
+        variant="contained"
+        className={classes.buttonPrimary}
+        startIcon={<AddIcon />}
+        disableElevation={true}
+      >
+        Add Payment
+      </Button>
     );
   };
 
@@ -135,15 +137,19 @@ function CustomerProfile(props: CustomerProps) {
     );
   };
 
+  const navigateToEdit = () => {
+    history.replace(`${match.url}/edit`, { customer })
+  }
+
   return (
-    <BaseScreen leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
+    <BaseScreen editAction={navigateToEdit} leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
       <BaseScrollView>
         <div className={classes.content}>
           <Typography variant="h1">{currentSite.name}</Typography>
           <Typography variant="body1" color="textSecondary">
             {customer.meterNumber}
           </Typography>
-          <OutlinedCardList info={tariffInfo} primary={false} columns/>
+          <OutlinedCardList info={tariffInfo} primary={false} columns />
           <div className={classes.section}>
             <div className={classes.headerWrapper}>
               <Typography variant="h2">Payment</Typography>

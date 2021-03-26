@@ -2,7 +2,7 @@ import { createStyles, FormControl, InputLabel, Theme, MenuItem, Select } from '
 import { withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory, Redirect } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
@@ -11,9 +11,9 @@ import { editCustomer } from '../../lib/airtable/request';
 import { RootState } from '../../lib/redux/store';
 import { CustomerRecord, SiteRecord, CustomerUpdateRecord } from '../../lib/airtable/interface';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
-import { EMPTY_CUSTOMER } from '../../lib/utils/customerUtils';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { User, EMPTY_USER } from '../../lib/redux/userDataSlice';
+import { EMPTY_CUSTOMER } from '../../lib/utils/customerUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -38,8 +38,11 @@ interface EditCustomerProps extends RouteComponentProps {
 }
 
 function EditCustomer(props: EditCustomerProps) {
-  const { classes, currentCustomer, currentSite, user } = props;
+  const { classes, currentSite, user } = props;
+  // Grab customer and assign as empty customer if not
+  const currentCustomer: CustomerRecord = props.location.state ? props.location.state.customer || EMPTY_CUSTOMER : EMPTY_CUSTOMER;
   const history = useHistory();
+
 
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState(currentCustomer.tariffPlanId);
   const [customerName, setCustomerName] = useState(currentCustomer.name);
@@ -48,6 +51,11 @@ function EditCustomer(props: EditCustomerProps) {
   // TODO: @julianrkung Look into constraints on meter number input.
   const [meterNumber, setMeterNumber] = useState(currentCustomer.meterNumber);
   const [customerInactive, setCustomerInactive] = useState(!currentCustomer.isactive);
+
+  // Redirect to main customers page if no customer was passed
+  if (currentCustomer === EMPTY_CUSTOMER) {
+    return <Redirect to='/customers' />;
+  }
 
   const handleSelectTariffPlan = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedTariffPlanId(event.target.value as string);
@@ -99,17 +107,17 @@ function EditCustomer(props: EditCustomerProps) {
     <BaseScreen title="Edit Customer" leftIcon="backNav">
       <form noValidate className={classes.content}>
         <TextField label={'Name'} id={'name'} value={customerName} onChange={handleNameInput} />
-        <Checkbox label={'Select if customer is inactive'} checked={customerInactive} checkboxOnChange = {() => setCustomerInactive(!customerInactive)} />
-        <Checkbox label={'Select if customer has meter'} checked={hasMeter} textField={hasMeter} textFieldValue={meterNumber} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput}/>
+        <Checkbox label={'Select if customer is inactive'} checked={customerInactive} checkboxOnChange={() => setCustomerInactive(!customerInactive)} />
+        <Checkbox label={'Select if customer has meter'} checked={hasMeter} textField={hasMeter} textFieldValue={meterNumber} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput} />
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
-          <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId = "select-tariff-plan-label" value={selectedTariffPlanId} onChange={handleSelectTariffPlan}>
+          <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId="select-tariff-plan-label" value={selectedTariffPlanId} onChange={handleSelectTariffPlan}>
             {tariffPlans.map((plan) =>
-                <MenuItem key={plan.id} value={plan.id}>{plan.name}</MenuItem>
+              <MenuItem key={plan.id} value={plan.id}>{plan.name}</MenuItem>
             )}
           </Select>
         </FormControl>
-        <TextField label={'Explanation'} id={'explanation'} onChange={handleExplanationInput}/>
+        <TextField label={'Explanation'} id={'explanation'} onChange={handleExplanationInput} />
         <Button label={'SAVE'} onClick={handleSubmit} />
       </form>
     </BaseScreen>
@@ -117,7 +125,6 @@ function EditCustomer(props: EditCustomerProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  currentCustomer: state.siteData.currentCustomer || EMPTY_CUSTOMER,
   currentSite: state.siteData.currentSite || EMPTY_SITE,
   user: state.userData.user || EMPTY_USER,
 });
