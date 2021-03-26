@@ -1,19 +1,21 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
 
+const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>();
 
 export interface SiteInventoryData {
   siteInventory: InventoryRecord[],
   purchaseRequests: PurchaseRequestRecord[],
-  inventoryUpdates: InventoryUpdateRecord[],
+  inventoryUpdates: EntityState<InventoryUpdateRecord>,
 }
+
 
 export const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
   siteInventory: [],
   purchaseRequests: [],
-  inventoryUpdates: [],
+  inventoryUpdates: inventoryUpdatesAdapter.getInitialState(),
 }
 
 // Aliases for readability
@@ -87,8 +89,10 @@ const inventoryDataSlice = createSlice({
       const siteInventoryData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
       siteInventoryData.siteInventory = inventory;
       siteInventoryData.purchaseRequests = purchaseRequests;
-      siteInventoryData.inventoryUpdates = inventoryUpdates;
       state.sitesInventory[siteId] = siteInventoryData;
+      
+      const inventoryUpdateEntities = inventoryUpdatesAdapter.addMany(state.sitesInventory[siteId].inventoryUpdates, inventoryUpdates);
+      state.sitesInventory[siteId].inventoryUpdates = inventoryUpdateEntities;
     },
     addInventory(state, action) {
       state.sitesInventory[action.payload.siteId].siteInventory.push(action.payload);
