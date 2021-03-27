@@ -42,6 +42,7 @@ const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrSite(newSite));
 };
 
+// TODO: switch to selector
 const getCurrentSite = (): SiteRecord => {
   return store.getState().siteData.currentSite;
 };
