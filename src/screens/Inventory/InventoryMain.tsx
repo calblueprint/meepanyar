@@ -7,7 +7,8 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { InventoryRecord } from '../../lib/airtable/interface';
-import { currentSiteInventorySelector, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { selectAllCurrentSiteInventoryArray } from '../../lib/redux/inventoryDataSlice';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryCard from './components/InventoryCard';
 
@@ -28,7 +29,7 @@ interface InventoryProps extends RouteComponentProps {
 // TODO @wangannie: address empty state
 function InventoryMain (props: InventoryProps) {
     const { classes } = props;
-    const siteInventory = useSelector(currentSiteInventorySelector);
+    const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
     return (
       <BaseScreen title="Inventory">
         <BaseScrollView>

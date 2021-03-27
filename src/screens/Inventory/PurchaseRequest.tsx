@@ -2,15 +2,14 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import moment from 'moment';
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
-import { ProductRecord, PurchaseRequestRecord } from '../../lib/airtable/interface';
+import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { updatePurchaseRequestAndInventory } from '../../lib/airtable/request';
-import { getProductIdByInventoryId } from '../../lib/redux/inventoryData';
-import { EMPTY_PRODUCT, PurchaseRequestStatus, selectProductById } from '../../lib/redux/inventoryDataSlice';
+import { EMPTY_PRODUCT, PurchaseRequestStatus, selectCurrentSiteInventoryById, selectProductById } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getUserId } from '../../lib/redux/userData';
 
@@ -28,13 +27,14 @@ const styles = (theme: Theme) =>
 interface PurchaseRequestsProps extends RouteComponentProps {
   classes: { content: string; section: string; };
   location: any;
-  product: ProductRecord;
+  // product: ProductRecord;
 }
 
 
 function PurchaseRequest (props: PurchaseRequestsProps) {
-  const { classes, product } = props;
+  const { classes } = props;
   const purchaseRequest: PurchaseRequestRecord = props.location.state.purchaseRequest;
+  const product = useSelector((state: RootState) => selectProductById(state, selectCurrentSiteInventoryById(state, purchaseRequest.inventoryId)?.productId || ""))|| EMPTY_PRODUCT;
   const history = useHistory();
 
     // TODO: rename approvedAt to reviewedAt
@@ -73,8 +73,4 @@ function PurchaseRequest (props: PurchaseRequestsProps) {
   );
 }
 
-const mapStateToProps = (state: RootState, ownProps: { location: { state: { purchaseRequest: PurchaseRequestRecord }; }; }) => ({
-    product: selectProductById(state, getProductIdByInventoryId(ownProps.location.state.purchaseRequest.inventoryId)) || EMPTY_PRODUCT,
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(PurchaseRequest));
+export default withStyles(styles)(PurchaseRequest);

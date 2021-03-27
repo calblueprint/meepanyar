@@ -6,6 +6,7 @@ import { RootState } from './store';
 
 const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>();
 const productsAdapter = createEntityAdapter<ProductRecord>();
+const siteInventoryAdapter = createEntityAdapter<InventoryRecord>();
 
 // Customized selectors for inventory updates
 export const {
@@ -23,14 +24,22 @@ export const {
   selectIds: selectProductIds,
 } = productsAdapter.getSelectors((state: RootState) => state.inventoryData.products);
 
+// Customized selectors for products
+export const {
+  selectEntities: selectAllCurrentSiteInventory,
+  selectAll: selectAllCurrentSiteInventoryArray,
+  selectById: selectCurrentSiteInventoryById,
+  selectIds: selectCurrentSiteInventoryIds,
+} = siteInventoryAdapter.getSelectors((state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].siteInventory);
+
 export interface SiteInventoryData {
-  siteInventory: InventoryRecord[],
+  siteInventory: EntityState<InventoryRecord>,
   purchaseRequests: PurchaseRequestRecord[],
   inventoryUpdates: EntityState<InventoryUpdateRecord>,
 }
 
 export const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
-  siteInventory: [],
+  siteInventory: siteInventoryAdapter.getInitialState(),
   purchaseRequests: [],
   inventoryUpdates: inventoryUpdatesAdapter.getInitialState(),
 }
@@ -104,15 +113,17 @@ const inventoryDataSlice = createSlice({
       state.products = productEntities;
       
       const siteInventoryData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
-      siteInventoryData.siteInventory = inventory;
       siteInventoryData.purchaseRequests = purchaseRequests;
       state.sitesInventory[siteId] = siteInventoryData;
-      
+
+      const siteInventoryEntities = siteInventoryAdapter.addMany(state.sitesInventory[siteId].siteInventory, inventory);
+      state.sitesInventory[siteId].siteInventory = siteInventoryEntities;
+
       const inventoryUpdateEntities = inventoryUpdatesAdapter.addMany(state.sitesInventory[siteId].inventoryUpdates, inventoryUpdates);
       state.sitesInventory[siteId].inventoryUpdates = inventoryUpdateEntities;
     },
     addInventory(state, action) {
-      state.sitesInventory[action.payload.siteId].siteInventory.push(action.payload);
+      siteInventoryAdapter.addOne(state.sitesInventory[action.payload.siteId].siteInventory, action.payload);
     },
     addPurchaseRequest(state, action) {
       const siteId = action.payload.siteId;
@@ -127,8 +138,11 @@ const inventoryDataSlice = createSlice({
     },
     updateInventoryQuantity(state, action) {
       const siteId = action.payload.siteId;
-      const inventoryIndex = state.sitesInventory[siteId].siteInventory.findIndex(inv => inv.id === action.payload.inventoryId);
-      state.sitesInventory[siteId].siteInventory[inventoryIndex].currentQuantity = action.payload.newQuantity;
+      const update = {
+        id: action.payload.inventoryId,
+        changes: { currentQuantity: action.payload.newQuantity } 
+      }
+      siteInventoryAdapter.updateOne(state.sitesInventory[siteId].siteInventory, update);
     },
     setCurrInventoryId(state, action) {
       state.currentInventoryId = action.payload;
