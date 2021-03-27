@@ -12,6 +12,13 @@ export interface PreservedCameraState {
 
 // TODO: @julianrkung Styling for camera once deployment occurs and you can access on phone
 
+/**
+ * This component is meant to fulfill the role of a general-use camera component.
+ * To navigate to this component, invoke the `navigateToCamera` method in `cameraUtils.ts`, passing in any state that should be preserved.
+ * After taking a picture, it leads to `/camera/preview` and the `CameraPreview` component, where the user can confirm.
+ * Once confirmed, the user will be brought back to the screen where `navigateToCamera` was invoked, passing a `photo` prop with photo data.
+ */
+
 type CameraProps = RouteComponentProps<{}, {}, PreservedCameraState>;
 
 function CameraScreen(props: CameraProps) {
