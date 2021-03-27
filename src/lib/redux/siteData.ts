@@ -2,6 +2,7 @@ import { SiteRecord } from '../airtable/interface';
 import { getAllSites } from '../airtable/request';
 import { refreshInventoryData } from './inventoryData';
 import { addCustomer, editCustomer, saveSiteData, setCurrSite, setCurrCustomer, setLoadingForSiteData } from './siteDataSlice';
+import { MeterReadingRecord } from '../airtable/interface';
 import { store } from './store';
 
 const refreshSiteData = async (loadSilently: boolean): Promise<void> => {
@@ -17,6 +18,20 @@ const refreshSiteData = async (loadSilently: boolean): Promise<void> => {
 
   if (sites.length > 0) {
     currentSite = sites[0];
+  }
+
+  // Sort each customer's meter readings to be chronological
+  for (let i = 0; i < sites.length; i++) {
+    const singleSite = sites[i];
+    const customers = singleSite.customers;
+    if (customers) {
+      for (let j = 0; j < sites.length; j++) {
+        let customerMeterReadings = customers.meterReadings;
+        if (customerMeterReadings) {
+          customerMeterReadings.sort((a: MeterReadingRecord, b: MeterReadingRecord) => (Date.parse(a.date) > Date.parse(b.date)) ? -1 : 1);
+        }
+      }
+    }
   }
 
   const siteData = {
