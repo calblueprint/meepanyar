@@ -2,8 +2,17 @@
 /* eslint-disable no-param-reassign */
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
+import { RootState } from './store';
 
 const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>();
+
+// Export the customized selectors for inventory updates
+export const {
+  selectAll: selectAllInventoryUpdates,
+  selectById: selectInventoryUpdateById,
+  selectIds: selectInventoryUpdateIds,
+  // Pass in a selector that returns the posts slice of state
+} = inventoryUpdatesAdapter.getSelectors((state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].inventoryUpdates);
 
 export interface SiteInventoryData {
   siteInventory: InventoryRecord[],
