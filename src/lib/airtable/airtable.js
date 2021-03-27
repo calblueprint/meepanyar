@@ -176,8 +176,7 @@ function getRecordsByAttribute(
     .select({
       view: VIEW,
       filterByFormula: filterByFormula
-        ? `AND(${filterByFormula}, {${fieldType}}=${fieldValue})`
-        : `{${fieldType}}=${fieldValue}`,
+        `AND(${filterByFormula}, {${fieldType}}=${fieldValue})`,
       sort,
     })
     .all()
