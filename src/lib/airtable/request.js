@@ -226,7 +226,7 @@ export const createManyInventorys = async (records) => {
 };
 
 // NONGENERATED: Create a Purchase Request and update the inventory's current qty (regardless of approval status)
-export const createPurchaseRequest = async (purchaseRequest) => {
+export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) => {
   let purchaseRequestId = "";
   const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
   try {
@@ -666,23 +666,6 @@ export const updateManyInventorys = async (recordUpdates) => {
   }
   return Promise.all(updatePromises);
 };
-
-// NONGENERATED: Approve/deny purchase request and update inventory qty if approved
-export const updatePurchaseRequestAndInventory = async (purchaseRequest) => {
-  try {
-    // Extract details relevant to reviewing the purchase request
-    const reviewData = {
-      reviewerId: purchaseRequest.reviewerId,
-      approvedAt: purchaseRequest.approvedAt,
-      status: purchaseRequest.status,
-    }
-    updatePurchaseRequest(purchaseRequest.id, reviewData);
-    updatePurchaseRequestInRedux(purchaseRequest);
-    console.log("(updatePurchaseRequestAndInventory) Successfully reviewed purchase request - purchase request and inventory updated!");
-  } catch (err) {
-    console.log("Error in updatePurchaseRequestAndInventory: ", err);
-  }
-}
 
 export const updatePurchaseRequest = async (id, recordUpdates) => {
   return updateRecord(Tables.PurchaseRequests, id, recordUpdates);

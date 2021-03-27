@@ -136,20 +136,14 @@ const inventoryDataSlice = createSlice({
       siteInventoryAdapter.addOne(state.sitesInventory[action.payload.siteId].siteInventory, action.payload);
     },
     addPurchaseRequest(state, action) {
-      const siteId = action.payload.siteId;
-      delete action.payload.siteId;
-      purchaseRequestsAdapter.addOne(state.sitesInventory[siteId].purchaseRequests, action.payload);
+      const { siteId, ...payload } = action.payload;
+      purchaseRequestsAdapter.addOne(state.sitesInventory[siteId].purchaseRequests, payload);
     },
     updatePurchaseRequest(state, action) {
-      const siteId = action.payload.siteId;
-      delete action.payload.siteId;
+      const {siteId, id, ...changes } = action.payload;
       const update = {
-        id: action.payload.id,
-        changes: {
-          reviewerId: action.payload.reviewerId,
-          approvedAt: action.payload.approvedAt,
-          status: action.payload.status,
-        }
+        id,
+        changes: { ...changes }
       }
       purchaseRequestsAdapter.updateOne(state.sitesInventory[siteId].purchaseRequests, update);
     },

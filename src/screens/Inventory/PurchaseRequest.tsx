@@ -8,7 +8,8 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
-import { updatePurchaseRequestAndInventory } from '../../lib/airtable/request';
+import { updatePurchaseRequest } from '../../lib/airtable/request';
+import { updatePurchaseRequestInRedux } from '../../lib/redux/inventoryData';
 import { EMPTY_PRODUCT, PurchaseRequestStatus, selectCurrentSiteInventoryById, selectProductById } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getUserId } from '../../lib/redux/userData';
@@ -37,14 +38,15 @@ function PurchaseRequest (props: PurchaseRequestsProps) {
   const product = useSelector((state: RootState) => selectProductById(state, selectCurrentSiteInventoryById(state, purchaseRequest.inventoryId)?.productId || ""))|| EMPTY_PRODUCT;
   const history = useHistory();
 
-    // TODO: rename approvedAt to reviewedAt
+  // TODO (with schema update): rename approvedAt to reviewedAt
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
-    // Make a deep copy of the existing purchase request record
-    const reviewedPurchaseRequest = JSON.parse(JSON.stringify(purchaseRequest));
-    reviewedPurchaseRequest.status = approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED;
-    reviewedPurchaseRequest.reviewerId = getUserId();
-    reviewedPurchaseRequest.approvedAt = moment().toISOString();
-    updatePurchaseRequestAndInventory(reviewedPurchaseRequest);
+    const reviewData = {
+      reviewerId: getUserId(),
+      approvedAt: moment().toISOString(),
+      status: approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED,
+    }
+    updatePurchaseRequest(purchaseRequest.id, reviewData);
+    updatePurchaseRequestInRedux({id: purchaseRequest.id, ...reviewData});
     history.goBack();
   }
 

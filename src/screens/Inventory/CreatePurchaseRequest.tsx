@@ -9,7 +9,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
-import { createPurchaseRequest } from '../../lib/airtable/request';
+import { createPurchaseRequestAndUpdateInventory } from '../../lib/airtable/request';
 import { currentInventoryProductSelector, currentInventorySelector } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY, EMPTY_PRODUCT, EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
 import { userIdSelector } from '../../lib/redux/userData';
@@ -46,12 +46,13 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const [amountSpent, setAmountSpent] = useState(0.0);
   const [notes, setNotes] = useState("");
 
+  // TODO @wangannie: add better edge case handling
   const handleAmountPurchasedInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAmountPurchased(parseFloat(event.target.value as string));
+    setAmountPurchased(parseFloat(event.target.value as string) || 0);
   }
 
   const handleAmountSpentInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAmountSpent(parseFloat(event.target.value as string));
+    setAmountSpent(parseFloat(event.target.value as string) || 0);
   }
 
   const handleNotesInput = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -71,7 +72,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     purchaseRequest.inventoryId = inventory.id;
     // TODO: add image upload
 
-    await createPurchaseRequest(purchaseRequest);
+    await createPurchaseRequestAndUpdateInventory(purchaseRequest);
     history.goBack();
   }
 

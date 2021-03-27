@@ -35,12 +35,12 @@ const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord): void
   store.dispatch(addPurchaseRequest(purchaseRequestData));
 }
 
-const updatePurchaseRequestInRedux = (purchaseRequest: PurchaseRequestRecord): void => {
-  const purchaseRequestData = {
+const updatePurchaseRequestInRedux = (purchaseRequest: Partial<PurchaseRequestRecord>): void => {
+  const purchaseRequestUpdates = {
     ...purchaseRequest,
     siteId: getCurrentSite().id
   }
-  store.dispatch(updatePurchaseRequest(purchaseRequestData));
+  store.dispatch(updatePurchaseRequest(purchaseRequestUpdates));
 }
 
 const updateInventoryQuantityInRedux = (inventoryId: string, newQuantity: number) : void => {
