@@ -230,24 +230,21 @@ export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) =
   let purchaseRequestId = "";
   const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
   try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/purchase-request/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(purchaseRequest)
-    })
-    console.log('Response for purchase request: ', resp);
-    await resp.json().then(data => purchaseRequestId = data.id);
+    delete purchaseRequest.id; // Remove the id field to add to Airtable
+    purchaseRequestId = await createPurchaseRequest(purchaseRequest);
     updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
   } catch (err) {
     purchaseRequestId = generateOfflineInventoryId(); // TODO: update to purchase request Id?
-    console.log('Error with create purchase req. request: ', err);
+    console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
   }
   purchaseRequest.id = purchaseRequestId;
   addPurchaseRequestToRedux(purchaseRequest);
   updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
   return purchaseRequest;
+};
+
+export const createPurchaseRequest = async (record) => {
+  return createRecord(Tables.PurchaseRequests, record);
 };
 
 export const createManyPurchaseRequests = async (records) => {
