@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { createStyles, Fab, FormControl, FormHelperText, ListSubheader, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
+import React, { useEffect, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { createStyles, FormControl, FormHelperText, MenuItem, ListSubheader, Select, Theme, Fab, withStyles } from '@material-ui/core';
-import UserSearchBar from '../../components/UserSearchBar';
-import CustomerCard from '../../components/CustomerCard';
-import TrieTree from '../../lib/utils/TrieTree';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import CustomerCard from '../../components/CustomerCard';
+import UserSearchBar from '../../components/UserSearchBar';
 import { CustomerRecord } from '../../lib/airtable/interface';
 import { store } from '../../lib/redux/store';
+import TrieTree from '../../lib/utils/TrieTree';
 
 
 const styles = (theme: Theme) =>
@@ -44,7 +44,7 @@ const styles = (theme: Theme) =>
       right: theme.spacing(2),
       color: 'white',
     },
-});
+  });
 
 interface UserProps {
   classes: { title: string; headerWrapper: string; selectionHeader: string; rightAlign: string; fab: string; };
@@ -56,7 +56,7 @@ enum SortBy {
 }
 
 enum FilterBy {
-  PAYMENT_STATUS = 'Payment Status' as any, 
+  PAYMENT_STATUS = 'Payment Status' as any,
   METER_STATUS = 'Meter Status' as any,
   ACTIVE_STATUS = 'Active Status' as any,
 }
@@ -88,7 +88,11 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
 
   const getCustomers = () => {
     const siteData = store.getState().siteData.currentSite;
-    let allCustomers: CustomerRecord[] = siteData.customers;
+    // TODO: It'd be better to slice once and store the sliced list somewhere.
+    // We need to slice here because redux freezes objects to prevent mutation.
+    // The slice occurs during each component update, so it's inefficient as number of
+    // customers or updates grows. This isn't predicted to be a huge issue but may be in the future.
+    let allCustomers: CustomerRecord[] = siteData.customers.slice();
     setFullCustomers(allCustomers);
     if (searchValue !== '') {
       allCustomers = allCustomersTrie.get(searchValue);
@@ -197,20 +201,20 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         <h1 className={classes.title}>Customers</h1>
       </div>
       <div className={classes.selectionHeader}>
-          <UserSearchBar onSearchChange={handleSearchChange} />
-          <FormControl>
-            <Select onChange={handleMenuSelect} multiple value={sortAndFilter} inputProps={{ 'aria-label': 'Without label' }}>
-              <ListSubheader>Sort By</ListSubheader>
-              <MenuItem value="NAME">{SortBy.NAME}</MenuItem>
-              <MenuItem value="METER">{SortBy.METER}</MenuItem>
-              <ListSubheader>Filter By</ListSubheader>
-              <MenuItem value="PAYMENT_STATUS">{FilterBy.PAYMENT_STATUS}</MenuItem>
-              <MenuItem value="METER_STATUS">{FilterBy.METER_STATUS}</MenuItem>
-              <MenuItem value="ACTIVE_STATUS">{FilterBy.ACTIVE_STATUS}</MenuItem>
-            </Select>
-            <div className={classes.rightAlign}><FormHelperText>Sort and Filter</FormHelperText></div>
-          </FormControl>
-        </div>
+        <UserSearchBar onSearchChange={handleSearchChange} />
+        <FormControl>
+          <Select onChange={handleMenuSelect} multiple value={sortAndFilter} inputProps={{ 'aria-label': 'Without label' }}>
+            <ListSubheader>Sort By</ListSubheader>
+            <MenuItem value="NAME">{SortBy.NAME}</MenuItem>
+            <MenuItem value="METER">{SortBy.METER}</MenuItem>
+            <ListSubheader>Filter By</ListSubheader>
+            <MenuItem value="PAYMENT_STATUS">{FilterBy.PAYMENT_STATUS}</MenuItem>
+            <MenuItem value="METER_STATUS">{FilterBy.METER_STATUS}</MenuItem>
+            <MenuItem value="ACTIVE_STATUS">{FilterBy.ACTIVE_STATUS}</MenuItem>
+          </Select>
+          <div className={classes.rightAlign}><FormHelperText>Sort and Filter</FormHelperText></div>
+        </FormControl>
+      </div>
       <BaseScrollView>
         <FormHelperText>{filterLabels[0]}</FormHelperText>
         {filteredCustomers.map((customer, index) => (
@@ -221,7 +225,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
         }
         <FormHelperText>{filterLabels[1]}</FormHelperText>
         {filteredCustomersAlt.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/${customer.name}`, state: { customer: customer } }}>
+          <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
@@ -229,7 +233,7 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       </BaseScrollView>
       <Link to={'/customers/create'}>
         <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>
-          <AddIcon fontSize="large"/>
+          <AddIcon fontSize="large" />
         </Fab>
       </Link>
     </BaseScreen>

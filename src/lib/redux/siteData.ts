@@ -1,10 +1,16 @@
-import { store } from './store';
-import { setLoadingForSiteData, setCurrSite, saveSiteData } from './siteDataSlice';
+import { SiteRecord } from '../airtable/interface';
 import { getAllSites } from '../airtable/request';
+import { refreshInventoryData } from './inventoryData';
+import { addCustomer, editCustomer, saveSiteData, setCurrSite, setCurrCustomer, setLoadingForSiteData } from './siteDataSlice';
 import { MeterReadingRecord } from '../airtable/interface';
+import { store } from './store';
 
-const refreshSiteData = async (): Promise<void> => {
-  store.dispatch(setLoadingForSiteData());
+const refreshSiteData = async (loadSilently: boolean): Promise<void> => {
+
+  //if background is true then dont set loading parameter.
+  if (!loadSilently) {
+    store.dispatch(setLoadingForSiteData());
+  }
   let currentSite = null;
 
   // Sites authentication is done on backend
@@ -39,11 +45,35 @@ const refreshSiteData = async (): Promise<void> => {
     currentSite,
   };
 
+  // Extract to inventoryData, delete extra fields
+  sites.map((site: SiteRecord) => {
+    refreshInventoryData(site);
+    delete site.inventoryIds;
+    delete site.products;
+    delete site.inventory;
+    delete site.inventoryUpdates;
+    delete site.purchaseRequests;
+  });
+
   store.dispatch(saveSiteData(siteData));
 };
+
 
 const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrSite(newSite));
 };
 
-export { refreshSiteData, setCurrentSite };
+const setCurrentCustomer = (newCustomer: any): void => {
+  store.dispatch(setCurrCustomer(newCustomer));
+}
+
+// TODO: @julianrkung move to customerData
+const addCustomerToRedux = (customer: any): void => {
+  store.dispatch(addCustomer(customer));
+};
+
+const editCustomerInRedux = (customer: any): void => {
+  store.dispatch(editCustomer(customer));
+};
+
+export { refreshSiteData, setCurrentSite, setCurrentCustomer, addCustomerToRedux, editCustomerInRedux };
