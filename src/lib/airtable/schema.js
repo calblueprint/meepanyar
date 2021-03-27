@@ -73,6 +73,7 @@ export const Columns = {
 		paymentIds: {name:`Payments`, type:`foreignKey-many`},
 		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
 		id: {name:`ID`, type:`formula`},
+		meterType: {name:`Meter Type`, type:`select`},
 	},
 	"Customer Updates": {
 		dateUpdated: {name:`Date Updated`, type:`date`},
