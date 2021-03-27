@@ -24,7 +24,11 @@ import {
   deleteRecord,
 } from './airtable';
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+import { editCustomerInRedux } from '../../lib/redux/siteData';
+>>>>>>> 760cf3e078c9125de0be8424e0f5b50443a828f2
 import { addToOfflineCustomer } from '../utils/offlineUtils';
 import { addInventoryToRedux } from '../redux/inventoryData';
 import { generateOfflineInventoryId } from '../utils/inventoryUtils';
@@ -508,19 +512,36 @@ export const updateCustomer = async (id, recordUpdates) => {
 };
 
 // NONGENERATED: Edit customer
-export const editCustomer = async (customer) => {
-  try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(customer)
-    })
+export const editCustomer = async (customer, customerUpdate) => {
+  if (!customer.id) {
+    addToOfflineCustomer(customer, 'edits', customerUpdate);
+  } else {
+    try {
+      const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
+      const { dateUpdated, customerId, explanation, userId } = customerUpdate;
+      await updateCustomer(customer.id, {
+        name,
+        meterNumber,
+        tariffPlanId,
+        siteId,
+        isactive,
+        hasmeter,
+      });
+      console.log("Customer edited!");
 
-    console.log(resp);
-  } catch (err) {
-    console.log(err);
+      const updateId = await createCustomerUpdate({
+        dateUpdated,
+        customerId,
+        explanation,
+        userId
+      });
+      console.log("Update id: ", updateId);
+      console.log("Created updates!");
+
+      editCustomerInRedux(customer);
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 

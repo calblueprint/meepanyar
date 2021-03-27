@@ -1,7 +1,8 @@
 import { SiteRecord } from '../airtable/interface';
 import { getAllSites } from '../airtable/request';
 import { refreshInventoryData } from './inventoryData';
-import { addCustomer, saveSiteData, setCurrSite, setLoadingForSiteData } from './siteDataSlice';
+import { addCustomer, editCustomer, saveSiteData, setCurrSite, setCurrCustomer, setLoadingForSiteData } from './siteDataSlice';
+import { MeterReadingRecord } from '../airtable/interface';
 import { store } from './store';
 
 const refreshSiteData = async (loadSilently: boolean): Promise<void> => {
@@ -17,6 +18,20 @@ const refreshSiteData = async (loadSilently: boolean): Promise<void> => {
 
   if (sites.length > 0) {
     currentSite = sites[0];
+  }
+
+  // Sort each customer's meter readings to be chronological
+  for (let i = 0; i < sites.length; i++) {
+    const singleSite = sites[i];
+    const customers = singleSite.customers;
+    if (customers) {
+      for (let j = 0; j < sites.length; j++) {
+        let customerMeterReadings = customers.meterReadings;
+        if (customerMeterReadings) {
+          customerMeterReadings.sort((a: MeterReadingRecord, b: MeterReadingRecord) => (Date.parse(a.date) > Date.parse(b.date)) ? -1 : 1);
+        }
+      }
+    }
   }
 
   const siteData = {
@@ -42,9 +57,17 @@ const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrSite(newSite));
 };
 
+const setCurrentCustomer = (newCustomer: any): void => {
+  store.dispatch(setCurrCustomer(newCustomer));
+}
+
 // TODO: @julianrkung move to customerData
 const addCustomerToRedux = (customer: any): void => {
   store.dispatch(addCustomer(customer));
 };
 
-export { refreshSiteData, setCurrentSite, addCustomerToRedux };
+const editCustomerInRedux = (customer: any): void => {
+  store.dispatch(editCustomer(customer));
+};
+
+export { refreshSiteData, setCurrentSite, setCurrentCustomer, addCustomerToRedux, editCustomerInRedux };

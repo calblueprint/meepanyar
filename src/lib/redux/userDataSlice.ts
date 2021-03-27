@@ -17,7 +17,7 @@ interface UserFields {
   Customers?: string[];
 }
 
-interface User {
+export interface User {
   id: string;
   createdTime: string;
   fields: UserFields;
@@ -35,6 +35,16 @@ const initialState: UserDataState = {
   user: null,
   lastUpdated: '',
   isOnline: true,
+};
+
+export const EMPTY_USER: User = {
+  id: '',
+  createdTime: '',
+  fields: {
+    ID: '',
+    Password: '',
+    Username: '',
+  },
 };
 
 const userDataSlice = createSlice({
@@ -59,5 +69,5 @@ const userDataSlice = createSlice({
   },
 });
 
-export const { setLoadingForUserData, saveUserData, setIsOnline , deauthenticateAndClearUserData} = userDataSlice.actions;
+export const { setLoadingForUserData, saveUserData, setIsOnline, deauthenticateAndClearUserData } = userDataSlice.actions;
 export default userDataSlice.reducer;
