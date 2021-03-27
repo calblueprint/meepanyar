@@ -24,6 +24,8 @@ import {
   deleteRecord,
 } from './airtable';
 import { addToOfflineCustomer } from '../utils/offlineUtils';
+import { addInventoryToRedux } from '../redux/inventoryData';
+import { generateOfflineInventoryId } from '../utils/inventoryUtils';
 
 /*
  ******* CREATE RECORDS *******
@@ -188,9 +190,29 @@ export const createManyProducts = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createInventory = async (record) => {
-  return createRecord(Tables.Inventory, record);
-};
+// NONGENERATED: Create an inventory record (add product to site)
+export const createInventory = async (inventory) => {
+  // Site and product must already exist in Airtable.
+  // Make a standard request to create an inventory item.
+  let inventoryId = "";
+  try {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inventory)
+    })
+    console.log('Response for inventory: ', resp);
+    await resp.json().then(data => inventoryId = data.id);
+  } catch (err) {
+    inventoryId = generateOfflineInventoryId();
+    console.log('Error with create inventory request: ', err);
+  }
+  inventory.id = inventoryId;
+  addInventoryToRedux(inventory);
+  return inventory;
+}
 
 export const createManyInventorys = async (records) => {
   const createPromises = [];
@@ -385,7 +407,7 @@ export const getProductById = async (id) => {
   return getRecordById(Tables.Products, id);
 };
 
-export const getProductsByIds = async ( ids, filterByFormula = '', sort = []
+export const getProductsByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -403,7 +425,7 @@ export const getInventoryById = async (id) => {
   return getRecordById(Tables.Inventory, id);
 };
 
-export const getInventorysByIds = async ( ids, filterByFormula = '', sort = []
+export const getInventorysByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -421,7 +443,7 @@ export const getPurchaseRequestById = async (id) => {
   return getRecordById(Tables.PurchaseRequests, id);
 };
 
-export const getPurchaseRequestsByIds = async ( ids, filterByFormula = '', sort = []
+export const getPurchaseRequestsByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -439,7 +461,7 @@ export const getInventoryUpdateById = async (id) => {
   return getRecordById(Tables.InventoryUpdates, id);
 };
 
-export const getInventoryUpdatesByIds = async ( ids, filterByFormula = '', sort = []
+export const getInventoryUpdatesByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -505,6 +527,23 @@ export const updateManyTariffPlans = async (recordUpdates) => {
 export const updateCustomer = async (id, recordUpdates) => {
   return updateRecord(Tables.Customers, id, recordUpdates);
 };
+
+// NONGENERATED: Edit customer
+export const editCustomer = async (customer) => {
+  try {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(customer)
+    })
+
+    console.log(resp);
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 export const updateManyCustomers = async (recordUpdates) => {
   const updatePromises = [];
