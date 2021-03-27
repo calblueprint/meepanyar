@@ -2,6 +2,7 @@
 /* eslint-disable no-param-reassign */
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
+import { setCurrSite } from './siteDataSlice';
 import { RootState } from './store';
 
 const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>();
@@ -157,6 +158,12 @@ const inventoryDataSlice = createSlice({
     },
     setCurrInventoryId(state, action) {
       state.currentInventoryId = action.payload;
+    }
+  },
+  extraReducers: {
+    // If the site changes, reset currentInventoryId
+    [setCurrSite.type]: (state, action) => {
+      state.currentInventoryId = initialState.currentInventoryId;
     }
   }
 });
