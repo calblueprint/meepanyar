@@ -3,6 +3,7 @@ import { Typography, withStyles } from '@material-ui/core';
 import { createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 
 const styles = (theme: Theme) =>
@@ -35,7 +36,7 @@ interface InventoryInfoProps {
 
 function InventoryInfo(props: InventoryInfoProps) {
   const { classes, productId, lastUpdated, currentQuantity} = props;
-  const product = useSelector((state: RootState) => state.inventoryData.products[productId]);
+  const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
   return (
     <div className={classes.content}>

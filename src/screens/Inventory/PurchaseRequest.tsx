@@ -9,8 +9,8 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { ProductRecord, PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { updatePurchaseRequestAndInventory } from '../../lib/airtable/request';
-import { getProductByInventoryId } from '../../lib/redux/inventoryData';
-import { PurchaseRequestStatus } from '../../lib/redux/inventoryDataSlice';
+import { getProductIdByInventoryId } from '../../lib/redux/inventoryData';
+import { EMPTY_PRODUCT, PurchaseRequestStatus, selectProductById } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getUserId } from '../../lib/redux/userData';
 
@@ -74,7 +74,7 @@ function PurchaseRequest (props: PurchaseRequestsProps) {
 }
 
 const mapStateToProps = (state: RootState, ownProps: { location: { state: { purchaseRequest: PurchaseRequestRecord }; }; }) => ({
-    product: getProductByInventoryId(ownProps.location.state.purchaseRequest.inventoryId),
+    product: selectProductById(state, getProductIdByInventoryId(ownProps.location.state.purchaseRequest.inventoryId)) || EMPTY_PRODUCT,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(PurchaseRequest));

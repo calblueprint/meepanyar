@@ -4,8 +4,8 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { connect } from 'react-redux';
 import { ProductRecord } from '../../../lib/airtable/interface';
-import { getProductByInventoryId } from '../../../lib/redux/inventoryData';
-import { PurchaseRequestStatus } from '../../../lib/redux/inventoryDataSlice';
+import { getProductIdByInventoryId } from '../../../lib/redux/inventoryData';
+import { EMPTY_PRODUCT, PurchaseRequestStatus, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 
 const styles = (theme: Theme) =>
@@ -61,7 +61,7 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
 }
 
 const mapStateToProps = (state: RootState, ownProps: { inventoryId: string; }) => ({
-  product: getProductByInventoryId(ownProps.inventoryId),
+  product: selectProductById(state, getProductIdByInventoryId(ownProps.inventoryId)) || EMPTY_PRODUCT,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(PurchaseRequestCard));

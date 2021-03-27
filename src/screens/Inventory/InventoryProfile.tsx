@@ -6,6 +6,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { currentInventoryProductSelector, currentInventorySelector } from '../../lib/redux/inventoryData';
+import { EMPTY_PRODUCT } from '../../lib/redux/inventoryDataSlice';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
 
@@ -32,7 +33,7 @@ const getPurchaseRequestButton = () => (
 function InventoryProfile(props: InventoryProps) {
   const { classes } = props;
   const inventory = useSelector(currentInventorySelector);
-  const product = useSelector(currentInventoryProductSelector);
+  const product = useSelector(currentInventoryProductSelector) || EMPTY_PRODUCT;
 
   return (
     <BaseScreen leftIcon="backNav" title={product.name}>

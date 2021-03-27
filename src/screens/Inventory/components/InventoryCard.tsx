@@ -3,7 +3,8 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { allProductsSelector } from '../../../lib/redux/inventoryData';
+import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
+import { RootState } from '../../../lib/redux/store';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -31,7 +32,7 @@ interface InventoryCardProps {
 
 function InventoryCard(props: InventoryCardProps) {
   const { classes, lastUpdated, productId } = props;
-  const product = useSelector(allProductsSelector)[productId];
+  const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
   return (
     <Card className={classes.cardContainer}>

@@ -9,8 +9,8 @@ import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { InventoryRecord } from '../../lib/airtable/interface';
 import { createInventory } from '../../lib/airtable/request';
-import { allProductsSelector, currentSiteInventorySelector, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
-import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
+import { currentSiteInventorySelector, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { EMPTY_INVENTORY, selectAllProducts } from '../../lib/redux/inventoryDataSlice';
 import { getCurrentSite } from '../../lib/redux/siteData';
 
 const styles = (theme: Theme) =>
@@ -29,7 +29,7 @@ interface AddInventoryProps extends RouteComponentProps {
 
 function AddInventory (props: AddInventoryProps) {
   const { classes } = props;
-  const products = useSelector(allProductsSelector);
+  const products = useSelector(selectAllProducts);
   const siteInventory = useSelector(currentSiteInventorySelector);
   const history = useHistory();
 

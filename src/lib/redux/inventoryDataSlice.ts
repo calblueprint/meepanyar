@@ -5,21 +5,29 @@ import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestR
 import { RootState } from './store';
 
 const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>();
+const productsAdapter = createEntityAdapter<ProductRecord>();
 
-// Export the customized selectors for inventory updates
+// Customized selectors for inventory updates
 export const {
-  selectAll: selectAllInventoryUpdates,
+  selectEntities: selectAllInventoryUpdates,
+  selectAll: selectAllInventoryUpdatesArray,
   selectById: selectInventoryUpdateById,
   selectIds: selectInventoryUpdateIds,
-  // Pass in a selector that returns the posts slice of state
 } = inventoryUpdatesAdapter.getSelectors((state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].inventoryUpdates);
+
+// Customized selectors for products
+export const {
+  selectEntities: selectAllProducts,
+  selectAll: selectAllProductsArray,
+  selectById: selectProductById,
+  selectIds: selectProductIds,
+} = productsAdapter.getSelectors((state: RootState) => state.inventoryData.products);
 
 export interface SiteInventoryData {
   siteInventory: InventoryRecord[],
   purchaseRequests: PurchaseRequestRecord[],
   inventoryUpdates: EntityState<InventoryUpdateRecord>,
 }
-
 
 export const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
   siteInventory: [],
@@ -32,13 +40,13 @@ export type SiteIdString = string;
 export type ProductIdString = string; 
 
 interface inventoryDataSliceState {
-  products: Record<ProductIdString, ProductRecord>;
+  products: EntityState<ProductRecord>;
   sitesInventory: Record<SiteIdString, SiteInventoryData>;
   currentInventoryId: string,
 }
 
 const initialState: inventoryDataSliceState = {
-  products: {},
+  products: productsAdapter.getInitialState(),
   sitesInventory: {},
   currentInventoryId: '',
 };
@@ -92,9 +100,9 @@ const inventoryDataSlice = createSlice({
   reducers: {
     saveInventoryData(state, action) {
       const {siteId, products, inventory, purchaseRequests, inventoryUpdates} = action.payload;
-      products.map((product: ProductRecord) => 
-        state.products[product.id] = product
-      );
+      const productEntities = productsAdapter.addMany(state.products, products);
+      state.products = productEntities;
+      
       const siteInventoryData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
       siteInventoryData.siteInventory = inventory;
       siteInventoryData.purchaseRequests = purchaseRequests;
