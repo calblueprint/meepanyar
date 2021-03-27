@@ -4,12 +4,7 @@ import { addInventory, addPurchaseRequest, EMPTY_INVENTORY, saveInventoryData, s
 import { getCurrentSite } from './siteData';
 import { RootState, store } from './store';
 
-export const currentSiteSelector = (state: RootState) => state.siteData.currentSite;
-export const sitesInventorySelector = (state: RootState) => state.inventoryData.sitesInventory;
 export const currentInventoryIdSelector = (state: RootState) => state.inventoryData.currentInventoryId;
-
-export const currentSiteInventoryDataSelector = createSelector(currentSiteSelector, sitesInventorySelector, (currentSite, sitesInventory) => sitesInventory[currentSite.id]);
-export const currentSitePurchaseRequestsSelector = createSelector(currentSiteInventoryDataSelector, (siteInventoryData) => siteInventoryData.purchaseRequests);
 export const currentInventorySelector = createSelector(currentInventoryIdSelector, store.getState, (currentInventoryId, state) => selectCurrentSiteInventoryById(state, currentInventoryId));
 export const currentInventoryProductSelector = createSelector(currentInventorySelector, store.getState, (inventory, state) => selectProductById(state, inventory?.productId || ""));
 

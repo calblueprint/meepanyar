@@ -6,8 +6,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
-import { currentSitePurchaseRequestsSelector } from '../../lib/redux/inventoryData';
-import { PurchaseRequestStatus, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
+import { PurchaseRequestStatus, selectAllCurrentSitePurchaseRequestsArray, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
 import PurchaseRequestCard from './components/PurchaseRequestCard';
 
 const styles = (theme: Theme) =>
@@ -22,7 +21,7 @@ interface PurchaseRequestsProps extends RouteComponentProps {
 // TODO @wangannie: address empty state
 function PurchaseRequests (props: PurchaseRequestsProps) {
     const { classes } = props;
-    const purchaseRequests = useSelector(currentSitePurchaseRequestsSelector);
+    const purchaseRequests = useSelector(selectAllCurrentSitePurchaseRequestsArray);
 
     const getPurchaseRequestsSection = (status: PurchaseRequestStatus) => (
       <div>

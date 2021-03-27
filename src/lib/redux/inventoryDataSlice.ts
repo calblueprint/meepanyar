@@ -7,6 +7,7 @@ import { RootState } from './store';
 const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>();
 const productsAdapter = createEntityAdapter<ProductRecord>();
 const siteInventoryAdapter = createEntityAdapter<InventoryRecord>();
+const purchaseRequestsAdapter = createEntityAdapter<PurchaseRequestRecord>();
 
 // Customized selectors for inventory updates
 export const {
@@ -24,7 +25,7 @@ export const {
   selectIds: selectProductIds,
 } = productsAdapter.getSelectors((state: RootState) => state.inventoryData.products);
 
-// Customized selectors for products
+// Customized selectors for site inventory
 export const {
   selectEntities: selectAllCurrentSiteInventory,
   selectAll: selectAllCurrentSiteInventoryArray,
@@ -32,15 +33,23 @@ export const {
   selectIds: selectCurrentSiteInventoryIds,
 } = siteInventoryAdapter.getSelectors((state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].siteInventory);
 
+// Customized selectors for purchase requests
+export const {
+  selectEntities: selectAllCurrentSitePurchaseRequests,
+  selectAll: selectAllCurrentSitePurchaseRequestsArray,
+  selectById: selectCurrentSitePurchaseRequestById,
+  selectIds: selectCurrentSitePurchaseRequestsIds,
+} = purchaseRequestsAdapter.getSelectors((state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].purchaseRequests);
+
 export interface SiteInventoryData {
   siteInventory: EntityState<InventoryRecord>,
-  purchaseRequests: PurchaseRequestRecord[],
+  purchaseRequests: EntityState<PurchaseRequestRecord>,
   inventoryUpdates: EntityState<InventoryUpdateRecord>,
 }
 
 export const EMPTY_SITE_INVENTORY_DATA : SiteInventoryData = {
   siteInventory: siteInventoryAdapter.getInitialState(),
-  purchaseRequests: [],
+  purchaseRequests: purchaseRequestsAdapter.getInitialState(),
   inventoryUpdates: inventoryUpdatesAdapter.getInitialState(),
 }
 
@@ -112,10 +121,11 @@ const inventoryDataSlice = createSlice({
       const productEntities = productsAdapter.addMany(state.products, products);
       state.products = productEntities;
       
-      const siteInventoryData = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
-      siteInventoryData.purchaseRequests = purchaseRequests;
-      state.sitesInventory[siteId] = siteInventoryData;
+      state.sitesInventory[siteId] = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
 
+      const purchaseRequestEntities = purchaseRequestsAdapter.addMany(state.sitesInventory[siteId].purchaseRequests, purchaseRequests);
+      state.sitesInventory[siteId].purchaseRequests = purchaseRequestEntities;
+      
       const siteInventoryEntities = siteInventoryAdapter.addMany(state.sitesInventory[siteId].siteInventory, inventory);
       state.sitesInventory[siteId].siteInventory = siteInventoryEntities;
 
@@ -128,13 +138,20 @@ const inventoryDataSlice = createSlice({
     addPurchaseRequest(state, action) {
       const siteId = action.payload.siteId;
       delete action.payload.siteId;
-      state.sitesInventory[siteId].purchaseRequests.push(action.payload);
+      purchaseRequestsAdapter.addOne(state.sitesInventory[siteId].purchaseRequests, action.payload);
     },
     updatePurchaseRequest(state, action) {
       const siteId = action.payload.siteId;
       delete action.payload.siteId;
-      const index = state.sitesInventory[siteId].purchaseRequests.findIndex(pr => pr.id === action.payload.id);
-      state.sitesInventory[siteId].purchaseRequests[index] = action.payload;
+      const update = {
+        id: action.payload.id,
+        changes: {
+          reviewerId: action.payload.reviewerId,
+          approvedAt: action.payload.approvedAt,
+          status: action.payload.status,
+        }
+      }
+      purchaseRequestsAdapter.updateOne(state.sitesInventory[siteId].purchaseRequests, update);
     },
     updateInventoryQuantity(state, action) {
       const siteId = action.payload.siteId;
