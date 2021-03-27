@@ -23,7 +23,10 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
+import { editCustomerInRedux } from '../../lib/redux/siteData';
 import { addToOfflineCustomer } from '../utils/offlineUtils';
+import { addInventoryToRedux } from '../redux/inventoryData';
+import { generateOfflineInventoryId } from '../utils/inventoryUtils';
 
 /*
  ******* CREATE RECORDS *******
@@ -200,9 +203,29 @@ export const createManyProducts = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createInventory = async (record) => {
-  return createRecord(Tables.Inventory, record);
-};
+// NONGENERATED: Create an inventory record (add product to site)
+export const createInventory = async (inventory) => {
+  // Site and product must already exist in Airtable.
+  // Make a standard request to create an inventory item.
+  let inventoryId = "";
+  try {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(inventory)
+    })
+    console.log('Response for inventory: ', resp);
+    await resp.json().then(data => inventoryId = data.id);
+  } catch (err) {
+    inventoryId = generateOfflineInventoryId();
+    console.log('Error with create inventory request: ', err);
+  }
+  inventory.id = inventoryId;
+  addInventoryToRedux(inventory);
+  return inventory;
+}
 
 export const createManyInventorys = async (records) => {
   const createPromises = [];
@@ -519,19 +542,36 @@ export const updateCustomer = async (id, recordUpdates) => {
 };
 
 // NONGENERATED: Edit customer
-export const editCustomer = async (customer) => {
-  try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(customer)
-    })
+export const editCustomer = async (customer, customerUpdate) => {
+  if (!customer.id) {
+    addToOfflineCustomer(customer, 'edits', customerUpdate);
+  } else {
+    try {
+      const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
+      const { dateUpdated, customerId, explanation, userId } = customerUpdate;
+      await updateCustomer(customer.id, {
+        name,
+        meterNumber,
+        tariffPlanId,
+        siteId,
+        isactive,
+        hasmeter,
+      });
+      console.log("Customer edited!");
 
-    console.log(resp);
-  } catch (err) {
-    console.log(err);
+      const updateId = await createCustomerUpdate({
+        dateUpdated,
+        customerId,
+        explanation,
+        userId
+      });
+      console.log("Update id: ", updateId);
+      console.log("Created updates!");
+
+      editCustomerInRedux(customer);
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 

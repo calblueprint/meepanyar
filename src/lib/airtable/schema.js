@@ -45,6 +45,10 @@ export const Columns = {
 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
 		id: {name:`ID`, type:`formula`},
 		inventoryIds: {name:`Inventory`, type:`foreignKey-many`},
+		products: {name: `Products`, type: `custom-object`},
+		inventory: {name: `SiteInventory`, type: `custom-object`},
+		purchaseRequests: {name: `PurchaseRequests`, type: `custom-object`},
+		inventoryUpdates: {name: `InventoryUpdates`, type: `custom-object`},
 	},
 	"Tariff Plans": {
 		name: {name:`Name`, type:`text`},
@@ -72,7 +76,7 @@ export const Columns = {
 	},
 	"Customer Updates": {
 		dateUpdated: {name:`Date Updated`, type:`date`},
-		customerIds: {name:`Customer`, type:`foreignKey-many`},
+		customerId: {name:`Customer`, type:`foreignKey-one`},
 		explanation: {name:`Explanation`, type:`multilineText`},
 		userId: {name:`User`, type:`foreignKey-one`},
 		id: {name:`ID`, type:`formula`},

@@ -33,8 +33,10 @@ const styles = (theme: Theme) =>
 interface CheckBoxProps {
   classes: { root: string; checkIcon: string; checkedIcon: string; textField: string };
   label: string;
+  checked?: boolean;
   checkboxOnChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  textField?: string | null;
+  textField?: boolean;
+  textFieldValue?: number | null;
   textFieldOnChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 
@@ -48,6 +50,7 @@ function CheckBox(props: CheckBoxProps) {
           <Checkbox
             color="primary"
             icon={<div className={classes.checkIcon} />}
+            checked={props.checked ? props.checked : undefined}
             checkedIcon={<CheckIcon className={`${classes.checkIcon} ${classes.checkedIcon}`} />}
             onChange={props.checkboxOnChange}
           />
@@ -57,11 +60,11 @@ function CheckBox(props: CheckBoxProps) {
       {props.textField ? (
         <TextField
           className={classes.textField}
-          id={props.textField}
           InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
           InputLabelProps={{ shrink: true }}
           color="primary"
           type="meter"
+          value={props.textFieldValue ? props.textFieldValue : undefined}
           onChange={props.textFieldOnChange}
         />
       ) : null}

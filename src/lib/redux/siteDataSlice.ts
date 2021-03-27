@@ -1,17 +1,19 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createSlice } from '@reduxjs/toolkit';
-import { SiteRecord, FinancialSummaryRecord } from '../airtable/interface';
+import { SiteRecord, CustomerRecord, FinancialSummaryRecord } from '../airtable/interface';
 
 interface siteDataSliceState {
   isLoading: boolean;
-  currentSite: any;
+  currentSite: any; //TODO: Set as SiteRecord | null and resolve errors
+  currentCustomer: CustomerRecord | null;
   sites: any[];
 }
 
 const initialState: siteDataSliceState = {
   isLoading: false,
   currentSite: null,
+  currentCustomer: null,
   sites: [],
 };
 
@@ -58,6 +60,9 @@ const siteDataSlice = createSlice({
     setCurrSite(state, action) {
       state.currentSite = action.payload;
     },
+    setCurrCustomer(state, action) {
+      state.currentCustomer = action.payload;
+    },
     // TODO: @julianrkung move to customerDataSlice
     addCustomer(state, action) {
       return {
@@ -69,9 +74,14 @@ const siteDataSlice = createSlice({
         ]
         }
       }
-      }
+    },
+    editCustomer(state, action) {
+      const index = state.currentSite.customers.findIndex((e: CustomerRecord) => e.id === action.payload.id);
+      state.currentSite.customers[index] = action.payload;
+      state.currentCustomer = action.payload;
+    }
   },
 });
 
-export const { setLoadingForSiteData, saveSiteData, setCurrSite, addCustomer } = siteDataSlice.actions;
+export const { setLoadingForSiteData, saveSiteData, setCurrSite, setCurrCustomer, addCustomer, editCustomer } = siteDataSlice.actions;
 export default siteDataSlice.reducer;

@@ -1,19 +1,21 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
-import { persistStore, persistReducer } from 'redux-persist';
-import logger from 'redux-logger';
-import { createBrowserHistory } from 'history';
-import thunk from 'redux-thunk';
-import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
-
-import userDataSlice from './userDataSlice';
+import { createBrowserHistory } from 'history';
+import logger from 'redux-logger';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
+import thunk from 'redux-thunk';
+import inventoryDataSlice from './inventoryDataSlice';
 import siteDataSlice from './siteDataSlice';
+import userDataSlice from './userDataSlice';
+
 
 const history = createBrowserHistory();
 
 const allReducers = combineReducers({
   userData: userDataSlice,
   siteData: siteDataSlice,
+  inventoryData: inventoryDataSlice,
   router: connectRouter(history),
 });
 
