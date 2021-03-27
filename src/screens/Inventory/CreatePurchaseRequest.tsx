@@ -10,7 +10,7 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { createPurchaseRequestAndUpdateInventory } from '../../lib/airtable/request';
-import { currentInventoryProductSelector, currentInventorySelector } from '../../lib/redux/inventoryData';
+import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY, EMPTY_PRODUCT, EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
 import { userIdSelector } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
@@ -39,8 +39,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const { classes } = props;
   const history = useHistory();
   const userId = useSelector(userIdSelector);
-  const inventory = useSelector(currentInventorySelector) || EMPTY_INVENTORY;
-  const product = useSelector(currentInventoryProductSelector) || EMPTY_PRODUCT;
+  const inventory = useSelector(selectCurrentInventory) || EMPTY_INVENTORY;
+  const product = useSelector(selectCurrentInventoryProduct) || EMPTY_PRODUCT;
 
   const [amountPurchased, setAmountPurchased] = useState(0.0);
   const [amountSpent, setAmountSpent] = useState(0.0);

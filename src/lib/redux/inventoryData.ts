@@ -4,9 +4,9 @@ import { addInventory, addPurchaseRequest, EMPTY_INVENTORY, saveInventoryData, s
 import { getCurrentSite } from './siteData';
 import { RootState, store } from './store';
 
-export const currentInventoryIdSelector = (state: RootState) => state.inventoryData.currentInventoryId;
-export const currentInventorySelector = createSelector(currentInventoryIdSelector, store.getState, (currentInventoryId, state) => selectCurrentSiteInventoryById(state, currentInventoryId));
-export const currentInventoryProductSelector = createSelector(currentInventorySelector, store.getState, (inventory, state) => selectProductById(state, inventory?.productId || ""));
+export const selectCurrentInventoryId = (state: RootState): string => state.inventoryData.currentInventoryId;
+export const selectCurrentInventory = createSelector(selectCurrentInventoryId, store.getState, (currentInventoryId, state) => selectCurrentSiteInventoryById(state, currentInventoryId));
+export const selectCurrentInventoryProduct = createSelector(selectCurrentInventory, store.getState, (inventory, state) => selectProductById(state, inventory?.productId || ""));
 
 const refreshInventoryData = (site: SiteRecord) : void => {
   if (site) { // TODO @wangannie what to do if site null

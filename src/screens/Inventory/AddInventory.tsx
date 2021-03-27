@@ -67,7 +67,7 @@ function AddInventory (props: AddInventoryProps) {
   }
 
   const handleStartingAmountInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setStartingAmount(parseFloat(event.target.value as string));
+    setStartingAmount(parseFloat(event.target.value as string) || 0);
   }
 
   return (
