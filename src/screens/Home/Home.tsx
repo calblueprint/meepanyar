@@ -4,7 +4,7 @@ import { RootState } from '../../lib/redux/store';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import { lessThanCurrentPeriod } from '../../lib/moment/momentUtils';
+import { isBeforeCurrentPeriod } from '../../lib/moment/momentUtils';
 
 import { SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
@@ -40,7 +40,7 @@ function Home(props: HomeProps) {
   const { classes, lastUpdated, isOnline, currentSite } = props;
 
   const calculateCustomerData = () => {
-    // customers to charge:  haven't charged yet/ no meterreading
+    // customers to charge:  haven't charged yet / no meter reading
     // outstanding payments: done the meter reading / charged, haven't paid yet
     let numCustomersToCharge = 0;
     let numOutstandingPayments = 0;
@@ -50,7 +50,7 @@ function Home(props: HomeProps) {
       //depends if the meter readings list is sorted with earliest => latest
       const latestMeterReading = currCustomer.meterReadings[currCustomer.meterReadings.length - 1];
       if (latestMeterReading != null) {
-        if (lessThanCurrentPeriod(latestMeterReading.date)) {
+        if (isBeforeCurrentPeriod(latestMeterReading.date)) {
           numCustomersToCharge += 1;
         }
         if (parseInt(currCustomer.outstandingBalance) > 0) {
@@ -60,7 +60,7 @@ function Home(props: HomeProps) {
         numCustomersToCharge += 1;
       }
     }
-    return { 'numOutstandingPayments': numOutstandingPayments, 'numCustomersToCharge': numCustomersToCharge }
+    return { numOutstandingPayments, numCustomersToCharge }
   }
 
 

@@ -20,13 +20,7 @@ const refreshSiteData = async (loadSilently: boolean): Promise<void> => {
     currentSite = sites[0];
   }
 
-  // for (let i = 0; i < sites.length; i++) {
-  //   const singleSite = sites[i];
-  //   if (singleReading) {
-  //     singleReading.sort((a: MeterReadingRecord, b: MeterReadingRecord) => (Date.parse(a.date) > Date.parse(b.date)) ? -1 : 1);
-  //   }
-  // }
-
+  // Sort each customer's meter readings to be chronological
   for (let i = 0; i < sites.length; i++) {
     const singleSite = sites[i];
     const customers = singleSite.customers;
