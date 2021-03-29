@@ -10,6 +10,7 @@ interface siteDataSliceState {
   sites: any[];
 }
 
+//TODO @julianrkung: Change sites to siteIdsToSites and change currentSite to currentSiteId
 const initialState: siteDataSliceState = {
   isLoading: false,
   currentSite: null,
@@ -60,28 +61,8 @@ const siteDataSlice = createSlice({
     setCurrSite(state, action) {
       state.currentSite = action.payload;
     },
-    setCurrCustomer(state, action) {
-      state.currentCustomer = action.payload;
-    },
-    // TODO: @julianrkung move to customerDataSlice
-    addCustomer(state, action) {
-      return {
-      ...state,
-      currentSite:{
-        ...state.currentSite,
-        customers:[
-          ...state.currentSite.customers, action.payload
-        ]
-        }
-      }
-    },
-    editCustomer(state, action) {
-      const index = state.currentSite.customers.findIndex((e: CustomerRecord) => e.id === action.payload.id);
-      state.currentSite.customers[index] = action.payload;
-      state.currentCustomer = action.payload;
-    }
   },
 });
 
-export const { setLoadingForSiteData, saveSiteData, setCurrSite, setCurrCustomer, addCustomer, editCustomer } = siteDataSlice.actions;
+export const { setLoadingForSiteData, saveSiteData, setCurrSite } = siteDataSlice.actions;
 export default siteDataSlice.reducer;

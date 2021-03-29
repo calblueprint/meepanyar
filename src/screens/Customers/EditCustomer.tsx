@@ -11,9 +11,10 @@ import { editCustomer } from '../../lib/airtable/request';
 import { RootState } from '../../lib/redux/store';
 import { CustomerRecord, SiteRecord, CustomerUpdateRecord } from '../../lib/airtable/interface';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
-import { EMPTY_CUSTOMER } from '../../lib/utils/customerUtils';
+import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { User, EMPTY_USER } from '../../lib/redux/userDataSlice';
+import { getCurrentCustomer } from '../../lib/redux/customerData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -75,10 +76,9 @@ function EditCustomer(props: EditCustomerProps) {
     customer.tariffPlanId = selectedTariffPlanId;
 
     // TODO: add error handling
-    editCustomer(customer, customerUpdate);
-
-    // Navigate to the new customer's profile page
-    history.replace(`/customers/customer`, { customer });
+    // We goBack instead of replace so there aren't 2 
+    // "/customers/customer" routes in the history stack
+    editCustomer(customer, customerUpdate).then(history.goBack);
   }
 
   const handleNameInput = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -117,7 +117,7 @@ function EditCustomer(props: EditCustomerProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  currentCustomer: state.siteData.currentCustomer || EMPTY_CUSTOMER,
+  currentCustomer: getCurrentCustomer() || EMPTY_CUSTOMER,
   currentSite: state.siteData.currentSite || EMPTY_SITE,
   user: state.userData.user || EMPTY_USER,
 });

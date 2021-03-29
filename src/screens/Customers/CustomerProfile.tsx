@@ -1,7 +1,7 @@
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
@@ -12,9 +12,10 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { setCurrentCustomer } from '../../lib/redux/siteData';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
+import { getCurrentCustomer } from '../../lib/redux/customerData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,16 +48,12 @@ const styles = (theme: Theme) =>
 interface CustomerProps extends RouteComponentProps {
   classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string;};
   currentSite: SiteRecord;
+  customer: CustomerRecord;
   location: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
-  const { classes, match, currentSite } = props;
-  const customer: CustomerRecord = props.location.state.customer;
-
-  useEffect(() => {
-    setCurrentCustomer(customer); //TODO: @julianrkung need to make customer data retrieval consistent (Link vs Redux)
-  },[]);
+  const { classes, match, currentSite, customer } = props;
 
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
@@ -166,6 +163,7 @@ function CustomerProfile(props: CustomerProps) {
 
 const mapStateToProps = (state: RootState) => ({
   currentSite: state.siteData.currentSite || EMPTY_SITE,
+  customer: getCurrentCustomer() || EMPTY_CUSTOMER,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));

@@ -81,6 +81,7 @@ export const createManyTariffPlans = async (records) => {
 // that hits a special endpoint because we require additional logic to
 // handle offline functionality
 export const createCustomer = async (customer) => {
+  let customerId = '';
   try {
     const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/create`, {
       method: 'POST',
@@ -89,11 +90,15 @@ export const createCustomer = async (customer) => {
       },
       body: JSON.stringify(customer)
     })
-
     console.log(resp);
+    await resp.json().then(data => customerId = data.id);
   } catch (err) {
     console.log(err);
+    customerId = generateOfflineId();
   }
+  customer.id = customerId;
+  addCustomerToRedux(customer);
+  return customerId;
 }
 
 export const createCustomerUpdate = async (record) => {
