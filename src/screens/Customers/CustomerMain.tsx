@@ -220,14 +220,14 @@ function CustomerMain(props: CustomerMainProps) {
       <BaseScrollView>
         <FormHelperText>{filterLabels[0]}</FormHelperText>
         {filteredCustomers.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/customer` }} onClick={() => setCurrentCustomerInRedux(customer)} >
+          <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerInRedux(customer)} >
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
         }
         <FormHelperText>{filterLabels[1]}</FormHelperText>
         {filteredCustomersAlt.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/customer` }} onClick={() => setCurrentCustomerInRedux(customer)} >
+          <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerInRedux(customer)} >
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))

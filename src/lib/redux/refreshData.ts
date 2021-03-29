@@ -70,7 +70,7 @@ const extractCustomerDataFromSite = (sites: SiteRecord[]) => {
         delete site.customers;
     })
 
-    store.dispatch(saveCustomerData({ siteIdsToCustomers }))
+    store.dispatch(saveCustomerData(siteIdsToCustomers))
 }
 
 export default refreshData;

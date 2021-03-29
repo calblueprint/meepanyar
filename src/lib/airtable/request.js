@@ -98,9 +98,6 @@ export const createCustomer = async (customer) => {
     customerId = generateOfflineId();
   }
   customer.id = customerId;
-  addCustomerToRedux(customer);
-  setCurrentCustomerInRedux(customer);
-
 }
 
 export const createCustomerUpdate = async (record) => {

@@ -39,8 +39,7 @@ const customerDataSlice = createSlice({
     initialState,
     reducers: {
         saveCustomerData(state, action) {
-            const { siteIdsToCustomers } = action.payload;
-            state.siteIdsToCustomers = siteIdsToCustomers;
+            state.siteIdsToCustomers = action.payload;
         },
         setCurrentCustomerId(state, action) {
             state.currentCustomerId = action.payload

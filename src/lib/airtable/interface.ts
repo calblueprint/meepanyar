@@ -33,16 +33,16 @@ export interface SiteRecord {
   id: string;
   name: string;
   customerIds: string[];
-  customers?: CustomerRecord[];
   financialSummaryIds: string[];
   financialSummaries: FinancialSummaryRecord[];
   tariffPlans: TariffPlanRecord[];
-  // These are extracted to InventoryDataSlice and deleted from SiteRecord
+  // These are extracted to other slices and deleted from SiteRecord
   inventoryIds?: string[];
   products?: ProductRecord[];
   inventory?: InventoryRecord[];
   purchaseRequests?: PurchaseRequestRecord[];
   inventoryUpdates?: InventoryUpdateRecord[];
+  customers?: CustomerRecord[];
 }
 
 export interface TariffPlanRecord {
