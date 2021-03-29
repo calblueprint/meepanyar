@@ -44,7 +44,7 @@ function Home(props: HomeProps) {
     // outstanding payments: done the meter reading / charged, haven't paid yet
     let numCustomersToCharge = 0;
     let numOutstandingPayments = 0;
-    const customers = currentSite.customers;
+    const customers = currentSite.customers || [];
     for (let i = 0; i < customers.length; i++) {
       const currCustomer = customers[i]
       //depends if the meter readings list is sorted with earliest => latest

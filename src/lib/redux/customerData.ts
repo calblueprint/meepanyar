@@ -12,8 +12,8 @@ const editCustomerInRedux = (customer: any): void => {
     store.dispatch(editCustomer(customer));
 };
 
-const setCurrentCustomerInRedux = (customer: CustomerRecord): void => {
-    store.dispatch(setCurrentCustomerId(customer.id))
+const setCurrentCustomerIdInRedux = (customerId: string): void => {
+    store.dispatch(setCurrentCustomerId(customerId))
 }
 
 const getCurrentCustomer = (): CustomerRecord | undefined => {
@@ -29,4 +29,4 @@ const getAllCustomersInSite = (): CustomerRecord[] => {
     return Object.values(siteIdsToCustomers);
 }
 
-export { setCurrentCustomerInRedux, addCustomerToRedux, getAllCustomersInSite, editCustomerInRedux, getCurrentCustomer };
+export { setCurrentCustomerIdInRedux, addCustomerToRedux, getAllCustomersInSite, editCustomerInRedux, getCurrentCustomer };

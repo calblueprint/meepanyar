@@ -9,7 +9,7 @@ import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 import { SiteRecord } from '../../lib/airtable/interface';
 import { createCustomer } from '../../lib/airtable/request';
-import { addCustomerToRedux, setCurrentCustomerInRedux } from '../../lib/redux/customerData';
+import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
@@ -62,11 +62,8 @@ function AddCustomer(props: AddCustomerProps) {
     createCustomer({
       ...customer,
       siteId: currentSite.id
-    }).then(() => {
-
-      // Customer has their `id` generated / fetched from airtable in `createCustomer`
-      addCustomerToRedux(customer);
-      setCurrentCustomerInRedux(customer);
+    }).then((id) => {
+      setCurrentCustomerIdInRedux(id);
       history.replace(`customer`);
     });
   }
