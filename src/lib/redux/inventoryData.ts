@@ -11,7 +11,7 @@ import {
   updateInventoryQuantity,
   updatePurchaseRequest
 } from './inventoryDataSlice';
-import { getCurrentSite } from './siteData';
+import { getCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
 
 // Custom selectors for current inventory and product
@@ -50,7 +50,7 @@ const addInventoryToRedux = (inventory: InventoryRecord): void => {
 const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord): void => {
   const purchaseRequestData = {
     ...purchaseRequest,
-    siteId: getCurrentSite().id,
+    siteId: getCurrentSiteId(),
   };
   store.dispatch(addPurchaseRequest(purchaseRequestData));
 };
@@ -58,7 +58,7 @@ const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord): void
 const updatePurchaseRequestInRedux = (purchaseRequest: Partial<PurchaseRequestRecord>): void => {
   const purchaseRequestUpdates = {
     ...purchaseRequest,
-    siteId: getCurrentSite().id,
+    siteId: getCurrentSiteId(),
   };
   store.dispatch(updatePurchaseRequest(purchaseRequestUpdates));
 };
@@ -67,7 +67,7 @@ const updateInventoryQuantityInRedux = (inventoryId: string, newQuantity: number
   const updateData = {
     inventoryId,
     newQuantity,
-    siteId: getCurrentSite().id,
+    siteId: getCurrentSiteId(),
   };
   store.dispatch(updateInventoryQuantity(updateData));
 };

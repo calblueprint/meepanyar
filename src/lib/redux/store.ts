@@ -7,6 +7,7 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 import thunk from 'redux-thunk';
 import inventoryDataSlice from './inventoryDataSlice';
 import siteDataSlice from './siteDataSlice';
+import customerDataSlice from './customerDataSlice';
 import userDataSlice from './userDataSlice';
 
 
@@ -15,6 +16,7 @@ const history = createBrowserHistory();
 const allReducers = combineReducers({
   userData: userDataSlice,
   siteData: siteDataSlice,
+  customerData: customerDataSlice,
   inventoryData: inventoryDataSlice,
   router: connectRouter(history),
 });

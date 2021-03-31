@@ -11,7 +11,7 @@ import { InventoryRecord } from '../../lib/airtable/interface';
 import { createInventory } from '../../lib/airtable/request';
 import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY, selectAllCurrentSiteInventoryArray, selectAllProducts } from '../../lib/redux/inventoryDataSlice';
-import { getCurrentSite } from '../../lib/redux/siteData';
+import { getCurrentSiteId } from '../../lib/redux/siteData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -49,7 +49,7 @@ function AddInventory (props: AddInventoryProps) {
     // Make a deep copy of an empty inventory record
     let inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY));
     inventory.productId = selectedProductId;
-    inventory.siteId = getCurrentSite().id;
+    inventory.siteId = getCurrentSiteId();
     inventory.currentQuantity = startingAmount;
     inventory.periodStartQuantity = startingAmount;
     

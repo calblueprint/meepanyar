@@ -12,7 +12,7 @@ import TextField from '../../components/TextField';
 import { createPurchaseRequestAndUpdateInventory } from '../../lib/airtable/request';
 import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
 import { EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
-import { userIdSelector } from '../../lib/redux/userData';
+import { selectCurrentUserId } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
 
@@ -38,7 +38,7 @@ interface CreatePurchaseRequestProps extends RouteComponentProps {
 function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const { classes } = props;
   const history = useHistory();
-  const userId = useSelector(userIdSelector);
+  const userId = useSelector(selectCurrentUserId);
   const inventory = useSelector(selectCurrentInventory);
   const product = useSelector(selectCurrentInventoryProduct);
 
