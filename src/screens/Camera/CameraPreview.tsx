@@ -5,7 +5,6 @@ import Button from '../../components/Button';
 import { withStyles } from '@material-ui/core/styles';
 import { createStyles } from '@material-ui/core';
 import { PreservedCameraState } from './Camera';
-import { createFinancialSummary } from '../../lib/airtable/request';
 
 interface CameraPreviewState extends PreservedCameraState {
     photoUri: string;
@@ -33,11 +32,6 @@ function CameraPreview(props: CameraPreviewProps) {
     }
 
     const handleConfirm = async () => {
-
-        // TODO: Remove this before merging PR. This is for testing purposes only
-        const financialSummary = await createFinancialSummary({ bankSlip: [{ url: photoUri }] });
-
-        console.log(financialSummary);
         history.replace(returnLink, { ...preservedState, photo: photoUri })
     }
 

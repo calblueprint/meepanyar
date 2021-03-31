@@ -41,7 +41,7 @@ function CameraScreen(props: CameraProps) {
     const onCameraError = (error: Error) => {
         let exposedErrorMessage = '';
         if (error.name === 'NotFoundError') {
-            exposedErrorMessage = 'Camera Not found :(';
+            exposedErrorMessage = 'Camera Not found';
             // Camera only works on secure contexts (https or localhost). Unsecure contexts are caught here
         } else if (error.name === 'TypeError' && !navigator.mediaDevices) {
             exposedErrorMessage = 'MediaDevices returned undefined. Ensure the connection to site is secure';

@@ -161,21 +161,9 @@ export const createPayment = async (payment, customer) => {
   }
 }
 
-export const createFinancialSummary = async (financialSummary) => {
-  try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/financial-summaries/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(financialSummary)
-    })
-
-    console.log(resp);
-  } catch (err) {
-    console.log(err);
-  }
-};
+export const createFinancialSummary = async (record) => {
+  return createRecord(Tables.FinancialSummaries, record);
+}
 
 export const createManyFinancialSummaries = async (records) => {
   const createPromises = [];
