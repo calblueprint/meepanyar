@@ -163,7 +163,7 @@ export const createPayment = async (payment, customer) => {
 
 export const createFinancialSummary = async (record) => {
   return createRecord(Tables.FinancialSummaries, record);
-}
+};
 
 export const createManyFinancialSummaries = async (records) => {
   const createPromises = [];
