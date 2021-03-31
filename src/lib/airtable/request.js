@@ -226,6 +226,8 @@ export const createManyInventorys = async (records) => {
 };
 
 // NONGENERATED: Create a Purchase Request and update the inventory's current qty (regardless of approval status)
+// TODO: handle offline workflow of creating purchase requests for inventory
+// that was created offline (no Airtable id).
 export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) => {
   let purchaseRequestId = "";
   const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;

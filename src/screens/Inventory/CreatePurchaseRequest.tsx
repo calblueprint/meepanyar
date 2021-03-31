@@ -4,14 +4,14 @@ import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { createPurchaseRequestAndUpdateInventory } from '../../lib/airtable/request';
 import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
-import { EMPTY_INVENTORY, EMPTY_PRODUCT, EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
+import { EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
 import { userIdSelector } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
@@ -39,12 +39,17 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const { classes } = props;
   const history = useHistory();
   const userId = useSelector(userIdSelector);
-  const inventory = useSelector(selectCurrentInventory) || EMPTY_INVENTORY;
-  const product = useSelector(selectCurrentInventoryProduct) || EMPTY_PRODUCT;
+  const inventory = useSelector(selectCurrentInventory);
+  const product = useSelector(selectCurrentInventoryProduct);
 
   const [amountPurchased, setAmountPurchased] = useState(0.0);
   const [amountSpent, setAmountSpent] = useState(0.0);
   const [notes, setNotes] = useState("");
+
+  // Redirect to InventoryMain if undefined
+  if (!userId || !inventory || !product) {
+    return <Redirect to={'/inventory'} />;
+  }
 
   // TODO @wangannie: add better edge case handling
   const handleAmountPurchasedInput = (event: React.ChangeEvent<{ value: unknown }>) => {
