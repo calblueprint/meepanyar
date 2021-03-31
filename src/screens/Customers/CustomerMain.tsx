@@ -76,15 +76,13 @@ function CustomerMain(props: CustomerMainProps) {
   const { classes } = props;
   const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
   const [filteredCustomersAlt, setFilteredCustomersAlt] = useState<CustomerRecord[]>([]);
-  const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
   const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME);
   const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.ACTIVE_STATUS);
   const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
   const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]);
   const [searchValue, setSearchValue] = useState<string>("");
-
-  let allCustomers: CustomerRecord[] = useSelector(selectAllCustomersArray);
+  const fullCustomers = useSelector(selectAllCustomersArray) || [];
 
   useEffect(() => {
     getCustomers();
@@ -92,7 +90,8 @@ function CustomerMain(props: CustomerMainProps) {
   }, [sortBy, filterBy, searchValue]);
 
   const getCustomers = () => {
-    setFullCustomers(allCustomers);
+    let allCustomers = fullCustomers;
+
     if (searchValue !== '') {
       allCustomers = allCustomersTrie.get(searchValue);
     }
