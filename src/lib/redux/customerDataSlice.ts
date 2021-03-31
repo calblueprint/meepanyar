@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import { CustomerRecord, SiteId } from '../airtable/interface';
 import { setCurrSite } from './siteDataSlice';
+import { RootState } from './store';
 
 export const EMPTY_CUSTOMER: CustomerRecord = {
     id: '',
@@ -22,15 +23,26 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     totalAmountPaidfromPayments: 0,
 }
 
+const customersAdapter = createEntityAdapter<CustomerRecord>();
+
+// Returns customers in the context of the current site
+export const {
+    selectEntities: selectAllCustomers,
+    selectAll: selectAllCustomersArray,
+    selectById: selectCustomerById,
+    selectIds: selectCustomerIds
+} = customersAdapter.getSelectors(
+    (state: RootState) => state.customerData.customers[state.siteData.currentSite.id]);
+
 // TODO: @julianrkung, We should eventually make this a Record<SiteId, Record<CustomerId, CustomerRecord>> map for efficiency
 // We can't do this yet because customers created while offline do not receive an id yet
 interface customerDataSliceState {
-    siteIdsToCustomers: Record<SiteId, CustomerRecord[]>;
+    customers: Record<SiteId, EntityState<CustomerRecord>>;
     currentCustomerId: string;
 }
 
 const initialState: customerDataSliceState = {
-    siteIdsToCustomers: {},
+    customers: {},
     currentCustomerId: EMPTY_CUSTOMER.id,
 };
 
@@ -39,7 +51,10 @@ const customerDataSlice = createSlice({
     initialState,
     reducers: {
         saveCustomerData(state, action) {
-            state.siteIdsToCustomers = action.payload;
+            for (const [siteId, siteCustomers] of Object.entries(action.payload)) {
+                state.customers[siteId] = customersAdapter.getInitialState();
+                state.customers[siteId] = customersAdapter.addMany(state.customers[siteId], siteCustomers as CustomerRecord[]);
+            }
         },
         setCurrentCustomerId(state, action) {
             state.currentCustomerId = action.payload
@@ -48,21 +63,15 @@ const customerDataSlice = createSlice({
             const customer: CustomerRecord = action.payload.customer;
             const siteId: SiteId = action.payload.siteId;
 
-            if (siteId) {
-                state.siteIdsToCustomers[siteId].push(customer);
-            } else {
-                console.log("Error occurred when adding a customer. No siteId or customerId passed")
-            }
+            customersAdapter.addOne(state.customers[siteId], customer);
         },
         editCustomer(state, action) {
-            const siteId = action.payload.siteId;
-            const index = state.siteIdsToCustomers[siteId].findIndex((e: CustomerRecord) => e.id === action.payload.id);
-            if (index !== -1) {
-                state.siteIdsToCustomers[siteId][index] = action.payload;
-                state.currentCustomerId = action.payload.id;
-            } else {
-                console.error(`No matching ID was found when attempting to edit customer ${action.payload}`)
-            }
+            const { siteId, id, ...changes } = action.payload;
+            const update = {
+                id,
+                changes,
+            };
+            customersAdapter.updateOne(state.customers[siteId], update);
         }
     },
     extraReducers: {

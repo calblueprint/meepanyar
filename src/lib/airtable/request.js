@@ -23,10 +23,9 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
-import { editCustomerInRedux } from '../../lib/redux/siteData';
-import { addToOfflineCustomer } from '../utils/offlineUtils';
+import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
+import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
 import { addInventoryToRedux } from '../redux/inventoryData';
-import { generateOfflineInventoryId } from '../utils/inventoryUtils';
 
 /*
  ******* CREATE RECORDS *******
@@ -212,7 +211,7 @@ export const createInventory = async (inventory) => {
     console.log('Response for inventory: ', resp);
     await resp.json().then(data => inventoryId = data.id);
   } catch (err) {
-    inventoryId = generateOfflineInventoryId();
+    inventoryId = generateOfflineId();
     console.log('Error with create inventory request: ', err);
   }
   inventory.id = inventoryId;
