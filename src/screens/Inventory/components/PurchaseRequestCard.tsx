@@ -41,7 +41,6 @@ interface PurchaseRequestCardProps {
   status: PurchaseRequestStatus;
 }
 
-// TODO: sort by creation date/status
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
   const { classes, inventoryId, amountPurchased, createdAt, requesterId, status } = props;
   const product =
