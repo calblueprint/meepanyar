@@ -25,7 +25,6 @@ import {
 } from './airtable';
 import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
 import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
-import { generateOfflineInventoryId } from '../utils/inventoryUtils';
 import { addInventoryToRedux, addPurchaseRequestToRedux, getInventoryCurrentQuantity, updateInventoryQuantityInRedux, updatePurchaseRequestInRedux } from '../redux/inventoryData';
 
 /*
@@ -212,7 +211,7 @@ export const createInventory = async (inventory) => {
     console.log('Response for inventory: ', resp);
     await resp.json().then(data => inventoryId = data.id);
   } catch (err) {
-    inventoryId = generateOfflineInventoryId();
+    inventoryId = generateOfflineId();
     console.log('Error with create inventory request: ', err);
   }
   inventory.id = inventoryId;
@@ -242,7 +241,7 @@ export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) =
     purchaseRequestId = await createPurchaseRequest(purchaseRequest);
     updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
   } catch (err) {
-    purchaseRequestId = generateOfflineInventoryId(); // TODO: update to purchase request Id?
+    purchaseRequestId = generateOfflineId();
     console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
   }
   purchaseRequest.id = purchaseRequestId;
