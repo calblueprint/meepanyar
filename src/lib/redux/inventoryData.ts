@@ -6,6 +6,8 @@ import {
   addPurchaseRequest,
   EMPTY_INVENTORY,
   saveInventoryData,
+  selectAllCurrentSitePurchaseRequestsArray,
+  selectAllInventoryUpdatesArray,
   selectCurrentSiteInventoryById,
   selectProductById,
   setCurrInventoryId,
@@ -26,6 +28,21 @@ export const selectCurrentInventoryProduct = createSelector(
   selectCurrentInventory,
   store.getState,
   (inventory, state) => selectProductById(state, inventory?.productId || ''),
+);
+
+const getInventoryId = (_: RootState, inventoryId: string) => inventoryId;
+
+export const selectPurchaseRequestsArrayByInventoryId = createSelector(
+  selectAllCurrentSitePurchaseRequestsArray,
+  getInventoryId,
+  (purchaseRequestsArray, inventoryId) =>
+    purchaseRequestsArray.filter((purchaseRequest) => purchaseRequest.inventoryId === inventoryId),
+);
+
+export const selectInventoryUpdatesArrayByInventoryId = createSelector(
+  selectAllInventoryUpdatesArray,
+  getInventoryId,
+  (inventoryUpdatesArray, inventoryId) => inventoryUpdatesArray.filter((update) => update.inventoryId === inventoryId),
 );
 
 export const refreshInventoryData = (site: SiteRecord): void => {

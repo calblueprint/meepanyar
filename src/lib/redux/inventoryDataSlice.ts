@@ -6,7 +6,10 @@ import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestR
 import { setCurrSite } from './siteDataSlice';
 import { RootState } from './store';
 
-const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>();
+const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>({
+  // Sort by descending timestamp
+  sortComparer: (a, b) => moment(b.updatedAt).diff(a.updatedAt),
+});
 const productsAdapter = createEntityAdapter<ProductRecord>();
 const siteInventoryAdapter = createEntityAdapter<InventoryRecord>();
 const purchaseRequestsAdapter = createEntityAdapter<PurchaseRequestRecord>({
