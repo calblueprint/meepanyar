@@ -13,6 +13,8 @@ import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
 import EditCustomer from './screens/Customers/EditCustomer';
 import FinancialSummariesMain from './screens/FinancialSummary/FinancialSummariesMain';
+import Camera from './screens/Camera/Camera';
+import CameraPreview from './screens/Camera/CameraPreview';
 import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummaryPayment';
 import Home from './screens/Home/Home';
@@ -72,6 +74,8 @@ function App(isSignedIn: AppProps) {
               <Route exact path="/">
                 <Redirect to={homeRedirect} />
               </Route>
+              <Route path="/camera" component={Camera} exact />
+              <Route path="/camera/preview" component={CameraPreview} exact />
               <Route exact path="/(login)" component={Login} />
               <Route component={Container} />
             </Switch>

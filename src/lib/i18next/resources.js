@@ -3,7 +3,7 @@
  * formatted according to the conventions in https://react.i18next.com/ 
  */
 export default {
-   my_MM:{
+   my:{
        translation:{
           "undefined":"undefined",
           "Cancel":"ဖျက်သိမ်းမည်",

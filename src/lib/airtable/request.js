@@ -23,6 +23,7 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
+import { editCustomerInRedux } from '../../lib/redux/siteData';
 import { addToOfflineCustomer } from '../utils/offlineUtils';
 import { addInventoryToRedux } from '../redux/inventoryData';
 import { generateOfflineInventoryId } from '../utils/inventoryUtils';
@@ -80,6 +81,7 @@ export const createManyTariffPlans = async (records) => {
 // that hits a special endpoint because we require additional logic to
 // handle offline functionality
 export const createCustomer = async (customer) => {
+  let customerId = '';
   try {
     const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/create`, {
       method: 'POST',
@@ -88,11 +90,15 @@ export const createCustomer = async (customer) => {
       },
       body: JSON.stringify(customer)
     })
-
     console.log(resp);
+    await resp.json().then(data => customerId = data.id);
   } catch (err) {
     console.log(err);
+    customerId = generateOfflineId();
   }
+  customer.id = customerId;
+  addCustomerToRedux(customer);
+  return customerId;
 }
 
 export const createCustomerUpdate = async (record) => {
@@ -529,19 +535,36 @@ export const updateCustomer = async (id, recordUpdates) => {
 };
 
 // NONGENERATED: Edit customer
-export const editCustomer = async (customer) => {
-  try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(customer)
-    })
+export const editCustomer = async (customer, customerUpdate) => {
+  if (!customer.id) {
+    addToOfflineCustomer(customer, 'edits', customerUpdate);
+  } else {
+    try {
+      const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
+      const { dateUpdated, customerId, explanation, userId } = customerUpdate;
+      await updateCustomer(customer.id, {
+        name,
+        meterNumber,
+        tariffPlanId,
+        siteId,
+        isactive,
+        hasmeter,
+      });
+      console.log("Customer edited!");
 
-    console.log(resp);
-  } catch (err) {
-    console.log(err);
+      const updateId = await createCustomerUpdate({
+        dateUpdated,
+        customerId,
+        explanation,
+        userId
+      });
+      console.log("Update id: ", updateId);
+      console.log("Created updates!");
+
+      editCustomerInRedux(customer);
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 
