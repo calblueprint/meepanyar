@@ -115,7 +115,6 @@ export interface FinancialSummaryRecord {
 
 export interface PurchaseRequestRecord {
   id: string;
-  period: number;
   notes?: string;
   status: PurchaseRequestStatus;
   requesterId: string;
