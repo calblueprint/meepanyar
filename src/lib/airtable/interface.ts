@@ -121,7 +121,7 @@ export interface PurchaseRequestRecord {
   requesterId: string;
   reviewerId?: string;
   createdAt: string;
-  approvedAt?: string;
+  reviewedAt?: string;
   amountPurchased: number;
   amountSpent: number;
   receipt?: Airtable.Attachment[];
@@ -145,7 +145,6 @@ export interface InventoryUpdateRecord {
   previousQuantity: number;
   updatedQuantity: number;
   inventoryId: string;
-  period: number;
 }
 
 export interface ProductRecord {
