@@ -23,10 +23,15 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
-import { editCustomerInRedux } from '../../lib/redux/siteData';
-import { addToOfflineCustomer } from '../utils/offlineUtils';
-import { addInventoryToRedux } from '../redux/inventoryData';
-import { generateOfflineInventoryId } from '../utils/inventoryUtils';
+
+import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
+import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
+import {
+  addInventoryToRedux,
+  addPurchaseRequestToRedux,
+  getInventoryCurrentQuantity,
+  updateInventoryQuantityInRedux,
+} from '../redux/inventoryData';
 
 /*
  ******* CREATE RECORDS *******
@@ -212,7 +217,7 @@ export const createInventory = async (inventory) => {
     console.log('Response for inventory: ', resp);
     await resp.json().then(data => inventoryId = data.id);
   } catch (err) {
-    inventoryId = generateOfflineInventoryId();
+    inventoryId = generateOfflineId();
     console.log('Error with create inventory request: ', err);
   }
   inventory.id = inventoryId;
@@ -229,6 +234,26 @@ export const createManyInventorys = async (records) => {
       createPromises.push(createRecords(Tables.Inventory, subset));
   }
   return Promise.all(createPromises);
+};
+
+// NONGENERATED: Create a Purchase Request and update the inventory's current qty (regardless of approval status)
+// TODO: handle offline workflow of creating purchase requests for inventory
+// that was created offline (no Airtable id).
+export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) => {
+  let purchaseRequestId = "";
+  const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
+  try {
+    delete purchaseRequest.id; // Remove the id field to add to Airtable
+    purchaseRequestId = await createPurchaseRequest(purchaseRequest);
+    updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
+  } catch (err) {
+    purchaseRequestId = generateOfflineId();
+    console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
+  }
+  purchaseRequest.id = purchaseRequestId;
+  addPurchaseRequestToRedux(purchaseRequest);
+  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
+  return purchaseRequest;
 };
 
 export const createPurchaseRequest = async (record) => {
