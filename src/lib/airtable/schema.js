@@ -27,7 +27,7 @@ export const Columns = {
 		password: {name:`Password`, type:`text`},
 		name: {name:`Name`, type:`text`},
 		paymentIds: {name:`Payments`, type:`foreignKey-many`},
-		meterReadingAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
+		meterReadingsAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
 		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
 		id: {name:`ID`, type:`formula`},
 		purchaseRequestIds: {name:`Purchase Requests`, type:`foreignKey-many`},
