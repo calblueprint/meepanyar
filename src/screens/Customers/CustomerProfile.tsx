@@ -12,7 +12,6 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
 import { selectCurrentCustomer } from '../../lib/redux/customerData';
@@ -54,9 +53,9 @@ interface CustomerProps extends RouteComponentProps {
 
 function CustomerProfile(props: CustomerProps) {
   const { classes, match, currentSite } = props;
-  const customer : CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
+  const customer = useSelector(selectCurrentCustomer);
 
-  if (customer === EMPTY_CUSTOMER) {
+  if (!customer) {
     return <Redirect to={'/customers'} />;
   }
 

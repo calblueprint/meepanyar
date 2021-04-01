@@ -33,7 +33,6 @@ const styles = (theme: Theme) =>
 interface EditCustomerProps extends RouteComponentProps {
   classes: { header: string; content: string; formControl: string; };
   location: any;
-  currentCustomer: CustomerRecord;
   currentSite: SiteRecord;
   user: User;
 }

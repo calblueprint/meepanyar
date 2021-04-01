@@ -82,7 +82,7 @@ function CustomerMain(props: CustomerMainProps) {
   const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
   const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]);
   const [searchValue, setSearchValue] = useState<string>("");
-  const fullCustomers = useSelector(selectAllCustomersArray) || [];
+  const fullCustomers : CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
 
   useEffect(() => {
     getCustomers();
