@@ -102,6 +102,7 @@ export const EMPTY_INVENTORY_UPDATE: InventoryUpdateRecord = {
   previousQuantity: 0,
   updatedQuantity: 0,
   inventoryId: '',
+  updatedAt: '',
   period: 0,
 };
 
@@ -164,6 +165,10 @@ const inventoryDataSlice = createSlice({
       };
       purchaseRequestsAdapter.updateOne(state.sitesInventory[siteId].purchaseRequests, update);
     },
+    addInventoryUpdate(state, action) {
+      const { siteId, ...payload } = action.payload;
+      inventoryUpdatesAdapter.addOne(state.sitesInventory[siteId].inventoryUpdates, payload);
+    },
     updateInventoryQuantity(state, action) {
       const siteId = action.payload.siteId;
       const update = {
@@ -189,6 +194,7 @@ export const {
   addInventory,
   addPurchaseRequest,
   updatePurchaseRequest,
+  addInventoryUpdate,
   updateInventoryQuantity,
   setCurrInventoryId,
 } = inventoryDataSlice.actions;

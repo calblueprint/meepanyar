@@ -24,13 +24,14 @@ import {
   deleteRecord,
 } from './airtable';
 
-import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
+import { addCustomerToRedux, editCustomerInRedux } from '../../lib/redux/customerData';
 import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
+  addInventoryUpdateToRedux,
   addPurchaseRequestToRedux,
   getInventoryCurrentQuantity,
-  updateInventoryQuantityInRedux,
+  updateInventoryQuantityInRedux
 } from '../redux/inventoryData';
 
 /*
@@ -269,6 +270,25 @@ export const createManyPurchaseRequests = async (records) => {
       createPromises.push(createRecords(Tables.PurchaseRequests, subset));
   }
   return Promise.all(createPromises);
+};
+
+// NONGENERATED: Create an Inventory Update and update the inventory's current qty
+// TODO: handle offline workflow of creating inventory updates for inventory
+// that was created offline (no Airtable id).
+export const createInventoryUpdateAndUpdateInventory = async (inventoryUpdate) => {
+  let inventoryUpdateId = "";
+  try {
+    delete inventoryUpdate.id; // Remove the id field to add to Airtable
+    inventoryUpdateId = await createInventoryUpdate(inventoryUpdate);
+    updateInventory(inventoryUpdate.inventoryId, {currentQuantity: inventoryUpdate.updatedQuantity });
+  } catch (err) {
+    inventoryUpdateId = generateOfflineId();
+    console.log('(createInventoryUpdateAndUpdateInventory) Error: ', err);
+  }
+  inventoryUpdate.id = inventoryUpdateId;
+  addInventoryUpdateToRedux(inventoryUpdate);
+  updateInventoryQuantityInRedux(inventoryUpdate.inventoryId, inventoryUpdate.updatedQuantity);
+  return inventoryUpdateId;
 };
 
 export const createInventoryUpdate = async (record) => {

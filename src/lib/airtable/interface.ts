@@ -144,6 +144,7 @@ export interface InventoryUpdateRecord {
   userId: string;
   previousQuantity: number;
   updatedQuantity: number;
+  updatedAt: string;
   inventoryId: string;
   period: number;
 }

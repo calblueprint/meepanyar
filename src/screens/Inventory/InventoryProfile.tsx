@@ -29,6 +29,12 @@ const getPurchaseRequestButton = () => (
   </Link>
 );
 
+const getUpdateButton = () => (
+  <Link to={'updates/create'}>
+    <Button label={'Update'} />
+  </Link>
+);
+
 function InventoryProfile(props: InventoryProps) {
   const { classes } = props;
   const inventory = useSelector(selectCurrentInventory);
@@ -49,6 +55,7 @@ function InventoryProfile(props: InventoryProps) {
             currentQuantity={inventory.currentQuantity}
           />
           {getPurchaseRequestButton()}
+          {getUpdateButton()}
           <div className={classes.section}></div>
         </div>
       </BaseScrollView>
