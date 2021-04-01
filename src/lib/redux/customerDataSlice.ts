@@ -32,17 +32,17 @@ export const {
     selectById: selectCustomerById,
     selectIds: selectCustomerIds
 } = customersAdapter.getSelectors(
-    (state: RootState) => state.customerData.customers[state.siteData.currentSite.id]);
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id]);
 
 // TODO: @julianrkung, We should eventually make this a Record<SiteId, Record<CustomerId, CustomerRecord>> map for efficiency
 // We can't do this yet because customers created while offline do not receive an id yet
 interface customerDataSliceState {
-    customers: Record<SiteId, EntityState<CustomerRecord>>;
+    sitesCustomers: Record<SiteId, EntityState<CustomerRecord>>;
     currentCustomerId: string;
 }
 
 const initialState: customerDataSliceState = {
-    customers: {},
+    sitesCustomers: {},
     currentCustomerId: EMPTY_CUSTOMER.id,
 };
 
@@ -52,8 +52,8 @@ const customerDataSlice = createSlice({
     reducers: {
         saveCustomerData(state, action) {
             for (const [siteId, siteCustomers] of Object.entries(action.payload)) {
-                state.customers[siteId] = customersAdapter.getInitialState();
-                state.customers[siteId] = customersAdapter.addMany(state.customers[siteId], siteCustomers as CustomerRecord[]);
+                state.sitesCustomers[siteId] = customersAdapter.getInitialState();
+                state.sitesCustomers[siteId] = customersAdapter.addMany(state.sitesCustomers[siteId], siteCustomers as CustomerRecord[]);
             }
         },
         setCurrentCustomerId(state, action) {
@@ -63,7 +63,7 @@ const customerDataSlice = createSlice({
             const customer: CustomerRecord = action.payload.customer;
             const siteId: SiteId = action.payload.siteId;
 
-            customersAdapter.addOne(state.customers[siteId], customer);
+            customersAdapter.addOne(state.sitesCustomers[siteId], customer);
         },
         editCustomer(state, action) {
             const { siteId, id, ...changes } = action.payload;
@@ -71,7 +71,7 @@ const customerDataSlice = createSlice({
                 id,
                 changes,
             };
-            customersAdapter.updateOne(state.customers[siteId], update);
+            customersAdapter.updateOne(state.sitesCustomers[siteId], update);
         }
     },
     extraReducers: {

@@ -9,7 +9,7 @@ export const addCustomerToRedux = (customer: CustomerRecord): void => {
     store.dispatch(addCustomer({ siteId, customer }));
 };
 
-export const editCustomerInRedux = (customer: any): void => {
+export const editCustomerInRedux = (customer: Partial<CustomerRecord>): void => {
     const customerUpdates = {
         ...customer,
         siteId: getCurrentSiteId()
