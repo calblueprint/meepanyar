@@ -1,14 +1,16 @@
 import { createStyles, Fab, Theme, withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import InventoryCard from '../../components/Inventory/InventoryCard';
-import { InventoryRecord, SiteRecord } from '../../lib/airtable/interface';
-import { EMPTY_SITE_INVENTORY_DATA, SiteInventoryData } from '../../lib/redux/inventoryDataSlice';
-import { RootState } from '../../lib/redux/store';
+import Button from '../../components/Button';
+import { InventoryRecord } from '../../lib/airtable/interface';
+import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { selectAllCurrentSiteInventoryArray } from '../../lib/redux/inventoryDataSlice';
+import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
+import InventoryCard from './components/InventoryCard';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -22,19 +24,21 @@ const styles = (theme: Theme) =>
 
 interface InventoryProps extends RouteComponentProps {
   classes: { fab: string };
-  currentSite: SiteRecord;
-  currentSiteInventory: SiteInventoryData;
 }
 
 // TODO @wangannie: address empty state
 function InventoryMain (props: InventoryProps) {
-    const { classes, currentSiteInventory } = props;
+    const { classes } = props;
+    const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
     return (
       <BaseScreen title="Inventory">
         <BaseScrollView>
-          {currentSiteInventory.siteInventory.map((inventory: InventoryRecord) =>  (
-            <Link key={inventory.id} to={{ pathname: `/inventory/item`, state: { inventoryItem: inventory }}}>
-              <InventoryCard key={inventory.id} inventoryItem={inventory}/>
+          <Link to={'/inventory/purchase-requests'}>
+            <Button label="Purchase Requests"/>
+          </Link>
+          {siteInventory.map((inventory: InventoryRecord) =>  (
+            <Link key={inventory.id} to={'/inventory/item'} onClick={() => setCurrentInventoryIdInRedux(inventory.id)}>
+              <InventoryCard key={inventory.id} productId={inventory.productId} lastUpdated={getInventoryLastUpdated(inventory)}/>
             </Link>
           ))}
         </BaseScrollView>
@@ -47,8 +51,4 @@ function InventoryMain (props: InventoryProps) {
     );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  currentSiteInventory: state.inventoryData.sitesInventory[state.siteData.currentSite?.id || ""] || EMPTY_SITE_INVENTORY_DATA,
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(InventoryMain));
+export default withStyles(styles)(InventoryMain);

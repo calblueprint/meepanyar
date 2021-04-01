@@ -1,19 +1,24 @@
 diff --git a/src/lib/airtable/request.js b/src/lib/airtable/request.js
-index ae23270..9282e4a 100644
+index ae23270..e9698d3 100644
 --- a/src/lib/airtable/request.js
 +++ b/src/lib/airtable/request.js
-@@ -23,6 +23,10 @@ import {
-   getRecordById,
+@@ -24,6 +24,15 @@ import {
    deleteRecord,
  } from './airtable';
-+import { editCustomerInRedux } from '../../lib/redux/siteData';
-+import { addToOfflineCustomer } from '../utils/offlineUtils';
-+import { addInventoryToRedux } from '../redux/inventoryData';
-+import { generateOfflineInventoryId } from '../utils/inventoryUtils';
  
++import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
++import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
++import {
++  addInventoryToRedux,
++  addPurchaseRequestToRedux,
++  getInventoryCurrentQuantity,
++  updateInventoryQuantityInRedux,
++} from '../redux/inventoryData';
++
  /*
   ******* CREATE RECORDS *******
-@@ -73,20 +77,29 @@ export const createManyTariffPlans = async (records) => {
+  */
+@@ -73,20 +82,29 @@ export const createManyTariffPlans = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -56,7 +61,7 @@ index ae23270..9282e4a 100644
  
  export const createCustomerUpdate = async (record) => {
    return createRecord(Tables.CustomerUpdates, record);
-@@ -103,37 +116,57 @@ export const createManyCustomerUpdates = async (records) => {
+@@ -103,37 +121,57 @@ export const createManyCustomerUpdates = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -142,7 +147,7 @@ index ae23270..9282e4a 100644
    return createRecord(Tables.FinancialSummaries, record);
  };
  
-@@ -163,9 +196,29 @@ export const createManyProducts = async (records) => {
+@@ -163,9 +201,29 @@ export const createManyProducts = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -165,7 +170,7 @@ index ae23270..9282e4a 100644
 +    console.log('Response for inventory: ', resp);
 +    await resp.json().then(data => inventoryId = data.id);
 +  } catch (err) {
-+    inventoryId = generateOfflineInventoryId();
++    inventoryId = generateOfflineId();
 +    console.log('Error with create inventory request: ', err);
 +  }
 +  inventory.id = inventoryId;
@@ -175,7 +180,34 @@ index ae23270..9282e4a 100644
  
  export const createManyInventorys = async (records) => {
    const createPromises = [];
-@@ -216,7 +269,7 @@ export const getUserById = async (id) => {
+@@ -178,6 +236,26 @@ export const createManyInventorys = async (records) => {
+   return Promise.all(createPromises);
+ };
+ 
++// NONGENERATED: Create a Purchase Request and update the inventory's current qty (regardless of approval status)
++// TODO: handle offline workflow of creating purchase requests for inventory
++// that was created offline (no Airtable id).
++export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) => {
++  let purchaseRequestId = "";
++  const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
++  try {
++    delete purchaseRequest.id; // Remove the id field to add to Airtable
++    purchaseRequestId = await createPurchaseRequest(purchaseRequest);
++    updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
++  } catch (err) {
++    purchaseRequestId = generateOfflineId();
++    console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
++  }
++  purchaseRequest.id = purchaseRequestId;
++  addPurchaseRequestToRedux(purchaseRequest);
++  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
++  return purchaseRequest;
++};
++
+ export const createPurchaseRequest = async (record) => {
+   return createRecord(Tables.PurchaseRequests, record);
+ };
+@@ -216,7 +294,7 @@ export const getUserById = async (id) => {
    return getRecordById(Tables.Users, id);
  };
  
@@ -184,7 +216,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -234,7 +287,7 @@ export const getSiteById = async (id) => {
+@@ -234,7 +312,7 @@ export const getSiteById = async (id) => {
    return getRecordById(Tables.Sites, id);
  };
  
@@ -193,7 +225,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -252,7 +305,7 @@ export const getTariffPlanById = async (id) => {
+@@ -252,7 +330,7 @@ export const getTariffPlanById = async (id) => {
    return getRecordById(Tables.TariffPlans, id);
  };
  
@@ -202,7 +234,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -270,7 +323,7 @@ export const getCustomerById = async (id) => {
+@@ -270,7 +348,7 @@ export const getCustomerById = async (id) => {
    return getRecordById(Tables.Customers, id);
  };
  
@@ -211,7 +243,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -288,7 +341,7 @@ export const getCustomerUpdateById = async (id) => {
+@@ -288,7 +366,7 @@ export const getCustomerUpdateById = async (id) => {
    return getRecordById(Tables.CustomerUpdates, id);
  };
  
@@ -220,7 +252,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -302,11 +355,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
+@@ -302,11 +380,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
    return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
  };
  
@@ -234,7 +266,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -324,7 +377,7 @@ export const getPaymentById = async (id) => {
+@@ -324,7 +402,7 @@ export const getPaymentById = async (id) => {
    return getRecordById(Tables.Payments, id);
  };
  
@@ -243,7 +275,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -338,11 +391,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
+@@ -338,11 +416,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
    return getAllRecords(Tables.Payments, filterByFormula, sort);
  };
  
@@ -257,7 +289,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -360,7 +413,7 @@ export const getProductById = async (id) => {
+@@ -360,7 +438,7 @@ export const getProductById = async (id) => {
    return getRecordById(Tables.Products, id);
  };
  
@@ -266,7 +298,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -378,7 +431,7 @@ export const getInventoryById = async (id) => {
+@@ -378,7 +456,7 @@ export const getInventoryById = async (id) => {
    return getRecordById(Tables.Inventory, id);
  };
  
@@ -275,7 +307,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -396,7 +449,7 @@ export const getPurchaseRequestById = async (id) => {
+@@ -396,7 +474,7 @@ export const getPurchaseRequestById = async (id) => {
    return getRecordById(Tables.PurchaseRequests, id);
  };
  
@@ -284,7 +316,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -414,7 +467,7 @@ export const getInventoryUpdateById = async (id) => {
+@@ -414,7 +492,7 @@ export const getInventoryUpdateById = async (id) => {
    return getRecordById(Tables.InventoryUpdates, id);
  };
  
@@ -293,7 +325,7 @@ index ae23270..9282e4a 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -481,6 +534,40 @@ export const updateCustomer = async (id, recordUpdates) => {
+@@ -481,6 +559,40 @@ export const updateCustomer = async (id, recordUpdates) => {
    return updateRecord(Tables.Customers, id, recordUpdates);
  };
  
@@ -334,7 +366,7 @@ index ae23270..9282e4a 100644
  export const updateManyCustomers = async (recordUpdates) => {
    const updatePromises = [];
    const numCalls = Math.ceil(recordUpdates.length / 10);
-@@ -507,7 +594,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
+@@ -507,7 +619,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -343,7 +375,7 @@ index ae23270..9282e4a 100644
    return updateRecord(Tables.MeterReadingsandInvoices, id, recordUpdates);
  };
  
-@@ -537,7 +624,7 @@ export const updateManyPayments = async (recordUpdates) => {
+@@ -537,7 +649,7 @@ export const updateManyPayments = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -352,7 +384,7 @@ index ae23270..9282e4a 100644
    return updateRecord(Tables.FinancialSummaries, id, recordUpdates);
  };
  
-@@ -637,7 +724,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
+@@ -637,7 +749,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
  export const deletePayment = async (id) => {
    return deleteRecord(Tables.Payments, id);
  };

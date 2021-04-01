@@ -1,7 +1,8 @@
 import $ from 'jquery';
 import refreshData from './refreshData';
-import { store } from './store';
+import { RootState, store } from './store';
 import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
+
 
 // TODO: Change from any when typing introduced
 const refreshUserData = async (user: any): Promise<void> => {
@@ -66,6 +67,8 @@ const getUserId = (): string => {
 
   return userId;
 };
+
+export const selectCurrentUserId = (state: RootState): string => state.userData.user?.id || "";
 
 export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());
