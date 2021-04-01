@@ -11,7 +11,7 @@ import { createInventoryUpdateAndUpdateInventory } from '../../lib/airtable/requ
 import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY_UPDATE } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
-import { getCurrentPeriod, getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
+import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
 
 const styles = (theme: Theme) =>
@@ -55,9 +55,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
     inventoryUpdate.previousQuantity = inventory.currentQuantity;
     inventoryUpdate.updatedQuantity = updatedAmount;
     inventoryUpdate.inventoryId = inventory.id;
-    inventoryUpdate.updatedAt = moment().toISOString();
-    // TODO: figure out period
-    inventoryUpdate.period = getCurrentPeriod();
+    inventoryUpdate.createdAt = moment().toISOString();
 
     await createInventoryUpdateAndUpdateInventory(inventoryUpdate);
     history.goBack();

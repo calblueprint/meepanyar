@@ -10,7 +10,7 @@ export const getInventoryLastUpdated = (inventory: InventoryRecord): string => {
 
   const updateTimes: Moment[] = [];
   purchaseRequests.map((pr) => updateTimes.push(moment(pr.createdAt)));
-  inventoryUpdates.map((update) => updateTimes.push(moment(update.updatedAt)));
+  inventoryUpdates.map((update) => updateTimes.push(moment(update.createdAt)));
 
   // Check because moment will incorrectly return the current time if updateTimes is empty
   if (updateTimes.length > 0) {

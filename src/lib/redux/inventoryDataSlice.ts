@@ -8,7 +8,7 @@ import { RootState } from './store';
 
 const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>({
   // Sort by descending timestamp
-  sortComparer: (a, b) => moment(b.updatedAt).diff(a.updatedAt),
+  sortComparer: (a, b) => moment(b.createdAt).diff(a.createdAt),
 });
 const productsAdapter = createEntityAdapter<ProductRecord>();
 const siteInventoryAdapter = createEntityAdapter<InventoryRecord>();
@@ -105,8 +105,7 @@ export const EMPTY_INVENTORY_UPDATE: InventoryUpdateRecord = {
   previousQuantity: 0,
   updatedQuantity: 0,
   inventoryId: '',
-  updatedAt: '',
-  period: 0,
+  createdAt: '',
 };
 
 export enum PurchaseRequestStatus {
@@ -117,7 +116,6 @@ export enum PurchaseRequestStatus {
 
 export const EMPTY_PURCHASE_REQUEST: PurchaseRequestRecord = {
   id: '',
-  period: 0,
   notes: '',
   status: PurchaseRequestStatus.PENDING,
   requesterId: '',

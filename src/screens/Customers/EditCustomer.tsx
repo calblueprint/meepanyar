@@ -1,8 +1,8 @@
 import { createStyles, FormControl, InputLabel, Theme, MenuItem, Select } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { connect, useSelector } from 'react-redux';
+import { RouteComponentProps, useHistory, Redirect } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
@@ -11,10 +11,10 @@ import { editCustomer } from '../../lib/airtable/request';
 import { RootState } from '../../lib/redux/store';
 import { CustomerRecord, SiteRecord, CustomerUpdateRecord } from '../../lib/airtable/interface';
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
-import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
+import { EMPTY_CUSTOMER, setCurrentCustomerId } from '../../lib/redux/customerDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { User, EMPTY_USER } from '../../lib/redux/userDataSlice';
-import { getCurrentCustomer } from '../../lib/redux/customerData';
+import { selectCurrentUserId } from '../../lib/redux/userData';
+import { selectCurrentCustomer } from '../../lib/redux/customerData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -33,14 +33,15 @@ const styles = (theme: Theme) =>
 interface EditCustomerProps extends RouteComponentProps {
   classes: { header: string; content: string; formControl: string; };
   location: any;
-  currentCustomer: CustomerRecord;
   currentSite: SiteRecord;
-  user: User;
 }
 
 function EditCustomer(props: EditCustomerProps) {
-  const { classes, currentCustomer, currentSite, user } = props;
+  const { classes, currentSite } = props;
   const history = useHistory();
+
+  const currentCustomer = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
+  const userId = useSelector(selectCurrentUserId);
 
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState(currentCustomer.tariffPlanId);
   const [customerName, setCustomerName] = useState(currentCustomer.name);
@@ -49,6 +50,10 @@ function EditCustomer(props: EditCustomerProps) {
   // TODO: @julianrkung Look into constraints on meter number input.
   const [meterNumber, setMeterNumber] = useState(currentCustomer.meterNumber);
   const [customerInactive, setCustomerInactive] = useState(!currentCustomer.isactive);
+
+  if (currentCustomer === EMPTY_CUSTOMER) {
+    return <Redirect to={'/customers'} />;
+  }
 
   const handleSelectTariffPlan = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedTariffPlanId(event.target.value as string);
@@ -65,7 +70,7 @@ function EditCustomer(props: EditCustomerProps) {
       dateUpdated: formatUTCDateStringToLocal((new Date()).toString()),
       customerId: currentCustomer.id,
       explanation: explanation,
-      userId: user.id,
+      userId: userId,
     };
 
     // Make a deep copy of an empty customer record
@@ -78,7 +83,10 @@ function EditCustomer(props: EditCustomerProps) {
     // TODO: add error handling
     // We goBack instead of replace so there aren't 2 
     // "/customers/customer" routes in the history stack
-    editCustomer(customer, customerUpdate).then(history.goBack);
+    editCustomer(customer, customerUpdate).then(() => {
+      setCurrentCustomerId(customer.id);
+      history.goBack();
+    });
   }
 
   const handleNameInput = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -117,9 +125,7 @@ function EditCustomer(props: EditCustomerProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  currentCustomer: getCurrentCustomer() || EMPTY_CUSTOMER,
   currentSite: state.siteData.currentSite || EMPTY_SITE,
-  user: state.userData.user || EMPTY_USER,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(EditCustomer));

@@ -5,17 +5,16 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
-import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { connect, useSelector } from 'react-redux';
+import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
-import { getCurrentCustomer } from '../../lib/redux/customerData';
+import { selectCurrentCustomer } from '../../lib/redux/customerData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,7 +52,12 @@ interface CustomerProps extends RouteComponentProps {
 }
 
 function CustomerProfile(props: CustomerProps) {
-  const { classes, match, currentSite, customer } = props;
+  const { classes, match, currentSite } = props;
+  const customer = useSelector(selectCurrentCustomer);
+
+  if (!customer) {
+    return <Redirect to={'/customers'} />;
+  }
 
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
@@ -163,7 +167,6 @@ function CustomerProfile(props: CustomerProps) {
 
 const mapStateToProps = (state: RootState) => ({
   currentSite: state.siteData.currentSite || EMPTY_SITE,
-  customer: getCurrentCustomer() || EMPTY_CUSTOMER,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));
