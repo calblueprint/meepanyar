@@ -1,7 +1,8 @@
 import $ from 'jquery';
-import { refreshSiteData } from './siteData';
-import { store } from './store';
+import refreshData from './refreshData';
+import { RootState, store } from './store';
 import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
+
 
 // TODO: Change from any when typing introduced
 const refreshUserData = async (user: any): Promise<void> => {
@@ -14,7 +15,7 @@ const refreshUserData = async (user: any): Promise<void> => {
   store.dispatch(saveUserData(user));
 
   try {
-    refreshSiteData(false);
+    refreshData(false);
   } catch (err) {
     console.log('Error occurred during login: ', err);
   }
@@ -28,7 +29,7 @@ const refreshDataBackground = async (): Promise<void> => {
   }
   try {
     if (state.userData.isOnline) {
-      refreshSiteData(true);
+      refreshData(true);
     }
   } catch (err) {
     console.log('Error occurred pulling data', err);
@@ -66,6 +67,8 @@ const getUserId = (): string => {
 
   return userId;
 };
+
+export const selectCurrentUserId = (state: RootState): string => state.userData.user?.id || "";
 
 export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());

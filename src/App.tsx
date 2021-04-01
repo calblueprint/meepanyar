@@ -13,13 +13,18 @@ import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
 import EditCustomer from './screens/Customers/EditCustomer';
 import FinancialSummariesMain from './screens/FinancialSummary/FinancialSummariesMain';
+import Camera from './screens/Camera/Camera';
+import CameraPreview from './screens/Camera/CameraPreview';
 import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummaryPayment';
 import Home from './screens/Home/Home';
 import Incidents from './screens/Incidents';
 import AddInventory from './screens/Inventory/AddInventory';
+import CreatePurchaseRequest from './screens/Inventory/CreatePurchaseRequest';
 import InventoryMain from './screens/Inventory/InventoryMain';
 import InventoryProfile from './screens/Inventory/InventoryProfile';
+import PurchaseRequest from './screens/Inventory/PurchaseRequest';
+import PurchaseRequests from './screens/Inventory/PurchaseRequests';
 import Login from './screens/Login';
 import Maintenance from './screens/Maintenance';
 import { theme } from './styles/ThemeStyles';
@@ -55,6 +60,9 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path="/inventory" component={InventoryMain} exact/>
       <AuthenticatedRoute path="/inventory/create" component={AddInventory} />
       <AuthenticatedRoute path="/inventory/item" component={InventoryProfile} /> 
+      <AuthenticatedRoute path="/inventory/purchase-requests" component={PurchaseRequests} exact/> 
+      <AuthenticatedRoute path="/inventory/purchase-requests/create" component={CreatePurchaseRequest} /> 
+      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} /> 
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 
@@ -72,6 +80,8 @@ function App(isSignedIn: AppProps) {
               <Route exact path="/">
                 <Redirect to={homeRedirect} />
               </Route>
+              <Route path="/camera" component={Camera} exact />
+              <Route path="/camera/preview" component={CameraPreview} exact />
               <Route exact path="/(login)" component={Login} />
               <Route component={Container} />
             </Switch>

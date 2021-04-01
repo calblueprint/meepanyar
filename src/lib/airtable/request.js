@@ -23,16 +23,18 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
 import { editCustomerInRedux } from '../../lib/redux/siteData';
->>>>>>> 760cf3e078c9125de0be8424e0f5b50443a828f2
 import { addToOfflineCustomer } from '../utils/offlineUtils';
 import { addInventoryToRedux } from '../redux/inventoryData';
 import { generateOfflineInventoryId } from '../utils/inventoryUtils';
->>>>>>> b5cefe22aa97376f70c6672898c6301fe489d3d2
+import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
+import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
+import {
+  addInventoryToRedux,
+  addPurchaseRequestToRedux,
+  getInventoryCurrentQuantity,
+  updateInventoryQuantityInRedux,
+} from '../redux/inventoryData';
 
 /*
  ******* CREATE RECORDS *******
@@ -83,6 +85,7 @@ export const createManyTariffPlans = async (records) => {
   return Promise.all(createPromises);
 };
 
+<<<<<<< HEAD
 export const createCustomer = async (record) => {
   return createRecord(Tables.Customers, record);
 };
@@ -97,6 +100,31 @@ export const createManyCustomers = async (records) => {
   }
   return Promise.all(createPromises);
 };
+=======
+// NONGENERATED: We use a special, non-schema-generated createCustomer
+// that hits a special endpoint because we require additional logic to
+// handle offline functionality
+export const createCustomer = async (customer) => {
+  let customerId = '';
+  try {
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(customer)
+    })
+    console.log(resp);
+    await resp.json().then(data => customerId = data.id);
+  } catch (err) {
+    console.log(err);
+    customerId = generateOfflineId();
+  }
+  customer.id = customerId;
+  addCustomerToRedux(customer);
+  return customerId;
+}
+>>>>>>> c57ce412077f6001c23db4b557f915f07aa7ad40
 
 export const createCustomerUpdate = async (record) => {
   return createRecord(Tables.CustomerUpdates, record);
@@ -189,7 +217,7 @@ export const createInventory = async (inventory) => {
     console.log('Response for inventory: ', resp);
     await resp.json().then(data => inventoryId = data.id);
   } catch (err) {
-    inventoryId = generateOfflineInventoryId();
+    inventoryId = generateOfflineId();
     console.log('Error with create inventory request: ', err);
   }
   inventory.id = inventoryId;
@@ -206,6 +234,26 @@ export const createManyInventorys = async (records) => {
       createPromises.push(createRecords(Tables.Inventory, subset));
   }
   return Promise.all(createPromises);
+};
+
+// NONGENERATED: Create a Purchase Request and update the inventory's current qty (regardless of approval status)
+// TODO: handle offline workflow of creating purchase requests for inventory
+// that was created offline (no Airtable id).
+export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) => {
+  let purchaseRequestId = "";
+  const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
+  try {
+    delete purchaseRequest.id; // Remove the id field to add to Airtable
+    purchaseRequestId = await createPurchaseRequest(purchaseRequest);
+    updateInventory(purchaseRequest.inventoryId, { currentQuantity: newQuantity });
+  } catch (err) {
+    purchaseRequestId = generateOfflineId();
+    console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
+  }
+  purchaseRequest.id = purchaseRequestId;
+  addPurchaseRequestToRedux(purchaseRequest);
+  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
+  return purchaseRequest;
 };
 
 export const createPurchaseRequest = async (record) => {
@@ -246,7 +294,7 @@ export const getUserById = async (id) => {
   return getRecordById(Tables.Users, id);
 };
 
-export const getUsersByIds = async ( ids, filterByFormula = '', sort = []
+export const getUsersByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -264,7 +312,7 @@ export const getSiteById = async (id) => {
   return getRecordById(Tables.Sites, id);
 };
 
-export const getSitesByIds = async ( ids, filterByFormula = '', sort = []
+export const getSitesByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -282,7 +330,7 @@ export const getTariffPlanById = async (id) => {
   return getRecordById(Tables.TariffPlans, id);
 };
 
-export const getTariffPlansByIds = async ( ids, filterByFormula = '', sort = []
+export const getTariffPlansByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -300,7 +348,7 @@ export const getCustomerById = async (id) => {
   return getRecordById(Tables.Customers, id);
 };
 
-export const getCustomersByIds = async ( ids, filterByFormula = '', sort = []
+export const getCustomersByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -318,7 +366,7 @@ export const getCustomerUpdateById = async (id) => {
   return getRecordById(Tables.CustomerUpdates, id);
 };
 
-export const getCustomerUpdatesByIds = async ( ids, filterByFormula = '', sort = []
+export const getCustomerUpdatesByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -336,7 +384,7 @@ export const getMeterReadingsandInvoiceById = async (id) => {
   return getRecordById(Tables.MeterReadingsandInvoices, id);
 };
 
-export const getMeterReadingsandInvoicesByIds = async ( ids, filterByFormula = '', sort = []
+export const getMeterReadingsandInvoicesByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -354,7 +402,7 @@ export const getPaymentById = async (id) => {
   return getRecordById(Tables.Payments, id);
 };
 
-export const getPaymentsByIds = async ( ids, filterByFormula = '', sort = []
+export const getPaymentsByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -372,7 +420,7 @@ export const getFinancialSummarieById = async (id) => {
   return getRecordById(Tables.FinancialSummaries, id);
 };
 
-export const getFinancialSummariesByIds = async ( ids, filterByFormula = '', sort = []
+export const getFinancialSummariesByIds = async (ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,

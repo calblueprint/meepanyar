@@ -9,10 +9,10 @@ import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 import { SiteRecord } from '../../lib/airtable/interface';
 import { createCustomer } from '../../lib/airtable/request';
-import { addCustomerToRedux } from '../../lib/redux/siteData';
+import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { EMPTY_CUSTOMER } from '../../lib/utils/customerUtils';
+import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -25,7 +25,7 @@ const styles = (theme: Theme) =>
   });
 
 interface AddCustomerProps extends RouteComponentProps {
-  classes: { content: string, formControl: string};
+  classes: { content: string, formControl: string };
   location: any;
   currentSite: SiteRecord;
 }
@@ -58,17 +58,14 @@ function AddCustomer(props: AddCustomerProps) {
     customer.isactive = !customerInactive;
     customer.tariffPlanId = selectedTariffPlanId;
 
-    // TODO: add error handling
-    addCustomerToRedux(customer);
-
     // Add other info necessary to create the Airtable record
     createCustomer({
       ...customer,
       siteId: currentSite.id
+    }).then((id) => {
+      setCurrentCustomerIdInRedux(id);
+      history.replace(`customer`);
     });
-
-    // Navigate to the new customer's profile page
-    history.replace(`customer`, { customer });
   }
 
   const handleNameInput = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -87,14 +84,14 @@ function AddCustomer(props: AddCustomerProps) {
         <TextField label={'Name'} id={'name'} primary={true} onChange={handleNameInput} />
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
-          <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId = "select-tariff-plan-label" onChange={handleSelectTariffPlan}>
+          <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId="select-tariff-plan-label" onChange={handleSelectTariffPlan}>
             {tariffPlans.map((plan) =>
-                <MenuItem key={plan.id} value={plan.id}>{plan.name}</MenuItem>
+              <MenuItem key={plan.id} value={plan.id}>{plan.name}</MenuItem>
             )}
           </Select>
         </FormControl>
-        <Checkbox label={'Meter:'} textField={hasMeter} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput}/>
-        <Checkbox label={'Customer is inactive'} checkboxOnChange = {() => setCustomerInactive(!customerInactive)}/>
+        <Checkbox label={'Meter:'} textField={hasMeter} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput} />
+        <Checkbox label={'Customer is inactive'} checkboxOnChange={() => setCustomerInactive(!customerInactive)} />
         <Button label={'Add'} onClick={handleSubmit} />
       </form>
     </BaseScreen>

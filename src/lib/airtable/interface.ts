@@ -1,3 +1,5 @@
+import { PurchaseRequestStatus } from "../redux/inventoryDataSlice";
+
 export type TableValues = string | boolean | number | Array<unknown> | Airtable.Attachment;
 
 export type TableRecord =
@@ -33,16 +35,16 @@ export interface SiteRecord {
   id: string;
   name: string;
   customerIds: string[];
-  customers: CustomerRecord[];
   financialSummaryIds: string[];
   financialSummaries: FinancialSummaryRecord[];
   tariffPlans: TariffPlanRecord[];
-  // These are extracted to InventoryDataSlice and deleted from SiteRecord
+  // These are extracted to other slices and deleted from SiteRecord
   inventoryIds?: string[];
   products?: ProductRecord[];
   inventory?: InventoryRecord[];
   purchaseRequests?: PurchaseRequestRecord[];
   inventoryUpdates?: InventoryUpdateRecord[];
+  customers?: CustomerRecord[];
 }
 
 export interface TariffPlanRecord {
@@ -115,7 +117,7 @@ export interface PurchaseRequestRecord {
   id: string;
   period: number;
   notes?: string;
-  status: string;
+  status: PurchaseRequestStatus;
   requesterId: string;
   reviewerId?: string;
   createdAt: string;
@@ -148,7 +150,10 @@ export interface InventoryUpdateRecord {
 
 export interface ProductRecord {
   id: string;
-  unit: number;
+  unit: string;
   name: string;
   inventoryIds?: string[];
 }
+
+export type SiteId = string;
+export type CustomerId = string;
