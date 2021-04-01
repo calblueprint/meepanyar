@@ -47,11 +47,10 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
     return <Redirect to={'/inventory'} />;
   }
 
-  // TODO (with schema update): rename approvedAt to reviewedAt
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
     const reviewData = {
       reviewerId: getUserId(),
-      approvedAt: moment().toISOString(),
+      reviewedAt: moment().toISOString(),
       status: approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED,
     };
     updatePurchaseRequest(purchaseRequest.id, reviewData);

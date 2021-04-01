@@ -102,7 +102,6 @@ export const EMPTY_INVENTORY_UPDATE: InventoryUpdateRecord = {
   previousQuantity: 0,
   updatedQuantity: 0,
   inventoryId: '',
-  period: 0,
 };
 
 export enum PurchaseRequestStatus {
@@ -113,7 +112,6 @@ export enum PurchaseRequestStatus {
 
 export const EMPTY_PURCHASE_REQUEST: PurchaseRequestRecord = {
   id: '',
-  period: 0,
   notes: '',
   status: PurchaseRequestStatus.PENDING,
   requesterId: '',
