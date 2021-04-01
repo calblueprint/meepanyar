@@ -1,5 +1,4 @@
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import moment from 'moment';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
@@ -9,7 +8,6 @@ import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { createInventoryUpdateAndUpdateInventory } from '../../lib/airtable/request';
 import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
-import { EMPTY_INVENTORY_UPDATE } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
@@ -49,15 +47,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const handleSubmit = async (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
-    // Make a deep copy of an empty Inventory Update record
-    const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE));
-    inventoryUpdate.userId = userId;
-    inventoryUpdate.previousQuantity = inventory.currentQuantity;
-    inventoryUpdate.updatedQuantity = updatedAmount;
-    inventoryUpdate.inventoryId = inventory.id;
-    inventoryUpdate.createdAt = moment().toISOString();
-
-    await createInventoryUpdateAndUpdateInventory(inventoryUpdate);
+    await createInventoryUpdateAndUpdateInventory(userId,inventory,updatedAmount);
     history.goBack();
   };
 

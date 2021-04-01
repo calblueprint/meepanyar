@@ -33,6 +33,8 @@ import {
   getInventoryCurrentQuantity,
   updateInventoryQuantityInRedux
 } from '../redux/inventoryData';
+import moment from 'moment';
+import { EMPTY_INVENTORY_UPDATE } from '../redux/inventoryDataSlice';
 
 /*
  ******* CREATE RECORDS *******
@@ -275,7 +277,14 @@ export const createManyPurchaseRequests = async (records) => {
 // NONGENERATED: Create an Inventory Update and update the inventory's current qty
 // TODO: handle offline workflow of creating inventory updates for inventory
 // that was created offline (no Airtable id).
-export const createInventoryUpdateAndUpdateInventory = async (inventoryUpdate) => {
+export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount ) => {
+  const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE));
+  inventoryUpdate.userId = userId;
+  inventoryUpdate.previousQuantity = inventory.currentQuantity;
+  inventoryUpdate.updatedQuantity = updatedAmount;
+  inventoryUpdate.inventoryId = inventory.id;
+  inventoryUpdate.createdAt = moment().toISOString();
+
   let inventoryUpdateId = "";
   try {
     delete inventoryUpdate.id; // Remove the id field to add to Airtable
@@ -288,7 +297,7 @@ export const createInventoryUpdateAndUpdateInventory = async (inventoryUpdate) =
   inventoryUpdate.id = inventoryUpdateId;
   addInventoryUpdateToRedux(inventoryUpdate);
   updateInventoryQuantityInRedux(inventoryUpdate.inventoryId, inventoryUpdate.updatedQuantity);
-  return inventoryUpdateId;
+  return inventoryUpdate;
 };
 
 export const createInventoryUpdate = async (record) => {
