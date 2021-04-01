@@ -6,7 +6,6 @@ import { SiteRecord, CustomerRecord, FinancialSummaryRecord } from '../airtable/
 interface siteDataSliceState {
   isLoading: boolean;
   currentSite: any; //TODO: Set as SiteRecord | null and resolve errors
-  currentCustomer: CustomerRecord | null;
   sites: any[];
 }
 
@@ -14,7 +13,6 @@ interface siteDataSliceState {
 const initialState: siteDataSliceState = {
   isLoading: false,
   currentSite: null,
-  currentCustomer: null,
   sites: [],
 };
 

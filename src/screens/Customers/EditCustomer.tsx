@@ -13,7 +13,7 @@ import { CustomerRecord, SiteRecord, CustomerUpdateRecord } from '../../lib/airt
 import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
 import { EMPTY_CUSTOMER, setCurrentCustomerId } from '../../lib/redux/customerDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { User, EMPTY_USER } from '../../lib/redux/userDataSlice';
+import { selectCurrentUserId } from '../../lib/redux/userData';
 import { selectCurrentCustomer } from '../../lib/redux/customerData';
 
 const styles = (theme: Theme) =>
@@ -34,14 +34,14 @@ interface EditCustomerProps extends RouteComponentProps {
   classes: { header: string; content: string; formControl: string; };
   location: any;
   currentSite: SiteRecord;
-  user: User;
 }
 
 function EditCustomer(props: EditCustomerProps) {
-  const { classes, currentSite, user } = props;
+  const { classes, currentSite } = props;
   const history = useHistory();
 
   const currentCustomer = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
+  const userId = useSelector(selectCurrentUserId);
 
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState(currentCustomer.tariffPlanId);
   const [customerName, setCustomerName] = useState(currentCustomer.name);
@@ -70,7 +70,7 @@ function EditCustomer(props: EditCustomerProps) {
       dateUpdated: formatUTCDateStringToLocal((new Date()).toString()),
       customerId: currentCustomer.id,
       explanation: explanation,
-      userId: user.id,
+      userId: userId,
     };
 
     // Make a deep copy of an empty customer record
@@ -126,7 +126,6 @@ function EditCustomer(props: EditCustomerProps) {
 
 const mapStateToProps = (state: RootState) => ({
   currentSite: state.siteData.currentSite || EMPTY_SITE,
-  user: state.userData.user || EMPTY_USER,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(EditCustomer));
