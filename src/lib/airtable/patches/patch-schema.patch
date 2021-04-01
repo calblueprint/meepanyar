@@ -1,5 +1,5 @@
 diff --git a/src/lib/airtable/schema.js b/src/lib/airtable/schema.js
-index a88bb47..b1a1584 100644
+index af8197d..9cc245c 100644
 --- a/src/lib/airtable/schema.js
 +++ b/src/lib/airtable/schema.js
 @@ -27,7 +27,7 @@ export const Columns = {
@@ -11,10 +11,16 @@ index a88bb47..b1a1584 100644
  		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
  		id: {name:`ID`, type:`formula`},
  		purchaseRequestIds: {name:`Purchase Requests`, type:`foreignKey-many`},
-@@ -35,13 +35,20 @@ export const Columns = {
- 		inventoryUpdateIds: {name:`Inventory Updates`, type:`foreignKey-many`},
+@@ -37,10 +37,19 @@ export const Columns = {
+ 		admin: {name:`Admin`, type:`checkbox`},
  	},
  	"Sites": {
++		// Custom objects added to the top of sites object to reduce
++		// likelihood of patch conflicts when new columns are added
++		products: {name: `Products`, type: `custom-object`},
++		inventory: {name: `SiteInventory`, type: `custom-object`},
++		purchaseRequests: {name: `PurchaseRequests`, type: `custom-object`},
++		inventoryUpdates: {name: `InventoryUpdates`, type: `custom-object`},
 +		customers: {name:`CustomerData`, type:`custom-object`},
 +		financialSummaries: {name: `FinancialSummaries`, type:`custom-object`},
 +		tariffPlans: {name:`TariffPlans`, type:`custom-object`},
@@ -26,10 +32,3 @@ index a88bb47..b1a1584 100644
  		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
  		id: {name:`ID`, type:`formula`},
  		inventoryIds: {name:`Inventory`, type:`foreignKey-many`},
-+		products: {name: `Products`, type: `custom-object`},
-+		inventory: {name: `SiteInventory`, type: `custom-object`},
-+		purchaseRequests: {name: `PurchaseRequests`, type: `custom-object`},
-+		inventoryUpdates: {name: `InventoryUpdates`, type: `custom-object`},
- 	},
- 	"Tariff Plans": {
- 		name: {name:`Name`, type:`text`},
