@@ -1,5 +1,5 @@
 diff --git a/src/lib/airtable/schema.js b/src/lib/airtable/schema.js
-index 7c751ee..e71d320 100644
+index a88bb47..b1a1584 100644
 --- a/src/lib/airtable/schema.js
 +++ b/src/lib/airtable/schema.js
 @@ -27,7 +27,7 @@ export const Columns = {

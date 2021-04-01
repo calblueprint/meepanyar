@@ -1,3 +1,5 @@
+import { PurchaseRequestStatus } from "../redux/inventoryDataSlice";
+
 export type TableValues = string | boolean | number | Array<unknown> | Airtable.Attachment;
 
 export type TableRecord =
@@ -115,7 +117,7 @@ export interface PurchaseRequestRecord {
   id: string;
   period: number;
   notes?: string;
-  status: string;
+  status: PurchaseRequestStatus;
   requesterId: string;
   reviewerId?: string;
   createdAt: string;
@@ -148,7 +150,7 @@ export interface InventoryUpdateRecord {
 
 export interface ProductRecord {
   id: string;
-  unit: number;
+  unit: string;
   name: string;
   inventoryIds?: string[];
 }
