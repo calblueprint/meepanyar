@@ -12,6 +12,7 @@ import { createInventory, createProduct } from '../../lib/airtable/request';
 import { addProductToRedux, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY, EMPTY_PRODUCT, selectAllCurrentSiteInventoryArray, selectAllProducts } from '../../lib/redux/inventoryDataSlice';
 import { getCurrentSiteId } from '../../lib/redux/siteData';
+import { generateOfflineId } from '../../lib/utils/offlineUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -61,7 +62,12 @@ function AddInventory (props: AddInventoryProps) {
       product.unit = unit;
       product.name = newProductName;
       delete product.id; // delete id field to add to Airtable
-      productId = await createProduct(product);
+      try {
+        productId = await createProduct(product);
+      } catch (error) {
+        console.log("[AddInventory] (createProduct, handleSubmit) Error: ", error);
+        productId = generateOfflineId();
+      }
       product.id = productId;
       addProductToRedux(product);
     }
