@@ -8,8 +8,8 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { InventoryRecord } from '../../lib/airtable/interface';
-import { createInventory, createProduct } from '../../lib/airtable/request';
-import { addProductToRedux, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { createInventory, createNewProduct } from '../../lib/airtable/request';
+import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
 import {
   EMPTY_INVENTORY,
   EMPTY_PRODUCT,
@@ -17,7 +17,6 @@ import {
   selectAllProducts
 } from '../../lib/redux/inventoryDataSlice';
 import { getCurrentSiteId } from '../../lib/redux/siteData';
-import { generateOfflineId } from '../../lib/utils/offlineUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -69,14 +68,7 @@ function AddInventory(props: AddInventoryProps) {
       product.unit = unit;
       product.name = newProductName;
       delete product.id; // delete id field to add to Airtable
-      try {
-        productId = await createProduct(product);
-      } catch (error) {
-        console.log('[AddInventory] (createProduct, handleSubmit) Error: ', error);
-        productId = generateOfflineId();
-      }
-      product.id = productId;
-      addProductToRedux(product);
+      productId = await createNewProduct(product);
     }
 
     // Make a deep copy of an empty inventory record
