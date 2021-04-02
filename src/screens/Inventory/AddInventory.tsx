@@ -146,6 +146,7 @@ function AddInventory(props: AddInventoryProps) {
           primary={true}
           onChange={handleStartingAmountInput}
         />
+        {/* TODO @wangannie: disable + show loading indicator on click to prevent double click */}
         <Button label={'Add'} onClick={handleSubmit} />
       </form>
     </BaseScreen>
