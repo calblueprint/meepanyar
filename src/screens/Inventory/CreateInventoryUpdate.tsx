@@ -32,6 +32,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const inventory = useSelector(selectCurrentInventory);
   const product = useSelector(selectCurrentInventoryProduct);
 
+  const [loading, setLoading] = useState(false);
   const [updatedAmount, setUpdatedAmount] = useState(0.0);
 
   // Redirect to InventoryMain if undefined
@@ -47,6 +48,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const handleSubmit = async (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
+    setLoading(true);
     await createInventoryUpdateAndUpdateInventory(userId,inventory,updatedAmount);
     history.goBack();
   };
@@ -67,7 +69,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
             primary={true}
             onChange={handleUpdatedAmount}
           />
-          <Button label="Update" onClick={handleSubmit} />
+          <Button loading={loading} label="Update" onClick={handleSubmit} />
         </div>
       </BaseScrollView>
     </BaseScreen>
