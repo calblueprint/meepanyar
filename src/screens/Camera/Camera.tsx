@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
 import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
-import BaseScreen from '../../components/BaseComponents/BaseScreen';
 // Preset styles for camera
 import 'react-html5-camera-photo/build/css/index.css';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
 
 export interface PreservedCameraState {
     preservedState: object;
@@ -35,7 +35,7 @@ function CameraScreen(props: CameraProps) {
 
     // We navigate to a new screen and pass all state
     const onTakePhoto = (photoUri: string) => {
-        history.push('/camera/preview', { ...preservedState, returnLink, photoUri })
+        history.push('/camera/preview', { preservedState, returnLink, photoUri })
     }
 
     const onCameraError = (error: Error) => {

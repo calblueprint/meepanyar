@@ -1,6 +1,4 @@
-import { Button as MaterialButton, Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -8,6 +6,7 @@ import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
+import CameraButton from '../../components/CameraButton';
 import TextField from '../../components/TextField';
 import { createPurchaseRequestAndUpdateInventory } from '../../lib/airtable/request';
 import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
@@ -29,10 +28,11 @@ const styles = (theme: Theme) =>
       border: `3.5px dashed ${theme.palette.divider}`,
       radius: '6px',
     },
-});
+  });
 
 interface CreatePurchaseRequestProps extends RouteComponentProps {
-  classes: { content: string; cameraButton: string; };
+  classes: { content: string; cameraButton: string };
+  location: any;
 }
 
 function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
@@ -42,9 +42,11 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const inventory = useSelector(selectCurrentInventory);
   const product = useSelector(selectCurrentInventoryProduct);
 
-  const [amountPurchased, setAmountPurchased] = useState(0.0);
-  const [amountSpent, setAmountSpent] = useState(0.0);
-  const [notes, setNotes] = useState("");
+  const [amountPurchased, setAmountPurchased] = useState(props.location.state?.amountPurchased || 0.0);
+  const [amountSpent, setAmountSpent] = useState(props.location.state?.amountSpent || 0.0);
+  const [notes, setNotes] = useState(props.location.state?.notes || 0.0);
+
+  const photoUri = props.location.state?.photo;
 
   // Redirect to InventoryMain if undefined
   if (!userId || !inventory || !product) {
@@ -54,15 +56,15 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   // TODO @wangannie: add better edge case handling
   const handleAmountPurchasedInput = (event: React.ChangeEvent<{ value: unknown }>) => {
     setAmountPurchased(parseFloat(event.target.value as string) || 0);
-  }
+  };
 
   const handleAmountSpentInput = (event: React.ChangeEvent<{ value: unknown }>) => {
     setAmountSpent(parseFloat(event.target.value as string) || 0);
-  }
+  };
 
   const handleNotesInput = (event: React.ChangeEvent<{ value: unknown }>) => {
     setNotes(event.target.value as string);
-  }
+  };
 
   const handleSubmit = async (event: React.MouseEvent) => {
     // Prevent page refresh on submit
@@ -78,32 +80,35 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     // TODO: add image upload
 
     await createPurchaseRequestAndUpdateInventory(purchaseRequest);
-    history.goBack();
-  }
+    history.goBack(); // TODO: fix!!
+  };
 
   return (
     <BaseScreen title="Inventory Purchase" leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.content}>
-          <InventoryInfo 
-            productId={inventory.productId} 
-            lastUpdated={getInventoryLastUpdated(inventory)} 
+          <InventoryInfo
+            productId={inventory.productId}
+            lastUpdated={getInventoryLastUpdated(inventory)}
             currentQuantity={inventory.currentQuantity}
           />
           {/* TODO fix requred/optional fields */}
-          <TextField label={`Amount Purchased (${product.unit})`} id={'amount-purchased'} primary={true} onChange={handleAmountPurchasedInput} />
-          <TextField label={'Amount Spent (ks)'} id={'amount-spent'} primary={true} onChange={handleAmountSpentInput} />
-          <TextField label={'Notes (optional)'} id={'notes'} primary={true} onChange={handleNotesInput} />
-          <Typography variant="caption" color="textSecondary">
-            Receipt
-          </Typography>
-          <MaterialButton className={classes.cameraButton} variant="contained" color="primary" disableElevation={true}>
-            <div>
-              <Typography color="primary"><PhotoLibraryIcon /></Typography>
-              <Typography variant="h2" color="primary">Add Photo</Typography>
-            </div>
-          </MaterialButton>
-          <Button label = "Confirm" onClick={handleSubmit}/>
+          <TextField
+            value={amountPurchased}
+            label={`Amount Purchased (${product.unit})`}
+            id={'amount-purchased'}
+            primary={true}
+            onChange={handleAmountPurchasedInput}
+          />
+          <TextField value={amountSpent} label={'Amount Spent (ks)'} id={'amount-spent'} primary={true} onChange={handleAmountSpentInput} />
+          <TextField value={notes} label={'Notes (optional)'} id={'notes'} primary={true} onChange={handleNotesInput} />
+          <CameraButton
+            preservedState={{ amountPurchased, amountSpent, notes }}
+            id="upload-receipt"
+            label="Receipt"
+            photoUri={photoUri}
+          />
+          <Button label="Confirm" onClick={handleSubmit} />
         </div>
       </BaseScrollView>
     </BaseScreen>
