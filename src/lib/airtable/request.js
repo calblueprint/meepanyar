@@ -274,7 +274,8 @@ export const createManyPurchaseRequests = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: Create an Inventory Update and update the inventory's current qty
+// NONGENERATED: Create an Inventory Update and update the inventory's current qty.
+// This includes the construction of an inventoryUpdate record because this is reused in multiple places.
 // TODO: handle offline workflow of creating inventory updates for inventory
 // that was created offline (no Airtable id).
 export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount ) => {
