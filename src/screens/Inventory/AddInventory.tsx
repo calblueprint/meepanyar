@@ -1,6 +1,6 @@
 import { createStyles, FormControl, TextField as MaterialTextField, Theme } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
@@ -21,10 +21,15 @@ const styles = (theme: Theme) =>
     formControl: {
       width: '100%',
     },
+    newProductContainer: {
+      flexDirection: 'row', 
+      display: 'flex', 
+      marginBottom: 40,
+    }
   });
 
 interface AddInventoryProps extends RouteComponentProps {
-  classes: { content: string, formControl: string};
+  classes: { content: string, formControl: string, newProductContainer: string};
 }
 
 function AddInventory (props: AddInventoryProps) {
@@ -40,6 +45,9 @@ function AddInventory (props: AddInventoryProps) {
   
   const [selectedProductId, setSelectedProductId] = useState("");
   const [startingAmount, setStartingAmount] = useState(0);
+  const [unit, setUnit] = useState("");
+  const [newProductName, setNewProductName] = useState("");
+  const NEW_PRODUCT_LABEL = "+ New Inventory Item";
 
   // TODO: Add form input validation and error messaging
   const handleSubmit = async (event: React.MouseEvent) => {
@@ -70,19 +78,49 @@ function AddInventory (props: AddInventoryProps) {
     setStartingAmount(parseFloat(event.target.value as string) || 0);
   }
 
+  const handleNewProductName = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setNewProductName(event.target.value as string || "");
+  }
+
+  const handleUnitInput = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setUnit(event.target.value as string || "");
+  }
+  const filter = createFilterOptions<string>();
+  
   return (
     <BaseScreen title="New Inventory" leftIcon="backNav">
       <form noValidate className={classes.content} onSubmit={() => false}>
         <FormControl variant="outlined" className={classes.formControl}>
           <Autocomplete
-            id = "select-item"
-            options = {productOptions}
-            style = {{ marginBottom: 24 }}
-            getOptionLabel={(productId) => `${products[productId]?.name} (${products[productId]?.unit})`}
-            renderInput={(params) => <MaterialTextField {...params} label="Item" variant="outlined"/>}
+            value={selectedProductId}
+            style = {{ marginBottom: 20 }}
             onChange={handleSelectItem}
+            filterOptions={(options, params) => {
+              const filtered = filter(options, params);
+              // Suggest the creation of a new value
+              // if (params.inputValue !== '') {
+                filtered.push(NEW_PRODUCT_LABEL);
+              // }
+              return filtered;
+            }}
+            selectOnFocus
+            clearOnBlur
+            id = "select-item"
+            options={productOptions}
+            getOptionLabel={(option) => products[option] ? `${products[option]?.name} (${products[option]?.unit})` : option}
+            renderInput={(params) => <MaterialTextField {...params} label="Item" variant="outlined"/>}
           />
         </FormControl>
+        {selectedProductId === NEW_PRODUCT_LABEL &&
+          <div className={classes.newProductContainer}>
+            <div style={{marginRight: 10, flex: 2}}>
+              <TextField label={'New Item'} id={'new-item'} primary={true} onChange={handleNewProductName} />
+            </div>
+            <div style={{flex: 1}}>
+              <TextField label={'Unit'} id={'unit'} primary={true} onChange={handleUnitInput} />
+            </div>
+          </div>
+        }
         <TextField label={'Starting Amount'} id={'starting-amount'} primary={true} onChange={handleStartingAmountInput} />
         <Button label={'Add'} onClick={handleSubmit} />
       </form>
