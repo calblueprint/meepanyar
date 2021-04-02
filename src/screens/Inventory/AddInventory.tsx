@@ -8,7 +8,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { InventoryRecord } from '../../lib/airtable/interface';
-import { createInventory, createNewProduct } from '../../lib/airtable/request';
+import { createInventory, createProduct } from '../../lib/airtable/request';
 import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
 import {
   EMPTY_INVENTORY,
@@ -68,7 +68,7 @@ function AddInventory(props: AddInventoryProps) {
       product.unit = unit;
       product.name = newProductName;
       delete product.id; // delete id field to add to Airtable
-      productId = await createNewProduct(product);
+      productId = await createProduct(product);
     }
 
     // Make a deep copy of an empty inventory record

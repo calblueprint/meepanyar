@@ -188,23 +188,19 @@ export const createManyFinancialSummaries = async (records) => {
 };
 
 // NONGENERATED: Create a product (inventory type) and add it to Redux
-export const createNewProduct = async (product) => {
+export const createProduct = async (product) => {
   let productId = "";
   try {
     delete product.id; // Remove the id field to add to Airtable
-    productId = await createProduct(product);
+    productId = await createRecord(Tables.Products, product);
   } catch (error) {
-    console.log('[AddInventory] (createProduct, handleSubmit) Error: ', error);
+    console.log('(createProduct) Airtable Error: ', error);
     productId = generateOfflineId();
   }
   product.id = productId;
   addProductToRedux(product);
   return product.id;
 }
-
-export const createProduct = async (record) => {
-  return createRecord(Tables.Products, record);
-};
 
 export const createManyProducts = async (records) => {
   const createPromises = [];
