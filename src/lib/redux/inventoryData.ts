@@ -1,7 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { InventoryRecord, PurchaseRequestRecord, SiteRecord } from '../airtable/interface';
+import { InventoryRecord, ProductRecord, PurchaseRequestRecord, SiteRecord } from '../airtable/interface';
 import {
   addInventory,
+  addProduct,
   addPurchaseRequest,
   EMPTY_INVENTORY,
   saveInventoryData,
@@ -81,6 +82,10 @@ const getInventoryCurrentQuantity = (inventoryId: string): number => {
 const setCurrentInventoryIdInRedux = (inventoryId: string): void => {
   store.dispatch(setCurrInventoryId(inventoryId));
 };
+
+export const addProductToRedux = (product: ProductRecord): void => {
+  store.dispatch(addProduct(product));
+}
 
 export {
   refreshInventoryData,

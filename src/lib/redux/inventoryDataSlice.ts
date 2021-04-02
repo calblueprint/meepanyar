@@ -173,6 +173,9 @@ const inventoryDataSlice = createSlice({
     setCurrInventoryId(state, action) {
       state.currentInventoryId = action.payload;
     },
+    addProduct(state, action) {
+      productsAdapter.addOne(state.products, action.payload);
+    },
   },
   extraReducers: {
     // If the site changes, reset currentInventoryId
@@ -189,5 +192,6 @@ export const {
   updatePurchaseRequest,
   updateInventoryQuantity,
   setCurrInventoryId,
+  addProduct,
 } = inventoryDataSlice.actions;
 export default inventoryDataSlice.reducer;

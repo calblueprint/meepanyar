@@ -8,9 +8,9 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { InventoryRecord } from '../../lib/airtable/interface';
-import { createInventory } from '../../lib/airtable/request';
-import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
-import { EMPTY_INVENTORY, selectAllCurrentSiteInventoryArray, selectAllProducts } from '../../lib/redux/inventoryDataSlice';
+import { createInventory, createProduct } from '../../lib/airtable/request';
+import { addProductToRedux, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { EMPTY_INVENTORY, EMPTY_PRODUCT, selectAllCurrentSiteInventoryArray, selectAllProducts } from '../../lib/redux/inventoryDataSlice';
 import { getCurrentSiteId } from '../../lib/redux/siteData';
 
 const styles = (theme: Theme) =>
@@ -41,7 +41,7 @@ function AddInventory (props: AddInventoryProps) {
   // Product IDs for items that the site already has inventory for
   const currentSiteProductIds = siteInventory.map((inventory: InventoryRecord) => inventory.productId);
   // Filter to only show products that the site doesn't already have
-  const productOptions = Object.entries(products).filter(([id, _]) => !currentSiteProductIds.includes(id)).map(item => item[0]);
+  const productOptionIds = Object.entries(products).filter(([id, _]) => !currentSiteProductIds.includes(id)).map(item => item[0]);
   
   const [selectedProductId, setSelectedProductId] = useState("");
   const [startingAmount, setStartingAmount] = useState(0);
@@ -53,10 +53,22 @@ function AddInventory (props: AddInventoryProps) {
   const handleSubmit = async (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
+    let productId = selectedProductId; // needed because setSelectedProductId is not immediate
+
+    if (selectedProductId === NEW_PRODUCT_LABEL) {
+      // Create the new product in Airtable and add to Redux
+      const product = JSON.parse(JSON.stringify(EMPTY_PRODUCT));
+      product.unit = unit;
+      product.name = newProductName;
+      delete product.id; // delete id field to add to Airtable
+      productId = await createProduct(product);
+      product.id = productId;
+      addProductToRedux(product);
+    }
 
     // Make a deep copy of an empty inventory record
     let inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY));
-    inventory.productId = selectedProductId;
+    inventory.productId = productId;
     inventory.siteId = getCurrentSiteId();
     inventory.currentQuantity = startingAmount;
     inventory.periodStartQuantity = startingAmount;
@@ -85,6 +97,7 @@ function AddInventory (props: AddInventoryProps) {
   const handleUnitInput = (event: React.ChangeEvent<{ value: unknown }>) => {
     setUnit(event.target.value as string || "");
   }
+  
   const filter = createFilterOptions<string>();
   
   return (
@@ -97,20 +110,18 @@ function AddInventory (props: AddInventoryProps) {
             onChange={handleSelectItem}
             filterOptions={(options, params) => {
               const filtered = filter(options, params);
-              // Suggest the creation of a new value
-              // if (params.inputValue !== '') {
-                filtered.push(NEW_PRODUCT_LABEL);
-              // }
+              filtered.push(NEW_PRODUCT_LABEL);
               return filtered;
             }}
             selectOnFocus
             clearOnBlur
             id = "select-item"
-            options={productOptions}
+            options={productOptionIds}
             getOptionLabel={(option) => products[option] ? `${products[option]?.name} (${products[option]?.unit})` : option}
             renderInput={(params) => <MaterialTextField {...params} label="Item" variant="outlined"/>}
           />
         </FormControl>
+        {/* If the user selected the New Inventory Item option, display extra fields */}
         {selectedProductId === NEW_PRODUCT_LABEL &&
           <div className={classes.newProductContainer}>
             <div style={{marginRight: 10, flex: 2}}>
