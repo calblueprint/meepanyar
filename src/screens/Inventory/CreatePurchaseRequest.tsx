@@ -77,7 +77,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     purchaseRequest.amountSpent = amountSpent;
     purchaseRequest.notes = notes;
     purchaseRequest.inventoryId = inventory.id;
-    // TODO: add image upload
+    purchaseRequest.receipt = [{ url: photoUri }];
 
     await createPurchaseRequestAndUpdateInventory(purchaseRequest);
     history.goBack(); // TODO: fix!!
