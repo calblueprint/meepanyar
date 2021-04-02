@@ -2,11 +2,8 @@ import { Card, Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-    EMPTY_PRODUCT,
-    selectCurrentSiteInventoryById,
-    selectProductById
-} from '../../../lib/redux/inventoryDataSlice';
+import { selectProductByInventoryId } from '../../../lib/redux/inventoryData';
+import { EMPTY_PRODUCT } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 
 const styles = (theme: Theme) =>
@@ -40,10 +37,7 @@ interface InventoryUpdateCardProps {
 
 function InventoryUpdateCard(props: InventoryUpdateCardProps) {
   const { classes, inventoryId, updatedQuantity, createdAt, userId } = props;
-  const product =
-    useSelector((state: RootState) =>
-      selectProductById(state, selectCurrentSiteInventoryById(state, inventoryId)?.productId || ''),
-    ) || EMPTY_PRODUCT;
+  const product = useSelector((state: RootState) => selectProductByInventoryId(state, inventoryId)) || EMPTY_PRODUCT;
 
   return (
     <Card className={classes.cardContainer}>

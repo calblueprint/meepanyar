@@ -17,18 +17,6 @@ import {
 import { getCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
 
-// Custom selectors for current inventory and product
-export const selectCurrentInventoryId = (state: RootState): string => state.inventoryData.currentInventoryId;
-export const selectCurrentInventory = createSelector(
-  selectCurrentInventoryId,
-  store.getState,
-  (currentInventoryId, state) => selectCurrentSiteInventoryById(state, currentInventoryId),
-);
-export const selectCurrentInventoryProduct = createSelector(
-  selectCurrentInventory,
-  store.getState,
-  (inventory, state) => selectProductById(state, inventory?.productId || ''),
-);
 
 const getInventoryId = (_: RootState, inventoryId: string) => inventoryId;
 
@@ -43,6 +31,31 @@ export const selectInventoryUpdatesArrayByInventoryId = createSelector(
   selectAllInventoryUpdatesArray,
   getInventoryId,
   (inventoryUpdatesArray, inventoryId) => inventoryUpdatesArray.filter((update) => update.inventoryId === inventoryId),
+);
+
+export const selectProductIdByInventoryId = createSelector(
+  getInventoryId,
+  store.getState,
+  (inventoryId, state) => selectCurrentSiteInventoryById(state, inventoryId)?.productId,
+);
+
+export const selectProductByInventoryId = createSelector(getInventoryId, store.getState, (inventoryId, state) =>
+  selectProductById(state, selectProductIdByInventoryId(state, inventoryId) || ''),
+);
+
+// Custom selectors for current inventory and product
+export const selectCurrentInventoryId = (state: RootState): string => state.inventoryData.currentInventoryId;
+
+export const selectCurrentInventory = createSelector(
+  selectCurrentInventoryId,
+  store.getState,
+  (currentInventoryId, state) => selectCurrentSiteInventoryById(state, currentInventoryId),
+);
+
+export const selectCurrentInventoryProduct = createSelector(
+  selectCurrentInventoryId,
+  store.getState,
+  (inventoryId, state) => selectProductByInventoryId(state, inventoryId),
 );
 
 export const refreshInventoryData = (site: SiteRecord): void => {
