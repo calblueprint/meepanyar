@@ -9,12 +9,12 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { updatePurchaseRequest } from '../../lib/airtable/request';
-import { updatePurchaseRequestInRedux } from '../../lib/redux/inventoryData';
+import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
+import { selectProductByInventoryId, updatePurchaseRequestInRedux } from '../../lib/redux/inventoryData';
 import {
+  EMPTY_PRODUCT,
   EMPTY_PURCHASE_REQUEST,
-  PurchaseRequestStatus,
-  selectCurrentSiteInventoryById,
-  selectProductById
+  PurchaseRequestStatus
 } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getUserId } from '../../lib/redux/userData';
@@ -38,20 +38,17 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   const { classes } = props;
   const history = useHistory();
   const purchaseRequest: PurchaseRequestRecord = props.location.state?.purchaseRequest || EMPTY_PURCHASE_REQUEST;
-  const product = useSelector((state: RootState) =>
-    selectProductById(state, selectCurrentSiteInventoryById(state, purchaseRequest.inventoryId)?.productId || ''),
-  );
+  const product = useSelector((state: RootState) => selectProductByInventoryId(state, purchaseRequest.inventoryId)) || EMPTY_PRODUCT;
 
   // If no purchase request was passed in (i.e. reaching this URL directly), redirect to InventoryMain
   if (!props.location.state?.purchaseRequest || !product) {
     return <Redirect to={'/inventory'} />;
   }
 
-  // TODO (with schema update): rename approvedAt to reviewedAt
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
     const reviewData = {
       reviewerId: getUserId(),
-      approvedAt: moment().toISOString(),
+      reviewedAt: moment().toISOString(),
       status: approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED,
     };
     updatePurchaseRequest(purchaseRequest.id, reviewData);
@@ -67,7 +64,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           <Typography variant="body1">{`Request status: ${purchaseRequest.status}`}</Typography>
           <Typography variant="body1">{`Amount purchased ${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
           <Typography variant="body1">{`Amount spent ${purchaseRequest.amountSpent} ks`}</Typography>
-          <Typography variant="body1">{`Created at ${purchaseRequest.createdAt}`}</Typography>
+          <Typography variant="body1">{`Created at ${formatDateStringToLocal(purchaseRequest.createdAt)}`}</Typography>
           <Typography variant="body1">{`Submitted by ${purchaseRequest.requesterId}`}</Typography>
           {purchaseRequest.notes && <Typography variant="body1">{`Notes: ${purchaseRequest.notes}`}</Typography>}
           {/* TODO: admins lookup user info by id */}

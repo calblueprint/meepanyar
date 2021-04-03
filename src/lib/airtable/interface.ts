@@ -115,13 +115,12 @@ export interface FinancialSummaryRecord {
 
 export interface PurchaseRequestRecord {
   id: string;
-  period: number;
   notes?: string;
   status: PurchaseRequestStatus;
   requesterId: string;
   reviewerId?: string;
   createdAt: string;
-  approvedAt?: string;
+  reviewedAt?: string;
   amountPurchased: number;
   amountSpent: number;
   receipt?: Airtable.Attachment[];
@@ -145,7 +144,7 @@ export interface InventoryUpdateRecord {
   previousQuantity: number;
   updatedQuantity: number;
   inventoryId: string;
-  period: number;
+  createdAt: string;
 }
 
 export interface ProductRecord {
