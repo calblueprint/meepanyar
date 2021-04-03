@@ -22,16 +22,10 @@ const styles = (theme: Theme) =>
       display: 'flex',
       flexDirection: 'column',
     },
-    cameraButton: {
-      backgroundColor: '#F7F9FC',
-      height: 130,
-      border: `3.5px dashed ${theme.palette.divider}`,
-      radius: '6px',
-    },
   });
 
 interface CreatePurchaseRequestProps extends RouteComponentProps {
-  classes: { content: string; cameraButton: string };
+  classes: { content: string; };
   location: any;
 }
 
@@ -77,7 +71,9 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     purchaseRequest.amountSpent = amountSpent;
     purchaseRequest.notes = notes;
     purchaseRequest.inventoryId = inventory.id;
-    purchaseRequest.receipt = [{ url: photoUri }];
+    if (photoUri) {
+      purchaseRequest.receipt = [{ url: photoUri }];
+    }
 
     await createPurchaseRequestAndUpdateInventory(purchaseRequest);
     history.goBack(); // TODO: fix!!
