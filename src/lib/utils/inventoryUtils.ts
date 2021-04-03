@@ -1,5 +1,6 @@
 import moment, { Moment } from 'moment';
 import { InventoryRecord, InventoryUpdateRecord, PurchaseRequestRecord } from '../airtable/interface';
+import { formatDateStringToLocal } from '../moment/momentUtils';
 import {
   selectInventoryUpdatesArrayByInventoryId,
   selectPurchaseRequestsArrayByInventoryId
@@ -23,7 +24,7 @@ export const getInventoryLastUpdated = (inventory: InventoryRecord): string => {
 
   // Check because moment will incorrectly return the current time if updateTimes is empty
   if (updateTimes.length > 0) {
-    return moment.max(updateTimes).toLocaleString();
+    return formatDateStringToLocal(moment.max(updateTimes).toISOString());
   }
   return 'Unknown'; // TODO @wangannie: address design edge case
 };

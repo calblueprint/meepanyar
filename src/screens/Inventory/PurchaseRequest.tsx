@@ -9,6 +9,7 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { updatePurchaseRequest } from '../../lib/airtable/request';
+import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { selectProductByInventoryId, updatePurchaseRequestInRedux } from '../../lib/redux/inventoryData';
 import {
   EMPTY_PRODUCT,
@@ -63,7 +64,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           <Typography variant="body1">{`Request status: ${purchaseRequest.status}`}</Typography>
           <Typography variant="body1">{`Amount purchased ${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
           <Typography variant="body1">{`Amount spent ${purchaseRequest.amountSpent} ks`}</Typography>
-          <Typography variant="body1">{`Created at ${purchaseRequest.createdAt}`}</Typography>
+          <Typography variant="body1">{`Created at ${formatDateStringToLocal(purchaseRequest.createdAt)}`}</Typography>
           <Typography variant="body1">{`Submitted by ${purchaseRequest.requesterId}`}</Typography>
           {purchaseRequest.notes && <Typography variant="body1">{`Notes: ${purchaseRequest.notes}`}</Typography>}
           {/* TODO: admins lookup user info by id */}

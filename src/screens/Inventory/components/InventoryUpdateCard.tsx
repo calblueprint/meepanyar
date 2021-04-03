@@ -2,6 +2,7 @@ import { Card, Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
 import { selectProductByInventoryId } from '../../../lib/redux/inventoryData';
 import { EMPTY_PRODUCT } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
@@ -43,7 +44,7 @@ function InventoryUpdateCard(props: InventoryUpdateCardProps) {
     <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>
         <Typography variant="body1">{`${product.name}, ${updatedQuantity} ${product.unit}(s)`}</Typography>
-        <Typography variant="body1">{`Created at: ${createdAt}`}</Typography>
+        <Typography variant="body1">{`Created at: ${formatDateStringToLocal(createdAt)}`}</Typography>
         <Typography variant="body1">{`Updated by: ${userId}`}</Typography>
       </div>
     </Card>
