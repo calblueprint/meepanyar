@@ -2,11 +2,9 @@ import { Card, CardActions, IconButton, Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
-import { connect } from 'react-redux';
-import { InventoryRecord, ProductRecord } from '../../lib/airtable/interface';
-import { ProductIdString } from '../../lib/redux/inventoryDataSlice';
-import { RootState } from '../../lib/redux/store';
-
+import { useSelector } from 'react-redux';
+import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
+import { RootState } from '../../../lib/redux/store';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -24,25 +22,23 @@ const styles = (theme: Theme) =>
       display: 'flex',
       marginBottom: 10
     },
-    arrowSpacing: {
-      padding: 0
-    },
   });
+  
 interface InventoryCardProps {
-  inventoryItem: InventoryRecord;
-  classes: {
-    arrow: string; cardContent: string; cardContainer: string; arrowSpacing: string;
-  };
-  products: Record<ProductIdString, ProductRecord>;
+  classes: { arrow: string; cardContent: string; cardContainer: string; };
+  lastUpdated: string,
+  productId: string,
 }
 
 function InventoryCard(props: InventoryCardProps) {
-  const { classes, inventoryItem, products} = props;
+  const { classes, lastUpdated, productId } = props;
+  const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
+
   return (
     <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>
-        <Typography variant="body1">{products[inventoryItem.productId]?.name}</Typography>
-        <Typography variant="body1" color="textSecondary">Last Updated: 00.00</Typography>
+        <Typography variant="body1">{product.name}</Typography>
+        <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated}`} </Typography>
       </div>
       <CardActions>
         <IconButton size="small">
@@ -53,8 +49,4 @@ function InventoryCard(props: InventoryCardProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  products: state.inventoryData.products || {}
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(InventoryCard));
+export default withStyles(styles)(InventoryCard);

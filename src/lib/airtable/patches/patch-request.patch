@@ -1,18 +1,27 @@
 diff --git a/src/lib/airtable/request.js b/src/lib/airtable/request.js
-index ae23270..7ac55a8 100644
+index ae23270..a3cc45f 100644
 --- a/src/lib/airtable/request.js
 +++ b/src/lib/airtable/request.js
-@@ -23,6 +23,9 @@ import {
-   getRecordById,
+@@ -24,6 +24,18 @@ import {
    deleteRecord,
  } from './airtable';
-+import { addToOfflineCustomer } from '../utils/offlineUtils';
-+import { addInventoryToRedux } from '../redux/inventoryData';
-+import { generateOfflineInventoryId } from '../utils/inventoryUtils';
  
++import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
++import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
++import {
++  addInventoryToRedux,
++  addProductToRedux,
++  addInventoryUpdateToRedux,
++  addPurchaseRequestToRedux,
++  getInventoryCurrentQuantity,
++  updateInventoryQuantityInRedux,
++} from '../redux/inventoryData';
++import moment from 'moment';
++import { EMPTY_INVENTORY_UPDATE } from '../redux/inventoryDataSlice';
  /*
   ******* CREATE RECORDS *******
-@@ -73,20 +76,24 @@ export const createManyTariffPlans = async (records) => {
+  */
+@@ -73,20 +85,29 @@ export const createManyTariffPlans = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -31,6 +40,7 @@ index ae23270..7ac55a8 100644
 +// that hits a special endpoint because we require additional logic to
 +// handle offline functionality
 +export const createCustomer = async (customer) => {
++  let customerId = '';
 +  try {
 +    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/create`, {
 +      method: 'POST',
@@ -39,18 +49,22 @@ index ae23270..7ac55a8 100644
 +      },
 +      body: JSON.stringify(customer)
 +    })
-+
 +    console.log(resp);
++    await resp.json().then(data => customerId = data.id);
 +  } catch (err) {
 +    console.log(err);
++    customerId = generateOfflineId();
    }
 -  return Promise.all(createPromises);
 -};
++  customer.id = customerId;
++  addCustomerToRedux(customer);
++  return customerId;
 +}
  
  export const createCustomerUpdate = async (record) => {
    return createRecord(Tables.CustomerUpdates, record);
-@@ -103,37 +110,57 @@ export const createManyCustomerUpdates = async (records) => {
+@@ -103,37 +124,57 @@ export const createManyCustomerUpdates = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -136,7 +150,31 @@ index ae23270..7ac55a8 100644
    return createRecord(Tables.FinancialSummaries, record);
  };
  
-@@ -163,9 +190,29 @@ export const createManyProducts = async (records) => {
+@@ -148,9 +189,20 @@ export const createManyFinancialSummaries = async (records) => {
+   return Promise.all(createPromises);
+ };
+ 
+-export const createProduct = async (record) => {
+-  return createRecord(Tables.Products, record);
+-};
++// NONGENERATED: Create a product (inventory type) and add it to Redux
++export const createProduct = async (product) => {
++  let productId = "";
++  try {
++    delete product.id; // Remove the id field to add to Airtable
++    productId = await createRecord(Tables.Products, product);
++  } catch (error) {
++    console.log('(createProduct) Airtable Error: ', error);
++    productId = generateOfflineId();
++  }
++  product.id = productId;
++  addProductToRedux(product);
++  return product.id;
++}
+ 
+ export const createManyProducts = async (records) => {
+   const createPromises = [];
+@@ -163,9 +215,29 @@ export const createManyProducts = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -159,7 +197,7 @@ index ae23270..7ac55a8 100644
 +    console.log('Response for inventory: ', resp);
 +    await resp.json().then(data => inventoryId = data.id);
 +  } catch (err) {
-+    inventoryId = generateOfflineInventoryId();
++    inventoryId = generateOfflineId();
 +    console.log('Error with create inventory request: ', err);
 +  }
 +  inventory.id = inventoryId;
@@ -169,7 +207,67 @@ index ae23270..7ac55a8 100644
  
  export const createManyInventorys = async (records) => {
    const createPromises = [];
-@@ -216,7 +263,7 @@ export const getUserById = async (id) => {
+@@ -178,6 +250,26 @@ export const createManyInventorys = async (records) => {
+   return Promise.all(createPromises);
+ };
+ 
++// NONGENERATED: Create a Purchase Request and update the inventory's current qty (regardless of approval status)
++// TODO: handle offline workflow of creating purchase requests for inventory
++// that was created offline (no Airtable id).
++export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) => {
++  let purchaseRequestId = "";
++  const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
++  try {
++    delete purchaseRequest.id; // Remove the id field to add to Airtable
++    purchaseRequestId = await createPurchaseRequest(purchaseRequest);
++    updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
++  } catch (err) {
++    purchaseRequestId = generateOfflineId();
++    console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
++  }
++  purchaseRequest.id = purchaseRequestId;
++  addPurchaseRequestToRedux(purchaseRequest);
++  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
++  return purchaseRequest;
++};
++
+ export const createPurchaseRequest = async (record) => {
+   return createRecord(Tables.PurchaseRequests, record);
+ };
+@@ -197,6 +289,32 @@ export const createInventoryUpdate = async (record) => {
+   return createRecord(Tables.InventoryUpdates, record);
+ };
+ 
++// NONGENERATED: Create an Inventory Update and update the inventory's current qty
++// TODO: handle offline workflow of creating inventory updates for inventory
++// that was created offline (no Airtable id).
++export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount ) => {
++  const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE));
++  inventoryUpdate.userId = userId;
++  inventoryUpdate.previousQuantity = inventory.currentQuantity;
++  inventoryUpdate.updatedQuantity = updatedAmount;
++  inventoryUpdate.inventoryId = inventory.id;
++  inventoryUpdate.createdAt = moment().toISOString();
++
++  let inventoryUpdateId = "";
++  try {
++    delete inventoryUpdate.id; // Remove the id field to add to Airtable
++    inventoryUpdateId = await createInventoryUpdate(inventoryUpdate);
++    updateInventory(inventoryUpdate.inventoryId, {currentQuantity: inventoryUpdate.updatedQuantity });
++  } catch (err) {
++    inventoryUpdateId = generateOfflineId();
++    console.log('(createInventoryUpdateAndUpdateInventory) Error: ', err);
++  }
++  inventoryUpdate.id = inventoryUpdateId;
++  addInventoryUpdateToRedux(inventoryUpdate);
++  updateInventoryQuantityInRedux(inventoryUpdate.inventoryId, inventoryUpdate.updatedQuantity);
++  return inventoryUpdate;
++};
++
+ export const createManyInventoryUpdates = async (records) => {
+   const createPromises = [];
+   const numCalls = Math.ceil(records.length / 10);
+@@ -216,7 +334,7 @@ export const getUserById = async (id) => {
    return getRecordById(Tables.Users, id);
  };
  
@@ -178,7 +276,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -234,7 +281,7 @@ export const getSiteById = async (id) => {
+@@ -234,7 +352,7 @@ export const getSiteById = async (id) => {
    return getRecordById(Tables.Sites, id);
  };
  
@@ -187,7 +285,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -252,7 +299,7 @@ export const getTariffPlanById = async (id) => {
+@@ -252,7 +370,7 @@ export const getTariffPlanById = async (id) => {
    return getRecordById(Tables.TariffPlans, id);
  };
  
@@ -196,7 +294,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -270,7 +317,7 @@ export const getCustomerById = async (id) => {
+@@ -270,7 +388,7 @@ export const getCustomerById = async (id) => {
    return getRecordById(Tables.Customers, id);
  };
  
@@ -205,7 +303,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -288,7 +335,7 @@ export const getCustomerUpdateById = async (id) => {
+@@ -288,7 +406,7 @@ export const getCustomerUpdateById = async (id) => {
    return getRecordById(Tables.CustomerUpdates, id);
  };
  
@@ -214,7 +312,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -302,11 +349,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
+@@ -302,11 +420,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
    return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
  };
  
@@ -228,7 +326,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -324,7 +371,7 @@ export const getPaymentById = async (id) => {
+@@ -324,7 +442,7 @@ export const getPaymentById = async (id) => {
    return getRecordById(Tables.Payments, id);
  };
  
@@ -237,7 +335,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -338,11 +385,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
+@@ -338,11 +456,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
    return getAllRecords(Tables.Payments, filterByFormula, sort);
  };
  
@@ -251,7 +349,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -360,7 +407,7 @@ export const getProductById = async (id) => {
+@@ -360,7 +478,7 @@ export const getProductById = async (id) => {
    return getRecordById(Tables.Products, id);
  };
  
@@ -260,7 +358,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -378,7 +425,7 @@ export const getInventoryById = async (id) => {
+@@ -378,7 +496,7 @@ export const getInventoryById = async (id) => {
    return getRecordById(Tables.Inventory, id);
  };
  
@@ -269,7 +367,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -396,7 +443,7 @@ export const getPurchaseRequestById = async (id) => {
+@@ -396,7 +514,7 @@ export const getPurchaseRequestById = async (id) => {
    return getRecordById(Tables.PurchaseRequests, id);
  };
  
@@ -278,7 +376,7 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -414,7 +461,7 @@ export const getInventoryUpdateById = async (id) => {
+@@ -414,7 +532,7 @@ export const getInventoryUpdateById = async (id) => {
    return getRecordById(Tables.InventoryUpdates, id);
  };
  
@@ -287,31 +385,48 @@ index ae23270..7ac55a8 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -481,6 +528,23 @@ export const updateCustomer = async (id, recordUpdates) => {
+@@ -481,6 +599,40 @@ export const updateCustomer = async (id, recordUpdates) => {
    return updateRecord(Tables.Customers, id, recordUpdates);
  };
  
 +// NONGENERATED: Edit customer
-+export const editCustomer = async (customer) => {
-+  try {
-+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/edit`, {
-+      method: 'POST',
-+      headers: {
-+        'Content-Type': 'application/json'
-+      },
-+      body: JSON.stringify(customer)
-+    })
++export const editCustomer = async (customer, customerUpdate) => {
++  if (!customer.id) {
++    addToOfflineCustomer(customer, 'edits', customerUpdate);
++  } else {
++    try {
++      const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
++      const { dateUpdated, customerId, explanation, userId } = customerUpdate;
++      await updateCustomer(customer.id, {
++        name,
++        meterNumber,
++        tariffPlanId,
++        siteId,
++        isactive,
++        hasmeter,
++      });
++      console.log("Customer edited!");
 +
-+    console.log(resp);
-+  } catch (err) {
-+    console.log(err);
++      const updateId = await createCustomerUpdate({
++        dateUpdated,
++        customerId,
++        explanation,
++        userId
++      });
++      console.log("Update id: ", updateId);
++      console.log("Created updates!");
++
++      editCustomerInRedux(customer);
++    } catch (err) {
++      console.log(err);
++    }
 +  }
 +}
 +
  export const updateManyCustomers = async (recordUpdates) => {
    const updatePromises = [];
    const numCalls = Math.ceil(recordUpdates.length / 10);
-@@ -507,7 +571,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
+@@ -507,7 +659,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -320,7 +435,7 @@ index ae23270..7ac55a8 100644
    return updateRecord(Tables.MeterReadingsandInvoices, id, recordUpdates);
  };
  
-@@ -537,7 +601,7 @@ export const updateManyPayments = async (recordUpdates) => {
+@@ -537,7 +689,7 @@ export const updateManyPayments = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -329,7 +444,7 @@ index ae23270..7ac55a8 100644
    return updateRecord(Tables.FinancialSummaries, id, recordUpdates);
  };
  
-@@ -637,7 +701,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
+@@ -637,7 +789,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
  export const deletePayment = async (id) => {
    return deleteRecord(Tables.Payments, id);
  };

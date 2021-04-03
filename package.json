@@ -41,6 +41,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-html5-camera-photo": "^1.5.4",
     "react-i18next": "^11.8.10",
     "react-icons": "^3.11.0",
     "react-material-navbar": "^1.2.1",
@@ -89,9 +90,10 @@
     ]
   },
   "devDependencies": {
-    "airtable-schema-generator": "^1.5.0",
+    "@types/react-html5-camera-photo": "^1.5.0",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
     "@typescript-eslint/parser": "^4.5.0",
+    "airtable-schema-generator": "^1.5.0",
     "husky": "^4.3.0",
     "prettier": "^2.1.2",
     "prettier-eslint": "^11.0.0"

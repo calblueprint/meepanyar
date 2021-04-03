@@ -1,13 +1,15 @@
 import { createStyles, Fab, FormControl, FormHelperText, ListSubheader, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import CustomerCard from '../../components/CustomerCard';
 import UserSearchBar from '../../components/UserSearchBar';
 import { CustomerRecord } from '../../lib/airtable/interface';
-import { store } from '../../lib/redux/store';
+import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
+import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import TrieTree from '../../lib/utils/TrieTree';
 
 
@@ -46,8 +48,9 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface UserProps {
+interface CustomerMainProps extends RouteComponentProps {
   classes: { title: string; headerWrapper: string; selectionHeader: string; rightAlign: string; fab: string; };
+  customers: CustomerRecord[]
 }
 
 enum SortBy {
@@ -69,17 +72,17 @@ const labels: FilterByLabel = {
   'ACTIVE_STATUS': ['Active', 'Inactive']
 }
 
-function CustomerMain(props: RouteComponentProps & UserProps) {
+function CustomerMain(props: CustomerMainProps) {
   const { classes } = props;
   const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
   const [filteredCustomersAlt, setFilteredCustomersAlt] = useState<CustomerRecord[]>([]);
-  const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
   const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME);
   const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.ACTIVE_STATUS);
   const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
   const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]);
   const [searchValue, setSearchValue] = useState<string>("");
+  const fullCustomers : CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
 
   useEffect(() => {
     getCustomers();
@@ -87,13 +90,8 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
   }, [sortBy, filterBy, searchValue]);
 
   const getCustomers = () => {
-    const siteData = store.getState().siteData.currentSite;
-    // TODO: It'd be better to slice once and store the sliced list somewhere.
-    // We need to slice here because redux freezes objects to prevent mutation.
-    // The slice occurs during each component update, so it's inefficient as number of
-    // customers or updates grows. This isn't predicted to be a huge issue but may be in the future.
-    let allCustomers: CustomerRecord[] = siteData.customers.slice();
-    setFullCustomers(allCustomers);
+    let allCustomers = fullCustomers;
+
     if (searchValue !== '') {
       allCustomers = allCustomersTrie.get(searchValue);
     }
@@ -218,14 +216,14 @@ function CustomerMain(props: RouteComponentProps & UserProps) {
       <BaseScrollView>
         <FormHelperText>{filterLabels[0]}</FormHelperText>
         {filteredCustomers.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
+          <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)} >
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
         }
         <FormHelperText>{filterLabels[1]}</FormHelperText>
         {filteredCustomersAlt.map((customer, index) => (
-          <Link key={index} to={{ pathname: `${props.match.url}/customer`, state: { customer: customer } }}>
+          <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)} >
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))

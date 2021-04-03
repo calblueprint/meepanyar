@@ -6,7 +6,7 @@ export const theme = createMuiTheme({
       main: '#FF922E',
     },
     secondary: {
-      main: '#FFE3CA',
+      main: '#FFC96F',
     },
     info: {
       main: '#FF6142',
@@ -42,6 +42,10 @@ export const theme = createMuiTheme({
     body2: {
       fontSize: '14px',
       fontWeight: 500,
+    },
+    caption: {
+      fontSize: '10px',
+      fontWeight: 700,
     },
     button: {
       fontSize: '12px',

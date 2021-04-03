@@ -1,12 +1,12 @@
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
-import React from 'react';
-import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { connect, useSelector } from 'react-redux';
+import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
@@ -14,7 +14,7 @@ import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtab
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
-
+import { selectCurrentCustomer } from '../../lib/redux/customerData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,12 +47,17 @@ const styles = (theme: Theme) =>
 interface CustomerProps extends RouteComponentProps {
   classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string;};
   currentSite: SiteRecord;
+  customer: CustomerRecord;
   location: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
   const { classes, match, currentSite } = props;
-  const customer: CustomerRecord = props.location.state.customer;
+  const customer = useSelector(selectCurrentCustomer);
+
+  if (!customer) {
+    return <Redirect to={'/customers'} />;
+  }
 
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
@@ -81,7 +86,7 @@ function CustomerProfile(props: CustomerProps) {
   ];
   const balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
   const readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
-  
+
   const getPaymentButton = () => {
     return (
         <Button
@@ -130,7 +135,7 @@ function CustomerProfile(props: CustomerProps) {
       </div>
     );
   };
-  
+
   return (
     <BaseScreen leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
       <BaseScrollView>

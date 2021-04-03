@@ -1,5 +1,9 @@
+/** 
+ * Return JavaScript object with translations,
+ * formatted according to the conventions in https://react.i18next.com/ 
+ */
 export default {
-    bur:{
+   my:{
        translation:{
           "undefined":"undefined",
           "Cancel":"ဖျက်သိမ်းမည်",

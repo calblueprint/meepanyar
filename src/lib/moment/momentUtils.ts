@@ -1,10 +1,23 @@
 import moment from 'moment';
 
-// Returns a string of the local date time in YYYY-MM-DD HH:mm:ss
-// given a DateTime string in UTC serialized by redux (like UserData)
-export const formatUTCDateStringToLocal = (dateStringUTC: string): string => {
-  return moment(dateStringUTC).local().format('YYYY-MM-DD HH:mm:ss');
+// Returns a string of the local date & time in a language- and timezone-sensitive format
+// given a DateTime string.
+export const formatDateStringToLocal = (dateString: string): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  };
+  return moment(dateString).local().toDate().toLocaleString(undefined, options);
 };
+
+export const isBeforeCurrentPeriod = (dateString: string): boolean => {
+  const inputDate = moment(dateString);
+  const periodStartDate = moment().startOf('month');
+  return inputDate.valueOf() < periodStartDate.valueOf();
+}
 
 // Returns and calculates period from date
 // Will be formatted as YYYY-MM
