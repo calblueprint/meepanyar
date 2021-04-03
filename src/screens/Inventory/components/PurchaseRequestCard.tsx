@@ -3,6 +3,7 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
 import {
   EMPTY_PRODUCT,
   PurchaseRequestStatus,
@@ -52,7 +53,7 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
     <Card className={classes.cardContainer}>
       <div className={classes.cardContent}>
         <Typography variant="body1">{`${product.name}, ${amountPurchased} ${product.unit}(s)`}</Typography>
-        <Typography variant="body1">{`Created at: ${createdAt}`}</Typography>
+        <Typography variant="body1">{`Created at: ${formatDateStringToLocal(createdAt)}`}</Typography>
         <Typography variant="body1">{`Requested by: ${requesterId}`}</Typography>
         <Typography variant="body1">{`Status: ${status}`}</Typography>
       </div>
