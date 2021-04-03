@@ -61,8 +61,6 @@ function AddInventory (props: AddInventoryProps) {
     // Once the inventory record is created, trigger an inventory update.
     await createInventoryUpdateAndUpdateInventory(userId, inventory, inventory.currentQuantity);
 
-    // TODO: @wangannie create inventory update
-
     // Navigate to new inventory item's profile page
     setCurrentInventoryIdInRedux(inventory.id);
     history.replace(`item`);

@@ -64,7 +64,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     setNotes(event.target.value as string);
   }
 
-  const handleSubmit = async (event: React.MouseEvent) => {
+  const handleSubmit = (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
     // Make a deep copy of an empty purchase request record
@@ -77,8 +77,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     purchaseRequest.inventoryId = inventory.id;
     // TODO: add image upload
 
-    await createPurchaseRequestAndUpdateInventory(purchaseRequest);
-    history.goBack();
+    createPurchaseRequestAndUpdateInventory(purchaseRequest).then(() => history.goBack());
   }
 
   return (

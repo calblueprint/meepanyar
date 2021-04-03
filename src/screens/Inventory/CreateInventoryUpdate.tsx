@@ -45,12 +45,11 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
     setUpdatedAmount(parseFloat(event.target.value as string) || 0);
   };
 
-  const handleSubmit = async (event: React.MouseEvent) => {
+  const handleSubmit = (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
     setLoading(true);
-    await createInventoryUpdateAndUpdateInventory(userId,inventory,updatedAmount);
-    history.goBack();
+    createInventoryUpdateAndUpdateInventory(userId, inventory, updatedAmount).then(() => history.goBack());
   };
 
   return (
