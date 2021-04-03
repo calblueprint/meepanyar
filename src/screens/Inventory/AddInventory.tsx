@@ -56,12 +56,14 @@ function AddInventory(props: AddInventoryProps) {
   const [startingAmount, setStartingAmount] = useState(0);
   const [unit, setUnit] = useState('');
   const [newProductName, setNewProductName] = useState('');
+  const [loading, setLoading] = useState(false);
   const NEW_PRODUCT_LABEL = '+ New Inventory Item';
 
   // TODO: Add form input validation and error messaging
   const handleSubmit = async (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
+    setLoading(true);
     let productId = selectedProductId; // needed because setSelectedProductId is not immediate
 
     if (selectedProductId === NEW_PRODUCT_LABEL) {
@@ -149,8 +151,7 @@ function AddInventory(props: AddInventoryProps) {
           primary={true}
           onChange={handleStartingAmountInput}
         />
-        {/* TODO @wangannie: disable + show loading indicator on click to prevent double click */}
-        <Button label={'Add'} onClick={handleSubmit} />
+        <Button loading={loading} label={'Add'} onClick={handleSubmit} />
       </form>
     </BaseScreen>
   );
