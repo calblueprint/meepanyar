@@ -80,18 +80,26 @@ function Home(props: HomeProps) {
 
       <Link to={'/customers'}>
         <HomeMenuItem
-          label="Customer Alerts"
-          amount={customerData.numCustomersToCharge + customerData.numOutstandingPayments}
-          sublabels={[
-            { amount: customerData.numCustomersToCharge, label: 'Customers to Charge' },
-            { amount: customerData.numOutstandingPayments, label: 'Outstanding Payments' },
-          ]}
+          label="To Meter"
+          amount={customerData.numCustomersToCharge}
         />
       </Link>
+      <Link to={'/customers'}>
+        <HomeMenuItem
+          label="To Collect"
+          amount={customerData.numOutstandingPayments}
+        />
+      </Link>
+      <Link to={'/maintenance'}>
+        <HomeMenuItem
+          label="Maintenance"
+          amount={customerData.numOutstandingPayments}
+        />
+      </Link>
+      <HomeMenuItem label="Incidents" amount={0} />
       <Link to={'/financial-summary'}>
         <HomeMenuItem label="Unpaid Reports" amount={0} />
       </Link>
-      <HomeMenuItem label="Unresolved Incidents" amount={0} />
       <Link to={'/financial-summary'}>
         <HomeMenuItem label="Financial Summary" noBadge={true} />
       </Link>

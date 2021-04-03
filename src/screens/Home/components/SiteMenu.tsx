@@ -15,7 +15,7 @@ import { setCurrentSite } from '../../../lib/redux/siteData';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      color: '#828282',
+      color: '#424242',
       display: 'flex',
       alignItems: 'flex-end',
       width: '150px',

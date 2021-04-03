@@ -23,10 +23,6 @@ import {
   getRecordById,
   deleteRecord,
 } from './airtable';
-import { editCustomerInRedux } from '../../lib/redux/siteData';
-import { addToOfflineCustomer } from '../utils/offlineUtils';
-import { addInventoryToRedux } from '../redux/inventoryData';
-import { generateOfflineInventoryId } from '../utils/inventoryUtils';
 import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
 import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
 import {
@@ -85,22 +81,6 @@ export const createManyTariffPlans = async (records) => {
   return Promise.all(createPromises);
 };
 
-<<<<<<< HEAD
-export const createCustomer = async (record) => {
-  return createRecord(Tables.Customers, record);
-};
-
-export const createManyCustomers = async (records) => {
-  const createPromises = [];
-  const numCalls = Math.ceil(records.length / 10);
-  for (let i = 0; i < numCalls; i += 1) {
-    const subset = records.slice(i * 10, (i + 1) * 10);
-    if (subset.length > 0)
-      createPromises.push(createRecords(Tables.Customers, subset));
-  }
-  return Promise.all(createPromises);
-};
-=======
 // NONGENERATED: We use a special, non-schema-generated createCustomer
 // that hits a special endpoint because we require additional logic to
 // handle offline functionality
@@ -124,7 +104,6 @@ export const createCustomer = async (customer) => {
   addCustomerToRedux(customer);
   return customerId;
 }
->>>>>>> c57ce412077f6001c23db4b557f915f07aa7ad40
 
 export const createCustomerUpdate = async (record) => {
   return createRecord(Tables.CustomerUpdates, record);

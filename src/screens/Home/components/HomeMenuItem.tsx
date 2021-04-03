@@ -2,6 +2,9 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import CheckIcon from '@material-ui/icons/Check';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import BuildIcon from '@material-ui/icons/Build';
+import WarningIcon from '@material-ui/icons/Warning';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 type sublabel = {
@@ -14,7 +17,7 @@ interface HomeMenuItemProps {
   amount?: number;
   sublabels?: sublabel[];
   noBadge?: boolean;
-  classes: { root: string; content: string; noAlert: string; sublabel: string; icon: string; grey: string };
+  classes: { root: string; content: string; noAlert: string; sublabel: string; icon: string; checked: string; label: string; };
 }
 
 const styles = (theme: Theme) =>
@@ -22,7 +25,7 @@ const styles = (theme: Theme) =>
     root: {
       width: '100%',
       border: '1px solid',
-      borderColor: theme.palette.divider,
+      borderColor: theme.palette.primary.main,
       borderRadius: '6px',
       padding: '15px 15px',
       marginBottom: '12px',
@@ -51,9 +54,13 @@ const styles = (theme: Theme) =>
       borderRadius: '50%',
       backgroundColor: '#FF6142',
     },
-    grey: {
-      backgroundColor: '#BDBDBD',
+    checked: {
+      backgroundColor: theme.palette.primary.main,
     },
+    label: {
+      color: '#757575',
+      size: '14px',
+    }
   });
 
 function HomeMenuItem(props: HomeMenuItemProps) {
@@ -61,26 +68,26 @@ function HomeMenuItem(props: HomeMenuItemProps) {
   const amount = props.amount
     ? sublabels
       ? sublabels.reduce(function (amt: number, curr: sublabel) {
-          return amt + curr.amount;
-        }, 0)
+        return amt + curr.amount;
+      }, 0)
       : props.amount
     : null;
 
   return (
     <ButtonBase className={classes.root}>
-      <div className={`${classes.content} ${noBadge ? null : amount ? null : classes.noAlert}`}>
+      <div className={`${classes.content} ${noBadge ? null : amount}`}>
         <div>
-          <Typography variant="h2">{label}</Typography>
+          <Typography className={classes.label}>{label}</Typography>
           {sublabels
             ? sublabels.map((sl: sublabel, index: number) => (
-                <Typography className={classes.sublabel} variant="body1" key={index}>
-                  {sl.amount} {sl.label}
-                </Typography>
-              ))
+              <Typography className={classes.sublabel} variant="body1" key={index}>
+                {sl.amount} {sl.label}
+              </Typography>
+            ))
             : null}
         </div>
         {noBadge ? null : (
-          <div className={`${classes.icon} ${amount ? null : classes.grey}`}>
+          <div className={`${classes.icon} ${amount ? null : classes.checked}`}>
             {amount ? <Typography variant="body2">{amount}</Typography> : <CheckIcon fontSize="small" />}
           </div>
         )}
