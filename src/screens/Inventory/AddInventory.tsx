@@ -8,7 +8,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { InventoryRecord } from '../../lib/airtable/interface';
-import { createInventory, createProduct } from '../../lib/airtable/request';
+import { createInventory, createInventoryUpdateAndUpdateInventory, createProduct } from '../../lib/airtable/request';
 import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
 import {
   EMPTY_INVENTORY,
@@ -17,6 +17,7 @@ import {
   selectAllProducts
 } from '../../lib/redux/inventoryDataSlice';
 import { getCurrentSiteId } from '../../lib/redux/siteData';
+import { selectCurrentUserId } from '../../lib/redux/userData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -41,6 +42,7 @@ function AddInventory(props: AddInventoryProps) {
   const { classes } = props;
   const products = useSelector(selectAllProducts);
   const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
+  const userId = useSelector(selectCurrentUserId);
   const history = useHistory();
 
   // Product IDs for items that the site already has inventory for
@@ -81,7 +83,8 @@ function AddInventory(props: AddInventoryProps) {
     // createInventory returns the inventory item with an id
     inventory = await createInventory(inventory);
 
-    // TODO: @wangannie create inventory update
+    // Once the inventory record is created, trigger an inventory update.
+    await createInventoryUpdateAndUpdateInventory(userId, inventory, inventory.currentQuantity);
 
     // Navigate to new inventory item's profile page
     setCurrentInventoryIdInRedux(inventory.id);

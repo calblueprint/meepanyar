@@ -6,7 +6,10 @@ import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestR
 import { setCurrSite } from './siteDataSlice';
 import { RootState } from './store';
 
-const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>();
+const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>({
+  // Sort by descending timestamp
+  sortComparer: (a, b) => moment(b.createdAt).diff(a.createdAt),
+});
 const productsAdapter = createEntityAdapter<ProductRecord>();
 const siteInventoryAdapter = createEntityAdapter<InventoryRecord>();
 const purchaseRequestsAdapter = createEntityAdapter<PurchaseRequestRecord>({
@@ -102,6 +105,7 @@ export const EMPTY_INVENTORY_UPDATE: InventoryUpdateRecord = {
   previousQuantity: 0,
   updatedQuantity: 0,
   inventoryId: '',
+  createdAt: '',
 };
 
 export enum PurchaseRequestStatus {
@@ -162,6 +166,10 @@ const inventoryDataSlice = createSlice({
       };
       purchaseRequestsAdapter.updateOne(state.sitesInventory[siteId].purchaseRequests, update);
     },
+    addInventoryUpdate(state, action) {
+      const { siteId, ...payload } = action.payload;
+      inventoryUpdatesAdapter.addOne(state.sitesInventory[siteId].inventoryUpdates, payload);
+    },
     updateInventoryQuantity(state, action) {
       const siteId = action.payload.siteId;
       const update = {
@@ -190,6 +198,7 @@ export const {
   addInventory,
   addPurchaseRequest,
   updatePurchaseRequest,
+  addInventoryUpdate,
   updateInventoryQuantity,
   setCurrInventoryId,
   addProduct,
