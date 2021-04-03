@@ -27,10 +27,16 @@ const styles = (theme: Theme) =>
     section: {
       marginTop: '30px',
     },
+    imageContainer: {
+      border: `3.5px solid ${theme.palette.divider}`,
+      radius: '6px',
+      padding: 0,
+      width: '100%',
+    },
   });
 
 interface PurchaseRequestsProps extends RouteComponentProps {
-  classes: { content: string; section: string };
+  classes: { content: string; section: string, imageContainer: string };
   location: any;
 }
 
@@ -67,10 +73,10 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           <Typography variant="body1">{`Amount purchased ${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
           <Typography variant="body1">{`Amount spent ${purchaseRequest.amountSpent} ks`}</Typography>
           <Typography variant="body1">{`Created at ${purchaseRequest.createdAt}`}</Typography>
+          {/* TODO: admins lookup user info by id */}
           <Typography variant="body1">{`Submitted by ${purchaseRequest.requesterId}`}</Typography>
           {purchaseRequest.notes && <Typography variant="body1">{`Notes: ${purchaseRequest.notes}`}</Typography>}
-          {/* TODO: admins lookup user info by id */}
-          {/* TODO: Add image */}
+          {purchaseRequest.receipt && <img className={classes.imageContainer} src={purchaseRequest.receipt[0].url} alt="receipt"/> }
           {purchaseRequest.status == PurchaseRequestStatus.PENDING && (
             <div>
               <Button onClick={() => handleSubmit(purchaseRequest, true)} label={'Approve'} />
