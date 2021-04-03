@@ -110,7 +110,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             label="Receipt"
             photoUri={photoUri}
           />
-          <Button label="Confirm" onClick={handleSubmit} />
+          <Button label="Submit" onClick={handleSubmit} />
         </div>
       </BaseScrollView>
     </BaseScreen>

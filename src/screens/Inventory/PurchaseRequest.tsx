@@ -65,7 +65,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   };
 
   return (
-    <BaseScreen leftIcon="backNav">
+    <BaseScreen title="Inventory Receipt" leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.content}>
           <Typography variant="h3">{`Purchase Request for ${product.name}`}</Typography>
