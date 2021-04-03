@@ -28,6 +28,7 @@ import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/custome
 import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
+  addProductToRedux,
   addInventoryUpdateToRedux,
   addPurchaseRequestToRedux,
   getInventoryCurrentQuantity,
@@ -188,9 +189,20 @@ export const createManyFinancialSummaries = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createProduct = async (record) => {
-  return createRecord(Tables.Products, record);
-};
+// NONGENERATED: Create a product (inventory type) and add it to Redux
+export const createProduct = async (product) => {
+  let productId = "";
+  try {
+    delete product.id; // Remove the id field to add to Airtable
+    productId = await createRecord(Tables.Products, product);
+  } catch (error) {
+    console.log('(createProduct) Airtable Error: ', error);
+    productId = generateOfflineId();
+  }
+  product.id = productId;
+  addProductToRedux(product);
+  return product.id;
+}
 
 export const createManyProducts = async (records) => {
   const createPromises = [];
