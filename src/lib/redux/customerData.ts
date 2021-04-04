@@ -1,4 +1,4 @@
-import { CustomerRecord } from '../airtable/interface';
+import { CustomerRecord, PaymentRecord } from '../airtable/interface';
 import { addCustomer, setCurrentCustomerId, editCustomer, selectCustomerById } from './customerDataSlice';
 import { getCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
@@ -17,6 +17,10 @@ export const editCustomerInRedux = (customer: Partial<CustomerRecord>): void => 
     store.dispatch(editCustomer(customerUpdates));
 };
 
+export const addPaymentToCustomerInRedux = (customerId: string, payment: PaymentRecord) => {
+    console.log("Supposed to add payment here");
+}
+
 export const setCurrentCustomerIdInRedux = (customerId: string): void => {
     store.dispatch(setCurrentCustomerId(customerId))
 }
@@ -24,6 +28,6 @@ export const setCurrentCustomerIdInRedux = (customerId: string): void => {
 export const selectCurrentCustomerId = (state: RootState) => state.customerData.currentCustomerId;
 
 export const selectCurrentCustomer = createSelector(
-    selectCurrentCustomerId, 
-    store.getState, 
+    selectCurrentCustomerId,
+    store.getState,
     (currentCustomerId, state) => selectCustomerById(state, currentCustomerId));

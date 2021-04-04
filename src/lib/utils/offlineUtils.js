@@ -1,6 +1,6 @@
 import { openDB } from 'idb';
 
-// We define a customer to be the same if they have the same
+// We define a customer to be the same if they have the same offline ID number
 export const checkSameCustomer = (customerOne, customerTwo) => {
     // Check rids if available, check those
     if (customerOne.rid && customerTwo.rid && customerOne.rid === customerTwo.rid) {
@@ -18,7 +18,7 @@ export const checkSameCustomer = (customerOne, customerTwo) => {
 // This function is called when creating meterReadings or payments for an offline customer
 // (one that is not yet in the airtable). We look for the "create customer" request in the
 // background-sync object store and modify the request to include creating a meterReading / payment as well.
-export const addToOfflineCustomer = async (customer, fieldToAppend, objectToAdd) => {
+export const addToOfflineCustomer = async (customerId, fieldToAppend, objectToAdd) => {
     let db, getTransaction, objectStore, requestCursor;
     const requestKeyToValue = {};
     try {
@@ -31,7 +31,7 @@ export const addToOfflineCustomer = async (customer, fieldToAppend, objectToAdd)
         return;
     }
 
-    console.log(customer, fieldToAppend, objectToAdd);
+    console.log(customerId, fieldToAppend, objectToAdd);
 
     // In this transaction, iterate through all the requests and store them in the requestKeyValues
     while (requestCursor) {
@@ -57,7 +57,9 @@ export const addToOfflineCustomer = async (customer, fieldToAppend, objectToAdd)
         const requestBody = await requestBodyBlob.text();
         const createCustomerJSON = JSON.parse(requestBody);
 
-        if (checkSameCustomer(customer, createCustomerJSON)) {
+        console.log("Request body: ", JSON.stringify(createCustomerJSON));
+
+        if (checkSameCustomer(customerId, createCustomerJSON.id)) {
             const modifiedRequest = { ...requestValue };
             createCustomerJSON[fieldToAppend].push(objectToAdd);
             const modifiedCustomerJSON = JSON.stringify(createCustomerJSON);

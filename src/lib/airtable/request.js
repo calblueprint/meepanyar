@@ -24,8 +24,8 @@ import {
   deleteRecord,
 } from './airtable';
 
-import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
-import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
+import { editCustomerInRedux, addCustomerToRedux, addPaymentToCustomerInRedux } from '../../lib/redux/customerData';
+import { addToOfflineCustomer, generateOfflineId, isOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
   addProductToRedux,
@@ -150,28 +150,27 @@ export const createMeterReadingandInvoice = async (meterReading, customer) => {
 }
 
 // NONGENERATED: Create a payment for a customer
-export const createPayment = async (payment, customer) => {
+export const createPayment = async (payment) => {
+  const customerId = payment.billedToId;
+  let paymentId = '';
   // If customer does not exist, we want to search the requests objectStore
   // to add the current meter reading to the customer request being POST'ed
-  if (!customer.rid) {
-    addToOfflineCustomer(customer, 'payments', payment);
+  if (isOfflineId(customerId)) {
+    addToOfflineCustomer(customerId, 'payments', payment);
+    paymentId = generateOfflineId();
   } else {
-    // Customer has an rid so it is in the airtable.
+    // Customer has an id so it is in the airtable.
     // Make a standard request to create a payment.
+    delete payment.id
     try {
-      payment.customerId = customer.rid;
-      const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/payments/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payment)
-      })
-      console.log('Response for payment: ', resp);
-    } catch (err) {
-      console.log('Error with create payment request: ', err)
+      paymentId = await createRecord(Tables.Payments, payment);
+    } catch (error) {
+      paymentId = generateOfflineId();
+      console.log('(createPayment) Error: ', error);
     }
   }
+  payment.id = paymentId;
+  addPaymentToCustomerInRedux(customerId, payment);
 }
 
 export const createFinancialSummary = async (record) => {
@@ -259,7 +258,7 @@ export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) =
   try {
     delete purchaseRequest.id; // Remove the id field to add to Airtable
     purchaseRequestId = await createPurchaseRequest(purchaseRequest);
-    updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
+    updateInventory(purchaseRequest.inventoryId, { currentQuantity: newQuantity });
   } catch (err) {
     purchaseRequestId = generateOfflineId();
     console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);

@@ -2,7 +2,7 @@ import { Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RouteComponentProps, Redirect } from 'react-router-dom';
+import { RouteComponentProps, Redirect, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
@@ -41,6 +41,7 @@ interface AddPaymentProps extends RouteComponentProps {
 
 function AddPayment(props: AddPaymentProps) {
     const { classes } = props;
+    const history = useHistory();
 
     const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
     const currentUserId: string | undefined = useSelector(selectCurrentUserId);
@@ -64,7 +65,7 @@ function AddPayment(props: AddPaymentProps) {
         payment.billedToId = currentCustomer.id;
         payment.collectedById = currentUserId;
         
-        createPayment(payment);
+        createPayment(payment).then(history.goBack);
     }
 
     const totalAmountOwed = currentCustomer.totalAmountBilledfromInvoices - currentCustomer.totalAmountPaidfromPayments;
