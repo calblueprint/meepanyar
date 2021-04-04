@@ -16,6 +16,9 @@ export const theme = createMuiTheme({
       secondary: '#C4C4C4',
     },
     divider: '#E5E5E5',
+    background: {
+      default: '#F7F9FC',
+    }
   },
   typography: {
     fontFamily: 'Helvetica Neue',
