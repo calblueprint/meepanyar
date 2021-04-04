@@ -107,7 +107,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
           <TextField value={notes} label={'Notes (optional)'} id={'notes'} primary={true} onChange={handleNotesInput} />
           <CameraButton
             preservedState={{ amountPurchased, amountSpent, notes }}
-            goBack={goBack}
+            goBack={goBack + 1}
             id="upload-receipt"
             label="Receipt"
             photoUri={photoUri}
