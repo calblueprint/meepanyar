@@ -19,18 +19,19 @@ const styles = (theme: Theme) =>
 interface CameraButtonProps {
   classes: { buttonContainer: string };
   id: string;
+  goBack: number;
   label?: string;
   photoUri?: string;
   preservedState?: {},
 }
 
 function CameraButton(props: CameraButtonProps) {
-  const { classes, photoUri, preservedState } = props;
+  const { classes, photoUri, preservedState, goBack } = props;
   return (
     <div>
       <InputLabel htmlFor={props.id}>{props.label}</InputLabel>
       <MaterialButton
-        onClick={() => navigateToCamera({preservedState} || {})}
+        onClick={() => navigateToCamera({preservedState} || {}, goBack)}
         className={classes.buttonContainer}
         variant="contained"
         color="primary"

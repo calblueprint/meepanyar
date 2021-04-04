@@ -39,6 +39,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const [amountPurchased, setAmountPurchased] = useState(props.location.state?.amountPurchased || 0.0);
   const [amountSpent, setAmountSpent] = useState(props.location.state?.amountSpent || 0.0);
   const [notes, setNotes] = useState(props.location.state?.notes || '');
+  const goBack = props.location.state?.goBack || -1;
 
   const photoUri = props.location.state?.photo;
 
@@ -76,7 +77,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     }
 
     await createPurchaseRequestAndUpdateInventory(purchaseRequest);
-    history.goBack(); // TODO: fix!!
+    history.go(goBack);
   };
 
   return (
@@ -106,6 +107,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
           <TextField value={notes} label={'Notes (optional)'} id={'notes'} primary={true} onChange={handleNotesInput} />
           <CameraButton
             preservedState={{ amountPurchased, amountSpent, notes }}
+            goBack={goBack}
             id="upload-receipt"
             label="Receipt"
             photoUri={photoUri}

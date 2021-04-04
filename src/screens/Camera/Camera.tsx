@@ -8,6 +8,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 export interface PreservedCameraState {
     preservedState: object;
     returnLink: string;
+    goBack: number;
 }
 
 // TODO: @julianrkung Styling for camera once deployment occurs and you can access on phone
@@ -31,11 +32,11 @@ function CameraScreen(props: CameraProps) {
         history.replace('home');
     }
 
-    const { preservedState, returnLink } = props.location.state;
+    const { preservedState, returnLink, goBack } = props.location.state;
 
     // We navigate to a new screen and pass all state
     const onTakePhoto = (photoUri: string) => {
-        history.push('/camera/preview', { preservedState, returnLink, photoUri })
+        history.push('/camera/preview', { preservedState, returnLink, photoUri, goBack: goBack - 1 })
     }
 
     const onCameraError = (error: Error) => {
