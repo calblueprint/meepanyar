@@ -91,6 +91,8 @@ function CustomerProfile(props: CustomerProps) {
     return (
         <Button
           variant="contained"
+          component={Link}
+          to={`${match.url}/payments/create`}
           className={classes.buttonPrimary}
           startIcon={<AddIcon />}
           disableElevation={true}

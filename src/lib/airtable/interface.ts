@@ -93,6 +93,8 @@ export interface PaymentRecord {
   id: string;
   amount: number;
   date: string;
+  billedToId: string;
+  collectedById: string;
 }
 
 export interface FinancialSummaryRecord {

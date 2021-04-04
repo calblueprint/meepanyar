@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
-import { CustomerRecord, SiteId } from '../airtable/interface';
+import { CustomerRecord, PaymentRecord, SiteId } from '../airtable/interface';
 import { setCurrSite } from './siteDataSlice';
 import { RootState } from './store';
 
@@ -21,6 +21,14 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     customerUpdates: [],
     totalAmountBilledfromInvoices: 0,
     totalAmountPaidfromPayments: 0,
+}
+
+export const EMPTY_PAYMENT: PaymentRecord = {
+    id: '',
+    amount: 0,
+    date: '',
+    billedToId: '',
+    collectedById: '',
 }
 
 const customersAdapter = createEntityAdapter<CustomerRecord>();

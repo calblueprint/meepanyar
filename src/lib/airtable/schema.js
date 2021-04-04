@@ -102,8 +102,8 @@ export const Columns = {
 		paymentName: {name:`Payment Name`, type:`formula`},
 		amount: {name:`Amount`, type:`number`},
 		date: {name:`Date`, type:`date`},
-		billedToIds: {name:`Billed To`, type:`foreignKey-many`},
-		collectedByIds: {name:`Collected By`, type:`foreignKey-many`},
+		billedToId: {name:`Billed To`, type:`foreignKey-one`},
+		collectedById: {name:`Collected By`, type:`foreignKey-one`},
 		id: {name:`ID`, type:`formula`},
 	},
 	"Financial Summaries": {
