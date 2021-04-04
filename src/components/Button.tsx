@@ -10,6 +10,7 @@ interface MainButtonProps {
   textButton?: boolean;
   variant?: 'text' | 'outlined' | 'contained';
   fullWidth?: boolean;
+  startIcon?: React.ReactNode;
 }
 
 const styles = makeStyles((theme: Theme) =>
@@ -30,6 +31,7 @@ function MainButton(props: MainButtonProps) {
   const classes = styles(props);
   return (
     <Button
+      startIcon={props.startIcon}
       fullWidth={props.fullWidth}
       disabled={props.disabled || props.loading}
       className={classes.button}
