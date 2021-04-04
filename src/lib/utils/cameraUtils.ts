@@ -5,6 +5,6 @@ import { history } from '../redux/store';
 // and it will be passed back to the original screen after the Camera workflow finishes
 // goBack tracks the number of layers in the history stack needed to go back
 export function navigateToCamera(preservedState: object, goBack?: number) {
-    const returnLink = history.location.pathname;
-    history.push('/camera', { ...preservedState, returnLink, goBack});
+  const returnLink = history.location.pathname;
+  history.replace('/camera', { ...preservedState, returnLink, goBack });
 }

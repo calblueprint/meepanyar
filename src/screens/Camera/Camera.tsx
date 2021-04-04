@@ -72,7 +72,7 @@ function CameraScreen(props: CameraProps) {
     }
 
     return (
-        <BaseScreen leftIcon="backNav">
+        <BaseScreen leftIcon="backNav" backAction={() => history.replace(returnLink, {...preservedState})}>
             {errorMessage ? renderErrorMessage() : renderCamera()}
         </BaseScreen>
     )

@@ -50,14 +50,15 @@ export interface HeaderProps {
   match?: any;
   name?: string;
   email?: string;
+  backAction?: () => void;
 }
 
 function BaseHeader(props: HeaderProps) {
-  const { leftIcon, title, rightIcon, classes, match, name, email } = props;
+  const { leftIcon, title, rightIcon, classes, match, name, email, backAction } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const history = useHistory();
-
+  const backActionDefault = history.goBack;
   const handleLogoutClick = async () => {
     const logoutSuccess = await logoutUser();
     if (logoutSuccess){
@@ -98,7 +99,7 @@ function BaseHeader(props: HeaderProps) {
 
   //TODO: allow users to input icons rather than map strings to icons
   const icons: { [key: string]: JSX.Element } = {
-    backNav: getIcon(history.goBack, <ArrowBackIosIcon />),
+    backNav: getIcon(backAction || backActionDefault, <ArrowBackIosIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />),
     user: getIcon(openProfileMenu, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
