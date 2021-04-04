@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect, useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
-import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
+import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import { isBeforeCurrentPeriod } from '../../lib/moment/momentUtils';
@@ -105,7 +105,7 @@ const mapStateToProps = (state: RootState) => {
   let lastUpdated = '';
 
   if (state.userData.lastUpdated) {
-    lastUpdated = formatUTCDateStringToLocal(state.userData.lastUpdated);
+    lastUpdated = formatDateStringToLocal(state.userData.lastUpdated);
   }
   const isOnline = state.userData.isOnline;
   const currentSite = state.siteData.currentSite;

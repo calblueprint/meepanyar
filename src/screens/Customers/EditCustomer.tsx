@@ -10,7 +10,7 @@ import TextField from '../../components/TextField';
 import { editCustomer } from '../../lib/airtable/request';
 import { RootState } from '../../lib/redux/store';
 import { CustomerRecord, SiteRecord, CustomerUpdateRecord } from '../../lib/airtable/interface';
-import { formatUTCDateStringToLocal } from '../../lib/moment/momentUtils';
+import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { EMPTY_CUSTOMER, setCurrentCustomerId } from '../../lib/redux/customerDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
@@ -67,7 +67,7 @@ function EditCustomer(props: EditCustomerProps) {
     // Add other info necessary to create the Airtable record
     const customerUpdate: CustomerUpdateRecord = {
       id: '',
-      dateUpdated: formatUTCDateStringToLocal((new Date()).toString()),
+      dateUpdated: formatDateStringToLocal((new Date()).toString()),
       customerId: currentCustomer.id,
       explanation: explanation,
       userId: userId,

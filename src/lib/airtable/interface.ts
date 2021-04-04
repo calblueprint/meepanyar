@@ -144,6 +144,7 @@ export interface InventoryUpdateRecord {
   previousQuantity: number;
   updatedQuantity: number;
   inventoryId: string;
+  createdAt: string;
 }
 
 export interface ProductRecord {
