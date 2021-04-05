@@ -1,9 +1,58 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
-import { CustomerRecord, SiteId } from '../airtable/interface';
+import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteId } from '../airtable/interface';
 import { setCurrSite } from './siteDataSlice';
 import { RootState } from './store';
+import moment from 'moment';
+
+const customersAdapter = createEntityAdapter<CustomerRecord>();
+const paymentsAdapter = createEntityAdapter<PaymentRecord>({
+    // Sort by descending timestamp
+    sortComparer: (a, b) => moment(b.date).diff(a.date),
+});
+const meterReadingsAdapter = createEntityAdapter<MeterReadingRecord>({
+    // Sort by descending timestamp
+    sortComparer: (a, b) => moment(b.date).diff(a.date),
+});
+
+// Returns customers in the context of the current site
+export const {
+    selectEntities: selectAllCustomers,
+    selectAll: selectAllCustomersArray,
+    selectById: selectCustomerById,
+    selectIds: selectCustomerIds
+} = customersAdapter.getSelectors(
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].customers);
+
+export const {
+    selectEntities: selectAllPayments,
+    selectAll: selectAllPaymentsArray,
+    selectById: selectPaymentById,
+    selectIds: selectPaymentIds
+} = paymentsAdapter.getSelectors(
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].payments);
+
+export const {
+    selectEntities: selectAllMeterReadings,
+    selectAll: selectAllMeterReadingsArray,
+    selectById: selectMeterReadingById,
+    selectIds: selectMeterReadingIds
+} = meterReadingsAdapter.getSelectors(
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].meterReadings);
+
+interface SiteCustomerData {
+    customers: EntityState<CustomerRecord>;
+    payments: EntityState<PaymentRecord>;
+    meterReadings: EntityState<MeterReadingRecord>;
+}
+
+// TODO: @julianrkung, We should eventually make this a Record<SiteId, Record<CustomerId, CustomerRecord>> map for efficiency
+// We can't do this yet because customers created while offline do not receive an id yet
+interface customerDataSliceState {
+    sitesCustomers: Record<SiteId, SiteCustomerData>;
+    currentCustomerId: string;
+}
 
 export const EMPTY_CUSTOMER: CustomerRecord = {
     id: '',
@@ -14,31 +63,34 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     hasmeter: false,
     outstandingBalance: '',
     meterReadingIds: [],
-    meterReadings: [],
     paymentIds: [],
-    payments: [],
     customerUpdateIds: [],
     customerUpdates: [],
     totalAmountBilledfromInvoices: 0,
     totalAmountPaidfromPayments: 0,
 }
 
-const customersAdapter = createEntityAdapter<CustomerRecord>();
+export const EMPTY_PAYMENT: PaymentRecord = {
+    id: '',
+    amount: 0,
+    date: '',
+    billedToId: '',
+    collectedById: '',
+}
 
-// Returns customers in the context of the current site
-export const {
-    selectEntities: selectAllCustomers,
-    selectAll: selectAllCustomersArray,
-    selectById: selectCustomerById,
-    selectIds: selectCustomerIds
-} = customersAdapter.getSelectors(
-    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id]);
+export const EMPTY_METER_READING: MeterReadingRecord = {
+    id: '',
+    reading: 0,
+    amountBilled: 0,
+    date: '',
+    meterNumber: -1,
+    customerId: '',
+}
 
-// TODO: @julianrkung, We should eventually make this a Record<SiteId, Record<CustomerId, CustomerRecord>> map for efficiency
-// We can't do this yet because customers created while offline do not receive an id yet
-interface customerDataSliceState {
-    sitesCustomers: Record<SiteId, EntityState<CustomerRecord>>;
-    currentCustomerId: string;
+export const EMPTY_SITE_CUSTOMER_DATA: SiteCustomerData = {
+    customers: customersAdapter.getInitialState(),
+    payments: paymentsAdapter.getInitialState(),
+    meterReadings: meterReadingsAdapter.getInitialState(),
 }
 
 const initialState: customerDataSliceState = {
@@ -51,10 +103,17 @@ const customerDataSlice = createSlice({
     initialState,
     reducers: {
         saveCustomerData(state, action) {
-            for (const [siteId, siteCustomers] of Object.entries(action.payload)) {
-                state.sitesCustomers[siteId] = customersAdapter.getInitialState();
-                state.sitesCustomers[siteId] = customersAdapter.addMany(state.sitesCustomers[siteId], siteCustomers as CustomerRecord[]);
-            }
+            const { siteId, payments, customers, meterReadings } = action.payload;
+            state.sitesCustomers[siteId] = JSON.parse(JSON.stringify(EMPTY_SITE_CUSTOMER_DATA));
+
+            const customerEntities = customersAdapter.addMany(state.sitesCustomers[siteId].customers, customers as CustomerRecord[]);
+            state.sitesCustomers[siteId].customers = customerEntities;
+
+            const paymentEntities = paymentsAdapter.addMany(state.sitesCustomers[siteId].payments, payments as PaymentRecord[]);
+            state.sitesCustomers[siteId].payments = paymentEntities;
+
+            const meterReadingEntities = meterReadingsAdapter.addMany(state.sitesCustomers[siteId].meterReadings, meterReadings as MeterReadingRecord[]);
+            state.sitesCustomers[siteId].meterReadings = meterReadingEntities;
         },
         setCurrentCustomerId(state, action) {
             state.currentCustomerId = action.payload
@@ -63,7 +122,7 @@ const customerDataSlice = createSlice({
             const customer: CustomerRecord = action.payload.customer;
             const siteId: SiteId = action.payload.siteId;
 
-            customersAdapter.addOne(state.sitesCustomers[siteId], customer);
+            customersAdapter.addOne(state.sitesCustomers[siteId].customers, customer);
         },
         editCustomer(state, action) {
             const { siteId, id, ...changes } = action.payload;
@@ -71,7 +130,7 @@ const customerDataSlice = createSlice({
                 id,
                 changes,
             };
-            customersAdapter.updateOne(state.sitesCustomers[siteId], update);
+            customersAdapter.updateOne(state.sitesCustomers[siteId].customers, update);
         }
     },
     extraReducers: {

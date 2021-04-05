@@ -1,50 +1,33 @@
 
 import { CustomerRecord, MeterReadingRecord, SiteRecord, TariffPlanRecord } from '../../lib/airtable/interface';
-import { getCurrentPeriod, getDiffinPeriods, getPeriodFromDate } from '../../lib/moment/momentUtils';
+import { isBeforeCurrentPeriod } from '../../lib/moment/momentUtils';
+import { selectMeterReadingsByCustomerId } from '../../lib/redux/customerData';
+import { store } from '../redux/store';
 
-const isCurrentReading = (mr: MeterReadingRecord): boolean => {
-    const period: string = getPeriodFromDate(mr.date);
-    const currPer: string = getCurrentPeriod();
-    return period === currPer;
-};
-
-// Returns last reading in the period
+// Returns the last reading in the period or undefined if no reading has been made in the current period
 export const getCurrentReading = (customer: CustomerRecord): MeterReadingRecord | undefined => {
-  return customer.meterReadings.find(isCurrentReading);
-};
+  const meterReadings: MeterReadingRecord[] = selectMeterReadingsByCustomerId(store.getState(), customer.id);
 
-const getClosestReading = (x: MeterReadingRecord | undefined, y: MeterReadingRecord | undefined): MeterReadingRecord | undefined => {
-  if (!x) {
-    return y;
+  if (meterReadings.length && !isBeforeCurrentPeriod(meterReadings[0].date)) {
+    return meterReadings[0];
   }
-  if (!y) {
-    return x;
-  }
-  const currentPeriod: string = getCurrentPeriod();
-  const diffX: number = getDiffinPeriods(currentPeriod, getPeriodFromDate(x.date));
-  const diffY: number = getDiffinPeriods(currentPeriod, getPeriodFromDate(y.date));
-  if (diffX < diffY) {
-    return x;
-  } else {
-    return y;
-  }
-}
+};
 
 // Searches through meterReadings and find most recent reading that isn't from the current period
 // Could be undefined if no other reading exists except current
 export const getStartingReading = (customer: CustomerRecord): MeterReadingRecord | undefined => {
-  let mostRecentReading: MeterReadingRecord | undefined;
-  for (let i = 0; i < customer.meterReadings.length; i += 1) {
-    const thisReading = customer.meterReadings[i];
-    if (!isCurrentReading(thisReading)) {
-      mostRecentReading = getClosestReading(thisReading, mostRecentReading);
+  const meterReadings: MeterReadingRecord[] = selectMeterReadingsByCustomerId(store.getState(), customer.id);
+
+  // Meter readings are sorted from most to least recent so we return the first one before the current period
+  for (const meterReading of meterReadings) {
+    if (isBeforeCurrentPeriod(meterReading.date)) {
+      return meterReading;
     }
   }
-  return mostRecentReading;
 };
 
 export const getPeriodUsage = (currReading: MeterReadingRecord, startingMeter: MeterReadingRecord | undefined) => {
-  const periodUsage = currReading.reading - (startingMeter? startingMeter.reading : 0);
+  const periodUsage = currReading.reading - (startingMeter ? startingMeter.reading : 0);
   return periodUsage;
 }
 
@@ -55,5 +38,15 @@ export const getAmountBilled = (currReading: MeterReadingRecord) => {
 // TODO: add better error handling
 export const getTariffPlan = (customer: CustomerRecord, currentSite: SiteRecord): TariffPlanRecord | undefined => {
   const tariffPlanId = customer.tariffPlanId;
-  return currentSite.tariffPlans.find((plan:TariffPlanRecord) => plan.id === tariffPlanId);
+  return currentSite.tariffPlans.find((plan: TariffPlanRecord) => plan.id === tariffPlanId);
+}
+
+export const getLatestReadingDate = (customer: CustomerRecord): string => {
+  const latestReading = getCurrentReading(customer);
+
+  if (latestReading) {
+    return latestReading.date
+  } else {
+    return 'No Readings'
+  }
 }
