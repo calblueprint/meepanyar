@@ -36,7 +36,7 @@ function Field(props: TextFieldProps) {
         InputProps={{ style: { fontSize: 14 }, disableUnderline: true, autoComplete: 'off' }}
         InputLabelProps={{ shrink: true }}
         color={props.primary ? 'primary' : undefined}
-        inputProps={props.value !== undefined ? { value: props.value || '' } : { defaultValue: '' }}
+        value={props.value || undefined}
         onChange={props.onChange}
       />
     </div>
