@@ -9,7 +9,7 @@ interface TextFieldProps {
   label: string;
   id: string;
   name?: string;
-  value?: string;
+  value?: string | number;
   disabled?: boolean;
   placeholder?: string;
   primary?: boolean; // TODO @wangannie: REMOVE
@@ -52,7 +52,7 @@ function Field(props: TextFieldProps) {
         required={props.required}
         className={classes.textField}
         InputLabelProps={{ shrink: true }}
-        value={props.value ? props.value : ''}
+        inputProps={props.value !== undefined ? {value: props.value || ''} : {defaultValue: ''}}
         onChange={props.onChange}
         disabled={props.disabled}
         placeholder={props.placeholder || props.label || ''}
