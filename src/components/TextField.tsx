@@ -56,7 +56,7 @@ function Field(props: TextFieldProps) {
         onChange={props.onChange}
         disabled={props.disabled}
         placeholder={props.placeholder || props.label || ''}
-        variant={'outlined'}
+        variant='outlined'
         fullWidth
         error={props.error}
         helperText={props.helperText}

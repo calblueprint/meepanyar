@@ -6,7 +6,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import CustomerCard from '../../components/CustomerCard';
-import UserSearchBar from '../../components/UserSearchBar';
+import SearchBar from '../../components/SearchBar';
 import { CustomerRecord } from '../../lib/airtable/interface';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
@@ -199,7 +199,7 @@ function CustomerMain(props: CustomerMainProps) {
         <h1 className={classes.title}>Customers</h1>
       </div>
       <div className={classes.selectionHeader}>
-        <UserSearchBar onSearchChange={handleSearchChange} />
+        <SearchBar placeholder="Search for a customer" onSearchChange={handleSearchChange} />
         <FormControl>
           <Select onChange={handleMenuSelect} multiple value={sortAndFilter} inputProps={{ 'aria-label': 'Without label' }}>
             <ListSubheader>Sort By</ListSubheader>
