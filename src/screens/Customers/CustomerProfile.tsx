@@ -164,7 +164,6 @@ function CustomerProfile(props: CustomerProps) {
   };
 
   const getTariffInfo = () => {
-    customer.meterType = "Inactive";
     if (customer.meterType == "Inactive") {
       tariffInfo = [
         { number: UNDEFINED_AMOUNT , label: 'Fixed\nTariff', unit: '' },
