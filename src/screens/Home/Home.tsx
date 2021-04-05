@@ -4,8 +4,6 @@ import { RootState } from '../../lib/redux/store';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import { isBeforeCurrentPeriod } from '../../lib/moment/momentUtils';
-
 import { SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
@@ -14,8 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import WifiIcon from '@material-ui/icons/Wifi';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import { CustomerRecord } from '../../lib/airtable/interface';
-import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
+import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
 
 const styles = () =>
   createStyles({
@@ -40,33 +37,10 @@ interface HomeProps {
 
 function Home(props: HomeProps) {
   const { classes, lastUpdated, isOnline, currentSite } = props;
-  const customers : CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
+  const numCustomersToMeter  = useSelector(selectCustomersToMeter)?.length || 0;
+  const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
+  const numOutstandingPayments = 0;
 
-  const calculateCustomerData = () => {
-    // customers to charge:  haven't charged yet / no meter reading
-    // outstanding payments: done the meter reading / charged, haven't paid yet
-    let numCustomersToCharge = 0;
-    let numOutstandingPayments = 0;
-    for (let i = 0; i < customers.length; i++) {
-      const currCustomer = customers[i]
-      //depends if the meter readings list is sorted with earliest => latest
-      const latestMeterReading = currCustomer.meterReadings[currCustomer.meterReadings.length - 1];
-      if (latestMeterReading != null) {
-        if (isBeforeCurrentPeriod(latestMeterReading.date)) {
-          numCustomersToCharge += 1;
-        }
-        if (parseInt(currCustomer.outstandingBalance) > 0) {
-          numOutstandingPayments += 1;
-        }
-      } else {
-        numCustomersToCharge += 1;
-      }
-    }
-    return { numOutstandingPayments, numCustomersToCharge }
-  }
-
-
-  const customerData = calculateCustomerData();
   return (
     <BaseScreen rightIcon="user">
       <div className={classes.header}>
@@ -83,10 +57,10 @@ function Home(props: HomeProps) {
       <Link to={'/customers'}>
         <HomeMenuItem
           label="Customer Alerts"
-          amount={customerData.numCustomersToCharge + customerData.numOutstandingPayments}
+          amount={numCustomersToMeter + numOutstandingPayments}
           sublabels={[
-            { amount: customerData.numCustomersToCharge, label: 'Customers to Charge' },
-            { amount: customerData.numOutstandingPayments, label: 'Outstanding Payments' },
+            { amount: numCustomersToMeter, label: 'Number of customers to meter' },
+            { amount: numCustomersToCollect, label: 'Number of customers to collect' },
           ]}
         />
       </Link>

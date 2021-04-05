@@ -1,5 +1,6 @@
-import { CustomerRecord, PaymentRecord, SiteRecord } from '../airtable/interface';
-import { addCustomer, setCurrentCustomerId, editCustomer, selectCustomerById, saveCustomerData, selectAllMeterReadingsArray } from './customerDataSlice';
+import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../airtable/interface';
+import { addCustomer, setCurrentCustomerId, editCustomer, selectCustomerById, saveCustomerData, selectAllMeterReadingsArray, selectAllCustomersArray, selectAllPaymentsArray, selectAllCustomers } from './customerDataSlice';
+import { isBeforeCurrentPeriod } from '../moment/momentUtils';
 import { getCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
 import { createSelector } from '@reduxjs/toolkit';
@@ -35,6 +36,8 @@ export const setCurrentCustomerIdInRedux = (customerId: string): void => {
     store.dispatch(setCurrentCustomerId(customerId))
 }
 
+const getCustomerId = (_: RootState, customerId: string) => customerId;
+
 export const selectCurrentCustomerId = (state: RootState) => state.customerData.currentCustomerId;
 
 export const selectCurrentCustomer = createSelector(
@@ -43,7 +46,66 @@ export const selectCurrentCustomer = createSelector(
     (currentCustomerId, state) => selectCustomerById(state, currentCustomerId));
 
 export const selectMeterReadingsByCustomerId = createSelector(
-    selectCurrentCustomerId,
     selectAllMeterReadingsArray,
-    (customerId, allMeterReadings) => allMeterReadings?.filter(meterReading =>  meterReading.customerId === customerId)
+    getCustomerId,
+    (allMeterReadings, customerId) => allMeterReadings?.filter(meterReading => meterReading.customerId === customerId)
+)
+
+export const selectPaymentsByCustomerId = createSelector(
+    selectAllPaymentsArray,
+    getCustomerId,
+    (allPayments, customerId) => allPayments?.filter(payment => payment.billedToId === customerId)
+)
+
+// TODO: we might have to change this once we factor in grace periods
+export const selectMeterReadingsInCurrentPeriod = createSelector(
+    selectAllMeterReadingsArray,
+    (allMeterReadings) => allMeterReadings.filter(meterReading => !isBeforeCurrentPeriod(meterReading.date))
+)
+
+// TODO: we might have to change this once we factor in grace periods
+export const selectPaymentsInCurrentPeriod = createSelector(
+    selectAllPaymentsArray,
+    (payments) => payments.filter(payment => !isBeforeCurrentPeriod(payment.date))
+)
+
+export const selectCustomersToMeter = createSelector(
+    selectMeterReadingsInCurrentPeriod,
+    selectAllCustomersArray,
+    (allMeterReadingsInCurrentPeriod, allCustomers) => {
+        const meteredCustomerIds = new Set(allMeterReadingsInCurrentPeriod.map(meterReading => meterReading.customerId));
+        return allCustomers.filter(customer => !meteredCustomerIds.has(customer.id))
+    }
+)
+
+// For each customer who has been metered this period, 
+// we calculate the amount
+// the amount they need to pay
+export const selectCustomersToCollect = createSelector(
+    selectMeterReadingsInCurrentPeriod,
+    selectPaymentsInCurrentPeriod,
+    selectCustomersToMeter,
+    selectAllCustomersArray,
+    (periodMeterReadings, periodPayments, unmeteredCustomers, allCustomers) => {
+        const unmeteredCustomerIds = new Set(unmeteredCustomers.map((customer: CustomerRecord) => customer.id));
+        const customersToCollect: CustomerRecord[] = []
+
+        allCustomers
+            .filter((customer: CustomerRecord) => !unmeteredCustomerIds.has(customer.id))
+            .forEach((customer: CustomerRecord) => {
+                const amountOwedThisPeriod = periodMeterReadings
+                    .filter(meterReading => meterReading.customerId === customer.id)
+                    .reduce((totalAmountOwed, meterReading: MeterReadingRecord) => totalAmountOwed + meterReading.amountBilled, 0);
+
+                const amountPaidThisPeriod = periodPayments
+                    .filter(payments => payments.billedToId === customer.id)
+                    .reduce((totalAmountPaid, payment: PaymentRecord) => totalAmountPaid + payment.amount, 0);
+
+                if (amountOwedThisPeriod <= amountPaidThisPeriod) {
+                    customersToCollect.push(customer)
+                }
+            });
+
+        return customersToCollect;
+    }
 )
