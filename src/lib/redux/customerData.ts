@@ -78,30 +78,46 @@ export const selectCustomersToMeter = createSelector(
     }
 )
 
+export const selectAmountOwedInCurrentPeriodByCustomerId = createSelector(
+    store.getState,
+    getCustomerId,
+    (state, customerId) => {
+        const currentPeriodMeterReadings = 
+        selectMeterReadingsByCustomerId(state, customerId)?.filter(meterReading => !isBeforeCurrentPeriod(meterReading.date));
+        if (currentPeriodMeterReadings) {
+            return currentPeriodMeterReadings.reduce((totalAmountOwed, meterReading: MeterReadingRecord) => totalAmountOwed + meterReading.amountBilled, 0);
+        }
+    } 
+)
+
+export const selectAmountPaidInCurrentPeriodByCustomerId = createSelector(
+    store.getState,
+    getCustomerId,
+    (state, customerId) => {
+        const currentPeriodPayments = selectPaymentsByCustomerId(state, customerId)?.filter(payment => !isBeforeCurrentPeriod(payment.date));
+        if (currentPeriodPayments) {
+            return currentPeriodPayments.reduce((totalAmountPaid, payment: PaymentRecord) => totalAmountPaid + payment.amount, 0);
+        }
+    }
+)
+
 // For each customer who has been metered this period, 
-// we calculate the amount
-// the amount they need to pay
+// we calculate the amount they need to pay
 export const selectCustomersToCollect = createSelector(
-    selectMeterReadingsInCurrentPeriod,
-    selectPaymentsInCurrentPeriod,
     selectCustomersToMeter,
     selectAllCustomersArray,
-    (periodMeterReadings, periodPayments, unmeteredCustomers, allCustomers) => {
+    store.getState,
+    (unmeteredCustomers, allCustomers, state) => {
         const unmeteredCustomerIds = new Set(unmeteredCustomers.map((customer: CustomerRecord) => customer.id));
         const customersToCollect: CustomerRecord[] = []
 
         allCustomers
             .filter((customer: CustomerRecord) => !unmeteredCustomerIds.has(customer.id))
             .forEach((customer: CustomerRecord) => {
-                const amountOwedThisPeriod = periodMeterReadings
-                    .filter(meterReading => meterReading.customerId === customer.id)
-                    .reduce((totalAmountOwed, meterReading: MeterReadingRecord) => totalAmountOwed + meterReading.amountBilled, 0);
+                const amountOwedThisPeriod = selectAmountOwedInCurrentPeriodByCustomerId(state, customer.id) || 0;
+                const amountPaidThisPeriod = selectAmountPaidInCurrentPeriodByCustomerId(state, customer.id) || 0;
 
-                const amountPaidThisPeriod = periodPayments
-                    .filter(payments => payments.billedToId === customer.id)
-                    .reduce((totalAmountPaid, payment: PaymentRecord) => totalAmountPaid + payment.amount, 0);
-
-                if (amountOwedThisPeriod <= amountPaidThisPeriod) {
+                if (amountOwedThisPeriod > amountPaidThisPeriod) {
                     customersToCollect.push(customer)
                 }
             });

@@ -3,9 +3,8 @@
 
 import { store } from './store';
 import { getAllSites } from '../airtable/request';
-import { SiteRecord, CustomerRecord, SiteId } from '../airtable/interface';
+import { SiteRecord } from '../airtable/interface';
 import { saveSiteData, setLoadingForSiteData } from './siteDataSlice';
-import { saveCustomerData } from './customerDataSlice';
 import { MeterReadingRecord } from '../airtable/interface';
 import { refreshInventoryData } from './inventoryData'
 import { refreshCustomerData } from './customerData';

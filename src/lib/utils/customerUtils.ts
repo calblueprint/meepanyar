@@ -4,11 +4,11 @@ import { isBeforeCurrentPeriod } from '../../lib/moment/momentUtils';
 import { selectMeterReadingsByCustomerId } from '../../lib/redux/customerData';
 import { store } from '../redux/store';
 
-// Returns last reading in the period
+// Returns the last reading in the period or undefined if no reading has been made in the current period
 export const getCurrentReading = (customer: CustomerRecord): MeterReadingRecord | undefined => {
   const meterReadings: MeterReadingRecord[] = selectMeterReadingsByCustomerId(store.getState(), customer.id);
 
-  if (meterReadings) {
+  if (meterReadings.length && !isBeforeCurrentPeriod(meterReadings[0].date)) {
     return meterReadings[0];
   }
 };
@@ -18,7 +18,7 @@ export const getCurrentReading = (customer: CustomerRecord): MeterReadingRecord 
 export const getStartingReading = (customer: CustomerRecord): MeterReadingRecord | undefined => {
   const meterReadings: MeterReadingRecord[] = selectMeterReadingsByCustomerId(store.getState(), customer.id);
 
-  // Meter readings are 
+  // Meter readings are sorted from most to least recent so we return the first one before the current period
   for (const meterReading of meterReadings) {
     if (isBeforeCurrentPeriod(meterReading.date)) {
       return meterReading;

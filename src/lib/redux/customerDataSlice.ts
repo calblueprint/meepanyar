@@ -41,7 +41,7 @@ export const {
 } = meterReadingsAdapter.getSelectors(
     (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].meterReadings);
 
-interface CustomerData {
+interface SiteCustomerData {
     customers: EntityState<CustomerRecord>;
     payments: EntityState<PaymentRecord>;
     meterReadings: EntityState<MeterReadingRecord>;
@@ -50,7 +50,7 @@ interface CustomerData {
 // TODO: @julianrkung, We should eventually make this a Record<SiteId, Record<CustomerId, CustomerRecord>> map for efficiency
 // We can't do this yet because customers created while offline do not receive an id yet
 interface customerDataSliceState {
-    sitesCustomers: Record<SiteId, CustomerData>;
+    sitesCustomers: Record<SiteId, SiteCustomerData>;
     currentCustomerId: string;
 }
 
@@ -87,7 +87,7 @@ export const EMPTY_METER_READING: MeterReadingRecord = {
     customerId: '',
 }
 
-export const EMPTY_CUSTOMER_DATA: CustomerData = {
+export const EMPTY_SITE_CUSTOMER_DATA: SiteCustomerData = {
     customers: customersAdapter.getInitialState(),
     payments: paymentsAdapter.getInitialState(),
     meterReadings: meterReadingsAdapter.getInitialState(),
@@ -104,7 +104,7 @@ const customerDataSlice = createSlice({
     reducers: {
         saveCustomerData(state, action) {
             const { siteId, payments, customers, meterReadings } = action.payload;
-            state.sitesCustomers[siteId] = JSON.parse(JSON.stringify(EMPTY_CUSTOMER_DATA));
+            state.sitesCustomers[siteId] = JSON.parse(JSON.stringify(EMPTY_SITE_CUSTOMER_DATA));
 
             const customerEntities = customersAdapter.addMany(state.sitesCustomers[siteId].customers, customers as CustomerRecord[]);
             state.sitesCustomers[siteId].customers = customerEntities;
