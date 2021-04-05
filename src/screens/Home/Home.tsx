@@ -39,7 +39,6 @@ function Home(props: HomeProps) {
   const { classes, lastUpdated, isOnline, currentSite } = props;
   const numCustomersToMeter  = useSelector(selectCustomersToMeter)?.length || 0;
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
-  const numOutstandingPayments = 0;
 
   return (
     <BaseScreen rightIcon="user">
