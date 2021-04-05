@@ -9,6 +9,7 @@ import CustomerCard from '../../components/CustomerCard';
 import SearchBar from '../../components/SearchBar';
 import { CustomerRecord } from '../../lib/airtable/interface';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
+import { getLatestReadingDate } from '../../lib/utils/customerUtils';
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import TrieTree from '../../lib/utils/TrieTree';
 
@@ -82,7 +83,7 @@ function CustomerMain(props: CustomerMainProps) {
   const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
   const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]);
   const [searchValue, setSearchValue] = useState<string>("");
-  const fullCustomers : CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
+  const fullCustomers: CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
 
   useEffect(() => {
     getCustomers();
@@ -145,21 +146,6 @@ function CustomerMain(props: CustomerMainProps) {
       default: {
         return true;
       }
-    }
-  }
-
-  const getLatestReadingDate = (customer: CustomerRecord) => {
-    //depends if the meter readings list is sorted with earliest => latest
-    if (customer.meterReadings.length > 0) {
-      const latestMeterReading = customer.meterReadings[customer.meterReadings.length - 1]
-      const dateTime = Date.parse(latestMeterReading.date)
-      const readingDate = new Date(dateTime)
-      const month = readingDate.getMonth() + 1;
-      const day = readingDate.getDate();
-      const shortDate = month.toString() + '.' + day.toString();
-      return shortDate;
-    } else {
-      return 'No Readings'
     }
   }
 
