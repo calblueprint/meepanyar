@@ -45,6 +45,8 @@ export interface SiteRecord {
   purchaseRequests?: PurchaseRequestRecord[];
   inventoryUpdates?: InventoryUpdateRecord[];
   customers?: CustomerRecord[];
+  payments?: PaymentRecord[];
+  meterReadings?: MeterReadingRecord[];
 }
 
 export interface TariffPlanRecord {
@@ -87,12 +89,15 @@ export interface MeterReadingRecord {
   amountBilled: number;
   date: string;
   meterNumber: number;
+  customerId: string;
 }
 
 export interface PaymentRecord {
   id: string;
   amount: number;
   date: string;
+  billedToId: string;
+  collectedById: string;
 }
 
 export interface FinancialSummaryRecord {

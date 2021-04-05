@@ -46,6 +46,8 @@ export const Columns = {
 		customers: {name:`CustomerData`, type:`custom-object`},
 		financialSummaries: {name: `FinancialSummaries`, type:`custom-object`},
 		tariffPlans: {name:`TariffPlans`, type:`custom-object`},
+		payments: {name:`Payments`, type:`custom-object`},
+		meterReadings: {name:`MeterReadings`, type:`custom-object`},
 		name: {name:`Name`, type:`text`},
 		userIds: {name:`Users`, type:`foreignKey-many`},
 		customerIds: {name:`Customers`, type:`foreignKey-many`},

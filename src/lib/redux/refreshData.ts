@@ -8,6 +8,7 @@ import { saveSiteData, setLoadingForSiteData } from './siteDataSlice';
 import { saveCustomerData } from './customerDataSlice';
 import { MeterReadingRecord } from '../airtable/interface';
 import { refreshInventoryData } from './inventoryData'
+import { refreshCustomerData } from './customerData';
 
 const refreshData = async (loadSilently: boolean): Promise<void> => {
 
@@ -61,16 +62,14 @@ const extractInventoryDataFromSite = (sites: SiteRecord[]) => {
 }
 
 const extractCustomerDataFromSite = (sites: SiteRecord[]) => {
-
-    const siteIdsToCustomers: Record<SiteId, CustomerRecord[]> = {};
     sites.map((site: SiteRecord) => {
-        siteIdsToCustomers[site.id] = site.customers || [];
+        refreshCustomerData(site);
         // We delete customers here so that there is no duplicate data
         // between the siteDataSlice and customerDataSlice
         delete site.customers;
+        delete site.payments;
+        delete site.meterReadings;
     })
-
-    store.dispatch(saveCustomerData(siteIdsToCustomers))
 }
 
 export default refreshData;
