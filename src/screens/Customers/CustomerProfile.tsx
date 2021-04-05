@@ -55,8 +55,8 @@ interface CustomerProps extends RouteComponentProps {
 function CustomerProfile(props: CustomerProps) {
   const { classes, match, currentSite } = props;
   const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
-  const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer?.id)) || [];
-  const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer?.id)) || [];
+  const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
+  const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
 
   if (customer === EMPTY_CUSTOMER) {
     return <Redirect to={'/customers'} />;
