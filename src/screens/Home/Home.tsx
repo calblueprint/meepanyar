@@ -56,7 +56,7 @@ function Home(props: HomeProps) {
       <Link to={'/customers'}>
         <HomeMenuItem
           label="Customer Alerts"
-          amount={numCustomersToMeter + numOutstandingPayments}
+          amount={numCustomersToMeter + numCustomersToCollect}
           sublabels={[
             { amount: numCustomersToMeter, label: 'Number of customers to meter' },
             { amount: numCustomersToCollect, label: 'Number of customers to collect' },

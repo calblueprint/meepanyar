@@ -63,9 +63,7 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     hasmeter: false,
     outstandingBalance: '',
     meterReadingIds: [],
-    meterReadings: [],
     paymentIds: [],
-    payments: [],
     customerUpdateIds: [],
     customerUpdates: [],
     totalAmountBilledfromInvoices: 0,
@@ -78,6 +76,15 @@ export const EMPTY_PAYMENT: PaymentRecord = {
     date: '',
     billedToId: '',
     collectedById: '',
+}
+
+export const EMPTY_METER_READING: MeterReadingRecord = {
+    id: '',
+    reading: 0,
+    amountBilled: 0,
+    date: '',
+    meterNumber: -1,
+    customerId: '',
 }
 
 export const EMPTY_CUSTOMER_DATA: CustomerData = {

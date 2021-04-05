@@ -66,9 +66,7 @@ export interface CustomerRecord {
   hasmeter: boolean;
   outstandingBalance: string;
   meterReadingIds: string[];
-  meterReadings: MeterReadingRecord[];
   paymentIds: string[];
-  payments: PaymentRecord[];
   customerUpdateIds: string[];
   customerUpdates: CustomerUpdateRecord[];
   totalAmountBilledfromInvoices: number;
