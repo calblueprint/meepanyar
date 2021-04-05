@@ -13,16 +13,19 @@ interface CardProps {
   primary: boolean;
   rightIcon?: JSX.Element;
   columns?: boolean;
+  grayed?: boolean;
+  textColor?: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
+    root: (props: CardProps) => ({
       marginTop: '10px',
       border: '1px solid',
       borderColor: theme.palette.divider,
       borderRadius: '6px',
-    },
+      backgroundColor: props.grayed ? theme.palette.divider : 'white'
+    }),
     content: (props: CardProps) => ({
       flex: 1,
       padding: '8px 8px',
@@ -42,11 +45,17 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
       margin: '5px',
     }),
-    fullItems: {
+    fullItems: (props: CardProps) => ({
       width: '100%',
       color: theme.palette.text.primary,
       margin: '5px',
+    }),
+    red: {
+      color: theme.palette.info.main,
     },
+    textColor: (props: CardProps) => ({
+      color: props.textColor ? props.textColor : theme.palette.text.primary,
+    }),
   }),
 );
 
@@ -67,11 +76,11 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
       <div key={key} className={ classes.itemWrapper }>
         <div className={rightIcon ? classes.items : classes.fullItems}>
           <Typography variant="body1" align={columns ? 'center' : 'inherit'}>{label}</Typography>
-          <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
+          <Typography variant="h3" align={columns ? 'center' : 'inherit'} className={primary ? classes.red : props.textColor}>
             {number} {props.columns ? '' : unit}
           </Typography>
           {/* Split unit to new line if in column layout */}
-          {props.columns && 
+          {props.columns &&
             <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
               {unit}
             </Typography>

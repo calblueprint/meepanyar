@@ -20,6 +20,7 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     customerUpdates: [],
     totalAmountBilledfromInvoices: 0,
     totalAmountPaidfromPayments: 0,
+    meterType: "Analog Meter",
 }
 
 // TODO: @julianrkung, We should eventually make this a Record<SiteId, Record<CustomerId, CustomerRecord>> map for efficiency
@@ -66,7 +67,7 @@ const customerDataSlice = createSlice({
         }
     },
     extraReducers: {
-        // When current site is changed, current customer id needs to be reset 
+        // When current site is changed, current customer id needs to be reset
         // because it's no longer valid in the new site context.
         [setCurrSite.type]: (state, action) => {
             state.currentCustomerId = initialState.currentCustomerId;
