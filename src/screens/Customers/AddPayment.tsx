@@ -10,7 +10,7 @@ import { selectCurrentCustomer } from '../../lib/redux/customerData';
 import { CustomerRecord } from '../../lib/airtable/interface';
 import { EMPTY_PAYMENT } from '../../lib/redux/customerDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
-import { createPayment } from '../../lib/airtable/request';
+import { createPaymentAndUpdateCustomerBalance } from '../../lib/airtable/request';
 import moment from 'moment';
 
 const styles = (theme: Theme) =>
@@ -64,8 +64,8 @@ function AddPayment(props: AddPaymentProps) {
         payment.date = moment().toISOString();
         payment.billedToId = currentCustomer.id;
         payment.collectedById = currentUserId;
-        
-        createPayment(payment).then(history.goBack);
+
+        createPaymentAndUpdateCustomerBalance(payment, currentCustomer).then(history.goBack);
     }
 
     const totalAmountOwed = currentCustomer.totalAmountBilledfromInvoices - currentCustomer.totalAmountPaidfromPayments;

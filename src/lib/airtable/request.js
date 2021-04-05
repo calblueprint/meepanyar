@@ -24,7 +24,7 @@ import {
   deleteRecord,
 } from './airtable';
 
-import { editCustomerInRedux, addCustomerToRedux, addPaymentToCustomerInRedux } from '../../lib/redux/customerData';
+import { updateCustomerInRedux, addCustomerToRedux, addPaymentInRedux } from '../../lib/redux/customerData';
 import { addToOfflineCustomer, generateOfflineId, isOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
@@ -150,7 +150,7 @@ export const createMeterReadingandInvoice = async (meterReading, customer) => {
 }
 
 // NONGENERATED: Create a payment for a customer
-export const createPayment = async (payment) => {
+export const createPaymentAndUpdateCustomerBalance = async (payment, customer) => {
   const customerId = payment.billedToId;
   let paymentId = '';
   // If customer does not exist, we want to search the requests objectStore
@@ -170,7 +170,13 @@ export const createPayment = async (payment) => {
     }
   }
   payment.id = paymentId;
-  addPaymentToCustomerInRedux(customerId, payment);
+  addPaymentInRedux(payment);
+
+  // Customer's outstanding balance is automatically updated on Airtable but needs to 
+  // be manually updated clientside to account for offline situations
+  updateCustomerInRedux(customerId, {outstandingBalance: customer.outstandingBalance - payment.amount});
+
+  return paymentId;
 }
 
 export const createFinancialSummary = async (record) => {
@@ -594,19 +600,15 @@ export const updateManyTariffPlans = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateCustomer = async (id, recordUpdates) => {
-  return updateRecord(Tables.Customers, id, recordUpdates);
-};
-
 // NONGENERATED: Edit customer
-export const editCustomer = async (customer, customerUpdate) => {
+export const updateCustomer = async (customer, customerUpdate) => {
   if (!customer.id) {
     addToOfflineCustomer(customer, 'edits', customerUpdate);
   } else {
     try {
       const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
       const { dateUpdated, customerId, explanation, userId } = customerUpdate;
-      await updateCustomer(customer.id, {
+      await updateRecord(Tables.Customers, customer.id, {
         name,
         meterNumber,
         tariffPlanId,
@@ -625,7 +627,7 @@ export const editCustomer = async (customer, customerUpdate) => {
       console.log("Update id: ", updateId);
       console.log("Created updates!");
 
-      editCustomerInRedux(customer);
+      updateCustomerInRedux(customer.id, customer);
     } catch (err) {
       console.log(err);
     }
