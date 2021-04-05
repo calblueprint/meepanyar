@@ -45,6 +45,8 @@ export interface SiteRecord {
   purchaseRequests?: PurchaseRequestRecord[];
   inventoryUpdates?: InventoryUpdateRecord[];
   customers?: CustomerRecord[];
+  payments?: PaymentRecord[];
+  meterReadings?: MeterReadingRecord[];
 }
 
 export interface TariffPlanRecord {
@@ -64,9 +66,7 @@ export interface CustomerRecord {
   hasmeter: boolean;
   outstandingBalance: string;
   meterReadingIds: string[];
-  meterReadings: MeterReadingRecord[];
   paymentIds: string[];
-  payments: PaymentRecord[];
   customerUpdateIds: string[];
   customerUpdates: CustomerUpdateRecord[];
   totalAmountBilledfromInvoices: number;
@@ -87,6 +87,7 @@ export interface MeterReadingRecord {
   amountBilled: number;
   date: string;
   meterNumber: number;
+  customerId: string;
 }
 
 export interface PaymentRecord {
