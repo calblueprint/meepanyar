@@ -39,6 +39,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const [amountPurchased, setAmountPurchased] = useState(props.location.state?.amountPurchased || 0.0);
   const [amountSpent, setAmountSpent] = useState(props.location.state?.amountSpent || 0.0);
   const [notes, setNotes] = useState(props.location.state?.notes || '');
+  const [submitIsLoading, setSubmitIsLoading] = useState(false);
   const goBack = props.location.state?.goBack || -1;
 
   const photoUri = props.location.state?.photo;
@@ -64,6 +65,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const handleSubmit = (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
+    setSubmitIsLoading(true);
     // Make a deep copy of an empty purchase request record
     const purchaseRequest = JSON.parse(JSON.stringify(EMPTY_PURCHASE_REQUEST));
     purchaseRequest.requesterId = userId;
@@ -111,7 +113,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             label="Receipt"
             photoUri={photoUri}
           />
-          <Button label="Submit" onClick={handleSubmit} />
+          <Button loading={submitIsLoading} label="Submit" onClick={handleSubmit} />
         </div>
       </BaseScrollView>
     </BaseScreen>
