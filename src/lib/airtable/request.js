@@ -25,7 +25,7 @@ import {
 } from './airtable';
 
 import { updateCustomerInRedux, addCustomerToRedux, addPaymentInRedux } from '../../lib/redux/customerData';
-import { addToOfflineCustomer, generateOfflineId, isOfflineId } from '../utils/offlineUtils';
+import { generateOfflineId, isOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
   addProductToRedux,
@@ -96,7 +96,12 @@ export const createCustomer = async (customer) => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(customer)
+      body: JSON.stringify({
+        ...customer,
+        [CUSTOMER_OFFLINE_FIELDS.PAYMENTS]: [],
+        [CUSTOMER_OFFLINE_FIELDS.METER_READINGS]: [],
+        [CUSTOMER_OFFLINE_FIELDS.CUSTOMER_UPDATES]: [],
+      })
     })
     console.log(resp);
     await resp.json().then(data => customerId = data.id);
@@ -126,26 +131,18 @@ export const createManyCustomerUpdates = async (records) => {
 
 // NONGENERATED: Create a meter reading for a customer
 export const createMeterReadingandInvoice = async (meterReading, customer) => {
-  // If customer does not exist, we want to search the requests objectStore
-  // to add the current meter reading to the customer request being POST'ed
-  if (!customer.rid) {
-    addToOfflineCustomer(customer, 'meterReadings', meterReading)
-  } else {
-    // Customer has an rid so it is in the airtable.
-    // Make a standard request to create a meter reading / invoice.
-    try {
-      meterReading.customerId = customer.rid;
-      const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/meter-readings-and-invoices/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(meterReading)
-      })
-      console.log('Response for meter reading: ', resp);
-    } catch (err) {
-      console.log('Error with create meter reading request: ', err);
-    }
+  try {
+    meterReading.customerId = customer.rid;
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/meter-readings-and-invoices/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(meterReading)
+    })
+    console.log('Response for meter reading: ', resp);
+  } catch (err) {
+    console.log('Error with create meter reading request: ', err);
   }
 }
 
@@ -153,28 +150,23 @@ export const createMeterReadingandInvoice = async (meterReading, customer) => {
 export const createPaymentAndUpdateCustomerBalance = async (payment, customer) => {
   const customerId = payment.billedToId;
   let paymentId = '';
-  // If customer does not exist, we want to search the requests objectStore
-  // to add the current meter reading to the customer request being POST'ed
-  if (isOfflineId(customerId)) {
-    addToOfflineCustomer(customerId, 'payments', payment);
+
+  // Customer has an id so it is in the airtable.
+  // Make a standard request to create a payment.
+  delete payment.id
+  try {
+    paymentId = await createRecord(Tables.Payments, payment);
+  } catch (error) {
     paymentId = generateOfflineId();
-  } else {
-    // Customer has an id so it is in the airtable.
-    // Make a standard request to create a payment.
-    delete payment.id
-    try {
-      paymentId = await createRecord(Tables.Payments, payment);
-    } catch (error) {
-      paymentId = generateOfflineId();
-      console.log('(createPayment) Error: ', error);
-    }
+    console.log('(createPayment) Error: ', error);
   }
+
   payment.id = paymentId;
   addPaymentInRedux(payment);
 
   // Customer's outstanding balance is automatically updated on Airtable but needs to 
   // be manually updated clientside to account for offline situations
-  updateCustomerInRedux(customerId, {outstandingBalance: customer.outstandingBalance - payment.amount});
+  updateCustomerInRedux(customerId, { outstandingBalance: customer.outstandingBalance - payment.amount });
 
   return paymentId;
 }
@@ -297,7 +289,7 @@ export const createInventoryUpdate = async (record) => {
 // NONGENERATED: Create an Inventory Update and update the inventory's current qty
 // TODO: handle offline workflow of creating inventory updates for inventory
 // that was created offline (no Airtable id).
-export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount ) => {
+export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount) => {
   const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE));
   inventoryUpdate.userId = userId;
   inventoryUpdate.previousQuantity = inventory.currentQuantity;
@@ -309,7 +301,7 @@ export const createInventoryUpdateAndUpdateInventory = async (userId, inventory,
   try {
     delete inventoryUpdate.id; // Remove the id field to add to Airtable
     inventoryUpdateId = await createInventoryUpdate(inventoryUpdate);
-    updateInventory(inventoryUpdate.inventoryId, {currentQuantity: inventoryUpdate.updatedQuantity });
+    updateInventory(inventoryUpdate.inventoryId, { currentQuantity: inventoryUpdate.updatedQuantity });
   } catch (err) {
     inventoryUpdateId = generateOfflineId();
     console.log('(createInventoryUpdateAndUpdateInventory) Error: ', err);
@@ -602,35 +594,31 @@ export const updateManyTariffPlans = async (recordUpdates) => {
 
 // NONGENERATED: Edit customer
 export const updateCustomer = async (customer, customerUpdate) => {
-  if (!customer.id) {
-    addToOfflineCustomer(customer, 'edits', customerUpdate);
-  } else {
-    try {
-      const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
-      const { dateUpdated, customerId, explanation, userId } = customerUpdate;
-      await updateRecord(Tables.Customers, customer.id, {
-        name,
-        meterNumber,
-        tariffPlanId,
-        siteId,
-        isactive,
-        hasmeter,
-      });
-      console.log("Customer edited!");
+  try {
+    const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
+    const { dateUpdated, customerId, explanation, userId } = customerUpdate;
+    await updateRecord(Tables.Customers, customer.id, {
+      name,
+      meterNumber,
+      tariffPlanId,
+      siteId,
+      isactive,
+      hasmeter,
+    });
+    console.log("Customer edited!");
 
-      const updateId = await createCustomerUpdate({
-        dateUpdated,
-        customerId,
-        explanation,
-        userId
-      });
-      console.log("Update id: ", updateId);
-      console.log("Created updates!");
+    const updateId = await createCustomerUpdate({
+      dateUpdated,
+      customerId,
+      explanation,
+      userId
+    });
+    console.log("Update id: ", updateId);
+    console.log("Created updates!");
 
-      updateCustomerInRedux(customer.id, customer);
-    } catch (err) {
-      console.log(err);
-    }
+    updateCustomerInRedux(customer.id, customer);
+  } catch (err) {
+    console.log(err);
   }
 }
 
