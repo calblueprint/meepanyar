@@ -24,18 +24,6 @@ import {
   deleteRecord,
 } from './airtable';
 
-import { updateCustomerInRedux, addCustomerToRedux, addPaymentInRedux } from '../../lib/redux/customerData';
-import { generateOfflineId } from '../utils/offlineUtils';
-import {
-  addInventoryToRedux,
-  addProductToRedux,
-  addInventoryUpdateToRedux,
-  addPurchaseRequestToRedux,
-  getInventoryCurrentQuantity,
-  updateInventoryQuantityInRedux,
-} from '../redux/inventoryData';
-import moment from 'moment';
-import { EMPTY_INVENTORY_UPDATE } from '../redux/inventoryDataSlice';
 /*
  ******* CREATE RECORDS *******
  */
@@ -85,29 +73,20 @@ export const createManyTariffPlans = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: We use a special, non-schema-generated createCustomer
-// that hits a special endpoint because we require additional logic to
-// handle offline functionality
-export const createCustomer = async (customer) => {
-  let customerId = '';
-  try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/customers/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(customer)
-    })
-    console.log(resp);
-    await resp.json().then(data => customerId = data.id);
-  } catch (err) {
-    console.log(err);
-    customerId = generateOfflineId();
+export const createCustomer = async (record) => {
+  return createRecord(Tables.Customers, record);
+};
+
+export const createManyCustomers = async (records) => {
+  const createPromises = [];
+  const numCalls = Math.ceil(records.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = records.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      createPromises.push(createRecords(Tables.Customers, subset));
   }
-  customer.id = customerId;
-  addCustomerToRedux(customer);
-  return customerId;
-}
+  return Promise.all(createPromises);
+};
 
 export const createCustomerUpdate = async (record) => {
   return createRecord(Tables.CustomerUpdates, record);
@@ -124,36 +103,37 @@ export const createManyCustomerUpdates = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createMeterReadingandInvoice = async (record) => {
+export const createMeterReadingsandInvoice = async (record) => {
   return createRecord(Tables.MeterReadingsandInvoices, record);
-}
+};
 
-// NONGENERATED: Create a payment for a customer
-export const createPaymentAndUpdateCustomerBalance = async (payment, customer) => {
-  const customerId = payment.billedToId;
-  let paymentId = '';
-
-  // Customer has an id so it is in the airtable.
-  // Make a standard request to create a payment.
-  delete payment.id
-  try {
-    paymentId = await createRecord(Tables.Payments, payment);
-  } catch (error) {
-    paymentId = generateOfflineId();
-    console.log('(createPayment) Error: ', error);
+export const createManyMeterReadingsandInvoices = async (records) => {
+  const createPromises = [];
+  const numCalls = Math.ceil(records.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = records.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      createPromises.push(createRecords(Tables.MeterReadingsandInvoices, subset));
   }
+  return Promise.all(createPromises);
+};
 
-  payment.id = paymentId;
-  addPaymentInRedux(payment);
+export const createPayment = async (record) => {
+  return createRecord(Tables.Payments, record);
+};
 
-  // Customer's outstanding balance is automatically updated on Airtable but needs to 
-  // be manually updated clientside to account for offline situations
-  updateCustomerInRedux({id: customerId, outstandingBalance: customer.outstandingBalance - payment.amount });
+export const createManyPayments = async (records) => {
+  const createPromises = [];
+  const numCalls = Math.ceil(records.length / 10);
+  for (let i = 0; i < numCalls; i += 1) {
+    const subset = records.slice(i * 10, (i + 1) * 10);
+    if (subset.length > 0)
+      createPromises.push(createRecords(Tables.Payments, subset));
+  }
+  return Promise.all(createPromises);
+};
 
-  return paymentId;
-}
-
-export const createFinancialSummary = async (record) => {
+export const createFinancialSummarie = async (record) => {
   return createRecord(Tables.FinancialSummaries, record);
 };
 
@@ -168,20 +148,9 @@ export const createManyFinancialSummaries = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: Create a product (inventory type) and add it to Redux
-export const createProduct = async (product) => {
-  let productId = "";
-  try {
-    delete product.id; // Remove the id field to add to Airtable
-    productId = await createRecord(Tables.Products, product);
-  } catch (error) {
-    console.log('(createProduct) Airtable Error: ', error);
-    productId = generateOfflineId();
-  }
-  product.id = productId;
-  addProductToRedux(product);
-  return product.id;
-}
+export const createProduct = async (record) => {
+  return createRecord(Tables.Products, record);
+};
 
 export const createManyProducts = async (records) => {
   const createPromises = [];
@@ -194,29 +163,9 @@ export const createManyProducts = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: Create an inventory record (add product to site)
-export const createInventory = async (inventory) => {
-  // Site and product must already exist in Airtable.
-  // Make a standard request to create an inventory item.
-  let inventoryId = "";
-  try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(inventory)
-    })
-    console.log('Response for inventory: ', resp);
-    await resp.json().then(data => inventoryId = data.id);
-  } catch (err) {
-    inventoryId = generateOfflineId();
-    console.log('Error with create inventory request: ', err);
-  }
-  inventory.id = inventoryId;
-  addInventoryToRedux(inventory);
-  return inventory;
-}
+export const createInventory = async (record) => {
+  return createRecord(Tables.Inventory, record);
+};
 
 export const createManyInventorys = async (records) => {
   const createPromises = [];
@@ -227,26 +176,6 @@ export const createManyInventorys = async (records) => {
       createPromises.push(createRecords(Tables.Inventory, subset));
   }
   return Promise.all(createPromises);
-};
-
-// NONGENERATED: Create a Purchase Request and update the inventory's current qty (regardless of approval status)
-// TODO: handle offline workflow of creating purchase requests for inventory
-// that was created offline (no Airtable id).
-export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) => {
-  let purchaseRequestId = "";
-  const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
-  try {
-    delete purchaseRequest.id; // Remove the id field to add to Airtable
-    purchaseRequestId = await createPurchaseRequest(purchaseRequest);
-    updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
-  } catch (err) {
-    purchaseRequestId = generateOfflineId();
-    console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
-  }
-  purchaseRequest.id = purchaseRequestId;
-  addPurchaseRequestToRedux(purchaseRequest);
-  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
-  return purchaseRequest;
 };
 
 export const createPurchaseRequest = async (record) => {
@@ -268,32 +197,6 @@ export const createInventoryUpdate = async (record) => {
   return createRecord(Tables.InventoryUpdates, record);
 };
 
-// NONGENERATED: Create an Inventory Update and update the inventory's current qty
-// TODO: handle offline workflow of creating inventory updates for inventory
-// that was created offline (no Airtable id).
-export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount ) => {
-  const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE));
-  inventoryUpdate.userId = userId;
-  inventoryUpdate.previousQuantity = inventory.currentQuantity;
-  inventoryUpdate.updatedQuantity = updatedAmount;
-  inventoryUpdate.inventoryId = inventory.id;
-  inventoryUpdate.createdAt = moment().toISOString();
-
-  let inventoryUpdateId = "";
-  try {
-    delete inventoryUpdate.id; // Remove the id field to add to Airtable
-    inventoryUpdateId = await createInventoryUpdate(inventoryUpdate);
-    updateInventory(inventoryUpdate.inventoryId, {currentQuantity: inventoryUpdate.updatedQuantity });
-  } catch (err) {
-    inventoryUpdateId = generateOfflineId();
-    console.log('(createInventoryUpdateAndUpdateInventory) Error: ', err);
-  }
-  inventoryUpdate.id = inventoryUpdateId;
-  addInventoryUpdateToRedux(inventoryUpdate);
-  updateInventoryQuantityInRedux(inventoryUpdate.inventoryId, inventoryUpdate.updatedQuantity);
-  return inventoryUpdate;
-};
-
 export const createManyInventoryUpdates = async (records) => {
   const createPromises = [];
   const numCalls = Math.ceil(records.length / 10);
@@ -313,7 +216,7 @@ export const getUserById = async (id) => {
   return getRecordById(Tables.Users, id);
 };
 
-export const getUsersByIds = async (ids, filterByFormula = '', sort = []
+export const getUsersByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -331,7 +234,7 @@ export const getSiteById = async (id) => {
   return getRecordById(Tables.Sites, id);
 };
 
-export const getSitesByIds = async (ids, filterByFormula = '', sort = []
+export const getSitesByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -349,7 +252,7 @@ export const getTariffPlanById = async (id) => {
   return getRecordById(Tables.TariffPlans, id);
 };
 
-export const getTariffPlansByIds = async (ids, filterByFormula = '', sort = []
+export const getTariffPlansByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -367,7 +270,7 @@ export const getCustomerById = async (id) => {
   return getRecordById(Tables.Customers, id);
 };
 
-export const getCustomersByIds = async (ids, filterByFormula = '', sort = []
+export const getCustomersByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -385,7 +288,7 @@ export const getCustomerUpdateById = async (id) => {
   return getRecordById(Tables.CustomerUpdates, id);
 };
 
-export const getCustomerUpdatesByIds = async (ids, filterByFormula = '', sort = []
+export const getCustomerUpdatesByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -399,11 +302,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) => 
   return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
 };
 
-export const getMeterReadingandInvoiceById = async (id) => {
+export const getMeterReadingsandInvoiceById = async (id) => {
   return getRecordById(Tables.MeterReadingsandInvoices, id);
 };
 
-export const getMeterReadingsandInvoicesByIds = async (ids, filterByFormula = '', sort = []
+export const getMeterReadingsandInvoicesByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -421,7 +324,7 @@ export const getPaymentById = async (id) => {
   return getRecordById(Tables.Payments, id);
 };
 
-export const getPaymentsByIds = async (ids, filterByFormula = '', sort = []
+export const getPaymentsByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -435,11 +338,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
   return getAllRecords(Tables.Payments, filterByFormula, sort);
 };
 
-export const getFinancialSummaryById = async (id) => {
+export const getFinancialSummarieById = async (id) => {
   return getRecordById(Tables.FinancialSummaries, id);
 };
 
-export const getFinancialSummariesByIds = async (ids, filterByFormula = '', sort = []
+export const getFinancialSummariesByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -457,7 +360,7 @@ export const getProductById = async (id) => {
   return getRecordById(Tables.Products, id);
 };
 
-export const getProductsByIds = async (ids, filterByFormula = '', sort = []
+export const getProductsByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -475,7 +378,7 @@ export const getInventoryById = async (id) => {
   return getRecordById(Tables.Inventory, id);
 };
 
-export const getInventorysByIds = async (ids, filterByFormula = '', sort = []
+export const getInventorysByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -493,7 +396,7 @@ export const getPurchaseRequestById = async (id) => {
   return getRecordById(Tables.PurchaseRequests, id);
 };
 
-export const getPurchaseRequestsByIds = async (ids, filterByFormula = '', sort = []
+export const getPurchaseRequestsByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -511,7 +414,7 @@ export const getInventoryUpdateById = async (id) => {
   return getRecordById(Tables.InventoryUpdates, id);
 };
 
-export const getInventoryUpdatesByIds = async (ids, filterByFormula = '', sort = []
+export const getInventoryUpdatesByIds = async ( ids, filterByFormula = '', sort = []
 ) => {
   let formula = `OR(${ids.reduce(
     (f, id) => `${f} {ID}='${id}',`,
@@ -574,35 +477,9 @@ export const updateManyTariffPlans = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-// NONGENERATED: Update the customer record, create a customer update, and update the record in redux
-export const updateCustomer = async (customer, customerUpdate) => {
-  try {
-    const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
-    const { dateUpdated, customerId, explanation, userId } = customerUpdate;
-    await updateRecord(Tables.Customers, customer.id, {
-      name,
-      meterNumber,
-      tariffPlanId,
-      siteId,
-      isactive,
-      hasmeter,
-    });
-    console.log("Customer edited!");
-
-    const updateId = await createCustomerUpdate({
-      dateUpdated,
-      customerId,
-      explanation,
-      userId
-    });
-    console.log("Update id: ", updateId);
-    console.log("Created updates!");
-
-    updateCustomerInRedux(customer);
-  } catch (err) {
-    console.log(err);
-  }
-}
+export const updateCustomer = async (id, recordUpdates) => {
+  return updateRecord(Tables.Customers, id, recordUpdates);
+};
 
 export const updateManyCustomers = async (recordUpdates) => {
   const updatePromises = [];
@@ -630,7 +507,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateMeterReadingandInvoice = async (id, recordUpdates) => {
+export const updateMeterReadingsandInvoice = async (id, recordUpdates) => {
   return updateRecord(Tables.MeterReadingsandInvoices, id, recordUpdates);
 };
 
@@ -660,7 +537,7 @@ export const updateManyPayments = async (recordUpdates) => {
   return Promise.all(updatePromises);
 };
 
-export const updateFinancialSummary = async (id, recordUpdates) => {
+export const updateFinancialSummarie = async (id, recordUpdates) => {
   return updateRecord(Tables.FinancialSummaries, id, recordUpdates);
 };
 
@@ -760,7 +637,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
 export const deletePayment = async (id) => {
   return deleteRecord(Tables.Payments, id);
 };
-export const deleteFinancialSummary = async (id) => {
+export const deleteFinancialSummarie = async (id) => {
   return deleteRecord(Tables.FinancialSummaries, id);
 };
 export const deleteProduct = async (id) => {
