@@ -54,7 +54,7 @@ export interface TariffPlanRecord {
   name: string;
   fixedTariff: number;
   tariffByUnit: number;
-  minUnits: number;
+  freeUnits: number;
 }
 
 export interface CustomerRecord {
