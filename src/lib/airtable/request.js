@@ -238,7 +238,7 @@ export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) =
   try {
     delete purchaseRequest.id; // Remove the id field to add to Airtable
     purchaseRequestId = await createPurchaseRequest(purchaseRequest);
-    updateInventory(purchaseRequest.inventoryId, { currentQuantity: newQuantity });
+    updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
   } catch (err) {
     purchaseRequestId = generateOfflineId();
     console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
