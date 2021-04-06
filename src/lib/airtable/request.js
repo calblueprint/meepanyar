@@ -148,7 +148,7 @@ export const createPaymentAndUpdateCustomerBalance = async (payment, customer) =
 
   // Customer's outstanding balance is automatically updated on Airtable but needs to 
   // be manually updated clientside to account for offline situations
-  updateCustomerInRedux(customerId, { outstandingBalance: customer.outstandingBalance - payment.amount });
+  updateCustomerInRedux({id: customerId, outstandingBalance: customer.outstandingBalance - payment.amount });
 
   return paymentId;
 }
@@ -598,7 +598,7 @@ export const updateCustomer = async (customer, customerUpdate) => {
     console.log("Update id: ", updateId);
     console.log("Created updates!");
 
-    updateCustomerInRedux(customer.id, customer);
+    updateCustomerInRedux(customer);
   } catch (err) {
     console.log(err);
   }

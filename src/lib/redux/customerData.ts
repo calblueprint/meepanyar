@@ -34,13 +34,12 @@ export const addCustomerToRedux = (customer: CustomerRecord): void => {
     store.dispatch(addCustomer({ siteId, customer }));
 };
 
-export const updateCustomerInRedux = (customerId : string, customerUpdates: Partial<CustomerRecord>): void => {
-    const updates = {
-        ...customerUpdates,
-        id: customerId,
+export const updateCustomerInRedux = (customer: Partial<CustomerRecord>): void => {
+    const customerUpdates = {
+        ...customer,
         siteId: getCurrentSiteId()
     }
-    store.dispatch(updateCustomer(updates));
+    store.dispatch(updateCustomer(customerUpdates));
 };
 
 export const addPaymentInRedux = (payment: PaymentRecord) => {
