@@ -115,7 +115,7 @@ index ae23270..0d52b8c 100644
 -  }
 -  return Promise.all(createPromises);
 -};
-+  // Customer's outstanding balance is automatically updated on Airtable but needs to 
++  // Customer's outstanding balance is automatically updated on Airtable but needs to
 +  // be manually updated clientside to account for offline situations
 +  updateCustomerInRedux({id: customerId, outstandingBalance: customer.outstandingBalance - payment.amount });
 +
