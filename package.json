@@ -34,8 +34,6 @@
     "connected-react-router": "^6.8.0",
     "history": "^4.10.1",
     "i18next": "^19.9.2",
-    "i18next-browser-languagedetector": "^6.1.0",
-    "i18next-http-backend": "^1.2.1",
     "idb": "^5.0.7",
     "jquery": "^3.5.1",
     "material-ui-icons": "^1.0.0-beta.36",
