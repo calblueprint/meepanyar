@@ -24,7 +24,7 @@ import {
   deleteRecord,
 } from './airtable';
 
-import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
+import { editCustomerInRedux, addCustomerToRedux, addMeterReadingToRedux } from '../../lib/redux/customerData';
 import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
