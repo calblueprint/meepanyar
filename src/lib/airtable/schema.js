@@ -61,7 +61,7 @@ export const Columns = {
 		name: {name:`Name`, type:`text`},
 		fixedTariff: {name:`Fixed Tariff`, type:`number`},
 		tariffByUnit: {name:`Tariff By Unit`, type:`number`},
-		minUnits: {name:`Min Units`, type:`number`},
+		freeUnits: {name:`Free Units`, type:`number`},
 		customerIds: {name:`Customer`, type:`foreignKey-many`},
 		siteIds: {name:`Sites`, type:`foreignKey-many`},
 		id: {name:`ID`, type:`formula`},
