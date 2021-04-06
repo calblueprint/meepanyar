@@ -71,17 +71,22 @@ const styles = (theme: Theme) =>
     },
     meterInfoContainer: {
       width: '50%',
+      display: 'flex',
+      alignItems: 'center',
     },
     meterInfo: {
+      width: '100%',
       marginBottom: '8px',
-      padding: '8px 12px',
+      padding: '4px 12px',
       border: '1px solid',
+      height: '60px',
+      maxHeight: '60px',
       borderColor: theme.palette.divider,
       backgroundColor: theme.palette.divider,
       borderRadius: '6px',
     },
     editableMeterIcon: {
-      fontSize: '16px',
+      fontSize: '14px',
       marginLeft: '5px',
       marginTop: '-4px',
       color: theme.palette.primary.main,
@@ -219,7 +224,7 @@ function CustomerProfile(props: CustomerProps) {
           <div className={classes.section}>
             { /* Top Left */ }
             <div style={{ float: 'left' }} className={classes.meterInfoContainer}>
-              <div style={{ marginRight: '4px', backgroundColor: 'white' }} className={classes.meterInfo}>
+              <div style={{ marginRight: '4px', backgroundColor: 'white', paddingTop: '0px' }} className={classes.meterInfo}>
                 <div style={{ display: 'inline-flex' }}>
                   <Typography variant="body1">{meterInfo[0].label}</Typography>
                   <IconButton size="small">
@@ -316,7 +321,7 @@ function CustomerProfile(props: CustomerProps) {
       ];
       return (
         <div>
-          <OutlinedCardList info={readingInfo} primary={false} rightIcon={getAddButton()} />
+          <OutlinedCardList info={readingInfo} primary={false} />
           <div className={classes.section}>
             { /* Top Left */ }
             <div style={{ float: 'left' }} className={classes.meterInfoContainer}>
