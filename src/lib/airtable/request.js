@@ -24,7 +24,7 @@ import {
   deleteRecord,
 } from './airtable';
 
-import { updateCustomerInRedux, addCustomerToRedux, addPaymentInRedux } from '../../lib/redux/customerData';
+import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux } from '../../lib/redux/customerData';
 import { generateOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
@@ -144,7 +144,7 @@ export const createPaymentAndUpdateCustomerBalance = async (payment, customer) =
   }
 
   payment.id = paymentId;
-  addPaymentInRedux(payment);
+  addPaymentToRedux(payment);
 
   // Customer's outstanding balance is automatically updated on Airtable but needs to
   // be manually updated clientside to account for offline situations

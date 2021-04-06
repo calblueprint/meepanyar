@@ -6,7 +6,7 @@ index ae23270..0d52b8c 100644
    deleteRecord,
  } from './airtable';
  
-+import { updateCustomerInRedux, addCustomerToRedux, addPaymentInRedux } from '../../lib/redux/customerData';
++import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux } from '../../lib/redux/customerData';
 +import { generateOfflineId } from '../utils/offlineUtils';
 +import {
 +  addInventoryToRedux,
@@ -103,7 +103,7 @@ index ae23270..0d52b8c 100644
 -  return createRecord(Tables.Payments, record);
 -};
 +  payment.id = paymentId;
-+  addPaymentInRedux(payment);
++  addPaymentToRedux(payment);
  
 -export const createManyPayments = async (records) => {
 -  const createPromises = [];

@@ -42,7 +42,7 @@ export const updateCustomerInRedux = (customer: Partial<CustomerRecord>): void =
     store.dispatch(updateCustomer(customerUpdates));
 };
 
-export const addPaymentInRedux = (payment: PaymentRecord) => {
+export const addPaymentToRedux = (payment: PaymentRecord) => {
     const paymentPayload = {
         ...payment,
         siteId: getCurrentSiteId()
