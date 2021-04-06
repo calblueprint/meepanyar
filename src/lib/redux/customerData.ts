@@ -1,5 +1,5 @@
 import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../airtable/interface';
-import { addCustomer, setCurrentCustomerId, editCustomer, selectCustomerById, saveCustomerData, selectAllMeterReadingsArray, selectAllCustomersArray, selectAllPaymentsArray, selectAllCustomers } from './customerDataSlice';
+import { addCustomer, setCurrentCustomerId, editCustomer, selectCustomerById, saveCustomerData, selectAllMeterReadingsArray, selectAllCustomersArray, selectAllPaymentsArray, selectAllCustomers, addMeterReading } from './customerDataSlice';
 import { isBeforeCurrentPeriod } from '../moment/momentUtils';
 import { getCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
@@ -23,6 +23,16 @@ export const addCustomerToRedux = (customer: CustomerRecord): void => {
     const siteId = getCurrentSiteId();
     store.dispatch(addCustomer({ siteId, customer }));
 };
+
+export const addMeterReadingToRedux = (meterReading: MeterReadingRecord): void => {
+
+    const meterReadingPayload = {
+        ...meterReading,
+        siteId: getCurrentSiteId()
+    };
+
+    store.dispatch(addMeterReading(meterReadingPayload));
+}
 
 export const editCustomerInRedux = (customer: Partial<CustomerRecord>): void => {
     const customerUpdates = {

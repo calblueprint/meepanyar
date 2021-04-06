@@ -124,6 +124,10 @@ const customerDataSlice = createSlice({
 
             customersAdapter.addOne(state.sitesCustomers[siteId].customers, customer);
         },
+        addMeterReading(state, action) {
+            const { siteId, ...payload } = action.payload;
+            meterReadingsAdapter.addOne(state.sitesCustomers[siteId].meterReadings, payload);
+        },
         editCustomer(state, action) {
             const { siteId, id, ...changes } = action.payload;
             const update = {
@@ -142,5 +146,5 @@ const customerDataSlice = createSlice({
     }
 });
 
-export const { saveCustomerData, setCurrentCustomerId, addCustomer, editCustomer } = customerDataSlice.actions;
+export const { saveCustomerData, setCurrentCustomerId, addCustomer, editCustomer, addMeterReading } = customerDataSlice.actions;
 export default customerDataSlice.reducer;
