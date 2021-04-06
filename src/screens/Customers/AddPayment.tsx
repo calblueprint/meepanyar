@@ -46,6 +46,7 @@ function AddPayment(props: AddPaymentProps) {
     const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
     const currentUserId: string | undefined = useSelector(selectCurrentUserId);
     const [paymentAmount, setPaymentAmount] = useState(0.0);
+    const [loading, setLoading] = useState(false);
 
     if (!currentCustomer || !currentUserId) {
         return <Redirect to={'/customers'} />
@@ -55,9 +56,13 @@ function AddPayment(props: AddPaymentProps) {
         setPaymentAmount(parseFloat(event.target.value as string) || 0);
     }
 
+    // TODO: Error handling
+    // TODO: making paymentAmount a required field
+    // TODO: make this a controlled component
     const handleSubmit = (event: React.MouseEvent) => {
         // Prevent page refresh on submit
         event.preventDefault();
+        setLoading(true);
 
         const payment = JSON.parse(JSON.stringify(EMPTY_PAYMENT));
         payment.amount = paymentAmount;
@@ -84,7 +89,7 @@ function AddPayment(props: AddPaymentProps) {
 
                 <form noValidate>
                     <TextField label={'Amount Paid (Ks)'} id={'new-payment'} primary={true} onChange={handleSetPaymentAmountInput} />
-                    <Button label={'+ ADD PAYMENT'} onClick={handleSubmit} />
+                    <Button label={'+ ADD PAYMENT'} onClick={handleSubmit} loading={loading} />
                 </form>
             </div>
         </BaseScreen>
