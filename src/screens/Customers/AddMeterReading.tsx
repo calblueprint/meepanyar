@@ -1,10 +1,19 @@
 import { Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import React from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import React, { useState } from 'react';
+import { connect, useSelector } from 'react-redux';
+import { RouteComponentProps, Redirect } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
+import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
+import { selectCurrentCustomer } from '../../lib/redux/customerData';
+import { EMPTY_METER_READING } from '../../lib/redux/customerDataSlice';
+import moment from 'moment';
+import { RootState } from '../../lib/redux/store'; 
+import { selectCurrentUserId } from '../../lib/redux/userData';
+import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { getTariffPlan } from '../../lib/utils/customerUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -24,11 +33,42 @@ const styles = (theme: Theme) =>
 
 interface AddMeterReadingProps extends RouteComponentProps {
   classes: { content: string; outlined: string; secondaryText: string };
+  currentSite: SiteRecord;
   location: any;
 }
 
 function AddMeterReading(props: AddMeterReadingProps) {
-  const { classes } = props;
+  const { classes, currentSite } = props;
+
+  const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
+  const userId = useSelector(selectCurrentUserId);
+  const [meterReadingAmount, setMeterReadingAmount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  if (!currentCustomer || !userId) {
+    return <Redirect to={'/customers'} />
+  }
+
+  const tariffPlan = getTariffPlan(currentCustomer, currentSite);
+
+  const handleSetMeterReadingAmount = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setMeterReadingAmount(parseFloat(event.target.value as string) || 0);
+  }
+
+  const handleSubmit = (event: React.MouseEvent) => {
+    // Prevent page refresh on submit
+    event.preventDefault();
+    setLoading(true);
+
+    const meterReading = JSON.parse(JSON.stringify(EMPTY_METER_READING));
+    meterReading.reading = meterReadingAmount;
+    meterReading.amountBilled = calculateAmountBilled(meterReadingAmount, tariffPlan);
+    meterReading.date = moment().toISOString();
+    meterReading.customerId = currentCustomer
+    meterReading.billedById = userId;
+
+    
+  }
 
   return (
     <BaseScreen title="Add Meter Reading" leftIcon="backNav">
@@ -51,13 +91,17 @@ function AddMeterReading(props: AddMeterReadingProps) {
             <Typography variant="body1" style={{ marginBottom: 15 }}>
               00.00.0000
             </Typography>
-            <TextField label={'New Meter Reading (kWh)'} id={'new-meter-reading'}/>
+            <TextField label={'New Meter Reading (kWh)'} id={'new-meter-reading'} onClick={handleSetMeterReadingAmount} />
           </div>
-          <Button label={'ADD'} />
+          <Button label={'ADD'} loading={loading} onClick={handleSubmit} />
         </form>
       </div>
     </BaseScreen>
   );
 }
 
-export default withStyles(styles)(AddMeterReading);
+const mapStateToProps = (state: RootState) => ({
+  currentSite: state.siteData.currentSite || EMPTY_SITE as SiteRecord
+})
+
+export default connect(mapStateToProps)(withStyles(styles)(AddMeterReading));

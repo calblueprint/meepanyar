@@ -41,6 +41,10 @@ export const getTariffPlan = (customer: CustomerRecord, currentSite: SiteRecord)
   return currentSite.tariffPlans.find((plan: TariffPlanRecord) => plan.id === tariffPlanId);
 }
 
+export const calculateAmountBilled = (reading: number, tariffPlan: TariffPlanRecord): number => {
+  return tariffPlan.fixedTariff + tariffPlan.tariffByUnit * reading
+}
+
 export const getLatestReadingDate = (customer: CustomerRecord): string => {
   const latestReading = getCurrentReading(customer);
 
