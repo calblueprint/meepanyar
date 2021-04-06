@@ -25,7 +25,7 @@ import {
 } from './airtable';
 
 import { updateCustomerInRedux, addCustomerToRedux, addPaymentInRedux } from '../../lib/redux/customerData';
-import { generateOfflineId, isOfflineId } from '../utils/offlineUtils';
+import { generateOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
   addProductToRedux,
@@ -96,12 +96,7 @@ export const createCustomer = async (customer) => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        ...customer,
-        [CUSTOMER_OFFLINE_FIELDS.PAYMENTS]: [],
-        [CUSTOMER_OFFLINE_FIELDS.METER_READINGS]: [],
-        [CUSTOMER_OFFLINE_FIELDS.CUSTOMER_UPDATES]: [],
-      })
+      body: JSON.stringify(customer)
     })
     console.log(resp);
     await resp.json().then(data => customerId = data.id);
