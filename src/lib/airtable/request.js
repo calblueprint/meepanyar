@@ -125,28 +125,17 @@ export const createManyCustomerUpdates = async (records) => {
 };
 
 // NONGENERATED: Create a meter reading for a customer
-export const createMeterReadingandInvoice = async (meterReading, customer) => {
-  // If customer does not exist, we want to search the requests objectStore
-  // to add the current meter reading to the customer request being POST'ed
-  if (!customer.rid) {
-    addToOfflineCustomer(customer, 'meterReadings', meterReading)
-  } else {
-    // Customer has an rid so it is in the airtable.
-    // Make a standard request to create a meter reading / invoice.
-    try {
-      meterReading.customerId = customer.rid;
-      const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/meter-readings-and-invoices/create`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(meterReading)
-      })
-      console.log('Response for meter reading: ', resp);
-    } catch (err) {
-      console.log('Error with create meter reading request: ', err);
-    }
+export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, customer) => {
+  let meterReadingId = '';
+  delete meterReading.id;
+  try {
+    meterReadingId = await createRecord(Tables.MeterReadingsandInvoices, meterReading);
+  } catch (error) {
+    console.log('(Meter Reading) Error occurred when creating meter reading: ', meterReading);
+    meterReadingId = generateOfflineId();
   }
+
+  meterReading.id = meterReading;
 }
 
 // NONGENERATED: Create a payment for a customer

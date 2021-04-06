@@ -2,7 +2,7 @@ import { Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { RouteComponentProps, Redirect } from 'react-router-dom';
+import { RouteComponentProps, Redirect, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
@@ -13,7 +13,8 @@ import moment from 'moment';
 import { RootState } from '../../lib/redux/store'; 
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { getTariffPlan } from '../../lib/utils/customerUtils';
+import { getTariffPlan, calculateAmountBilled } from '../../lib/utils/customerUtils';
+import { createMeterReadingandInvoice } from '../../lib/airtable/request';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -39,7 +40,7 @@ interface AddMeterReadingProps extends RouteComponentProps {
 
 function AddMeterReading(props: AddMeterReadingProps) {
   const { classes, currentSite } = props;
-
+  const history = useHistory();
   const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
   const userId = useSelector(selectCurrentUserId);
   const [meterReadingAmount, setMeterReadingAmount] = useState(0);
@@ -50,6 +51,11 @@ function AddMeterReading(props: AddMeterReadingProps) {
   }
 
   const tariffPlan = getTariffPlan(currentCustomer, currentSite);
+
+  if (!tariffPlan) {
+    console.log("(Meter Readings) Could not find customer tariff plan, redirecting to Customer Main")
+    return <Redirect to={'/customers'} />
+  }
 
   const handleSetMeterReadingAmount = (event: React.ChangeEvent<{ value: unknown }>) => {
     setMeterReadingAmount(parseFloat(event.target.value as string) || 0);
@@ -67,7 +73,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
     meterReading.customerId = currentCustomer
     meterReading.billedById = userId;
 
-    
+    createMeterReadingandInvoice(meterReading).then(history.goBack);
   }
 
   return (
