@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
 import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
-import BaseScreen from '../../components/BaseComponents/BaseScreen';
 // Preset styles for camera
 import 'react-html5-camera-photo/build/css/index.css';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
 
 export interface PreservedCameraState {
     preservedState: object;
     returnLink: string;
+    goBack: number;
 }
 
 // TODO: @julianrkung Styling for camera once deployment occurs and you can access on phone
@@ -31,11 +32,11 @@ function CameraScreen(props: CameraProps) {
         history.replace('home');
     }
 
-    const { preservedState, returnLink } = props.location.state;
+    const { preservedState, returnLink, goBack } = props.location.state;
 
     // We navigate to a new screen and pass all state
     const onTakePhoto = (photoUri: string) => {
-        history.push('/camera/preview', { ...preservedState, returnLink, photoUri })
+        history.push('/camera/preview', { preservedState, returnLink, photoUri, goBack: goBack - 1 })
     }
 
     const onCameraError = (error: Error) => {
@@ -71,7 +72,7 @@ function CameraScreen(props: CameraProps) {
     }
 
     return (
-        <BaseScreen leftIcon="backNav">
+        <BaseScreen leftIcon="backNav" backAction={() => history.replace(returnLink, {...preservedState})}>
             {errorMessage ? renderErrorMessage() : renderCamera()}
         </BaseScreen>
     )

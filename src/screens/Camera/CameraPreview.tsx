@@ -1,9 +1,9 @@
+import { createStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
-import { withStyles } from '@material-ui/core/styles';
-import { createStyles } from '@material-ui/core';
 import { PreservedCameraState } from './Camera';
 
 interface CameraPreviewState extends PreservedCameraState {
@@ -22,7 +22,7 @@ const styles = () => createStyles({
 
 function CameraPreview(props: CameraPreviewProps) {
     const history = useHistory();
-    const { preservedState, returnLink, photoUri } = props.location.state;
+    const { preservedState, returnLink, photoUri, goBack } = props.location.state;
 
 
     // If the user enters the camera screen without a returnLink, 
@@ -32,7 +32,7 @@ function CameraPreview(props: CameraPreviewProps) {
     }
 
     const handleConfirm = async () => {
-        history.replace(returnLink, { ...preservedState, photo: photoUri })
+        history.replace(returnLink, { ...preservedState, photo: photoUri, goBack: goBack - 1 })
     }
 
     return (

@@ -6,6 +6,8 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 import BaseNavigation from './components/BaseComponents/BaseNavigation';
 import { history, RootState } from './lib/redux/store';
+import Camera from './screens/Camera/Camera';
+import CameraPreview from './screens/Camera/CameraPreview';
 import AddCustomer from './screens/Customers/AddCustomer';
 import AddMeterReading from './screens/Customers/AddMeterReading';
 import CustomerMain from './screens/Customers/CustomerMain';
@@ -13,15 +15,17 @@ import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
 import EditCustomer from './screens/Customers/EditCustomer';
 import FinancialSummariesMain from './screens/FinancialSummary/FinancialSummariesMain';
-import Camera from './screens/Camera/Camera';
-import CameraPreview from './screens/Camera/CameraPreview';
 import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummaryPayment';
 import Home from './screens/Home/Home';
 import Incidents from './screens/Incidents';
 import AddInventory from './screens/Inventory/AddInventory';
+import CreateInventoryUpdate from './screens/Inventory/CreateInventoryUpdate';
+import CreatePurchaseRequest from './screens/Inventory/CreatePurchaseRequest';
 import InventoryMain from './screens/Inventory/InventoryMain';
 import InventoryProfile from './screens/Inventory/InventoryProfile';
+import PurchaseRequest from './screens/Inventory/PurchaseRequest';
+import PurchaseRequests from './screens/Inventory/PurchaseRequests';
 import Login from './screens/Login';
 import Maintenance from './screens/Maintenance';
 import { theme } from './styles/ThemeStyles';
@@ -57,6 +61,11 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path="/inventory" component={InventoryMain} exact/>
       <AuthenticatedRoute path="/inventory/create" component={AddInventory} />
       <AuthenticatedRoute path="/inventory/item" component={InventoryProfile} /> 
+      <AuthenticatedRoute path="/inventory/purchase-requests" component={PurchaseRequests} exact/> 
+      <AuthenticatedRoute path="/inventory/purchase-requests/create" component={CreatePurchaseRequest} /> 
+      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} /> 
+      <AuthenticatedRoute path="/inventory/updates/create" component={CreateInventoryUpdate} /> 
+
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 

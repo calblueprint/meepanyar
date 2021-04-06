@@ -1,15 +1,18 @@
+import { Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import React from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import { InventoryRecord, ProductRecord, SiteRecord } from '../../lib/airtable/interface';
-import { ProductIdString } from '../../lib/redux/inventoryDataSlice';
-import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import Button from '../../components/Button';
+import { InventoryUpdateRecord } from '../../lib/airtable/interface';
+import { selectCurrentInventory, selectCurrentInventoryProduct, selectInventoryUpdatesArrayByInventoryId } from '../../lib/redux/inventoryData';
+import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
-
+import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
+import InventoryInfo from './components/InventoryInfo';
+import InventoryUpdateCard from './components/InventoryUpdateCard';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -22,32 +25,60 @@ const styles = (theme: Theme) =>
   });
 
 interface InventoryProps extends RouteComponentProps {
-  classes: { content: string; section: string; };
-  currentSite: SiteRecord;
-  location: any;
-  products: Record<ProductIdString, ProductRecord>;
+  classes: { content: string; section: string };
 }
 
+const getPurchaseRequestButton = () => (
+  <Link to={'purchase-requests/create'}>
+    <Button label={'Purchase'} />
+  </Link>
+);
+
+const getUpdateButton = () => (
+  <Link to={'updates/create'}>
+    <Button label={'Update'} />
+  </Link>
+);
+
 function InventoryProfile(props: InventoryProps) {
-  const { classes, products } = props;
-  const inventoryItem: InventoryRecord = props.location.state.inventoryItem;
+  const { classes } = props;
+  const inventory = useSelector(selectCurrentInventory) || EMPTY_INVENTORY;
+  const product = useSelector(selectCurrentInventoryProduct);
+  const inventoryUpdates = useSelector((state: RootState) => selectInventoryUpdatesArrayByInventoryId(state, inventory.id));
+
+  // Redirect to InventoryMain if either are undefined
+  if (inventory === EMPTY_INVENTORY || !product) {
+    return <Redirect to={'/inventory'} />;
+  }
 
   return (
-    <BaseScreen leftIcon="backNav" title={products[inventoryItem.productId].name}>
+    <BaseScreen leftIcon="backNav" title={product.name}>
       <BaseScrollView>
         <div className={classes.content}>
-          <Typography variant="h1">{`${inventoryItem.currentQuantity} ${products[inventoryItem.productId].unit}`}</Typography>
-          <div className={classes.section}>
-          </div>
+          <InventoryInfo
+            productId={inventory.productId}
+            lastUpdated={getInventoryLastUpdated(inventory)}
+            currentQuantity={inventory.currentQuantity}
+          />
+          {getPurchaseRequestButton()}
+          {getUpdateButton()}
+          <div className={classes.section}></div>
+        </div>
+        <div className={classes.content}>
+        <Typography variant="body2">Recent Updates</Typography>
+        {inventoryUpdates.map((inventoryUpdate: InventoryUpdateRecord) =>  (
+          <InventoryUpdateCard 
+            key={inventoryUpdate.id} 
+            updatedQuantity={inventoryUpdate.updatedQuantity}
+            createdAt={inventoryUpdate.createdAt}
+            inventoryId={inventoryUpdate.inventoryId}
+            userId={inventoryUpdate.userId}
+          />
+        ))}
         </div>
       </BaseScrollView>
     </BaseScreen>
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  currentSite: state.siteData.currentSite || EMPTY_SITE,
-  products: state.inventoryData.products || {}
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(InventoryProfile));
+export default withStyles(styles)(InventoryProfile);

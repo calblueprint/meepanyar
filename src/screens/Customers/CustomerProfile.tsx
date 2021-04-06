@@ -5,17 +5,17 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
-import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { connect, useSelector } from 'react-redux';
+import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
-import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
+import { CustomerRecord, MeterReadingRecord, SiteRecord, PaymentRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
-import { getCurrentCustomer } from '../../lib/redux/customerData';
+import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
+import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,14 +46,21 @@ const styles = (theme: Theme) =>
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string;};
+  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string; };
   currentSite: SiteRecord;
   customer: CustomerRecord;
   location: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
-  const { classes, match, currentSite, customer } = props;
+  const { classes, match, currentSite } = props;
+  const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
+  const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
+  const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
+
+  if (customer === EMPTY_CUSTOMER) {
+    return <Redirect to={'/customers'} />;
+  }
 
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
@@ -64,8 +71,8 @@ function CustomerProfile(props: CustomerProps) {
   const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;
   const minUnits = customerTariff ? customerTariff?.minUnits : UNDEFINED_AMOUNT;
 
-  const tariffInfo : CardPropsInfo[] = [
-    { number: fixedTariff.toString() , label: 'Fixed Tariff', unit: 'MMK' },
+  const tariffInfo: CardPropsInfo[] = [
+    { number: fixedTariff.toString(), label: 'Fixed Tariff', unit: 'MMK' },
     { number: unitTariff.toString(), label: 'Unit Tariff', unit: 'MMK' },
     { number: minUnits.toString(), label: 'Minimum Units Used', unit: '' },
   ]
@@ -76,23 +83,23 @@ function CustomerProfile(props: CustomerProps) {
   const amountBilled: number | string = currReading ? getAmountBilled(currReading) : UNDEFINED_AMOUNT;
 
   const meterInfo: CardPropsInfo[] = [
-    { number: startingReading? startingReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Starting Meter', unit: 'kWh' },
+    { number: startingReading ? startingReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Starting Meter', unit: 'kWh' },
     { number: periodUsage.toString(), label: 'Period Usage', unit: 'kWh' },
     { number: amountBilled.toString(), label: 'Amount Billed', unit: 'kS' },
   ];
   const balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
-  const readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
+  const readingInfo: CardPropsInfo[] = [{ number: currReading ? currReading.amountBilled.toString() : UNDEFINED_AMOUNT, label: 'Current Reading', unit: 'kWh' }];
 
   const getPaymentButton = () => {
     return (
-        <Button
-          variant="contained"
-          className={classes.buttonPrimary}
-          startIcon={<AddIcon />}
-          disableElevation={true}
-        >
-          Add Payment
-        </Button>
+      <Button
+        variant="contained"
+        className={classes.buttonPrimary}
+        startIcon={<AddIcon />}
+        disableElevation={true}
+      >
+        Add Payment
+      </Button>
     );
   };
 
@@ -104,7 +111,7 @@ function CustomerProfile(props: CustomerProps) {
         component={Link}
         to={{
           pathname: `${match.url}/records`,
-          state: { invoices: customer.meterReadings, payments: customer.payments },
+          state: { invoices: meterReadings, payments: payments },
         }}
         className={classes.buttonSecondary}
         startIcon={<ListAltOutlinedIcon />}
@@ -122,7 +129,7 @@ function CustomerProfile(props: CustomerProps) {
           component={Link}
           to={{
             pathname: `${match.url}/meter-readings/create`,
-            state: { invoices: customer.meterReadings, payments: customer.payments },
+            state: { invoices: meterReadings, payments: payments },
           }}
           size="small"
         >
@@ -140,7 +147,7 @@ function CustomerProfile(props: CustomerProps) {
           <Typography variant="body1" color="textSecondary">
             {customer.meterNumber}
           </Typography>
-          <OutlinedCardList info={tariffInfo} primary={false} columns/>
+          <OutlinedCardList info={tariffInfo} primary={false} columns />
           <div className={classes.section}>
             <div className={classes.headerWrapper}>
               <Typography variant="h2">Payment</Typography>
@@ -163,7 +170,6 @@ function CustomerProfile(props: CustomerProps) {
 
 const mapStateToProps = (state: RootState) => ({
   currentSite: state.siteData.currentSite || EMPTY_SITE,
-  customer: getCurrentCustomer() || EMPTY_CUSTOMER,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));

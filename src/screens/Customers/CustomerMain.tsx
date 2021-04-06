@@ -1,16 +1,17 @@
 import { createStyles, Fab, FormControl, FormHelperText, ListSubheader, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import CustomerCard from '../../components/CustomerCard';
 import UserSearchBar from '../../components/UserSearchBar';
 import { CustomerRecord } from '../../lib/airtable/interface';
-import { getAllCustomersInSite, setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
+import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
+import { getLatestReadingDate } from '../../lib/utils/customerUtils';
+import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import TrieTree from '../../lib/utils/TrieTree';
-import { RootState } from '../../lib/redux/store';
-import { connect } from 'react-redux';
 
 
 const styles = (theme: Theme) =>
@@ -73,16 +74,16 @@ const labels: FilterByLabel = {
 }
 
 function CustomerMain(props: CustomerMainProps) {
-  const { classes, customers } = props;
+  const { classes } = props;
   const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
   const [filteredCustomersAlt, setFilteredCustomersAlt] = useState<CustomerRecord[]>([]);
-  const [fullCustomers, setFullCustomers] = useState<CustomerRecord[]>([]);
   const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME);
   const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.ACTIVE_STATUS);
   const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
   const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]);
   const [searchValue, setSearchValue] = useState<string>("");
+  const fullCustomers: CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
 
   useEffect(() => {
     getCustomers();
@@ -90,12 +91,8 @@ function CustomerMain(props: CustomerMainProps) {
   }, [sortBy, filterBy, searchValue]);
 
   const getCustomers = () => {
-    // TODO: It'd be better to slice once and store the sliced list somewhere.
-    // We need to slice here because redux freezes objects to prevent mutation.
-    // The slice occurs during each component update, so it's inefficient as number of
-    // customers or updates grows. This isn't predicted to be a huge issue but may be in the future.
-    let allCustomers: CustomerRecord[] = customers.slice();
-    setFullCustomers(allCustomers);
+    let allCustomers = fullCustomers;
+
     if (searchValue !== '') {
       allCustomers = allCustomersTrie.get(searchValue);
     }
@@ -149,21 +146,6 @@ function CustomerMain(props: CustomerMainProps) {
       default: {
         return true;
       }
-    }
-  }
-
-  const getLatestReadingDate = (customer: CustomerRecord) => {
-    //depends if the meter readings list is sorted with earliest => latest
-    if (customer.meterReadings.length > 0) {
-      const latestMeterReading = customer.meterReadings[customer.meterReadings.length - 1]
-      const dateTime = Date.parse(latestMeterReading.date)
-      const readingDate = new Date(dateTime)
-      const month = readingDate.getMonth() + 1;
-      const day = readingDate.getDate();
-      const shortDate = month.toString() + '.' + day.toString();
-      return shortDate;
-    } else {
-      return 'No Readings'
     }
   }
 
@@ -243,8 +225,4 @@ function CustomerMain(props: CustomerMainProps) {
 
 }
 
-const mapStateToProps = (state: RootState) => ({
-  customers: getAllCustomersInSite()
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(CustomerMain));
+export default withStyles(styles)(CustomerMain);
