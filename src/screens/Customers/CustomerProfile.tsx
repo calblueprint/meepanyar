@@ -220,7 +220,7 @@ function CustomerProfile(props: CustomerProps) {
     if (customer.meterType == "Analog Meter") {
       return (
         <div>
-          <OutlinedCardList info={readingInfo} primary={false} />
+          <OutlinedCardList info={readingInfo} primary={false} rightIcon={getAddButton()} />
           <div className={classes.section}>
             { /* Top Left */ }
             <div style={{ float: 'left' }} className={classes.meterInfoContainer}>
