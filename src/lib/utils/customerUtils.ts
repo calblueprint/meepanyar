@@ -42,8 +42,13 @@ export const getTariffPlan = (customer: CustomerRecord, currentSite: SiteRecord)
 }
 
 export const calculateAmountBilled = (reading: number, tariffPlan: TariffPlanRecord): number => {
-  // TODO: Update calculation when freeUnit PR is merged
-  return tariffPlan.fixedTariff + tariffPlan.tariffByUnit * reading
+  let amountCharged = tariffPlan.fixedTariff;
+
+  if (reading <= tariffPlan.freeUnits) {
+    amountCharged += tariffPlan.tariffByUnit * reading
+  }
+
+  return amountCharged
 }
 
 export const getLatestReadingDate = (customer: CustomerRecord): string => {
