@@ -45,6 +45,8 @@ export interface SiteRecord {
   purchaseRequests?: PurchaseRequestRecord[];
   inventoryUpdates?: InventoryUpdateRecord[];
   customers?: CustomerRecord[];
+  payments?: PaymentRecord[];
+  meterReadings?: MeterReadingRecord[];
 }
 
 export interface TariffPlanRecord {
@@ -64,9 +66,7 @@ export interface CustomerRecord {
   hasmeter: boolean;
   outstandingBalance: string;
   meterReadingIds: string[];
-  meterReadings: MeterReadingRecord[];
   paymentIds: string[];
-  payments: PaymentRecord[];
   customerUpdateIds: string[];
   customerUpdates: CustomerUpdateRecord[];
   totalAmountBilledfromInvoices: number;
@@ -88,12 +88,15 @@ export interface MeterReadingRecord {
   amountBilled: number;
   date: string;
   meterNumber: number;
+  customerId: string;
 }
 
 export interface PaymentRecord {
   id: string;
   amount: number;
   date: string;
+  billedToId: string;
+  collectedById: string;
 }
 
 export interface FinancialSummaryRecord {
@@ -116,13 +119,12 @@ export interface FinancialSummaryRecord {
 
 export interface PurchaseRequestRecord {
   id: string;
-  period: number;
   notes?: string;
   status: PurchaseRequestStatus;
   requesterId: string;
   reviewerId?: string;
   createdAt: string;
-  approvedAt?: string;
+  reviewedAt?: string;
   amountPurchased: number;
   amountSpent: number;
   receipt?: Airtable.Attachment[];
@@ -146,7 +148,7 @@ export interface InventoryUpdateRecord {
   previousQuantity: number;
   updatedQuantity: number;
   inventoryId: string;
-  period: number;
+  createdAt: string;
 }
 
 export interface ProductRecord {

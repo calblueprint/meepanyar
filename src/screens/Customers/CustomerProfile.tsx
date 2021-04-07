@@ -3,17 +3,17 @@ import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import { FlashOn as FlashOnIcon, AttachMoney as AttachMoneyIcon } from '@material-ui/icons';
-import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { connect, useSelector } from 'react-redux';
+import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
-import { CustomerRecord, MeterReadingRecord, SiteRecord } from '../../lib/airtable/interface';
+import { CustomerRecord, MeterReadingRecord, SiteRecord, PaymentRecord } from '../../lib/airtable/interface';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
-import { getCurrentCustomer } from '../../lib/redux/customerData';
+import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
+import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import TariffPlanInfo from './components/TariffPlanInfo';
 import MeterInfoContainer from './components/MeterInfoContainer';
 
@@ -58,7 +58,14 @@ interface CustomerProps extends RouteComponentProps {
 }
 
 function CustomerProfile(props: CustomerProps) {
-  const { classes, match, currentSite, customer } = props;
+  const { classes, match, currentSite } = props;
+  const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
+  const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
+  const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
+
+  if (customer === EMPTY_CUSTOMER) {
+    return <Redirect to={'/customers'} />;
+  }
 
   // data retrieval
   const UNDEFINED_AMOUNT = '--';
@@ -90,7 +97,7 @@ function CustomerProfile(props: CustomerProps) {
           component={Link}
           to={{
             pathname: `${match.url}/meter-readings/create`,
-            state: { invoices: customer.meterReadings, payments: customer.payments },
+            state: { invoices: meterReadings, payments: payments },
           }}
           size="small"
         >
@@ -107,7 +114,7 @@ function CustomerProfile(props: CustomerProps) {
           component={Link}
           to={{
             pathname: `${match.url}/meter-readings/create`,
-            state: { invoices: customer.meterReadings, payments: customer.payments },
+            state: { invoices: meterReadings, payments: payments },
           }}
           size="small"
         >
@@ -226,7 +233,7 @@ function CustomerProfile(props: CustomerProps) {
           </div>
         </div>
       );
-    } else if (customer.meterType === "Inactive") {
+    } else {
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
@@ -288,7 +295,7 @@ function CustomerProfile(props: CustomerProps) {
             <Link className={classes.buttonSecondary}
               to={{
               pathname: `${match.url}/records`,
-              state: { invoices: customer.meterReadings, payments: customer.payments, defaultTab: '1' },
+              state: { invoices: meterReadings, payments: payments, defaultTab: '1' },
             }}>View All</Link>
           </div>
           {getPaymentInfo()}
@@ -299,7 +306,7 @@ function CustomerProfile(props: CustomerProps) {
             <Link className={classes.buttonSecondary}
               to={{
               pathname: `${match.url}/records`,
-              state: { invoices: customer.meterReadings, payments: customer.payments, defaultTab: '0' },
+              state: { invoices: meterReadings, payments: payments, defaultTab: '0' },
             }}>View All</Link>
           </div>
           {getReadingInfo()}
@@ -311,7 +318,6 @@ function CustomerProfile(props: CustomerProps) {
 
 const mapStateToProps = (state: RootState) => ({
   currentSite: state.siteData.currentSite || EMPTY_SITE,
-  customer: getCurrentCustomer() || EMPTY_CUSTOMER,
 });
 
 export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));
