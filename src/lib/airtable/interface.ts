@@ -71,6 +71,7 @@ export interface CustomerRecord {
   customerUpdates: CustomerUpdateRecord[];
   totalAmountBilledfromInvoices: number;
   totalAmountPaidfromPayments: number;
+  startingMeterReading: number;
 }
 
 export interface CustomerUpdateRecord {
