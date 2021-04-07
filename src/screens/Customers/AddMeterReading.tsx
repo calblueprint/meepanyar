@@ -97,7 +97,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
             <Typography variant="body1" style={{ marginBottom: 15 }}>
               00.00.0000
             </Typography>
-            <TextField label={'New Meter Reading (kWh)'} id={'new-meter-reading'} onClick={handleSetMeterReadingAmount} />
+            <TextField label={'New Meter Reading (kWh)'} id={'new-meter-reading'} onChange={handleSetMeterReadingAmount} />
           </div>
           <Button label={'ADD'} loading={loading} onClick={handleSubmit} />
         </form>
