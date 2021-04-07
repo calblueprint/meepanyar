@@ -43,11 +43,12 @@ const loginUser = async (username: string, password: string): Promise<boolean> =
 
 const logoutUser = async (): Promise<boolean> => {
   try {
+    // We clear user data first 
+    clearUserData();
     const res = await base.logout();
     if (!res.body.success) {
       return false;
     }
-    clearUserData();
     return true;
   } catch (err) {
     console.log(err);
