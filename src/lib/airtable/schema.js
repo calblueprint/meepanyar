@@ -82,6 +82,7 @@ export const Columns = {
 		id: {name:`ID`, type:`formula`},
 		meterType: {name:`Meter Type`, type:`select`},
 		customerNumber: {name:`Customer Number`, type:`number`},
+		startingMeterReading: {name:`Starting Meter Reading`, type:`number`},
 	},
 	"Customer Updates": {
 		dateUpdated: {name:`Date Updated`, type:`date`},
