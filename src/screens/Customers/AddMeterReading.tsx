@@ -73,10 +73,11 @@ function AddMeterReading(props: AddMeterReadingProps) {
     meterReading.reading = meterReadingAmount;
     meterReading.amountBilled = calculateAmountBilled(meterReadingAmount - startingMeterReading.reading, tariffPlan);
     meterReading.date = moment().toISOString();
-    meterReading.customerId = currentCustomer
+    meterReading.customerId = currentCustomer.id;
     meterReading.billedById = userId;
+    meterReading.meterNumber = currentCustomer.meterNumber;
 
-    createMeterReadingAndUpdateCustomerBalance(meterReading).then(history.goBack);
+    createMeterReadingAndUpdateCustomerBalance(meterReading, currentCustomer).then(history.goBack);
   }
 
   return (

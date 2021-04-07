@@ -135,7 +135,7 @@ export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, c
     meterReadingId = generateOfflineId();
   }
 
-  meterReading.id = meterReading;
+  meterReading.id = meterReadingId;
   addMeterReadingToRedux(meterReading);
   
   // Customer's outstanding balance is automatically updated on Airtable but needs to
