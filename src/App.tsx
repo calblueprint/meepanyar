@@ -10,6 +10,7 @@ import Camera from './screens/Camera/Camera';
 import CameraPreview from './screens/Camera/CameraPreview';
 import AddCustomer from './screens/Customers/AddCustomer';
 import AddMeterReading from './screens/Customers/AddMeterReading';
+import AddPayment from './screens/Customers/AddPayment';
 import CustomerMain from './screens/Customers/CustomerMain';
 import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
@@ -50,6 +51,7 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path={'/customers/customer'} component={CustomerProfile} exact />
       <AuthenticatedRoute path={'/customers/customer/edit'} component={EditCustomer} exact />
       <AuthenticatedRoute path="/customers/customer/meter-readings/create" component={AddMeterReading} exact />
+      <AuthenticatedRoute path="/customers/customer/payments/create" component={AddPayment} exact />
       <AuthenticatedRoute path={'/customers/customer/records'} component={CustomerRecords} exact />
       <AuthenticatedRoute path="/financial-summaries" component={FinancialSummariesMain} />
 

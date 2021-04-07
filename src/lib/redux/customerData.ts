@@ -1,5 +1,16 @@
 import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../airtable/interface';
-import { addCustomer, setCurrentCustomerId, editCustomer, selectCustomerById, saveCustomerData, selectAllMeterReadingsArray, selectAllCustomersArray, selectAllPaymentsArray, selectAllCustomers, addMeterReading } from './customerDataSlice';
+import {
+    addCustomer,
+    setCurrentCustomerId,
+    updateCustomer,
+    selectCustomerById,
+    saveCustomerData,
+    selectAllMeterReadingsArray,
+    selectAllCustomersArray,
+    selectAllPaymentsArray,
+    addPayment,
+    addMeterReading
+} from './customerDataSlice';
 import { isBeforeCurrentPeriod } from '../moment/momentUtils';
 import { getCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
@@ -34,13 +45,21 @@ export const addMeterReadingToRedux = (meterReading: MeterReadingRecord): void =
     store.dispatch(addMeterReading(meterReadingPayload));
 }
 
-export const editCustomerInRedux = (customer: Partial<CustomerRecord>): void => {
+export const updateCustomerInRedux = (customer: Partial<CustomerRecord>): void => {
     const customerUpdates = {
         ...customer,
         siteId: getCurrentSiteId()
     }
-    store.dispatch(editCustomer(customerUpdates));
+    store.dispatch(updateCustomer(customerUpdates));
 };
+
+export const addPaymentToRedux = (payment: PaymentRecord) => {
+    const paymentPayload = {
+        ...payment,
+        siteId: getCurrentSiteId()
+    }
+    store.dispatch(addPayment(paymentPayload));
+}
 
 export const setCurrentCustomerIdInRedux = (customerId: string): void => {
     store.dispatch(setCurrentCustomerId(customerId))
@@ -92,12 +111,12 @@ export const selectAmountOwedInCurrentPeriodByCustomerId = createSelector(
     store.getState,
     getCustomerId,
     (state, customerId) => {
-        const currentPeriodMeterReadings = 
-        selectMeterReadingsByCustomerId(state, customerId)?.filter(meterReading => !isBeforeCurrentPeriod(meterReading.date));
+        const currentPeriodMeterReadings =
+            selectMeterReadingsByCustomerId(state, customerId)?.filter(meterReading => !isBeforeCurrentPeriod(meterReading.date));
         if (currentPeriodMeterReadings) {
             return currentPeriodMeterReadings.reduce((totalAmountOwed, meterReading: MeterReadingRecord) => totalAmountOwed + meterReading.amountBilled, 0);
         }
-    } 
+    }
 )
 
 export const selectAmountPaidInCurrentPeriodByCustomerId = createSelector(
