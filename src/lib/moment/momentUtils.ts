@@ -36,6 +36,18 @@ export const getCurrentPeriod = () => {
   return year + "-" + month.toString().padStart(2, "0");
 }
 
+export const getNextPeriod = () => {
+  let year = moment().year();
+  let month = moment().month();
+  if (month == 11) {
+    month = 1;
+    year += 1;
+  } else {
+    month += 2;
+  }
+  return year + "-" + month.toString().padStart(2, "0");
+}
+
 export const getLastPeriod = () => {
   let year = moment().year();
   // Last month is retrieved directly from moment's month() because of 0 indexing

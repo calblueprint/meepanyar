@@ -17,7 +17,8 @@ interface HomeMenuItemProps {
   amount?: number;
   sublabels?: sublabel[];
   noBadge?: boolean;
-  classes: { root: string; content: string; noAlert: string; sublabel: string; icon: string; checked: string; label: string; };
+  iconType?: string;
+  classes: { root: string; content: string; noAlert: string; sublabel: string; icon: string; checked: string; label: string; innerContent: string; };
 }
 
 const styles = (theme: Theme) =>
@@ -58,13 +59,19 @@ const styles = (theme: Theme) =>
       backgroundColor: theme.palette.primary.main,
     },
     label: {
+      marginLeft: '15px',
       color: '#757575',
       size: '14px',
-    }
+    },
+    innerContent: {
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
+    },
   });
 
 function HomeMenuItem(props: HomeMenuItemProps) {
-  const { label, sublabels, noBadge, classes } = props;
+  const { label, sublabels, noBadge, classes, iconType } = props;
   const amount = props.amount
     ? sublabels
       ? sublabels.reduce(function (amt: number, curr: sublabel) {
@@ -73,18 +80,39 @@ function HomeMenuItem(props: HomeMenuItemProps) {
       : props.amount
     : null;
 
+  const renderIcons = () => {
+    if (iconType == 'meter' || iconType == 'collect') {
+      return (
+        <AccountBoxIcon color="primary" />
+      );
+    }
+    if (iconType == 'maintain') {
+      return (
+        <BuildIcon color="primary" />
+      );
+    }
+    if (iconType == 'incident') {
+      return (
+        <WarningIcon color="primary" />
+      );
+    }
+  }
+
   return (
     <ButtonBase className={classes.root}>
       <div className={`${classes.content} ${noBadge ? null : amount}`}>
-        <div>
-          <Typography className={classes.label}>{label}</Typography>
-          {sublabels
-            ? sublabels.map((sl: sublabel, index: number) => (
-              <Typography className={classes.sublabel} variant="body1" key={index}>
-                {sl.amount} {sl.label}
-              </Typography>
-            ))
-            : null}
+        <div className={classes.innerContent}>
+          {renderIcons()}
+          <div >
+            <Typography className={classes.label}>{label}</Typography>
+            {sublabels
+              ? sublabels.map((sl: sublabel, index: number) => (
+                <Typography className={classes.sublabel} variant="body1" key={index}>
+                  {sl.amount} {sl.label}
+                </Typography>
+              ))
+              : null}
+          </div>
         </div>
         {noBadge ? null : (
           <div className={`${classes.icon} ${amount ? null : classes.checked}`}>
@@ -92,7 +120,7 @@ function HomeMenuItem(props: HomeMenuItemProps) {
           </div>
         )}
       </div>
-    </ButtonBase>
+    </ButtonBase >
   );
 }
 

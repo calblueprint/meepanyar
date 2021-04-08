@@ -1,18 +1,24 @@
 import React from 'react';
 import { connect, useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
-import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
+import { formatDateStringToLocal, getCurrentPeriod, getNextPeriod } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
+import ReportButton from './components/ReportButton';
+import PastReportButton from './components/PastReportsButton';
+import PaymentButton from './components/PaymentButton';
+
 
 import Typography from '@material-ui/core/Typography';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import CloudIcon from '@material-ui/icons/Cloud';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
+import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
+import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 
 const styles = () =>
   createStyles({
@@ -25,11 +31,25 @@ const styles = () =>
       color: '#BDBDBD',
       textAlign: 'right',
       width: '100px',
+      fontSize: '10px',
     },
+    periodDescription: {
+      fontSize: '14px',
+      color: '#757575',
+    },
+    categoryText: {
+      fontSize: '18px',
+      color: '424242',
+    },
+    financialSums: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    },
+
   });
 
 interface HomeProps {
-  classes: { header: string; network: string };
+  classes: { header: string; network: string, periodDescription: string, categoryText: string, financialSums: string };
   lastUpdated: string;
   isOnline: boolean;
   currentSite: SiteRecord;
@@ -39,76 +59,69 @@ function Home(props: HomeProps) {
   const { classes, lastUpdated, isOnline, currentSite } = props;
   const customers: CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
 
-  const calculateCustomerData = () => {
-    // customers to charge:  haven't charged yet / no meter reading
-    // outstanding payments: done the meter reading / charged, haven't paid yet
-    let numCustomersToCharge = 0;
-    let numOutstandingPayments = 0;
-    for (let i = 0; i < customers.length; i++) {
-      const currCustomer = customers[i]
-      //depends if the meter readings list is sorted with earliest => latest
-      const latestMeterReading = currCustomer.meterReadings[currCustomer.meterReadings.length - 1];
-      if (latestMeterReading != null) {
-        if (isBeforeCurrentPeriod(latestMeterReading.date)) {
-          numCustomersToCharge += 1;
-        }
-        if (parseInt(currCustomer.outstandingBalance) > 0) {
-          numOutstandingPayments += 1;
-        }
-      } else {
-        numCustomersToCharge += 1;
-      }
-    }
-    return { numOutstandingPayments, numCustomersToCharge }
-  }
-
   const numCustomersToMeter = useSelector(selectCustomersToMeter)?.length || 0;
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
 
   return (
     <BaseScreen rightIcon="user">
-      <div className={classes.header}>
-        <SiteMenu currentSite={currentSite} />
-        <div className={classes.network}>
-          {isOnline ? <CloudIcon color="primary" /> : <CloudOffIcon color="secondary" />}
-          <Typography className={classes.network} variant="body1">
-            Last Connected to Network <br />
-            {lastUpdated}
-          </Typography>
+      <BaseScrollView>
+        <div className={classes.header}>
+          <div>
+            <SiteMenu currentSite={currentSite} />
+            <Typography className={classes.periodDescription} >
+              Current Period: {getCurrentPeriod()}
+            </Typography>
+            <Typography className={classes.periodDescription} >
+              Deadline: {getNextPeriod()}
+            </Typography>
+          </div>
+          <div className={classes.network}>
+            {isOnline ? <CloudIcon color="primary" /> : <CloudOffIcon color="disabled" />}
+            <Typography className={classes.network} variant="body1">
+              Last Connected to Network <br />
+              {lastUpdated}
+            </Typography>
+          </div>
         </div>
-      </div>
 
-      <Link to={'/customers'}>
-        <HomeMenuItem
-          label="To Meter"
-          amount={numCustomersToMeter}
-        // label="Customer Alerts"
-        // amount={numCustomersToMeter + numCustomersToCollect}
-        // sublabels={[
-        //   { amount: numCustomersToMeter, label: 'Number of customers to meter' },
-        //   { amount: numCustomersToCollect, label: 'Number of customers to collect' },
-        // ]}
-        />
-      </Link>
-      <Link to={'/customers'}>
-        <HomeMenuItem
-          label="To Collect"
-          amount={numCustomersToCollect}
-        />
-      </Link>
-      <Link to={'/maintenance'}>
-        <HomeMenuItem
-          label="Maintenance"
-          amount={0}
-        />
-      </Link>
-      <HomeMenuItem label="Incidents" amount={0} />
-      <Link to={'/financial-summary'}>
-        <HomeMenuItem label="Unpaid Reports" amount={0} />
-      </Link>
-      <Link to={'/financial-summary'}>
-        <HomeMenuItem label="Financial Summary" noBadge={true} />
-      </Link>
+        <PaymentButton />
+        <Typography className={classes.categoryText}>
+          Tasks
+      </Typography>
+        <Link to={'/customers'}>
+          <HomeMenuItem
+            label="To Meter"
+            amount={numCustomersToMeter}
+            iconType="meter"
+          />
+        </Link>
+        <Link to={'/customers'}>
+          <HomeMenuItem
+            label="To Collect"
+            amount={numCustomersToCollect}
+            iconType="collect"
+          />
+        </Link>
+        <Link to={'/maintenance'}>
+          <HomeMenuItem
+            label="Maintenance"
+            amount={0}
+            iconType="maintain"
+          />
+        </Link>
+        <HomeMenuItem label="Incidents" amount={0} iconType="incident" />
+        <Typography className={classes.categoryText}>
+          Financial Reports
+      </Typography>
+        <div className={classes.financialSums}>
+          <Link to={'/financial-summary'}>
+            <ReportButton />
+          </Link>
+          <Link to={'/financial-summary'}>
+            <PastReportButton />
+          </Link>
+        </div>
+      </BaseScrollView>
     </BaseScreen>
   );
 }
