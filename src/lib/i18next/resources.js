@@ -196,6 +196,7 @@ export default {
       "Select frequency": "အကြိမ်နှုန်းရွေးချယ်ရန်",
       "Select equipment": "ပစ္စည်းအစိတ်အပိုင်းရွေးချယ်ရန်...",
       "No Remaining Tasks": "ကျန်ရှိနေသေးသောတာဝန်မရှိပါ။",
+      "No Readings": "ကျန်ရှိနေသေ",
       "Scheduled Date": "စီစဉ်ထားသည့်နေ့စွဲ",
       "Equipment / Component": "ပစ္စည်းအစိတ်အပိုင်း",
       "Last Updated [Date]": "နောက်ဆုံးမှတ်တမ်းတင်နေ့စွဲ [Date]",

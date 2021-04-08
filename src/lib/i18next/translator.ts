@@ -8,7 +8,7 @@ export const useInternationalization = () => {
     const { t } = useTranslation();
     const intl = (text: string, input?: string) => {
         const pattern: RegExp = /\[\w+\]/g;
-        const translated_text: string = input ? t(text).replace(pattern, input) : t(text);
+        const translated_text: string = input ? t(text).replace(pattern, t(input)) : t(text);
         switch (detectEncoding()) {
             case LanguageEncoding.ZAWGYI: 
                 return converter.unicodeToZawgyi(translated_text); 
