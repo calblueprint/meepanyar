@@ -20,6 +20,7 @@ import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummary
 import Home from './screens/Home/Home';
 import Incidents from './screens/Incidents';
 import AddInventory from './screens/Inventory/AddInventory';
+import BaseComponentsDemo from './screens/Inventory/BaseComponentsDemo';
 import CreateInventoryUpdate from './screens/Inventory/CreateInventoryUpdate';
 import CreatePurchaseRequest from './screens/Inventory/CreatePurchaseRequest';
 import InventoryMain from './screens/Inventory/InventoryMain';
@@ -70,6 +71,7 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 
       <AuthenticatedRoute path="/financial-summary" component={FinancialSummary} exact />
+      <AuthenticatedRoute path="/base-components" component={BaseComponentsDemo} exact />
       <BaseNavigation />
     </>
   );
