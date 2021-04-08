@@ -3,11 +3,11 @@
 
 import { store } from './store';
 import { getAllSites } from '../airtable/request';
-import { SiteRecord, CustomerRecord, SiteId } from '../airtable/interface';
+import { SiteRecord } from '../airtable/interface';
 import { saveSiteData, setLoadingForSiteData } from './siteDataSlice';
-import { saveCustomerData } from './customerDataSlice';
 import { MeterReadingRecord } from '../airtable/interface';
 import { refreshInventoryData } from './inventoryData'
+import { refreshCustomerData } from './customerData';
 
 const refreshData = async (loadSilently: boolean): Promise<void> => {
 
@@ -21,20 +21,6 @@ const refreshData = async (loadSilently: boolean): Promise<void> => {
 
     if (sites.length > 0) {
         currentSite = sites[0];
-    }
-
-    // Sort each customer's meter readings to be chronological
-    for (let i = 0; i < sites.length; i++) {
-        const singleSite = sites[i];
-        const customers = singleSite.customers;
-        if (customers) {
-            for (let j = 0; j < sites.length; j++) {
-                let customerMeterReadings = customers.meterReadings;
-                if (customerMeterReadings) {
-                    customerMeterReadings.sort((a: MeterReadingRecord, b: MeterReadingRecord) => (Date.parse(a.date) > Date.parse(b.date)) ? -1 : 1);
-                }
-            }
-        }
     }
 
     const siteData = {
@@ -61,16 +47,14 @@ const extractInventoryDataFromSite = (sites: SiteRecord[]) => {
 }
 
 const extractCustomerDataFromSite = (sites: SiteRecord[]) => {
-
-    const siteIdsToCustomers: Record<SiteId, CustomerRecord[]> = {};
     sites.map((site: SiteRecord) => {
-        siteIdsToCustomers[site.id] = site.customers || [];
+        refreshCustomerData(site);
         // We delete customers here so that there is no duplicate data
         // between the siteDataSlice and customerDataSlice
         delete site.customers;
+        delete site.payments;
+        delete site.meterReadings;
     })
-
-    store.dispatch(saveCustomerData(siteIdsToCustomers))
 }
 
 export default refreshData;

@@ -27,10 +27,16 @@ const styles = (theme: Theme) =>
     section: {
       marginTop: '30px',
     },
+    imageContainer: {
+      border: `3.5px solid ${theme.palette.divider}`,
+      radius: '6px',
+      padding: 0,
+      width: '100%',
+    },
   });
 
 interface PurchaseRequestsProps extends RouteComponentProps {
-  classes: { content: string; section: string };
+  classes: { content: string; section: string, imageContainer: string };
   location: any;
 }
 
@@ -59,7 +65,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   };
 
   return (
-    <BaseScreen leftIcon="backNav">
+    <BaseScreen title="Inventory Receipt" leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.content}>
           <Typography variant="h3">{`Purchase Request for ${product.name}`}</Typography>
@@ -69,8 +75,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           <Typography variant="body1">{`Created at ${formatDateStringToLocal(purchaseRequest.createdAt)}`}</Typography>
           <Typography variant="body1">{`Submitted by ${purchaseRequest.requesterId}`}</Typography>
           {purchaseRequest.notes && <Typography variant="body1">{`Notes: ${purchaseRequest.notes}`}</Typography>}
-          {/* TODO: admins lookup user info by id */}
-          {/* TODO: Add image */}
+          {purchaseRequest.receipt && <img className={classes.imageContainer} src={purchaseRequest.receipt[0].url} alt="receipt"/> }
           {userIsAdmin && purchaseRequest.status == PurchaseRequestStatus.PENDING && (
             <div>
               <Button onClick={() => handleSubmit(purchaseRequest, true)} label={'Approve'} />
