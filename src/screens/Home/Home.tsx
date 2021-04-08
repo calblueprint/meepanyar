@@ -11,8 +11,8 @@ import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
 
 import Typography from '@material-ui/core/Typography';
-import WifiIcon from '@material-ui/icons/Wifi';
-import WifiOffIcon from '@material-ui/icons/WifiOff';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
+import CloudIcon from '@material-ui/icons/Cloud';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { CustomerRecord } from '../../lib/airtable/interface';
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
@@ -40,7 +40,7 @@ interface HomeProps {
 
 function Home(props: HomeProps) {
   const { classes, lastUpdated, isOnline, currentSite } = props;
-  const customers : CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
+  const customers: CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
 
   const calculateCustomerData = () => {
     // customers to charge:  haven't charged yet / no meter reading
@@ -72,7 +72,7 @@ function Home(props: HomeProps) {
       <div className={classes.header}>
         <SiteMenu currentSite={currentSite} />
         <div className={classes.network}>
-          {isOnline ? <WifiIcon color="primary" /> : <WifiOffIcon color="secondary" />}
+          {isOnline ? <CloudIcon color="primary" /> : <CloudOffIcon color="secondary" />}
           <Typography className={classes.network} variant="body1">
             Last Connected to Network <br />
             {lastUpdated}

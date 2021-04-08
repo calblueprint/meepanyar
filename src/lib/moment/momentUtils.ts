@@ -10,7 +10,12 @@ export const formatDateStringToLocal = (dateString: string): string => {
     hour: 'numeric',
     minute: 'numeric',
   };
-  return moment(dateString).local().toDate().toLocaleString(undefined, options);
+  const timeOfDay = moment(dateString).local().format('LT');
+  const standardDate = moment(dateString).local().format('L');
+  const revisedDate = standardDate.replace('/', '.').substring(0, standardDate.length - 5);
+  const combinedString = timeOfDay + ' ' + revisedDate;
+  //return moment(dateString).local().toDate().toLocaleString(undefined, options);
+  return combinedString;
 };
 
 export const isBeforeCurrentPeriod = (dateString: string): boolean => {
