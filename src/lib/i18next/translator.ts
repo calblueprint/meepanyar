@@ -6,12 +6,14 @@ const converter = new EncodingConverter();
 /* Custom React hook to handle language internationalization */
 export const useInternationalization = () => {
     const { t } = useTranslation();
-    const intl = (text: string) => {
+    const intl = (text: string, input?: string) => {
+        const pattern: RegExp = /\[\w+\]/g;
+        const translated_text: string = input ? t(text).replace(pattern, input) : t(text);
         switch (detectEncoding()) {
             case LanguageEncoding.ZAWGYI: 
-                return converter.unicodeToZawgyi(t(text)); 
+                return converter.unicodeToZawgyi(translated_text); 
             default: 
-                return t(text); 
+                return t(translated_text); 
         }
     }
     return intl; 
