@@ -43,7 +43,8 @@ const loginUser = async (username: string, password: string): Promise<boolean> =
 
 const logoutUser = async (): Promise<boolean> => {
   try {
-    // We clear user data first 
+    // We clear user data first so that users are logged out
+    // even if logout fails to reach backend in offline scenarios
     clearUserData();
     const res = await base.logout();
     if (!res.body.success) {
