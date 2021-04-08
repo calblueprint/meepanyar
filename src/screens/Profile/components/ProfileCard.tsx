@@ -5,12 +5,14 @@ import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        leftContent: {
+        textContent: {
+            display: 'flex',
             flex: 1,
             padding: 12,
         },
-        rightContent: {
-            padding: 12,
+        primaryTextContent: {
+            flex: 1,
+            textAlign: 'right',
         },
         arrow: {
             color: theme.palette.text.primary,
@@ -24,30 +26,30 @@ const useStyles = makeStyles((theme: Theme) =>
     }));
 
 interface ProfileCardProps {
-    leftContent: string;
-    rightContent?: string;
+    leftText: string;
+    rightText?: string;
     chevron?: boolean;
     noBottomBorder?: boolean;
 }
 
 function ProfileCard(props: ProfileCardProps) {
-    const { leftContent, rightContent, chevron } = props;
+    const { leftText, rightText, chevron } = props;
     const classes = useStyles(props);
 
     const renderChevron = () => (<IconButton size="small">
         <ArrowForwardIosIcon className={classes.arrow} fontSize="small" />
     </IconButton>)
 
-    const renderRightContent = () => (            <div className={classes.rightContent}>
-        <Typography variant="body1" color='textSecondary'>{rightContent}</Typography>
+    const renderRightContent = () => (<div className={classes.primaryTextContent}>
+        <Typography variant="body1" color='textSecondary'>{rightText}</Typography>
     </div>)
 
     return (
         <div className={classes.cardContainer}>
-            <div className={classes.leftContent}>
-                <Typography variant="body1" color='textPrimary'>{leftContent}</Typography>
+            <div className={classes.textContent}>
+                <Typography variant="body1" color='textPrimary'>{leftText}</Typography>
+                {rightText ? renderRightContent() : null}
             </div>
-            {rightContent ? renderRightContent() : null}
             {chevron ? renderChevron() : null}
         </div>
     );

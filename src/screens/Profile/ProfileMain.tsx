@@ -30,9 +30,9 @@ function ProfileMain(props: ProfileMainProps) {
   return (
     <BaseScreen title="Profile" leftIcon="backNav">
       <Link to={'/profile/user'} >
-        <ProfileCard leftContent={"My Information"} chevron />
+        <ProfileCard leftText={"My Information"} chevron />
       </Link>
-      <ProfileCard leftContent={"Site Information"} chevron />
+      <ProfileCard leftText={"Site Information"} chevron />
       <Button variant='text' onClick={handleLogoutClick}>
         <Typography color='primary'>
           Log Out
