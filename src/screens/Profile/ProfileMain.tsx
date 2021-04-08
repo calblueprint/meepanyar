@@ -2,7 +2,7 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { logoutUser } from '../../lib/airlock/airlock';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { RouteComponentProps, useHistory, Link } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import ProfileCard from './components/ProfileCard';
 
@@ -29,8 +29,10 @@ function ProfileMain(props: ProfileMainProps) {
 
   return (
     <BaseScreen title="Profile" leftIcon="backNav">
-      <ProfileCard cardContent={"My Information"} />
-      <ProfileCard cardContent={"Site Information"} />
+      <Link to={'/profile/user'} >
+        <ProfileCard leftContent={"My Information"} chevron />
+      </Link>
+      <ProfileCard leftContent={"Site Information"} chevron />
       <Button variant='text' onClick={handleLogoutClick}>
         <Typography color='primary'>
           Log Out

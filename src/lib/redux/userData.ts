@@ -70,6 +70,8 @@ const getUserId = (): string => {
 
 export const selectCurrentUserId = (state: RootState): string => state.userData.user?.id || "";
 
+export const selectCurrentUser = (state: RootState) => state.userData.user;
+
 export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());
 };

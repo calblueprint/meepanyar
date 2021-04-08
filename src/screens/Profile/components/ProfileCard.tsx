@@ -1,43 +1,56 @@
-import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import { IconButton, Typography } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        cardContent: {
+        leftContent: {
             flex: 1,
-            padding: 16,
+            padding: 12,
+        },
+        rightContent: {
+            padding: 12,
         },
         arrow: {
             color: theme.palette.text.primary,
         },
-        cardContainer: {
-            borderBottom: `1px solid ${theme.palette.divider}`,
+        cardContainer: (props: ProfileCardProps) => ({
+            borderBottom: props.noBottomBorder ? '' : `1px solid ${theme.palette.divider}`,
             display: 'flex',
             width: '100%',
             marginBottom: 10
-        },
-    });
+        }),
+    }));
 
 interface ProfileCardProps {
-    classes: { arrow: string; cardContent: string; cardContainer: string; };
-    cardContent: string;
+    leftContent: string;
+    rightContent?: string;
+    chevron?: boolean;
+    noBottomBorder?: boolean;
 }
 
 function ProfileCard(props: ProfileCardProps) {
-    const { classes, cardContent } = props;
+    const { leftContent, rightContent, chevron } = props;
+    const classes = useStyles(props);
+
+    const renderChevron = () => (<IconButton size="small">
+        <ArrowForwardIosIcon className={classes.arrow} fontSize="small" />
+    </IconButton>)
+
+    const renderRightContent = () => (            <div className={classes.rightContent}>
+        <Typography variant="body1" color='textSecondary'>{rightContent}</Typography>
+    </div>)
 
     return (
         <div className={classes.cardContainer}>
-            <div className={classes.cardContent}>
-                <Typography variant="body1">{cardContent}</Typography>
+            <div className={classes.leftContent}>
+                <Typography variant="body1" color='textPrimary'>{leftContent}</Typography>
             </div>
-            <IconButton size="small">
-                <ArrowForwardIosIcon className={classes.arrow} fontSize="small" />
-            </IconButton>
+            {rightContent ? renderRightContent() : null}
+            {chevron ? renderChevron() : null}
         </div>
     );
 }
 
-export default withStyles(styles)(ProfileCard);
+export default ProfileCard;
