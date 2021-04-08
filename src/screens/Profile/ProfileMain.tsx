@@ -38,7 +38,6 @@ function ProfileMain(props: ProfileMainProps) {
           Log Out
         </Typography>
       </Button>
-
     </BaseScreen>
   );
 }
