@@ -1,6 +1,6 @@
+import { createStyles, withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import BaseHeader, { HeaderProps } from './BaseHeader';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 const styles = () =>
   createStyles({
@@ -19,11 +19,11 @@ interface BaseScreenProps extends HeaderProps {
 }
 
 const BaseScreen: React.FC<BaseScreenProps> = (props) => {
-  const { classes, leftIcon, title, rightIcon, match } = props;
+  const { classes, leftIcon, title, rightIcon, match, backAction } = props;
 
   return (
     <>
-      <BaseHeader leftIcon={leftIcon} title={title} rightIcon={rightIcon} match={match} />
+      <BaseHeader leftIcon={leftIcon} title={title} rightIcon={rightIcon} match={match} backAction={backAction}/>
       <div className={classes.content}>{props.children}</div>
     </>
   );

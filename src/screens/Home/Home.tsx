@@ -4,9 +4,7 @@ import { RootState } from '../../lib/redux/store';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import { isBeforeCurrentPeriod } from '../../lib/moment/momentUtils';
-
-import { SiteRecord } from '../../lib/airtable/interface';
+import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
 
@@ -14,8 +12,7 @@ import Typography from '@material-ui/core/Typography';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import CloudIcon from '@material-ui/icons/Cloud';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import { CustomerRecord } from '../../lib/airtable/interface';
-import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
+import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
 
 const styles = () =>
   createStyles({
@@ -65,8 +62,9 @@ function Home(props: HomeProps) {
     return { numOutstandingPayments, numCustomersToCharge }
   }
 
+  const numCustomersToMeter = useSelector(selectCustomersToMeter)?.length || 0;
+  const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
 
-  const customerData = calculateCustomerData();
   return (
     <BaseScreen rightIcon="user">
       <div className={classes.header}>
@@ -83,19 +81,25 @@ function Home(props: HomeProps) {
       <Link to={'/customers'}>
         <HomeMenuItem
           label="To Meter"
-          amount={customerData.numCustomersToCharge}
+          amount={numCustomersToMeter}
+        // label="Customer Alerts"
+        // amount={numCustomersToMeter + numCustomersToCollect}
+        // sublabels={[
+        //   { amount: numCustomersToMeter, label: 'Number of customers to meter' },
+        //   { amount: numCustomersToCollect, label: 'Number of customers to collect' },
+        // ]}
         />
       </Link>
       <Link to={'/customers'}>
         <HomeMenuItem
           label="To Collect"
-          amount={customerData.numOutstandingPayments}
+          amount={numCustomersToCollect}
         />
       </Link>
       <Link to={'/maintenance'}>
         <HomeMenuItem
           label="Maintenance"
-          amount={customerData.numOutstandingPayments}
+          amount={0}
         />
       </Link>
       <HomeMenuItem label="Incidents" amount={0} />
