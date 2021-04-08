@@ -5,11 +5,11 @@ import React from 'react';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        textContent: {
+        textContent: (props: ProfileCardProps) => ({
             display: 'flex',
             flex: 1,
-            padding: 12,
-        },
+            padding: props.chevron ? 10 : 5,
+        }),
         primaryTextContent: {
             flex: 1,
             textAlign: 'right',
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
             borderBottom: props.noBottomBorder ? '' : `1px solid ${theme.palette.divider}`,
             display: 'flex',
             width: '100%',
-            marginBottom: 10
+            margin: '10px 0px',
         }),
     }));
 

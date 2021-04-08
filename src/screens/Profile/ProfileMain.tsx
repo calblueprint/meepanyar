@@ -1,14 +1,9 @@
-import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { logoutUser } from '../../lib/airlock/airlock';
 import { RouteComponentProps, useHistory, Link } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import ProfileCard from './components/ProfileCard';
-
-const styles = (theme: Theme) =>
-  createStyles({
-  });
 
 interface ProfileMainProps extends RouteComponentProps {
   location: any;
@@ -42,4 +37,4 @@ function ProfileMain(props: ProfileMainProps) {
   );
 }
 
-export default withStyles(styles)(ProfileMain);
+export default ProfileMain;
