@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     balanceText: {
       fontWeight: 700,
-      color: theme.palette.info.main,
+      color: theme.palette.error.main,
     },
     fieldContainer: {
       marginTop: '10px',
