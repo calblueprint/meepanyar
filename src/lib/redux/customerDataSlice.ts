@@ -68,6 +68,7 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     customerUpdates: [],
     totalAmountBilledfromInvoices: 0,
     totalAmountPaidfromPayments: 0,
+    startingMeterReading: 0,
 }
 
 export const EMPTY_PAYMENT: PaymentRecord = {
