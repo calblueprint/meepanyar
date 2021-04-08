@@ -51,9 +51,9 @@ const getAndSetTranslations = async () => {
         const resources = { my: { translation: resultData } }; 
         const jsonResponse = JSON.stringify(resources, null, 2);
         fs.writeFileSync('./src/lib/i18next/resources.js', "export default " + jsonResponse, 'utf8');
-        console.log('Successful pulling in translations'); 
+        console.log('Successfully pulled in translations'); 
     } catch (err) {
-        console.err('Error when creating translations: ', err);
+        console.error('Error when creating translations: ', err);
     }
 }
 
