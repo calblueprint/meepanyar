@@ -6,6 +6,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 import BaseNavigation from './components/BaseComponents/BaseNavigation';
 import { history, RootState } from './lib/redux/store';
+import BaseComponentsDemo from './screens/BaseComponentsDemo';
 import Camera from './screens/Camera/Camera';
 import CameraPreview from './screens/Camera/CameraPreview';
 import AddCustomer from './screens/Customers/AddCustomer';
@@ -20,7 +21,6 @@ import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummary
 import Home from './screens/Home/Home';
 import Incidents from './screens/Incidents';
 import AddInventory from './screens/Inventory/AddInventory';
-import BaseComponentsDemo from './screens/Inventory/BaseComponentsDemo';
 import CreateInventoryUpdate from './screens/Inventory/CreateInventoryUpdate';
 import CreatePurchaseRequest from './screens/Inventory/CreatePurchaseRequest';
 import InventoryMain from './screens/Inventory/InventoryMain';
