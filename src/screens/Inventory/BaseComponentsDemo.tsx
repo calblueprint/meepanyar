@@ -29,7 +29,7 @@ const styles = (theme: Theme) =>
   });
 
 interface BaseComponentsProps extends RouteComponentProps {
-  classes: { content: string; formControl: string; twoColumnContainer: string };
+  classes: { content: string; formControl: string; twoColumnContainer: string; };
 }
 
 function BaseComponentsDemo(props: BaseComponentsProps) {

@@ -12,7 +12,6 @@ interface TextFieldProps {
   value?: string | number;
   disabled?: boolean;
   placeholder?: string;
-  primary?: boolean; // TODO @wangannie: REMOVE
   error?: boolean;
   helperText?: string;
   required? : boolean;
@@ -61,7 +60,6 @@ function Field(props: TextFieldProps) {
         fullWidth
         error={props.error}
         helperText={props.helperText}
-        // TODO: check with designs
         InputProps={{
           endAdornment: props.unit? <InputAdornment position="end">{`${props.unit}(s)`}</InputAdornment> : props.error ? <ErrorIcon color="error" /> : undefined,
         }}
