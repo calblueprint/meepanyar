@@ -22,6 +22,7 @@ const styles = makeStyles((theme: Theme) =>
       borderRadius: 6,
       minHeight: 36,
       marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
       margin: '0 auto',
     }),
   }),
