@@ -71,9 +71,16 @@ function CustomerProfile(props: CustomerProps) {
   const UNDEFINED_AMOUNT = '--';
 
   const customerTariff = getTariffPlan(customer, currentSite);
-  const fixedTariff = customerTariff ? customerTariff?.fixedTariff : '0';
-  const unitTariff = customerTariff ? customerTariff?.tariffByUnit : '0';
-  const freeUnits = customerTariff ? customerTariff?.freeUnits : '0';
+
+  const fixedTariff = customerTariff ? customerTariff?.fixedTariff : UNDEFINED_AMOUNT;
+  const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;
+  const freeUnits = customerTariff ? customerTariff?.freeUnits : UNDEFINED_AMOUNT;
+
+  const tariffInfo: CardPropsInfo[] = [
+    { number: fixedTariff.toString(), label: 'Fixed Tariff', unit: 'MMK' },
+    { number: unitTariff.toString(), label: 'Unit Tariff', unit: 'MMK' },
+    { number: freeUnits.toString(), label: 'Free Units', unit: '' },
+  ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
   const startingReading: MeterReadingRecord | undefined = getStartingReading(customer);
