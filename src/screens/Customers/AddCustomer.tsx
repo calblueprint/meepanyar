@@ -10,9 +10,9 @@ import TextField from '../../components/TextField';
 import { SiteRecord } from '../../lib/airtable/interface';
 import { createCustomer } from '../../lib/airtable/request';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
+import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -81,7 +81,7 @@ function AddCustomer(props: AddCustomerProps) {
   return (
     <BaseScreen title="Add New Customer" leftIcon="backNav">
       <form noValidate className={classes.content} onSubmit={() => false}>
-        <TextField label={'Name'} id={'name'} primary={true} onChange={handleNameInput} />
+        <TextField label={'Name'} id={'name'} onChange={handleNameInput} />
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
           <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId="select-tariff-plan-label" onChange={handleSelectTariffPlan}>
