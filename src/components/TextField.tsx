@@ -14,7 +14,7 @@ interface TextFieldProps {
   placeholder?: string;
   primary?: boolean; // TODO @wangannie: REMOVE
   error?: boolean;
-  helperText?: string | false;
+  helperText?: string;
   required? : boolean;
   type?: string;
   unit?: string;
@@ -25,6 +25,7 @@ const styles = makeStyles((theme: Theme) =>
   createStyles({
     margin: {
       marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
     },
     label:{
       marginLeft: 12,
