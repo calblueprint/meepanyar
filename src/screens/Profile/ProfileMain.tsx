@@ -23,9 +23,7 @@ function ProfileMain() {
       <Link to={'/profile/user'} >
         <ProfileCard leftText={"My Information"} chevron />
       </Link>
-      <Link to={'/profile/site'}>
-        <ProfileCard leftText={"Site Information"} chevron />
-      </Link>
+      <ProfileCard leftText={"Site Information"} chevron />
       <Button variant='text' onClick={handleLogoutClick}>
         <Typography color='primary'>
           Log Out
