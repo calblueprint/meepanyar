@@ -20,35 +20,40 @@ const styles = (theme: Theme) =>
       right: theme.spacing(2),
       color: 'white',
     },
-});
+  });
 
 interface InventoryProps extends RouteComponentProps {
   classes: { fab: string };
 }
 
 // TODO @wangannie: address empty state
-function InventoryMain (props: InventoryProps) {
-    const { classes } = props;
-    const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
-    return (
-      <BaseScreen title="Inventory">
-        <BaseScrollView>
-          <Link to={'/inventory/purchase-requests'}>
-            <Button label="Purchase Requests"/>
-          </Link>
-          {siteInventory.map((inventory: InventoryRecord) =>  (
-            <Link key={inventory.id} to={'/inventory/item'} onClick={() => setCurrentInventoryIdInRedux(inventory.id)}>
-              <InventoryCard key={inventory.id} productId={inventory.productId} lastUpdated={getInventoryLastUpdated(inventory)}/>
-            </Link>
-          ))}
-        </BaseScrollView>
-        <Link to={'/inventory/create'}>
-          <Fab color='primary' aria-label='add inventory' className={classes.fab} size='medium'>
-            <AddIcon fontSize="large"/>
-          </Fab>
+function InventoryMain(props: InventoryProps) {
+  const { classes } = props;
+  const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
+  return (
+    <BaseScreen title="Inventory">
+      <BaseScrollView>
+        <Link to={'/inventory/purchase-requests'}>
+          <Button label="Purchase Requests" />
         </Link>
-      </BaseScreen>
-    );
+        {siteInventory.map((inventory: InventoryRecord) => (
+          <Link key={inventory.id} to={'/inventory/item'} onClick={() => setCurrentInventoryIdInRedux(inventory.id)}>
+            <InventoryCard
+              currentQuantity={inventory.currentQuantity}
+              key={inventory.id}
+              productId={inventory.productId}
+              lastUpdated={getInventoryLastUpdated(inventory)}
+            />
+          </Link>
+        ))}
+      </BaseScrollView>
+      <Link to={'/inventory/create'}>
+        <Fab color="primary" aria-label="add inventory" className={classes.fab} size="medium">
+          <AddIcon fontSize="large" />
+        </Fab>
+      </Link>
+    </BaseScreen>
+  );
 }
 
 export default withStyles(styles)(InventoryMain);
