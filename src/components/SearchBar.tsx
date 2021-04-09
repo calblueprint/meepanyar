@@ -1,4 +1,4 @@
-import { TextField } from '@material-ui/core';
+import { TextField as MaterialTextField } from '@material-ui/core';
 import React from 'react';
 
 interface SearchProps {
@@ -6,9 +6,9 @@ interface SearchProps {
   placeholder?: string;
 }
 
-function SearchBar(props: SearchProps) {;
+function SearchBar(props: SearchProps) {
   return (
-    <TextField
+    <MaterialTextField
       name="search"
       onChange={props.onSearchChange}
       variant="standard"
