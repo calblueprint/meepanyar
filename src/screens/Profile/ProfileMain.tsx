@@ -1,15 +1,11 @@
 import { Button, Typography } from '@material-ui/core';
 import React from 'react';
 import { logoutUser } from '../../lib/airlock/airlock';
-import { RouteComponentProps, useHistory, Link } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import ProfileCard from './components/ProfileCard';
 
-interface ProfileMainProps extends RouteComponentProps {
-  location: any;
-}
-
-function ProfileMain(props: ProfileMainProps) {
+function ProfileMain() {
   const history = useHistory();
 
   const handleLogoutClick = () => {
@@ -27,7 +23,9 @@ function ProfileMain(props: ProfileMainProps) {
       <Link to={'/profile/user'} >
         <ProfileCard leftText={"My Information"} chevron />
       </Link>
-      <ProfileCard leftText={"Site Information"} chevron />
+      <Link to={'/profile/site'}>
+        <ProfileCard leftText={"Site Information"} chevron />
+      </Link>
       <Button variant='text' onClick={handleLogoutClick}>
         <Typography color='primary'>
           Log Out
