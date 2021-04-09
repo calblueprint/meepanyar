@@ -73,7 +73,7 @@ function CustomerProfile(props: CustomerProps) {
   const customerTariff = getTariffPlan(customer, currentSite);
   const fixedTariff = customerTariff ? customerTariff?.fixedTariff : '0';
   const unitTariff = customerTariff ? customerTariff?.tariffByUnit : '0';
-  const minUnits = customerTariff ? customerTariff?.minUnits : '0';
+  const freeUnits = customerTariff ? customerTariff?.freeUnits : '0';
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
   const startingReading: MeterReadingRecord | undefined = getStartingReading(customer);
@@ -288,7 +288,7 @@ function CustomerProfile(props: CustomerProps) {
             meterType={customer.meterType}
             fixedTariff={fixedTariff.toString()}
             unitTariff={unitTariff.toString()}
-            minUnits={minUnits.toString()}
+            freeUnits={freeUnits.toString()}
           />
           <div className={classes.headerWrapper}>
             <Typography variant="h2">Payment</Typography>

@@ -38,17 +38,17 @@ interface TariffPlanInfoProps {
   meterType: string;
   fixedTariff: string;
   unitTariff: string;
-  minUnits: string;
+  freeUnits: string;
 }
 
 function TariffPlanInfo(props: TariffPlanInfoProps) {
-  const { classes, undefinedAmount, meterType, fixedTariff, unitTariff, minUnits } = props;
+  const { classes, undefinedAmount, meterType, fixedTariff, unitTariff, freeUnits } = props;
 
   if (meterType === "Inactive") {
     const tariffInfo : CardPropsInfo[] = [
       { number: undefinedAmount, label: 'Fixed\nTariff', unit: '' },
       { number: undefinedAmount, label: 'Unit\nTariff', unit: '' },
-      { number: undefinedAmount, label: 'Minimum\nUnits', unit: '' },
+      { number: undefinedAmount, label: 'Free\nUnits', unit: '' },
     ];
     return (
       <div className={classes.root}>
@@ -68,7 +68,7 @@ function TariffPlanInfo(props: TariffPlanInfoProps) {
     const tariffInfo : CardPropsInfo[] = [
       { number: fixedTariff , label: 'Fixed\nTariff', unit: 'Ks' },
       { number: unitTariff, label: 'Unit\nTariff', unit: 'Ks' },
-      { number: minUnits, label: 'Minimum\nUnits', unit: 'kWh' },
+      { number: freeUnits, label: 'Free\nUnits', unit: 'kWh' },
     ]
     return (
       <div className={classes.root}>
