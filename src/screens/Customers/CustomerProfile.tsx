@@ -119,7 +119,7 @@ function CustomerProfile(props: CustomerProps) {
     if (customer.meterType === "Inactive") {
       balanceInfo = [{ number: UNDEFINED_AMOUNT, label: 'Remaining Balance', unit: '' }];
       return (
-        <OutlinedCardList info={balanceInfo} primary={false} grayText={true} />
+        <OutlinedCardList info={balanceInfo} primary={false} grayBackground={true} grayText={true} />
       );
     } else {
       return (
@@ -206,13 +206,9 @@ function CustomerProfile(props: CustomerProps) {
   }
 
   return (
-    <BaseScreen leftIcon="backNav" title={customer.name} rightIcon="edit" match={match}>
+    <BaseScreen leftIcon="backNav" title={`${customer.meterNumber}, ${customer.name}`} rightIcon="edit" match={match}>
       <BaseScrollView>
         <div className={classes.content}>
-          <Typography variant="h2">{currentSite.name}</Typography>
-          <Typography variant="body1" color="textSecondary">
-            {customer.meterNumber}
-          </Typography>
           <TariffPlanInfo
             undefinedAmount={UNDEFINED_AMOUNT}
             meterType={customer.meterType}

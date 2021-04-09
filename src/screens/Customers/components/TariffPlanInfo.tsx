@@ -27,13 +27,10 @@ const styles = (theme: Theme) =>
       lineHeight: '1.2',
       marginTop: '5px',
     },
-    gray: {
-      color: 'rgba(189,189,189,1)',
-    },
   });
 
 interface TariffPlanInfoProps {
-  classes: { root: string; content: string; item: string; gray: string; label: string; };
+  classes: { root: string; content: string; item: string; label: string; };
   undefinedAmount: string;
   meterType: string;
   fixedTariff: string;
@@ -61,11 +58,11 @@ function TariffPlanInfo(props: TariffPlanInfoProps) {
   }
 
   return (
-    <div className={classes.root}>
+    <div className={classes.root} style={{ backgroundColor: meterType === "Inactive" ? '#F7F9FC' : 'inherit', borderColor: meterType === "Inactive" ? '#F7F9FC' : 'inherit' }}>
       <div className={classes.content}>
         {tariffInfo.map((info, index) => (
           <div key={index} className={classes.item}>
-            <Typography variant="h3" align={'center'} className={meterType === "Inactive" ? classes.gray : undefined}>
+            <Typography variant="h3" align={'center'} style={{color: meterType === "Inactive" ? 'rgba(189,189,189,1)' : undefined}}>
               {info.number} {info.unit}
             </Typography>
             <Typography variant="body1" align={'center'} className={classes.label}>{info.label}</Typography>
