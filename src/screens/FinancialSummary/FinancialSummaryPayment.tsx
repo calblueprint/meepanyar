@@ -7,10 +7,9 @@ import { Button, Typography } from '@material-ui/core';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import FinancialInfo from './components/FinancialInfo';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
-import { connect } from 'react-redux';
-import { RootState } from '../../lib/redux/store';
+import { useSelector } from 'react-redux';
 import { FinancialSummaryRecord } from '../../lib/airtable/interface';
-import { EMPTY_FINANCIAL_SUMMARY } from '../../lib/redux/siteDataSlice';
+import { EMPTY_FINANCIAL_SUMMARY, selectAllFinancialSummariesArray } from '../../lib/redux/siteDataSlice';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -45,12 +44,15 @@ const styles = (theme: Theme) =>
 
 interface FinancialSummaryPaymentProps extends RouteComponentProps {
   classes: { content: string; confirmButton: string; cameraButton: string; header: string; };
-  financialSummary: FinancialSummaryRecord; //TODO: change later to take in one financial summary
   location: any;
 }
 
 function FinancialSummaryPayment(props: FinancialSummaryPaymentProps) {
-  const { classes, financialSummary } = props;
+  const { classes } = props;
+
+  // TODO: Change to select the correct summary
+  const financialSummaries : FinancialSummaryRecord[] = useSelector(selectAllFinancialSummariesArray) || [];
+  const financialSummary : FinancialSummaryRecord = financialSummaries.length  > 0 ? financialSummaries[0] : EMPTY_FINANCIAL_SUMMARY;
 
   return (
     <BaseScreen leftIcon="backNav">
@@ -89,8 +91,4 @@ function FinancialSummaryPayment(props: FinancialSummaryPaymentProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  financialSummary: state.siteData.currentSite.financialSummaries ? state.siteData.currentSite.financialSummaries[0] : EMPTY_FINANCIAL_SUMMARY,  //TODO: change later to take in one financial summary
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(FinancialSummaryPayment));
+export default withStyles(styles)(FinancialSummaryPayment);
