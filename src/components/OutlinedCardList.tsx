@@ -22,9 +22,9 @@ const useStyles = makeStyles((theme: Theme) =>
     root: (props: CardProps) => ({
       marginTop: '10px',
       border: '1px solid',
-      borderColor: theme.palette.divider,
+      borderColor: props.grayBackground ? '#F7F9FC' : theme.palette.divider,
       borderRadius: '6px',
-      backgroundColor: props.grayBackground ? theme.palette.divider : 'white'
+      backgroundColor: props.grayBackground ? '#F7F9FC' : 'white'
     }),
     content: (props: CardProps) => ({
       flex: 1,

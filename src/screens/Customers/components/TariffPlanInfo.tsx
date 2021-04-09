@@ -16,7 +16,7 @@ const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      padding: '8px',
+      padding: '10px',
     },
     item: {
       width: '100%',
@@ -44,47 +44,36 @@ interface TariffPlanInfoProps {
 function TariffPlanInfo(props: TariffPlanInfoProps) {
   const { classes, undefinedAmount, meterType, fixedTariff, unitTariff, freeUnits } = props;
 
+  let tariffInfo : CardPropsInfo[];
+  //TODO: swap with something like customer.inactive
   if (meterType === "Inactive") {
-    const tariffInfo : CardPropsInfo[] = [
+    tariffInfo = [
       { number: undefinedAmount, label: 'Fixed\nTariff', unit: '' },
       { number: undefinedAmount, label: 'Unit\nTariff', unit: '' },
       { number: undefinedAmount, label: 'Free\nUnits', unit: '' },
     ];
-    return (
-      <div className={classes.root}>
-        <div className={classes.content}>
-          {tariffInfo.map((info, index) => (
-            <div key={index} className={classes.item}>
-              <Typography variant="h3" align={'center'} style={{ color: 'rgba(189,189,189,1)' }}>
-                {info.number} {info.unit}
-              </Typography>
-              <Typography variant="body1" align={'center'} className={classes.label}>{info.label}</Typography>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
   } else {
-    const tariffInfo : CardPropsInfo[] = [
+    tariffInfo = [
       { number: fixedTariff , label: 'Fixed\nTariff', unit: 'Ks' },
       { number: unitTariff, label: 'Unit\nTariff', unit: 'Ks' },
       { number: freeUnits, label: 'Free\nUnits', unit: 'kWh' },
-    ]
-    return (
-      <div className={classes.root}>
-        <div className={classes.content}>
-          {tariffInfo.map((info, index) => (
-            <div key={index} className={classes.item}>
-              <Typography variant="h3" align={'center'}>
-                {info.number} {info.unit}
-              </Typography>
-              <Typography variant="body1" align={'center'} className={classes.label}>{info.label}</Typography>
-            </div>
-          ))}
-        </div>
-      </div>
-    );
+    ];
   }
+
+  return (
+    <div className={classes.root}>
+      <div className={classes.content}>
+        {tariffInfo.map((info, index) => (
+          <div key={index} className={classes.item}>
+            <Typography variant="h3" align={'center'} className={meterType === "Inactive" ? classes.gray : undefined}>
+              {info.number} {info.unit}
+            </Typography>
+            <Typography variant="body1" align={'center'} className={classes.label}>{info.label}</Typography>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default withStyles(styles)(TariffPlanInfo);

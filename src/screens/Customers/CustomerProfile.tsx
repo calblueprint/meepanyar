@@ -2,7 +2,7 @@ import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { FlashOn as FlashOnIcon, AttachMoney as AttachMoneyIcon } from '@material-ui/icons';
+import { Add as AddIcon } from '@material-ui/icons';
 import { connect, useSelector } from 'react-redux';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
@@ -33,6 +33,7 @@ const styles = (theme: Theme) =>
     buttonPrimary: {
       borderRadius: '12px',
       color: 'white',
+      marginRight: '5px',
       backgroundColor: theme.palette.primary.main,
     },
     buttonSecondary: {
@@ -46,7 +47,7 @@ const styles = (theme: Theme) =>
       },
     },
     section: {
-      marginTop: '10px',
+      marginTop: '12px',
     },
   });
 
@@ -88,44 +89,27 @@ function CustomerProfile(props: CustomerProps) {
   const amountBilled: number | string = currReading ? getAmountBilled(currReading) : '0';
 
   let meterInfo: CardPropsInfo[] = [
+    //TODO: include actual starting reading - currentCustomer.startingMeterReading
     { number: startingReading? startingReading.amountBilled.toString() : '0', label: 'Starting Meter', unit: 'kWh' },
     { number: periodUsage.toString(), label: 'Period Usage', unit: 'kWh' },
-    { number: currReading ? currReading.toString() : '0', label: 'Ending Meter', unit: 'kWh' },
+    { number: currReading ? currReading.reading.toString() : '0', label: 'Ending Meter', unit: 'kWh' },
     { number: amountBilled.toString(), label: 'Amount Billed', unit: 'kS' },
   ];
   let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
-  let readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.amountBilled.toString() : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
+  let readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.reading.toString() : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
 
-  const getPaymentButton = () => {
-    //TODO: change link to payments screen
+  const getAddButton = (path: String) => {
     return (
       <div className={classes.buttonPrimary}>
         <IconButton
           component={Link}
           to={{
-            pathname: `${match.url}/meter-readings/create`,
+            pathname: `${match.url}${path}`,
             state: { invoices: meterReadings, payments: payments },
           }}
           size="small"
         >
-          <AttachMoneyIcon style={{ color: 'white' }} />
-        </IconButton>
-      </div>
-    );
-  };
-
-  const getAddButton = () => {
-    return (
-      <div className={classes.buttonPrimary}>
-        <IconButton
-          component={Link}
-          to={{
-            pathname: `${match.url}/meter-readings/create`,
-            state: { invoices: meterReadings, payments: payments },
-          }}
-          size="small"
-        >
-          <FlashOnIcon style={{ color: 'white' }} />
+          <AddIcon style={{ color: 'white' }} />
         </IconButton>
       </div>
     );
@@ -139,70 +123,27 @@ function CustomerProfile(props: CustomerProps) {
       );
     } else {
       return (
-        <OutlinedCardList info={balanceInfo} primary={true} rightIcon={getPaymentButton()} />
+        <OutlinedCardList info={balanceInfo} primary={true} rightIcon={getAddButton('/meter-readings/create')} />
       );
     }
   }
 
   const getReadingInfo = () => {
+    //0 has rightIcon, 1 has grayBackground, 2 has grayText + grayBackground
+    let readingCardState;
+    let topLeftEditable;
+    let topLeftGray, topRightGray, bottomRightGray, bottomLeftGray;
+
     if (customer.meterType === "Analog Meter") {
-      return (
-        <div>
-          <OutlinedCardList info={readingInfo} primary={false} rightIcon={getAddButton()} />
-          <div className={classes.section}>
-            { /* Top Left */ }
-            <MeterInfoContainer
-              floatRight={false}
-              info={meterInfo[0]}
-              editable={true}
-            />
-            { /* Top Right */ }
-            <MeterInfoContainer
-              floatRight={true}
-              info={meterInfo[2]}
-            />
-            { /* Bottom Right */ }
-            <MeterInfoContainer
-              floatRight={true}
-              info={meterInfo[3]}
-            />
-            { /* Bottom Left */ }
-            <MeterInfoContainer
-              floatRight={false}
-              info={meterInfo[1]}
-            />
-          </div>
-        </div>
-      );
+      readingCardState = 0;
+      topLeftEditable = true;
     } else if (customer.meterType === "Smart Meter") {
-      return (
-        <div>
-          <OutlinedCardList info={readingInfo} primary={false} grayBackground={true} />
-          <div className={classes.section}>
-            { /* Top Left */ }
-            <MeterInfoContainer
-              floatRight={false}
-              info={meterInfo[0]}
-            />
-            { /* Top Right */ }
-            <MeterInfoContainer
-              floatRight={true}
-              info={meterInfo[2]}
-            />
-            { /* Bottom Right */ }
-            <MeterInfoContainer
-              floatRight={true}
-              info={meterInfo[3]}
-            />
-            { /* Bottom Left */ }
-            <MeterInfoContainer
-              floatRight={false}
-              info={meterInfo[1]}
-            />
-          </div>
-        </div>
-      );
+      readingCardState = 1;
     } else if (customer.meterType === "No Meter") {
+      readingCardState = 2;
+      topLeftGray = true;
+      topRightGray = true;
+      bottomRightGray = true;
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
@@ -210,37 +151,12 @@ function CustomerProfile(props: CustomerProps) {
         { number: UNDEFINED_AMOUNT, label: 'Ending Meter', unit: '' },
         { number: UNDEFINED_AMOUNT, label: 'Amount Billed', unit: '' },
       ];
-      return (
-        <div>
-          <OutlinedCardList info={readingInfo} primary={false} />
-          <div className={classes.section}>
-            { /* Top Left */ }
-            <MeterInfoContainer
-              floatRight={false}
-              info={meterInfo[0]}
-              gray={true}
-            />
-            { /* Top Right */ }
-            <MeterInfoContainer
-              floatRight={true}
-              info={meterInfo[2]}
-              gray={true}
-            />
-            { /* Bottom Right */ }
-            <MeterInfoContainer
-              floatRight={true}
-              info={meterInfo[3]}
-              gray={true}
-            />
-            { /* Bottom Left */ }
-            <MeterInfoContainer
-              floatRight={false}
-              info={meterInfo[1]}
-            />
-          </div>
-        </div>
-      );
     } else {
+      readingCardState = 2;
+      topLeftGray = true;
+      topRightGray = true;
+      bottomRightGray = true;
+      bottomLeftGray = true;
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
@@ -248,38 +164,45 @@ function CustomerProfile(props: CustomerProps) {
         { number: UNDEFINED_AMOUNT, label: 'Ending Meter', unit: '' },
         { number: UNDEFINED_AMOUNT, label: 'Amount Billed', unit: '' },
       ];
-      return (
-        <div>
-          <OutlinedCardList info={readingInfo} primary={false} grayText={true} />
-          <div className={classes.section}>
-            { /* Top Left */ }
-            <MeterInfoContainer
-              floatRight={false}
-              info={meterInfo[0]}
-              gray={true}
-            />
-            { /* Top Right */ }
-            <MeterInfoContainer
-              floatRight={true}
-              info={meterInfo[2]}
-              gray={true}
-            />
-            { /* Bottom Right */ }
-            <MeterInfoContainer
-              floatRight={true}
-              info={meterInfo[3]}
-              gray={true}
-            />
-            { /* Bottom Left */ }
-            <MeterInfoContainer
-              floatRight={false}
-              info={meterInfo[1]}
-              gray={true}
-            />
-          </div>
-        </div>
-      );
     }
+
+    return (
+      <div>
+        <OutlinedCardList
+          info={readingInfo}
+          primary={false}
+          rightIcon={readingCardState === 0 ? getAddButton('/meter-readings/create') : undefined}
+          grayBackground={readingCardState === 1 || readingCardState === 2 ? true : undefined} grayText={readingCardState === 2 ? true : undefined}
+        />
+        <div className={classes.section}>
+          { /* Top Left */ }
+          <MeterInfoContainer
+            floatRight={false}
+            info={meterInfo[0]}
+            editable={topLeftEditable}
+            gray={topLeftGray}
+          />
+          { /* Top Right */ }
+          <MeterInfoContainer
+            floatRight={true}
+            info={meterInfo[2]}
+            gray={topRightGray}
+          />
+          { /* Bottom Right */ }
+          <MeterInfoContainer
+            floatRight={true}
+            info={meterInfo[3]}
+            gray={bottomRightGray}
+          />
+          { /* Bottom Left */ }
+          <MeterInfoContainer
+            floatRight={false}
+            info={meterInfo[1]}
+            gray={bottomLeftGray}
+          />
+        </div>
+      </div>
+    );
   }
 
   return (

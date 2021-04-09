@@ -14,12 +14,10 @@ const styles = (theme: Theme) =>
     info: {
       width: '100%',
       marginBottom: '8px',
-      padding: '4px 12px',
+      padding: '0px 12px 4px',
       border: '1px solid',
       height: '60px',
       maxHeight: '60px',
-      borderColor: theme.palette.divider,
-      backgroundColor: theme.palette.divider,
       borderRadius: '6px',
     },
     icon: {
@@ -44,43 +42,31 @@ interface MeterInfoContainerProps {
 function MeterInfoContainer(props: MeterInfoContainerProps) {
   const { classes, floatRight, info, editable, gray } = props;
 
-  if (editable) {
-    return (
-      <div className={classes.root} style={{ float: floatRight ? 'right' : 'left' }}>
+  const renderEditableIcon = () => (
+    <IconButton size="small">
+      {/* TODO: add link to this button */}
+      <CreateIcon className={classes.icon} />
+    </IconButton>
+  );
+
+  return (
+    <div className={classes.root} style={{ float: floatRight ? 'right' : 'left' }}>
         <div className={classes.info} style={{
           marginRight: floatRight ? undefined : '4px',
           marginLeft: floatRight ? '4px' : undefined,
-          paddingTop: '0px',
-          backgroundColor: 'white' }}
+          borderColor: editable ? '#BDBDBD' : '#F7F9FC',
+          backgroundColor: editable ? 'white' : '#F7F9FC' }}
         >
           <div className={classes.inline}>
             <Typography variant="body1">{info.label}</Typography>
-            <IconButton size="small">
-              {/* TODO: add link to this button */}
-              <CreateIcon className={classes.icon} />
-            </IconButton>
+            {editable ? renderEditableIcon() : null}
           </div>
           <Typography variant="h3" style={{ color: gray ? 'rgba(189,189,189,1)' : undefined }}>
             {info.number} {info.unit}
           </Typography>
-        </div>
-      </div>
-    );
-  } else {
-    return (
-      <div className={classes.root} style={{ float: floatRight ? 'right' : 'left' }}>
-        <div className={classes.info} style={{
-          marginRight: floatRight ? undefined : '4px',
-          marginLeft: floatRight ? '4px' : undefined }}
-        >
-          <Typography variant="body1">{info.label}</Typography>
-          <Typography variant="h3" style={{ color: gray ? 'rgba(189,189,189,1)' : undefined }}>
-            {info.number} {info.unit}
-          </Typography>
-        </div>
-      </div>
-    );
-  }
+       </div>
+    </div>
+  );
 }
 
 export default withStyles(styles)(MeterInfoContainer);
