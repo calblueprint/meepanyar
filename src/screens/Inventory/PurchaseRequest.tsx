@@ -88,10 +88,9 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           id={'amount-purchased'}
           value={purchaseRequest.amountPurchased}
         />
-        {/* TODO: update units base component for currency */}
         <TextField
           label={'Amount Spent'}
-          unit={'kS'}
+          currency
           disabled
           id={'amount-spent'}
           value={purchaseRequest.amountSpent}

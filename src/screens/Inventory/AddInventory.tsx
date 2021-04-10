@@ -21,21 +21,14 @@ import { selectCurrentUserId } from '../../lib/redux/userData';
 
 const styles = (theme: Theme) =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-    },
-    formControl: {
-      width: '100%',
-    },
     newProductContainer: {
       flexDirection: 'row',
       display: 'flex',
-      marginBottom: 40,
     },
   });
 
 interface AddInventoryProps extends RouteComponentProps {
-  classes: { content: string; formControl: string; newProductContainer: string };
+  classes: { newProductContainer: string };
 }
 
 function AddInventory(props: AddInventoryProps) {
@@ -92,7 +85,7 @@ function AddInventory(props: AddInventoryProps) {
     setCurrentInventoryIdInRedux(inventory.id);
     history.replace(`item`);
   };
-  
+
   const handleSelectItem = (event: React.ChangeEvent<{}>, value: string | null) => {
     setSelectedProductId(value || '');
   };
@@ -113,8 +106,8 @@ function AddInventory(props: AddInventoryProps) {
 
   return (
     <BaseScreen title="New Inventory" leftIcon="backNav">
-      <form noValidate className={classes.content} onSubmit={() => false}>
-        <FormControl variant="outlined" className={classes.formControl}>
+      <form onSubmit={() => false}>
+        <FormControl variant="outlined" fullWidth>
           <Autocomplete
             value={selectedProductId}
             style={{ marginBottom: 20 }}
@@ -137,20 +130,31 @@ function AddInventory(props: AddInventoryProps) {
         {/* If the user selected the New Inventory Item option, display extra fields */}
         {selectedProductId === NEW_PRODUCT_LABEL && (
           <div className={classes.newProductContainer}>
-            <div style={{ marginRight: 10, flex: 2 }}>
-              <TextField label={'New Item'} id={'new-item'} onChange={handleNewProductName} />
+            <div style={{ marginRight: 8, flex: 2 }}>
+              <TextField
+                required
+                label={'New Item Name'}
+                id={'new-item-name'}
+                value={newProductName}
+                onChange={handleNewProductName}
+              />
             </div>
             <div style={{ flex: 1 }}>
-              <TextField label={'Unit'} id={'unit'} onChange={handleUnitInput} />
+              <TextField required label={'Unit'} id={'unit'} value={unit} onChange={handleUnitInput} />
             </div>
           </div>
         )}
         <TextField
+          required
+          placeholder="e.g. 5"
+          unit={unit}
+          type="number"
           label={'Starting Amount'}
           id={'starting-amount'}
+          value={startingAmount}
           onChange={handleStartingAmountInput}
         />
-        <Button loading={loading} label={'Add'} onClick={handleSubmit} />
+        <Button fullWidth loading={loading} label={'Add'} onClick={handleSubmit} />
       </form>
     </BaseScreen>
   );
