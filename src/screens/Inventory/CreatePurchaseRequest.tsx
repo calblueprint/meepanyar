@@ -17,15 +17,13 @@ import InventoryInfo from './components/InventoryInfo';
 
 const styles = (theme: Theme) =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-      display: 'flex',
-      flexDirection: 'column',
+    headerContainer: {
+      marginBottom: theme.spacing(2),
     },
   });
 
 interface CreatePurchaseRequestProps extends RouteComponentProps {
-  classes: { content: string; };
+  classes: { headerContainer: string };
   location: any;
 }
 
@@ -79,31 +77,46 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     }
 
     createPurchaseRequestAndUpdateInventory(purchaseRequest).then(() => history.go(goBack));
-  }
+  };
 
   return (
     <BaseScreen title="Inventory Purchase" leftIcon="backNav">
       <BaseScrollView>
-        <div className={classes.content}>
+        <div className={classes.headerContainer}>
           <InventoryInfo
             productId={inventory.productId}
             lastUpdated={getInventoryLastUpdated(inventory.id)}
             currentQuantity={inventory.currentQuantity}
           />
-          {/* TODO fix requred/optional fields */}
+        </div>
+        <form>
           <TextField
+            required
+            type="number"
             value={amountPurchased}
-            label={`Amount Purchased (${product.unit})`}
+            label={`Amount Purchased`}
             id={'amount-purchased'}
+            placeholder="e.g. 5"
+            unit={product.unit}
             onChange={handleAmountPurchasedInput}
           />
           <TextField
+            required
+            type="number"
+            currency
             value={amountSpent}
-            label={'Amount Spent (ks)'}
+            label={'Amount Spent'}
             id={'amount-spent'}
+            placeholder="e.g. 5"
             onChange={handleAmountSpentInput}
           />
-          <TextField value={notes} label={'Notes (optional)'} id={'notes'} onChange={handleNotesInput} />
+          <TextField
+            placeholder="Enter Notes..."
+            value={notes}
+            label={'Notes'}
+            id={'notes'}
+            onChange={handleNotesInput}
+          />
           <CameraButton
             preservedState={{ amountPurchased, amountSpent, notes }}
             goBack={goBack + 1}
@@ -111,8 +124,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             label="Receipt"
             photoUri={photoUri}
           />
-          <Button loading={submitIsLoading} label="Submit" onClick={handleSubmit} />
-        </div>
+          <Button fullWidth loading={submitIsLoading} label="Submit" onClick={handleSubmit} />
+        </form>
       </BaseScrollView>
     </BaseScreen>
   );
