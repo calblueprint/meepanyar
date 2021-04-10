@@ -23,7 +23,7 @@ function ProfileMain() {
     <BaseScreen title="Profile" leftIcon="backNav">
       <List>
         <ListItemWrapper linkTo='/profile/user' leftPrimaryText='My Information' divider />
-        <ListItemWrapper leftPrimaryText='Site Information' />
+        <ListItemWrapper leftPrimaryText='Site Information' divider />
       </List>
       <Button variant='text' onClick={handleLogoutClick} label='Log Out' />
     </BaseScreen>
