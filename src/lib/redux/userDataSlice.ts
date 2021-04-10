@@ -16,7 +16,6 @@ interface UserFields {
   Incidents?: string[];
   Site?: string[];
   Customers?: string[];
-  Admin?: boolean;
 }
 
 export interface User {

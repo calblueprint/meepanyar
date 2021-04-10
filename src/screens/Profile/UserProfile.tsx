@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCurrentUser } from '../../lib/redux/userData';
-import ProfileCard from './components/ProfileCard';
+import ListItemWrapper from '../../components/ListItemWrapper';
+import { List } from '@material-ui/core';
 
 function UserProfile() {
   const user = useSelector(selectCurrentUser);
@@ -14,9 +15,11 @@ function UserProfile() {
 
   return (
     <BaseScreen title="My Information" leftIcon="backNav">
-      <ProfileCard leftText={'Name'} rightText={user?.fields.Name} noBottomBorder />
-      <ProfileCard leftText={'Email'} rightText={user?.fields.Email} noBottomBorder />
-      <ProfileCard leftText={'Admin?'} rightText={user?.fields.Admin ? 'Yes' : 'No'} noBottomBorder />
+      <List>
+        <ListItemWrapper leftPrimaryText={'Name'} rightSecondaryText={user?.fields.Name} dense />
+        <ListItemWrapper leftPrimaryText={'Email'} rightSecondaryText={user?.fields.Email} dense />
+        <ListItemWrapper leftPrimaryText={'Admin?'} rightSecondaryText={user?.fields.Admin ? 'Yes' : 'No'} dense />
+      </List>
     </BaseScreen>
   );
 }

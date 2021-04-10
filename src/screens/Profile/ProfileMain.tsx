@@ -1,9 +1,10 @@
-import { Button, Typography } from '@material-ui/core';
+import { List } from '@material-ui/core';
 import React from 'react';
+import Button from '../../components/Button';
 import { logoutUser } from '../../lib/airlock/airlock';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import ProfileCard from './components/ProfileCard';
+import ListItemWrapper from '../../components/ListItemWrapper';
 
 function ProfileMain() {
   const history = useHistory();
@@ -20,15 +21,11 @@ function ProfileMain() {
 
   return (
     <BaseScreen title="Profile" leftIcon="backNav">
-      <Link to={'/profile/user'} >
-        <ProfileCard leftText={"My Information"} chevron />
-      </Link>
-      <ProfileCard leftText={"Site Information"} chevron />
-      <Button variant='text' onClick={handleLogoutClick}>
-        <Typography color='primary'>
-          Log Out
-        </Typography>
-      </Button>
+      <List>
+        <ListItemWrapper linkTo='/profile/user' leftPrimaryText='My Information' divider />
+        <ListItemWrapper leftPrimaryText='Site Information' />
+      </List>
+      <Button variant='text' onClick={handleLogoutClick} label='Log Out' />
     </BaseScreen>
   );
 }
