@@ -12,7 +12,6 @@ import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardLi
 import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
-import TariffPlanInfo from './components/TariffPlanInfo';
 import MeterInfoContainer from './components/MeterInfoContainer';
 import { RootState } from '../../lib/redux/store';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
