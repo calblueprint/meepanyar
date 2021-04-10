@@ -54,7 +54,7 @@ function InventoryProfile(props: InventoryProps) {
           <Typography variant="body2">Recent Updates</Typography>
           <List>
             {inventoryHistory.map((historyRecord: any) => (
-              <ListItem disableGutters>
+              <ListItem disableGutters key={historyRecord.id}>
                 <ListItemIcon style={{ minWidth: 28 }}>
                   {historyRecord.status ? (
                     <AttachMoneyIcon color='primary' fontSize="small" />
@@ -65,7 +65,7 @@ function InventoryProfile(props: InventoryProps) {
                 <ListItemText primary={formatDateStringToLocal(historyRecord.createdAt)} />
                 <ListItemText
                   primaryTypographyProps={{ align: 'right' }}
-                  primary={`${historyRecord.updatedQuantity || historyRecord.amountPurchased} ${product.unit}(s)`}
+                  primary={`${historyRecord.updatedQuantity || historyRecord.amountPurchased || 0} ${product.unit}(s)`}
                 />
                 <ListItemSecondaryAction>
                   {historyRecord.status && (
