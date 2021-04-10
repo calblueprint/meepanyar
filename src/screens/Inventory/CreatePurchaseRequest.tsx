@@ -34,8 +34,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const inventory = useSelector(selectCurrentInventory);
   const product = useSelector(selectCurrentInventoryProduct);
 
-  const [amountPurchased, setAmountPurchased] = useState(props.location.state?.amountPurchased || 0.0);
-  const [amountSpent, setAmountSpent] = useState(props.location.state?.amountSpent || 0.0);
+  const [amountPurchased, setAmountPurchased] = useState(props.location.state?.amountPurchased || '');
+  const [amountSpent, setAmountSpent] = useState(props.location.state?.amountSpent || '');
   const [notes, setNotes] = useState(props.location.state?.notes || '');
   const [submitIsLoading, setSubmitIsLoading] = useState(false);
   const goBack = props.location.state?.goBack || -1;
@@ -49,11 +49,11 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
 
   // TODO @wangannie: add better edge case handling
   const handleAmountPurchasedInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAmountPurchased(parseFloat(event.target.value as string) || 0);
+    setAmountPurchased(event.target.value as string || '');
   };
 
   const handleAmountSpentInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAmountSpent(parseFloat(event.target.value as string) || 0);
+    setAmountSpent(event.target.value as string || '');
   };
 
   const handleNotesInput = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -68,8 +68,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     const purchaseRequest = JSON.parse(JSON.stringify(EMPTY_PURCHASE_REQUEST));
     purchaseRequest.requesterId = userId;
     purchaseRequest.createdAt = moment().toISOString();
-    purchaseRequest.amountPurchased = amountPurchased;
-    purchaseRequest.amountSpent = amountSpent;
+    purchaseRequest.amountPurchased = parseFloat(amountPurchased) || 0;
+    purchaseRequest.amountSpent = parseFloat(amountSpent) || 0;
     purchaseRequest.notes = notes;
     purchaseRequest.inventoryId = inventory.id;
     if (photoUri) {
