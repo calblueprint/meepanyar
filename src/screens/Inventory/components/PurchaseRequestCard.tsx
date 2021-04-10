@@ -3,8 +3,10 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { PurchaseRequestRecord } from '../../../lib/airtable/interface';
 import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
 import {
   EMPTY_PRODUCT,
@@ -13,6 +15,9 @@ import {
   selectProductById
 } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
+import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../../lib/redux/userData';
+import { reviewPurchaseRequest } from '../../../lib/utils/inventoryUtils';
+import { getPurchaseRequestReviewButtons } from '../PurchaseRequest';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -20,6 +25,10 @@ const styles = (theme: Theme) =>
       flex: 1,
       alignItems: 'center',
       display: 'flex',
+      paddingRight: theme.spacing(1),
+      '&:last-child': {
+        paddingBottom: theme.spacing(2),
+      },
     },
     leftContent: {
       flex: 1,
@@ -30,15 +39,15 @@ const styles = (theme: Theme) =>
       display: 'flex',
       marginBottom: theme.spacing(1),
     },
+    cardActions: {
+      width: 70,
+      justifyContent: 'flex-end',
+    },
   });
 
 interface PurchaseRequestCardProps {
-  classes: { cardContent: string; cardContainer: string; leftContent: string };
-  inventoryId: string;
-  amountPurchased: number;
-  createdAt: string;
-  amountSpent: number;
-  status: PurchaseRequestStatus;
+  classes: { cardContent: string; cardContainer: string; leftContent: string; cardActions: string };
+  purchaseRequest: PurchaseRequestRecord;
 }
 
 export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size?: 'small' | 'large') => {
@@ -53,24 +62,46 @@ export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size
 };
 
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
-  const { classes, inventoryId, amountPurchased, createdAt, status, amountSpent } = props;
+  const { classes, purchaseRequest } = props;
+  const [status, setStatus] = useState(purchaseRequest.status);
   const product =
     useSelector((state: RootState) =>
-      selectProductById(state, selectCurrentSiteInventoryById(state, inventoryId)?.productId || ''),
+      selectProductById(state, selectCurrentSiteInventoryById(state, purchaseRequest.inventoryId)?.productId || ''),
     ) || EMPTY_PRODUCT;
+  const userId = useSelector(selectCurrentUserId);
+  const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+
+  const handleSubmitReview = (approved: boolean) => {
+    setStatus(approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED);
+    reviewPurchaseRequest(purchaseRequest, approved, userId);
+  };
 
   return (
     <Card variant="outlined" className={classes.cardContainer}>
-      <CardContent className={classes.cardContent}>
-        <div className={classes.leftContent}>
-          <Typography variant="h2">{product.name}</Typography>
-          <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(
-            createdAt,
-          )}  •  ${amountPurchased} ${product.unit}(s)`}</Typography>
-        </div>
-        <Typography variant="h2">{`${amountSpent} Ks`}</Typography>
-      </CardContent>
-      <CardActions>{getPurchaseRequestStatusIcon(status)}</CardActions>
+      <Link
+        key={purchaseRequest.id}
+        to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest } }}
+        style={{ flex: 1 }}
+      >
+        <CardContent className={classes.cardContent}>
+          <div className={classes.leftContent}>
+            <Typography color="textPrimary" variant="h2">
+              {product.name}
+            </Typography>
+            <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(purchaseRequest.createdAt)}`}</Typography>
+            <Typography variant="body1" color="textSecondary">{`${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
+          </div>
+          <Typography color="textPrimary" variant="h2">{`${purchaseRequest.amountSpent} Ks`}</Typography>
+        </CardContent>
+      </Link>
+      <CardActions className={classes.cardActions}>
+        {status == PurchaseRequestStatus.PENDING && userIsAdmin
+          ? getPurchaseRequestReviewButtons(
+              () => handleSubmitReview(true),
+              () => handleSubmitReview(false),
+            )
+          : getPurchaseRequestStatusIcon(status)}
+      </CardActions>
     </Card>
   );
 }

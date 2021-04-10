@@ -29,6 +29,9 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-between',
+      '&:last-child': {
+        paddingBottom: theme.spacing(2),
+      },
     },
     leftContentColumnContainer: {
       display: 'flex',

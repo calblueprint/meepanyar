@@ -1,7 +1,7 @@
 import { Badge, createStyles, Tab, Tabs, Theme, withStyles } from '@material-ui/core';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
@@ -40,19 +40,10 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
       {purchaseRequests
         .filter((pr) => (status ? pr.status == status : true))
         .map((purchaseRequest: PurchaseRequestRecord) => (
-          <Link
+          <PurchaseRequestCard
             key={purchaseRequest.id}
-            to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest } }}
-          >
-            <PurchaseRequestCard
-              key={purchaseRequest.id}
-              status={purchaseRequest.status}
-              amountPurchased={purchaseRequest.amountPurchased}
-              createdAt={purchaseRequest.createdAt}
-              amountSpent={purchaseRequest.amountSpent}
-              inventoryId={purchaseRequest.inventoryId}
-            />
-          </Link>
+            purchaseRequest={purchaseRequest}
+          />
         ))}
     </div>
   );

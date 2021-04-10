@@ -29,7 +29,9 @@ const styles = (theme: Theme) =>
       marginBottom: theme.spacing(3),
     },
     reviewButtonsContainer: {
+      flex: 1,
       display: 'flex',
+      justifyContent: 'center',
       alignItems: 'center',
     },
   });
@@ -38,6 +40,19 @@ interface PurchaseRequestsProps extends RouteComponentProps {
   classes: { imageContainer: string; headerContainer: string; reviewButtonsContainer: string };
   location: any;
 }
+
+export const getPurchaseRequestReviewButtons = (handleApprove: () => void, handleDeny: () => void) => {
+  return (
+    <div>
+      <IconButton edge="end" size="small" onClick={handleDeny}>
+        {getPurchaseRequestStatusIcon(PurchaseRequestStatus.DENIED)}
+      </IconButton>
+      <IconButton edge="end" size="small" onClick={handleApprove}>
+        {getPurchaseRequestStatusIcon(PurchaseRequestStatus.APPROVED)}
+      </IconButton>
+    </div>
+  );
+};
 
 function PurchaseRequest(props: PurchaseRequestsProps) {
   const { classes } = props;
@@ -66,20 +81,14 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
             lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)}
             outlined
           />
-          {userIsAdmin && purchaseRequest.status == PurchaseRequestStatus.PENDING ? (
-            <div className={classes.reviewButtonsContainer}>
-              <IconButton onClick={() => handleSubmit(purchaseRequest, false)}>
-                {getPurchaseRequestStatusIcon(PurchaseRequestStatus.DENIED)}
-              </IconButton>
-              <IconButton onClick={() => handleSubmit(purchaseRequest, true)}>
-                {getPurchaseRequestStatusIcon(PurchaseRequestStatus.APPROVED)}
-              </IconButton>
-            </div>
-          ) : (
-            <IconButton onClick={() => alert('NO EDIT YET')}>
-              {getPurchaseRequestStatusIcon(purchaseRequest.status)}
-            </IconButton>
-          )}
+          <div className={classes.reviewButtonsContainer}>
+            {userIsAdmin && purchaseRequest.status == PurchaseRequestStatus.PENDING
+              ? getPurchaseRequestReviewButtons(
+                  () => handleSubmit(purchaseRequest, true),
+                  () => handleSubmit(purchaseRequest, false),
+                )
+              : getPurchaseRequestStatusIcon(purchaseRequest.status)}
+          </div>
         </div>
         <TextField
           label={'Amount Purchased'}
@@ -88,13 +97,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           id={'amount-purchased'}
           value={purchaseRequest.amountPurchased}
         />
-        <TextField
-          label={'Amount Spent'}
-          currency
-          disabled
-          id={'amount-spent'}
-          value={purchaseRequest.amountSpent}
-        />
+        <TextField label={'Amount Spent'} currency disabled id={'amount-spent'} value={purchaseRequest.amountSpent} />
         <TextField label={'Notes'} disabled id={'notes'} value={purchaseRequest.notes || 'None'} />
         {/* TODO: lookup user name by id */}
         <TextField label={'Submitted By'} disabled id={'submitted-by'} value={purchaseRequest.requesterId} />
