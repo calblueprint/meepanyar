@@ -14,15 +14,13 @@ import InventoryInfo from './components/InventoryInfo';
 
 const styles = (theme: Theme) =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-      display: 'flex',
-      flexDirection: 'column',
+    headerContainer: {
+      marginBottom: theme.spacing(2),
     },
   });
 
 interface CreateInventoryUpdateProps extends RouteComponentProps {
-  classes: { content: string };
+  classes: { headerContainer: string };
 }
 
 function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
@@ -55,21 +53,27 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   return (
     <BaseScreen title="Update Item" leftIcon="backNav">
       <BaseScrollView>
-        <div className={classes.content}>
+        <div className={classes.headerContainer}>
           <InventoryInfo
             outlined
             productId={inventory.productId}
             lastUpdated={getInventoryLastUpdated(inventory.id)}
             currentQuantity={inventory.currentQuantity}
           />
-          {/* TODO fix requred/optional fields */}
+        </div>
+        <form>
           <TextField
-            label={`Updated amount in ${product.unit}(s)`}
+            placeholder={'e.g. 5'}
+            required
+            type="number"
+            unit={product.unit}
+            label={`Updated Amount`}
             id={'updated-amount'}
+            value={updatedAmount}
             onChange={handleUpdatedAmount}
           />
-          <Button loading={loading} label="Update" onClick={handleSubmit} />
-        </div>
+          <Button fullWidth loading={loading} label="Update" onClick={handleSubmit} />
+        </form>
       </BaseScrollView>
     </BaseScreen>
   );
