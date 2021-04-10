@@ -5,10 +5,8 @@ import { ListItem, ListItemText, ListItemSecondaryAction, IconButton, makeStyles
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 interface ListItemWrapperProps {
-  leftPrimaryText: string;
-  leftSecondaryText?: string;
-  rightPrimaryText?: string;
-  rightSecondaryText?: string;
+  leftText: string;
+  rightText?: string
   linkTo?: string;
   dense?: boolean;
   divider?: boolean;
@@ -20,12 +18,13 @@ const styles = makeStyles((theme: Theme) =>
       paddingRight: 0
     },
     rightTextStyles: {
-      textAlign: 'right'
+      textAlign: 'right',
+      color: theme.palette.text.disabled
     }
   }));
 
 const ListItemWrapper = (props: ListItemWrapperProps) => {
-  const { linkTo, leftPrimaryText, leftSecondaryText, rightPrimaryText, rightSecondaryText, ...listItemProps } = props;
+  const { linkTo, leftText, rightText, ...listItemProps } = props;
   const classes = styles(props);
 
   const getForwardIcon = () =>
@@ -38,21 +37,16 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
   const getRightText = () =>
   (<ListItemText
     className={classes.rightTextStyles}
-    primary={rightPrimaryText}
-    primaryTypographyProps={{ color: 'textPrimary' }}
-    secondary={rightSecondaryText}
-    secondaryTypographyProps={{ color: 'textSecondary' }}
+    primary={rightText}
   />)
 
   return (
     <ListItem disableGutters component={linkTo ? Link : 'li'} to={linkTo} {...listItemProps} >
       <ListItemText
-        primary={leftPrimaryText}
+        primary={leftText}
         primaryTypographyProps={{ color: 'textPrimary' }}
-        secondary={leftSecondaryText}
-        secondaryTypographyProps={{ color: 'textSecondary' }}
       />
-      {rightPrimaryText || rightSecondaryText ? getRightText() : null}
+      {rightText ? getRightText() : null}
       {linkTo ? getForwardIcon() : null}
     </ListItem>)
 }
