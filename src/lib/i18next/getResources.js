@@ -43,18 +43,42 @@ const getAllRecords = (table, filterByFormula = '', sort = []) => {
 
 /** 
  * Format JavaScript object with translations, storing in ./resources.js. 
- * formatted according to the conventions in https://react.i18next.com/ 
+ * Formatted according to the conventions in https://react.i18next.com/ 
  */
-const getAndSetTranslations = async () => {
+const getAndSetTranslationMap = async () => {
     try {
         const resultData = await getAllRecords('Translation'); 
         const resources = { my: { translation: resultData } }; 
         const jsonResponse = JSON.stringify(resources, null, 2);
-        fs.writeFileSync('./src/lib/i18next/resources.js', "export default " + jsonResponse, 'utf8');
+        fs.writeFileSync('./src/lib/i18next/resources.js', "module.exports = " + jsonResponse, 'utf8');
         console.log('Successfully pulled in translations'); 
     } catch (err) {
         console.error('Error when creating translations: ', err);
     }
+}
+
+/** 
+ * Format TypeScript object with available words for translations, storing in ./words.ts. 
+ */
+const getAndSetWordMap = async () => {
+  try {  
+    const resources = require('./resources'); 
+    const words = {}; 
+    for (const key in resources["my"]["translation"]) {
+        const word_key = key.toLowerCase().replace(/ /g,"_").replace(/[^a-z_A-Z]+/g, '');
+        words[word_key] = key; 
+    }
+    const jsonResponse = JSON.stringify(words, null, 2);
+    fs.writeFileSync('./src/lib/i18next/words.ts', "export default " + jsonResponse, 'utf8');
+    console.log('Successfully configured available words'); 
+  } catch (err) {
+    console.error('Error when creating words: ', err);
+  }
+}
+
+const getAndSetTranslations = async () => {
+  await getAndSetTranslationMap(); 
+  await getAndSetWordMap(); 
 }
 
 getAndSetTranslations();
