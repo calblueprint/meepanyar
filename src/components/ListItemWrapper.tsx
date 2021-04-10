@@ -51,8 +51,4 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
     </ListItem>)
 }
 
-ListItemWrapper.defaultProps = {
-  listItemProps: {}
-}
-
 export default ListItemWrapper
