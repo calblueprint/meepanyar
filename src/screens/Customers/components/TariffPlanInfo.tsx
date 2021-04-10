@@ -2,13 +2,15 @@ import React from 'react';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { CardPropsInfo } from '../../../components/OutlinedCardList';
+import { MeterType } from '../../../lib/redux/customerDataSlice';
 
 const styles = (theme: Theme) =>
   createStyles({
     root: {
       marginTop: '10px',
       border: '1px solid',
-      borderColor: '#F7F9FC',
+      borderColor: theme.palette.background.default,
+      backgroundColor: theme.palette.background.default,
       borderRadius: '6px',
     },
     content: {
@@ -20,7 +22,7 @@ const styles = (theme: Theme) =>
     },
     item: {
       width: '100%',
-      color: theme.palette.text.primary,
+      color: theme.palette.text.secondary,
     },
     label: {
       whiteSpace: 'pre-line',
@@ -43,7 +45,7 @@ function TariffPlanInfo(props: TariffPlanInfoProps) {
 
   let tariffInfo : CardPropsInfo[];
   //TODO: swap with something like customer.inactive
-  if (meterType === "Inactive") {
+  if (meterType === MeterType.INACTIVE) {
     tariffInfo = [
       { number: undefinedAmount, label: 'Fixed\nTariff', unit: '' },
       { number: undefinedAmount, label: 'Unit\nTariff', unit: '' },
@@ -58,11 +60,11 @@ function TariffPlanInfo(props: TariffPlanInfoProps) {
   }
 
   return (
-    <div className={classes.root} style={{ backgroundColor: meterType === "Inactive" ? '#F7F9FC' : 'inherit', borderColor: meterType === "Inactive" ? '#F7F9FC' : 'inherit' }}>
+    <div className={classes.root} style={{ backgroundColor: meterType != MeterType.INACTIVE ? 'white' : undefined }}>
       <div className={classes.content}>
         {tariffInfo.map((info, index) => (
           <div key={index} className={classes.item}>
-            <Typography variant="h3" align={'center'} style={{color: meterType === "Inactive" ? 'rgba(189,189,189,1)' : undefined}}>
+            <Typography variant="h3" align={'center'}>
               {info.number} {info.unit}
             </Typography>
             <Typography variant="body1" align={'center'} className={classes.label}>{info.label}</Typography>

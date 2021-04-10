@@ -17,6 +17,7 @@ import MeterInfoContainer from './components/MeterInfoContainer';
 import { RootState } from '../../lib/redux/store';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
+import Button from '../../components/Button';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -37,18 +38,13 @@ const styles = (theme: Theme) =>
       marginRight: '5px',
       backgroundColor: theme.palette.primary.main,
     },
-    buttonSecondary: {
-      borderRadius: '12px',
-      color: 'white',
-      backgroundColor: theme.palette.primary.main,
-    },
     section: {
       marginTop: '10px',
     },
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string; };
+  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; };
   customer: CustomerRecord;
   location: any;
 }
@@ -126,20 +122,18 @@ function CustomerProfile(props: CustomerProps) {
   }
 
   const getReadingInfo = () => {
-    //0 has rightIcon, 1 has grayBackground, 2 has grayText + grayBackground
-    let readingCardState;
+    let meterRightIcon, meterGrayBackground, meterGrayText;
     let topLeftEditable;
     let topLeftGray, topRightGray, bottomRightGray, bottomLeftGray;
 
-    console.log(customer);
-
     if (customer.meterType === MeterType.ANALOG_METER) {
-      readingCardState = 0;
+      meterRightIcon = true;
       topLeftEditable = true;
     } else if (customer.meterType === MeterType.SMART_METER) {
-      readingCardState = 1;
+      meterGrayBackground = true;
     } else if (customer.meterType === MeterType.NO_METER) {
-      readingCardState = 2;
+      meterGrayText = true;
+      meterGrayBackground = true;
       topLeftGray = true;
       topRightGray = true;
       bottomRightGray = true;
@@ -151,7 +145,8 @@ function CustomerProfile(props: CustomerProps) {
         { number: UNDEFINED_AMOUNT, label: 'Amount Billed', unit: '' },
       ];
     } else {
-      readingCardState = 2;
+      meterGrayText = true;
+      meterGrayBackground = true;
       topLeftGray = true;
       topRightGray = true;
       bottomRightGray = true;
@@ -170,8 +165,8 @@ function CustomerProfile(props: CustomerProps) {
         <OutlinedCardList
           info={readingInfo}
           primary={false}
-          rightIcon={readingCardState === 0 ? getAddButton('/meter-readings/create') : undefined}
-          grayBackground={readingCardState === 1} grayText={readingCardState === 2}
+          rightIcon={meterRightIcon ? getAddButton('/meter-readings/create') : undefined}
+          grayBackground={meterGrayBackground} grayText={meterGrayText}
         />
         <div className={classes.section}>
           { /* Top Left */ }
@@ -217,22 +212,28 @@ function CustomerProfile(props: CustomerProps) {
           />
           <div className={classes.headerWrapper}>
             <Typography variant="h2">Payment</Typography>
-            <Link className={classes.buttonSecondary}
+            <Link
               to={{
-              pathname: `${match.url}/records`,
-              state: { invoices: meterReadings, payments: payments, defaultTab: '1' },
-            }}>View All</Link>
+                pathname: `${match.url}/records`,
+                state: { invoices: meterReadings, payments: payments, defaultTab: '1' }
+              }}
+            >
+              <Button label={'View All'} variant="text" />
+            </Link>
           </div>
           {getPaymentInfo()}
           <div className={classes.headerWrapper}>
             <Typography variant="h2">
               Meter Reading
             </Typography>
-            <Link className={classes.buttonSecondary}
+            <Link
               to={{
-              pathname: `${match.url}/records`,
-              state: { invoices: meterReadings, payments: payments, defaultTab: '0' },
-            }}>View All</Link>
+                pathname: `${match.url}/records`,
+                state: { invoices: meterReadings, payments: payments, defaultTab: '0' }
+              }}
+            >
+              <Button label={'View All'} variant="text" />
+            </Link>
           </div>
           {getReadingInfo()}
         </div>

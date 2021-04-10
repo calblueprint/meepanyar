@@ -22,9 +22,9 @@ const useStyles = makeStyles((theme: Theme) =>
     root: (props: CardProps) => ({
       marginTop: '10px',
       border: '1px solid',
-      borderColor: props.grayBackground ? '#F7F9FC' : theme.palette.divider,
+      borderColor: props.grayBackground ? theme.palette.background.default : theme.palette.text.disabled,
       borderRadius: '6px',
-      backgroundColor: props.grayBackground ? '#F7F9FC' : 'white'
+      backgroundColor: props.grayBackground ? theme.palette.background.default : 'white'
     }),
     content: (props: CardProps) => ({
       flex: 1,
@@ -51,10 +51,10 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: '5px',
     },
     red: {
-      color: theme.palette.info.main,
+      color: theme.palette.error.main,
     },
     text: (props: CardProps) => ({
-      color: props.grayText ? 'rgba(189,189,189,1)' : theme.palette.text.primary,
+      color: props.grayText ? theme.palette.text.secondary : theme.palette.text.primary,
     }),
   }),
 );
