@@ -1,6 +1,5 @@
-import { List } from '@material-ui/core';
+import { List, ListItem, ListItemText } from '@material-ui/core';
 import React from 'react';
-import Button from '../../components/Button';
 import { logoutUser } from '../../lib/airlock/airlock';
 import { useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
@@ -24,8 +23,10 @@ function ProfileMain() {
       <List>
         <ListItemWrapper linkTo='/profile/user' leftText='My Information' divider />
         <ListItemWrapper leftText='Site Information' divider />
+        <ListItem button onClick={handleLogoutClick} disableGutters >
+          <ListItemText primary='Log Out' primaryTypographyProps={{ color: 'primary' }} />
+        </ListItem>
       </List>
-      <Button variant='text' onClick={handleLogoutClick} label='Log Out' />
     </BaseScreen>
   );
 }
