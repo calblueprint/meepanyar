@@ -1,16 +1,14 @@
+import { IconButton } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import moment from 'moment';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import Button from '../../components/Button';
+import TextField from '../../components/TextField';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
-import { updatePurchaseRequest } from '../../lib/airtable/request';
-import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
-import { selectProductByInventoryId, updatePurchaseRequestInRedux } from '../../lib/redux/inventoryData';
+import { selectProductByInventoryId } from '../../lib/redux/inventoryData';
 import {
   EMPTY_PRODUCT,
   EMPTY_PURCHASE_REQUEST,
@@ -18,6 +16,8 @@ import {
 } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { reviewPurchaseRequest } from '../../lib/utils/inventoryUtils';
+import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -54,13 +54,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   }
 
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
-    const reviewData = {
-      reviewerId: getUserId(),
-      reviewedAt: moment().toISOString(),
-      status: approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED,
-    };
-    updatePurchaseRequest(purchaseRequest.id, reviewData);
-    updatePurchaseRequestInRedux({ id: purchaseRequest.id, ...reviewData });
+    reviewPurchaseRequest(purchaseRequest, approved, getUserId());
     history.goBack();
   };
 
@@ -69,19 +63,17 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
       <BaseScrollView>
         <div className={classes.content}>
           <Typography variant="h3">{`Purchase Request for ${product.name}`}</Typography>
-          <Typography variant="body1">{`Request status: ${purchaseRequest.status}`}</Typography>
-          <Typography variant="body1">{`Amount purchased ${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
-          <Typography variant="body1">{`Amount spent ${purchaseRequest.amountSpent} ks`}</Typography>
-          <Typography variant="body1">{`Created at ${formatDateStringToLocal(purchaseRequest.createdAt)}`}</Typography>
-          <Typography variant="body1">{`Submitted by ${purchaseRequest.requesterId}`}</Typography>
-          {purchaseRequest.notes && <Typography variant="body1">{`Notes: ${purchaseRequest.notes}`}</Typography>}
-          {purchaseRequest.receipt && <img className={classes.imageContainer} src={purchaseRequest.receipt[0].url} alt="receipt"/> }
           {userIsAdmin && purchaseRequest.status == PurchaseRequestStatus.PENDING && (
             <div>
-              <Button onClick={() => handleSubmit(purchaseRequest, true)} label={'Approve'} />
-              <Button onClick={() => handleSubmit(purchaseRequest, false)} label={'Deny'} />
+              <IconButton onClick={() => handleSubmit(purchaseRequest, true)} >{getPurchaseRequestStatusIcon(PurchaseRequestStatus.APPROVED)}</IconButton>
+              <IconButton onClick={() => handleSubmit(purchaseRequest, false)}>{getPurchaseRequestStatusIcon(PurchaseRequestStatus.DENIED)}</IconButton>
             </div>
           )}
+          <TextField label={'Amount Purchased'}  unit={product.unit} disabled id={'amount-purchased'} value={purchaseRequest.amountPurchased} />
+          <TextField label={'Amount Spent'}  unit={'kS'} disabled id={'amount-spent'} value={purchaseRequest.amountSpent} />
+          <TextField label={'Notes'} disabled id={'notes'} value={purchaseRequest.notes || "None"} />
+          <TextField label={'Submitted By'} disabled id={'submitted-by'} value={purchaseRequest.requesterId} />
+          {purchaseRequest.receipt && <img className={classes.imageContainer} src={purchaseRequest.receipt[0].url} alt="receipt"/> }
         </div>
       </BaseScrollView>
     </BaseScreen>
