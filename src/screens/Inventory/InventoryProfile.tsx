@@ -2,10 +2,9 @@ import { Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import Button from '../../components/Button';
 import { InventoryUpdateRecord } from '../../lib/airtable/interface';
 import { selectCurrentInventory, selectCurrentInventoryProduct, selectInventoryUpdatesArrayByInventoryId } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
@@ -28,18 +27,6 @@ interface InventoryProps extends RouteComponentProps {
   classes: { content: string; section: string };
 }
 
-const getPurchaseRequestButton = () => (
-  <Link to={'purchase-requests/create'}>
-    <Button label={'Purchase'} />
-  </Link>
-);
-
-const getUpdateButton = () => (
-  <Link to={'updates/create'}>
-    <Button label={'Update'} />
-  </Link>
-);
-
 function InventoryProfile(props: InventoryProps) {
   const { classes } = props;
   const inventory = useSelector(selectCurrentInventory) || EMPTY_INVENTORY;
@@ -52,16 +39,15 @@ function InventoryProfile(props: InventoryProps) {
   }
 
   return (
-    <BaseScreen leftIcon="backNav" title={product.name}>
+    <BaseScreen leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.content}>
           <InventoryInfo
             productId={inventory.productId}
             lastUpdated={getInventoryLastUpdated(inventory)}
             currentQuantity={inventory.currentQuantity}
+            withActions
           />
-          {getPurchaseRequestButton()}
-          {getUpdateButton()}
           <div className={classes.section}></div>
         </div>
         <div className={classes.content}>
