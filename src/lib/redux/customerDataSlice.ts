@@ -16,6 +16,13 @@ const meterReadingsAdapter = createEntityAdapter<MeterReadingRecord>({
     sortComparer: (a, b) => moment(b.date).diff(a.date),
 });
 
+export enum MeterType {
+  ANALOG_METER = 'Analog Meter',
+  SMART_METER = 'Smart Meter',
+  NO_METER = 'No Meter',
+  INACTIVE = 'Inactive'
+}
+
 // Returns customers in the context of the current site
 export const {
     selectEntities: selectAllCustomers,
@@ -68,7 +75,7 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     customerUpdates: [],
     totalAmountBilledfromInvoices: 0,
     totalAmountPaidfromPayments: 0,
-    meterType: "Analog Meter",
+    meterType: MeterType.ANALOG_METER,
     startingMeterReading: 0,
 }
 

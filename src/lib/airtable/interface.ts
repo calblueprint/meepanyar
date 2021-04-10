@@ -1,4 +1,5 @@
 import { PurchaseRequestStatus } from "../redux/inventoryDataSlice";
+import { MeterType } from "../redux/customerDataSlice";
 
 export type TableValues = string | boolean | number | Array<unknown> | Airtable.Attachment;
 
@@ -71,7 +72,7 @@ export interface CustomerRecord {
   customerUpdates: CustomerUpdateRecord[];
   totalAmountBilledfromInvoices: number;
   totalAmountPaidfromPayments: number;
-  meterType: string;
+  meterType: MeterType;
   startingMeterReading: number;
 }
 

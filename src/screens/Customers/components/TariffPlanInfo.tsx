@@ -8,7 +8,7 @@ const styles = (theme: Theme) =>
     root: {
       marginTop: '10px',
       border: '1px solid',
-      borderColor: theme.palette.divider,
+      borderColor: '#F7F9FC',
       borderRadius: '6px',
     },
     content: {

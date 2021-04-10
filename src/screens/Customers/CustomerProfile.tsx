@@ -13,7 +13,7 @@ import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
-import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
+import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import TariffPlanInfo from './components/TariffPlanInfo';
 import MeterInfoContainer from './components/MeterInfoContainer';
 
@@ -98,7 +98,8 @@ function CustomerProfile(props: CustomerProps) {
   let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
   let readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.reading.toString() : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
 
-  const getAddButton = (path: String) => {
+  const getAddButton = (path: string) => {
+    //TODO: separate into base component @wangannie
     return (
       <div className={classes.buttonPrimary}>
         <IconButton
@@ -116,14 +117,14 @@ function CustomerProfile(props: CustomerProps) {
   };
 
   const getPaymentInfo = () => {
-    if (customer.meterType === "Inactive") {
+    if (customer.meterType === MeterType.INACTIVE) {
       balanceInfo = [{ number: UNDEFINED_AMOUNT, label: 'Remaining Balance', unit: '' }];
       return (
-        <OutlinedCardList info={balanceInfo} primary={false} grayBackground={true} grayText={true} />
+        <OutlinedCardList info={balanceInfo} primary={false} grayBackground grayText />
       );
     } else {
       return (
-        <OutlinedCardList info={balanceInfo} primary={true} rightIcon={getAddButton('/meter-readings/create')} />
+        <OutlinedCardList info={balanceInfo} primary rightIcon={getAddButton('/meter-readings/create')} />
       );
     }
   }
@@ -134,12 +135,14 @@ function CustomerProfile(props: CustomerProps) {
     let topLeftEditable;
     let topLeftGray, topRightGray, bottomRightGray, bottomLeftGray;
 
-    if (customer.meterType === "Analog Meter") {
+    console.log(customer);
+
+    if (customer.meterType === MeterType.ANALOG_METER) {
       readingCardState = 0;
       topLeftEditable = true;
-    } else if (customer.meterType === "Smart Meter") {
+    } else if (customer.meterType === MeterType.SMART_METER) {
       readingCardState = 1;
-    } else if (customer.meterType === "No Meter") {
+    } else if (customer.meterType === MeterType.NO_METER) {
       readingCardState = 2;
       topLeftGray = true;
       topRightGray = true;
@@ -172,7 +175,7 @@ function CustomerProfile(props: CustomerProps) {
           info={readingInfo}
           primary={false}
           rightIcon={readingCardState === 0 ? getAddButton('/meter-readings/create') : undefined}
-          grayBackground={readingCardState === 1 || readingCardState === 2 ? true : undefined} grayText={readingCardState === 2 ? true : undefined}
+          grayBackground={readingCardState === 1} grayText={readingCardState === 2}
         />
         <div className={classes.section}>
           { /* Top Left */ }
@@ -184,13 +187,13 @@ function CustomerProfile(props: CustomerProps) {
           />
           { /* Top Right */ }
           <MeterInfoContainer
-            floatRight={true}
+            floatRight
             info={meterInfo[2]}
             gray={topRightGray}
           />
           { /* Bottom Right */ }
           <MeterInfoContainer
-            floatRight={true}
+            floatRight
             info={meterInfo[3]}
             gray={bottomRightGray}
           />
