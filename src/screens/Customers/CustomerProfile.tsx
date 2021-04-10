@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import React from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
@@ -13,9 +13,9 @@ import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardLi
 import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
-import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
+import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -47,13 +47,13 @@ const styles = (theme: Theme) =>
 
 interface CustomerProps extends RouteComponentProps {
   classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string; };
-  currentSite: SiteRecord;
   customer: CustomerRecord;
   location: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
-  const { classes, match, currentSite } = props;
+  const { classes, match } = props;
+  const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation);
   const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
   const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
   const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
@@ -65,7 +65,7 @@ function CustomerProfile(props: CustomerProps) {
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
 
-  const customerTariff = getTariffPlan(customer, currentSite);
+  const customerTariff = getTariffPlanByCustomer(customer);
 
   const fixedTariff = customerTariff ? customerTariff?.fixedTariff : UNDEFINED_AMOUNT;
   const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;
@@ -168,8 +168,4 @@ function CustomerProfile(props: CustomerProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  currentSite: state.siteData.currentSite || EMPTY_SITE,
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));
+export default withStyles(styles)(CustomerProfile);

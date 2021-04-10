@@ -5,7 +5,6 @@ import { store } from './store';
 import { getAllSites } from '../airtable/request';
 import { SiteRecord } from '../airtable/interface';
 import { saveSiteData, setLoadingForSiteData } from './siteDataSlice';
-import { MeterReadingRecord } from '../airtable/interface';
 import { refreshInventoryData } from './inventoryData'
 import { refreshCustomerData } from './customerData';
 
