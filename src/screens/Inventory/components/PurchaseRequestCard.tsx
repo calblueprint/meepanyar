@@ -41,14 +41,14 @@ interface PurchaseRequestCardProps {
   status: PurchaseRequestStatus;
 }
 
-export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus) => {
+export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size?: 'small' | 'large') => {
   switch (status) {
     case PurchaseRequestStatus.APPROVED:
-      return <CheckCircleOutlineIcon color={'primary'} />;
+      return <CheckCircleOutlineIcon color={'primary'} fontSize={size || 'default'} />;
     case PurchaseRequestStatus.DENIED:
-      return <CancelOutlinedIcon color={'error'} />;
+      return <CancelOutlinedIcon color={'error'} fontSize={size || 'default'} />;
     default:
-      return <HourglassEmptyIcon />;
+      return <HourglassEmptyIcon fontSize={size || 'default'} />;
   }
 };
 

@@ -32,6 +32,25 @@ export const getInventoryLastUpdated = (inventoryId: string): string => {
   return 'Unknown'; // TODO @wangannie: address design edge case
 };
 
+// Get the full history of an inventory item including updates and purchase requests
+// sorted from most to least recent createdAt date.
+// TODO: cleanup to extract only relevant data points (?)
+export const getInventoryHistory = (inventoryId: string): any[] => {
+  const purchaseRequests: PurchaseRequestRecord[] = selectPurchaseRequestsArrayByInventoryId(
+    store.getState(),
+    inventoryId,
+  );
+  const inventoryUpdates: InventoryUpdateRecord[] = selectInventoryUpdatesArrayByInventoryId(
+    store.getState(),
+    inventoryId,
+  );
+
+  const history: any[] = [];
+  history.push(...purchaseRequests);
+  history.push(...inventoryUpdates);
+  history.sort((a,b) => moment(b.createdAt).diff(a.createdAt));
+  return history;
+};
 
 export const reviewPurchaseRequest = (purchaseRequest: PurchaseRequestRecord, approved: boolean, userId: string) => {
   const reviewData = {
