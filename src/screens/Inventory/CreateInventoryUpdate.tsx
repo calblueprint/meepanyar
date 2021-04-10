@@ -31,7 +31,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const product = useSelector(selectCurrentInventoryProduct);
 
   const [loading, setLoading] = useState(false);
-  const [updatedAmount, setUpdatedAmount] = useState(0.0);
+  const [updatedAmount, setUpdatedAmount] = useState('');
 
   // Redirect to InventoryMain if undefined
   if (!userId || !inventory || !product) {
@@ -40,14 +40,14 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
 
   // TODO @wangannie: add better edge case handling
   const handleUpdatedAmount = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setUpdatedAmount(parseFloat(event.target.value as string) || 0);
+    setUpdatedAmount(event.target.value as string || '');
   };
 
   const handleSubmit = (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
     setLoading(true);
-    createInventoryUpdateAndUpdateInventory(userId, inventory, updatedAmount).then(() => history.goBack());
+    createInventoryUpdateAndUpdateInventory(userId, inventory, parseFloat(updatedAmount) || 0).then(() => history.goBack());
   };
 
   return (
