@@ -72,6 +72,8 @@ export const selectCurrentUserId = (state: RootState): string => state.userData.
 
 export const selectCurrentUser = (state: RootState) => state.userData.user;
 
+export const selectCurrentUserIsAdmin = (state: RootState): boolean => state.userData.user?.fields.Admin || false;
+
 export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());
 };

@@ -95,7 +95,6 @@ class Login extends React.Component<RouteComponentProps, LoginState> {
             <Styles.LoginButton
               type="submit"
               variant="contained"
-              color="secondary"
               onClick={this.onCreateAccountClicked}
             >
               Create Account

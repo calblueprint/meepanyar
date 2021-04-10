@@ -9,6 +9,7 @@ interface UserFields {
   ID: string;
   Password: string;
   Username: string;
+  Admin: boolean;
   အမည်?: string;
   Name?: string;
   Email?: string;
@@ -45,6 +46,7 @@ export const EMPTY_USER: User = {
     ID: '',
     Password: '',
     Username: '',
+    Admin: false,
   },
 };
 

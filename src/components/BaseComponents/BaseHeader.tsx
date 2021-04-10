@@ -2,7 +2,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CreateIcon from '@material-ui/icons/Create';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -56,9 +56,9 @@ function BaseHeader(props: HeaderProps) {
   const history = useHistory();
   const backActionDefault = history.goBack;
 
-  const getIcon = (onClick: (event: React.MouseEvent<HTMLElement>) => void, icon: JSX.Element) => {
+  const getIcon = (onClick: (event: React.MouseEvent<HTMLElement>) => void, icon: JSX.Element, primary?: boolean) => {
     return (
-      <IconButton onClick={onClick} color="primary">
+      <IconButton onClick={onClick} color={primary? "primary" : "default"}>
         {icon}
       </IconButton>
     );
@@ -74,7 +74,7 @@ function BaseHeader(props: HeaderProps) {
 
   //TODO: allow users to input icons rather than map strings to icons
   const icons: { [key: string]: JSX.Element } = {
-    backNav: getIcon(backAction || backActionDefault, <ArrowBackIosIcon />),
+    backNav: getIcon(backAction || backActionDefault, <ArrowBackIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />),
     user: getIcon(navigateToProfile, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
