@@ -7,7 +7,7 @@ import { SiteRecord, FinancialSummaryRecord, TariffPlanRecord, SiteId } from '..
 const tariffPlanAdapter = createEntityAdapter<TariffPlanRecord>();
 const financialSummaryAdapter = createEntityAdapter<FinancialSummaryRecord>();
 
-// Returns customers in the context of the current site
+// Returns tariff plans in the context of the current site
 export const {
   selectEntities: selectAllTariffPlans,
   selectAll: selectAllTariffPlansArray,
@@ -16,7 +16,7 @@ export const {
 } = tariffPlanAdapter.getSelectors(
   (state: RootState) => state.siteData.sites[state.siteData.currentSiteId].tariffPlans);
 
-// Returns customers in the context of the current site
+// Returns financial summaries in the context of the current site
 export const {
   selectEntities: selectAllFinancialSummaries,
   selectAll: selectAllFinancialSummariesArray,

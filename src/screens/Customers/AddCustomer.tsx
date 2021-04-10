@@ -12,7 +12,7 @@ import { createCustomer } from '../../lib/airtable/request';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
-import { selectCurrentSite } from '../../lib/redux/siteData';
+import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -41,7 +41,7 @@ function AddCustomer(props: AddCustomerProps) {
   // TODO: @julianrkung Look into constraints on meter number input.
   const [meterNumber, setMeterNumber] = useState("");
   const [customerInactive, setCustomerInactive] = useState(false);
-  const currentSite = useSelector(selectCurrentSite);
+  const currentSite = useSelector(selectCurrentSiteInformation);
   const tariffPlans = useSelector(selectAllTariffPlansArray);
 
   if (!currentSite) {

@@ -13,7 +13,7 @@ import WifiIcon from '@material-ui/icons/Wifi';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
-import { selectAllSites, selectCurrentSite } from '../../lib/redux/siteData';
+import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 
 const styles = () =>
@@ -41,8 +41,8 @@ function Home(props: HomeProps) {
   const { classes, lastUpdated, isOnline } = props;
   const numCustomersToMeter = useSelector(selectCustomersToMeter)?.length || 0;
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
-  const allSites: SiteRecord[] = useSelector(selectAllSites) || [];
-  const currentSite: SiteRecord = useSelector(selectCurrentSite) || EMPTY_SITE;
+  const allSites: SiteRecord[] = useSelector(selectAllSitesInformation) || [];
+  const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation) || EMPTY_SITE;
 
   return (
     <BaseScreen rightIcon="user">

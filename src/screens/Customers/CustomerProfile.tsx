@@ -12,10 +12,10 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { CustomerRecord, MeterReadingRecord, SiteRecord, PaymentRecord } from '../../lib/airtable/interface';
 import { RootState } from '../../lib/redux/store';
-import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
-import { selectCurrentSite } from '../../lib/redux/siteData';
+import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -53,7 +53,7 @@ interface CustomerProps extends RouteComponentProps {
 
 function CustomerProfile(props: CustomerProps) {
   const { classes, match } = props;
-  const currentSite: SiteRecord = useSelector(selectCurrentSite);
+  const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation);
   const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
   const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
   const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
@@ -65,7 +65,7 @@ function CustomerProfile(props: CustomerProps) {
   // data retrieval
   const UNDEFINED_AMOUNT = '-';
 
-  const customerTariff = getTariffPlan(customer);
+  const customerTariff = getTariffPlanByCustomer(customer);
 
   const fixedTariff = customerTariff ? customerTariff?.fixedTariff : UNDEFINED_AMOUNT;
   const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;

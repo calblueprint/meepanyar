@@ -16,7 +16,7 @@ import {
   selectAllCurrentSiteInventoryArray,
   selectAllProducts
 } from '../../lib/redux/inventoryDataSlice';
-import { getCurrentSiteId } from '../../lib/redux/siteData';
+import { selectCurrentSiteId } from '../../lib/redux/siteData';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 
 const styles = (theme: Theme) =>
@@ -43,6 +43,7 @@ function AddInventory(props: AddInventoryProps) {
   const products = useSelector(selectAllProducts);
   const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
   const userId = useSelector(selectCurrentUserId);
+  const siteId = useSelector(selectCurrentSiteId);
   const history = useHistory();
 
   // Product IDs for items that the site already has inventory for
@@ -78,7 +79,7 @@ function AddInventory(props: AddInventoryProps) {
     // Make a deep copy of an empty inventory record
     let inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY));
     inventory.productId = productId;
-    inventory.siteId = getCurrentSiteId();
+    inventory.siteId = siteId;
     inventory.currentQuantity = startingAmount;
     inventory.periodStartQuantity = startingAmount;
 

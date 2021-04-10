@@ -37,7 +37,7 @@ export const getAmountBilled = (currReading: MeterReadingRecord) => {
 };
 
 // TODO: add better error handling
-export const getTariffPlan = (customer: CustomerRecord): TariffPlanRecord | undefined => {
+export const getTariffPlanByCustomer = (customer: CustomerRecord): TariffPlanRecord | undefined => {
   return selectTariffPlanById(store.getState(), customer.tariffPlanId);
 }
 
