@@ -44,7 +44,7 @@ function InventoryProfile(props: InventoryProps) {
         <div className={classes.content}>
           <InventoryInfo
             productId={inventory.productId}
-            lastUpdated={getInventoryLastUpdated(inventory)}
+            lastUpdated={getInventoryLastUpdated(inventory.id)}
             currentQuantity={inventory.currentQuantity}
             withActions
           />

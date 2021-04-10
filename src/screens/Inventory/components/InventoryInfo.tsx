@@ -1,4 +1,4 @@
-import { Card, CardActions, CardContent, Typography, withStyles } from '@material-ui/core';
+import { Card, CardActions, CardContent, makeStyles, Typography } from '@material-ui/core';
 import { createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
@@ -7,14 +7,23 @@ import Button from '../../../components/Button';
 import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 
-const styles = (theme: Theme) =>
+interface InventoryInfoProps {
+  productId: string;
+  lastUpdated: string;
+  currentQuantity?: number;
+  withActions?: boolean;
+  outlined?: boolean;
+}
+
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    cardContainer: {
-      backgroundColor: theme.palette.primary.light,
+    cardContainer: (props: InventoryInfoProps) => ({
+      backgroundColor: props.outlined ? theme.palette.background.paper : theme.palette.primary.light,
+      border: props.outlined ? `1px solid ${theme.palette.primary.light}` : 'none',
       boxShadow: 'none',
       borderRadius: 6,
-      marginBottom: 20,
-    },
+      flex: 2,
+    }),
     cardContent: {
       display: 'flex',
       flex: 1,
@@ -28,15 +37,7 @@ const styles = (theme: Theme) =>
     cardActions: {
       justifyContent: 'space-around',
     },
-  });
-
-interface InventoryInfoProps {
-  classes: { cardContainer: string; cardContent: string; leftContentColumnContainer: string; cardActions: string };
-  productId: string;
-  lastUpdated: string;
-  currentQuantity: number;
-  withActions?: boolean;
-}
+  }));
 
 const getPurchaseRequestButton = () => (
   <Link to={'purchase-requests/create'}>
@@ -51,11 +52,12 @@ const getUpdateButton = () => (
 );
 
 function InventoryInfo(props: InventoryInfoProps) {
-  const { classes, productId, lastUpdated, currentQuantity, withActions } = props;
+  const classes = useStyles(props);
+  const { productId, lastUpdated, currentQuantity, withActions } = props;
   const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
   return (
-    <Card className={classes.cardContainer}>
+    <Card variant={props.outlined ? 'outlined' : undefined } className={classes.cardContainer}>
       <CardContent className={classes.cardContent}>
         <div className={classes.leftContentColumnContainer}>
           <Typography variant="h2" color="textPrimary">
@@ -64,7 +66,7 @@ function InventoryInfo(props: InventoryInfoProps) {
           <Typography variant="caption">Last Updated</Typography>
           <Typography variant="caption">{lastUpdated}</Typography>
         </div>
-        <Typography align="right" variant="body2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
+        { props.currentQuantity !== undefined && <Typography align="right" variant="body2">{`${currentQuantity} ${product.unit}(s)`}</Typography>}
       </CardContent>
       {withActions && (
         <CardActions className={classes.cardActions}>
@@ -76,4 +78,4 @@ function InventoryInfo(props: InventoryInfoProps) {
   );
 }
 
-export default withStyles(styles)(InventoryInfo);
+export default InventoryInfo;

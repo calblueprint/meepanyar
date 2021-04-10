@@ -87,7 +87,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
         <div className={classes.content}>
           <InventoryInfo
             productId={inventory.productId}
-            lastUpdated={getInventoryLastUpdated(inventory)}
+            lastUpdated={getInventoryLastUpdated(inventory.id)}
             currentQuantity={inventory.currentQuantity}
           />
           {/* TODO fix requred/optional fields */}

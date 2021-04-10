@@ -85,7 +85,7 @@ function InventoryMain(props: InventoryProps) {
               currentQuantity={inventory.currentQuantity}
               key={inventory.id}
               productId={inventory.productId}
-              lastUpdated={getInventoryLastUpdated(inventory)}
+              lastUpdated={getInventoryLastUpdated(inventory.id)}
             />
           </Link>
         ))}
