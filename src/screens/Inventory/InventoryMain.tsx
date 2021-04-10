@@ -17,8 +17,9 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import ScrollView from '../../components/BaseComponents/ScrollView';
 import Button from '../../components/Button';
 import { InventoryRecord } from '../../lib/airtable/interface';
-import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { selectPendingPurchaseRequestCount, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
 import { selectAllCurrentSiteInventoryArray } from '../../lib/redux/inventoryDataSlice';
+import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryCard from './components/InventoryCard';
 
@@ -60,6 +61,9 @@ interface InventoryProps extends RouteComponentProps {
 function InventoryMain(props: InventoryProps) {
   const { classes } = props;
   const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
+  const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+  const pendingCount = useSelector(selectPendingPurchaseRequestCount);
+
   return (
     <div>
       <AppBar className={classes.appBar} position="sticky">
@@ -71,8 +75,8 @@ function InventoryMain(props: InventoryProps) {
         <Toolbar className={classes.bottomToolbar}>
           <Typography variant="h1">Inventory</Typography>
           <Link to={'/inventory/purchase-requests'}>
-            {/* TODO: get # pending purchase requests */}
-            <Badge color="error" badgeContent={1}>
+            {/* Hide the badge for non-admin users */}
+            <Badge color="error" badgeContent={!userIsAdmin ? 0 : pendingCount}>
               <Button variant="text" label="All Purchases" />
             </Badge>
           </Link>
