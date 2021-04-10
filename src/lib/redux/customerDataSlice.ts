@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteId } from '../airtable/interface';
-import { setCurrSite } from './siteDataSlice';
+import { setCurrentSiteId } from './siteDataSlice';
 import { RootState } from './store';
 import moment from 'moment';
 
@@ -23,7 +23,7 @@ export const {
     selectById: selectCustomerById,
     selectIds: selectCustomerIds
 } = customersAdapter.getSelectors(
-    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].customers);
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSiteId].customers);
 
 export const {
     selectEntities: selectAllPayments,
@@ -31,7 +31,7 @@ export const {
     selectById: selectPaymentById,
     selectIds: selectPaymentIds
 } = paymentsAdapter.getSelectors(
-    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].payments);
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSiteId].payments);
 
 export const {
     selectEntities: selectAllMeterReadings,
@@ -39,7 +39,7 @@ export const {
     selectById: selectMeterReadingById,
     selectIds: selectMeterReadingIds
 } = meterReadingsAdapter.getSelectors(
-    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].meterReadings);
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSiteId].meterReadings);
 
 interface SiteCustomerData {
     customers: EntityState<CustomerRecord>;
@@ -68,6 +68,7 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     customerUpdates: [],
     totalAmountBilledfromInvoices: 0,
     totalAmountPaidfromPayments: 0,
+    startingMeterReading: 0,
 }
 
 export const EMPTY_PAYMENT: PaymentRecord = {
@@ -136,7 +137,7 @@ const customerDataSlice = createSlice({
     extraReducers: {
         // When current site is changed, current customer id needs to be reset 
         // because it's no longer valid in the new site context.
-        [setCurrSite.type]: (state, action) => {
+        [setCurrentSiteId.type]: (state, action) => {
             state.currentCustomerId = initialState.currentCustomerId;
         }
     }

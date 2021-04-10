@@ -17,7 +17,7 @@ import {
   PurchaseRequestStatus
 } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getUserId } from '../../lib/redux/userData';
+import { getUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -45,6 +45,8 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   const history = useHistory();
   const purchaseRequest: PurchaseRequestRecord = props.location.state?.purchaseRequest || EMPTY_PURCHASE_REQUEST;
   const product = useSelector((state: RootState) => selectProductByInventoryId(state, purchaseRequest.inventoryId)) || EMPTY_PRODUCT;
+  const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+
 
   // If no purchase request was passed in (i.e. reaching this URL directly), redirect to InventoryMain
   if (!props.location.state?.purchaseRequest || !product) {
@@ -74,7 +76,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           <Typography variant="body1">{`Submitted by ${purchaseRequest.requesterId}`}</Typography>
           {purchaseRequest.notes && <Typography variant="body1">{`Notes: ${purchaseRequest.notes}`}</Typography>}
           {purchaseRequest.receipt && <img className={classes.imageContainer} src={purchaseRequest.receipt[0].url} alt="receipt"/> }
-          {purchaseRequest.status == PurchaseRequestStatus.PENDING && (
+          {userIsAdmin && purchaseRequest.status == PurchaseRequestStatus.PENDING && (
             <div>
               <Button onClick={() => handleSubmit(purchaseRequest, true)} label={'Approve'} />
               <Button onClick={() => handleSubmit(purchaseRequest, false)} label={'Deny'} />

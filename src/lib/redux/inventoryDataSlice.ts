@@ -3,7 +3,7 @@
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import moment from 'moment';
 import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
-import { setCurrSite } from './siteDataSlice';
+import { setCurrentSiteId } from './siteDataSlice';
 import { RootState } from './store';
 
 const inventoryUpdatesAdapter = createEntityAdapter<InventoryUpdateRecord>({
@@ -24,7 +24,7 @@ export const {
   selectById: selectInventoryUpdateById,
   selectIds: selectInventoryUpdateIds,
 } = inventoryUpdatesAdapter.getSelectors(
-  (state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].inventoryUpdates,
+  (state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSiteId].inventoryUpdates,
 );
 
 // Customized selectors for products
@@ -42,7 +42,7 @@ export const {
   selectById: selectCurrentSiteInventoryById,
   selectIds: selectCurrentSiteInventoryIds,
 } = siteInventoryAdapter.getSelectors(
-  (state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].siteInventory,
+  (state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSiteId].siteInventory,
 );
 
 // Customized selectors for purchase requests
@@ -52,7 +52,7 @@ export const {
   selectById: selectCurrentSitePurchaseRequestById,
   selectIds: selectCurrentSitePurchaseRequestsIds,
 } = purchaseRequestsAdapter.getSelectors(
-  (state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSite.id].purchaseRequests,
+  (state: RootState) => state.inventoryData.sitesInventory[state.siteData.currentSiteId].purchaseRequests,
 );
 
 export interface SiteInventoryData {
@@ -187,7 +187,7 @@ const inventoryDataSlice = createSlice({
   },
   extraReducers: {
     // If the site changes, reset currentInventoryId
-    [setCurrSite.type]: (state, action) => {
+    [setCurrentSiteId.type]: (state, action) => {
       state.currentInventoryId = initialState.currentInventoryId;
     },
   },

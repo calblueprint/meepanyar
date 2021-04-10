@@ -1,7 +1,7 @@
 import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../airtable/interface';
 import { addCustomer, setCurrentCustomerId, editCustomer, selectCustomerById, saveCustomerData, selectAllMeterReadingsArray, selectAllCustomersArray, selectAllPaymentsArray, selectAllCustomers } from './customerDataSlice';
 import { isBeforeCurrentPeriod } from '../moment/momentUtils';
-import { getCurrentSiteId } from './siteData';
+import { selectCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
 import { createSelector } from '@reduxjs/toolkit';
 
@@ -20,14 +20,14 @@ export const refreshCustomerData = (site: SiteRecord): void => {
 };
 
 export const addCustomerToRedux = (customer: CustomerRecord): void => {
-    const siteId = getCurrentSiteId();
+    const siteId = selectCurrentSiteId(store.getState());
     store.dispatch(addCustomer({ siteId, customer }));
 };
 
 export const editCustomerInRedux = (customer: Partial<CustomerRecord>): void => {
     const customerUpdates = {
         ...customer,
-        siteId: getCurrentSiteId()
+        siteId: selectCurrentSiteId(store.getState())
     }
     store.dispatch(editCustomer(customerUpdates));
 };

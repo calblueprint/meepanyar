@@ -29,6 +29,7 @@ export interface UserRecord {
   sites: SiteRecord[];
   password: string;
   name: string;
+  admin: boolean;
 }
 
 export interface SiteRecord {
@@ -36,9 +37,9 @@ export interface SiteRecord {
   name: string;
   customerIds: string[];
   financialSummaryIds: string[];
-  financialSummaries: FinancialSummaryRecord[];
-  tariffPlans: TariffPlanRecord[];
-  // These are extracted to other slices and deleted from SiteRecord
+  // These are extracted to other slices or entities and deleted from SiteRecord
+  financialSummaries?: FinancialSummaryRecord[];
+  tariffPlans?: TariffPlanRecord[];
   inventoryIds?: string[];
   products?: ProductRecord[];
   inventory?: InventoryRecord[];
@@ -54,7 +55,7 @@ export interface TariffPlanRecord {
   name: string;
   fixedTariff: number;
   tariffByUnit: number;
-  minUnits: number;
+  freeUnits: number;
 }
 
 export interface CustomerRecord {
@@ -71,6 +72,7 @@ export interface CustomerRecord {
   customerUpdates: CustomerUpdateRecord[];
   totalAmountBilledfromInvoices: number;
   totalAmountPaidfromPayments: number;
+  startingMeterReading: number;
 }
 
 export interface CustomerUpdateRecord {
