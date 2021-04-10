@@ -15,7 +15,7 @@ import {
   updateInventoryQuantity,
   updatePurchaseRequest
 } from './inventoryDataSlice';
-import { getCurrentSiteId } from './siteData';
+import { selectCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
 
 
@@ -82,7 +82,7 @@ export const addInventoryToRedux = (inventory: InventoryRecord): void => {
 export const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord): void => {
   const purchaseRequestData = {
     ...purchaseRequest,
-    siteId: getCurrentSiteId(),
+    siteId: selectCurrentSiteId(store.getState()),
   };
   store.dispatch(addPurchaseRequest(purchaseRequestData));
 };
@@ -90,7 +90,7 @@ export const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord
 export const updatePurchaseRequestInRedux = (purchaseRequest: Partial<PurchaseRequestRecord>): void => {
   const purchaseRequestUpdates = {
     ...purchaseRequest,
-    siteId: getCurrentSiteId(),
+    siteId: selectCurrentSiteId(store.getState()),
   };
   store.dispatch(updatePurchaseRequest(purchaseRequestUpdates));
 };
@@ -98,7 +98,7 @@ export const updatePurchaseRequestInRedux = (purchaseRequest: Partial<PurchaseRe
 export const addInventoryUpdateToRedux = (inventoryUpdate: InventoryUpdateRecord): void => {
   const inventoryUpdateData = {
     ...inventoryUpdate,
-    siteId: getCurrentSiteId(),
+    siteId: selectCurrentSiteId(store.getState()),
   };
   store.dispatch(addInventoryUpdate(inventoryUpdateData));
 };
@@ -107,7 +107,7 @@ export const updateInventoryQuantityInRedux = (inventoryId: string, newQuantity:
   const updateData = {
     inventoryId,
     newQuantity,
-    siteId: getCurrentSiteId(),
+    siteId: selectCurrentSiteId(store.getState()),
   };
   store.dispatch(updateInventoryQuantity(updateData));
 };

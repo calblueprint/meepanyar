@@ -13,6 +13,8 @@ import WifiIcon from '@material-ui/icons/Wifi';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
+import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 
 const styles = () =>
   createStyles({
@@ -36,14 +38,16 @@ interface HomeProps {
 }
 
 function Home(props: HomeProps) {
-  const { classes, lastUpdated, isOnline, currentSite } = props;
-  const numCustomersToMeter  = useSelector(selectCustomersToMeter)?.length || 0;
+  const { classes, lastUpdated, isOnline } = props;
+  const numCustomersToMeter = useSelector(selectCustomersToMeter)?.length || 0;
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
+  const allSites: SiteRecord[] = useSelector(selectAllSitesInformation) || [];
+  const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation) || EMPTY_SITE;
 
   return (
     <BaseScreen rightIcon="user">
       <div className={classes.header}>
-        <SiteMenu currentSite={currentSite} />
+        <SiteMenu currentSite={currentSite} sites={allSites} />
         <div className={classes.network}>
           {isOnline ? <WifiIcon color="primary" /> : <WifiOffIcon color="secondary" />}
           <Typography className={classes.network} variant="body1">
@@ -81,9 +85,8 @@ const mapStateToProps = (state: RootState) => {
     lastUpdated = formatDateStringToLocal(state.userData.lastUpdated);
   }
   const isOnline = state.userData.isOnline;
-  const currentSite = state.siteData.currentSite;
 
-  return { lastUpdated, isOnline, currentSite };
+  return { lastUpdated, isOnline };
 };
 
 export default connect(mapStateToProps)(withStyles(styles)(Home));
