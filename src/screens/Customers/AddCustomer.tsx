@@ -85,7 +85,7 @@ function AddCustomer(props: AddCustomerProps) {
   return (
     <BaseScreen title="Add New Customer" leftIcon="backNav">
       <form noValidate className={classes.content} onSubmit={() => false}>
-        <TextField label={'Name'} id={'name'} primary={true} onChange={handleNameInput} />
+        <TextField label={'Name'} id={'name'} onChange={handleNameInput} />
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
           <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId="select-tariff-plan-label" onChange={handleSelectTariffPlan}>

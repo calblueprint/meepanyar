@@ -70,6 +70,8 @@ const getUserId = (): string => {
 
 export const selectCurrentUserId = (state: RootState): string => state.userData.user?.id || "";
 
+export const selectCurrentUserIsAdmin = (state: RootState): boolean => state.userData.user?.fields.Admin || false;
+
 export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());
 };

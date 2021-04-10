@@ -95,17 +95,15 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             value={amountPurchased}
             label={`Amount Purchased (${product.unit})`}
             id={'amount-purchased'}
-            primary={true}
             onChange={handleAmountPurchasedInput}
           />
           <TextField
             value={amountSpent}
             label={'Amount Spent (ks)'}
             id={'amount-spent'}
-            primary={true}
             onChange={handleAmountSpentInput}
           />
-          <TextField value={notes} label={'Notes (optional)'} id={'notes'} primary={true} onChange={handleNotesInput} />
+          <TextField value={notes} label={'Notes (optional)'} id={'notes'} onChange={handleNotesInput} />
           <CameraButton
             preservedState={{ amountPurchased, amountSpent, notes }}
             goBack={goBack + 1}

@@ -139,17 +139,16 @@ function AddInventory(props: AddInventoryProps) {
         {selectedProductId === NEW_PRODUCT_LABEL && (
           <div className={classes.newProductContainer}>
             <div style={{ marginRight: 10, flex: 2 }}>
-              <TextField label={'New Item'} id={'new-item'} primary={true} onChange={handleNewProductName} />
+              <TextField label={'New Item'} id={'new-item'} onChange={handleNewProductName} />
             </div>
             <div style={{ flex: 1 }}>
-              <TextField label={'Unit'} id={'unit'} primary={true} onChange={handleUnitInput} />
+              <TextField label={'Unit'} id={'unit'} onChange={handleUnitInput} />
             </div>
           </div>
         )}
         <TextField
           label={'Starting Amount'}
           id={'starting-amount'}
-          primary={true}
           onChange={handleStartingAmountInput}
         />
         <Button loading={loading} label={'Add'} onClick={handleSubmit} />

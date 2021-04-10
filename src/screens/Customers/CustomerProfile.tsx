@@ -1,21 +1,21 @@
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
-import { CustomerRecord, MeterReadingRecord, SiteRecord, PaymentRecord } from '../../lib/airtable/interface';
-import { RootState } from '../../lib/redux/store';
-import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
+import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
+import { RootState } from '../../lib/redux/store';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -40,8 +40,8 @@ const styles = (theme: Theme) =>
     },
     buttonSecondary: {
       borderRadius: '12px',
-      color: theme.palette.primary.main,
-      backgroundColor: theme.palette.secondary.main,
+      color: 'white',
+      backgroundColor: theme.palette.primary.main,
     },
   });
 

@@ -29,6 +29,7 @@ export interface UserRecord {
   sites: SiteRecord[];
   password: string;
   name: string;
+  admin: boolean;
 }
 
 export interface SiteRecord {

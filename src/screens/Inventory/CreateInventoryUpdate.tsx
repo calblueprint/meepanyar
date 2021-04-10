@@ -65,7 +65,6 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
           <TextField
             label={`Updated amount in ${product.unit}(s)`}
             id={'updated-amount'}
-            primary={true}
             onChange={handleUpdatedAmount}
           />
           <Button loading={loading} label="Update" onClick={handleSubmit} />
