@@ -69,10 +69,10 @@ function CustomerProfile(props: CustomerProps) {
   const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;
   const freeUnits = customerTariff ? customerTariff?.freeUnits : UNDEFINED_AMOUNT;
 
-  const tariffInfo: CardPropsInfo[] = [
-    { number: fixedTariff.toString(), label: 'Fixed Tariff', unit: 'MMK' },
-    { number: unitTariff.toString(), label: 'Unit Tariff', unit: 'MMK' },
-    { number: freeUnits.toString(), label: 'Free Units', unit: '' },
+  let tariffInfo: CardPropsInfo[] = [
+    { number: fixedTariff.toString(), label: 'Fixed Tariff', unit: 'Ks' },
+    { number: unitTariff.toString(), label: 'Unit Tariff', unit: 'Ks' },
+    { number: freeUnits.toString(), label: 'Free Units', unit: 'kWh' },
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
@@ -123,20 +123,30 @@ function CustomerProfile(props: CustomerProps) {
 
   const getReadingInfo = () => {
     let meterRightIcon, meterGrayBackground, meterGrayText;
-    let topLeftEditable;
-    let topLeftGray, topRightGray, bottomRightGray, bottomLeftGray;
+    let topLeftGrayBackground, topRightGrayBackground, bottomRightGrayBackground, bottomLeftGrayBackground;
+    let topLeftGrayText, topRightGrayText, bottomRightGrayText, bottomLeftGrayText;
 
     if (customer.meterType === MeterType.ANALOG_METER) {
       meterRightIcon = true;
-      topLeftEditable = true;
+      topRightGrayBackground = true;
+      bottomRightGrayBackground = true;
+      bottomLeftGrayBackground = true;
     } else if (customer.meterType === MeterType.SMART_METER) {
       meterGrayBackground = true;
+      topLeftGrayBackground = true;
+      topRightGrayBackground = true;
+      bottomRightGrayBackground = true;
+      bottomLeftGrayBackground = true;
     } else if (customer.meterType === MeterType.NO_METER) {
       meterGrayText = true;
       meterGrayBackground = true;
-      topLeftGray = true;
-      topRightGray = true;
-      bottomRightGray = true;
+      topLeftGrayBackground = true;
+      topRightGrayBackground = true;
+      bottomRightGrayBackground = true;
+      bottomLeftGrayBackground = true;
+      topLeftGrayText = true;
+      topRightGrayText = true;
+      bottomRightGrayText = true;
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
@@ -147,10 +157,14 @@ function CustomerProfile(props: CustomerProps) {
     } else {
       meterGrayText = true;
       meterGrayBackground = true;
-      topLeftGray = true;
-      topRightGray = true;
-      bottomRightGray = true;
-      bottomLeftGray = true;
+      topLeftGrayBackground = true;
+      topRightGrayBackground = true;
+      bottomRightGrayBackground = true;
+      bottomLeftGrayBackground = true;
+      topLeftGrayText = true;
+      topRightGrayText = true;
+      bottomRightGrayText = true;
+      bottomLeftGrayText = true;
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
@@ -173,29 +187,48 @@ function CustomerProfile(props: CustomerProps) {
           <MeterInfoContainer
             floatRight={false}
             info={meterInfo[0]}
-            editable={topLeftEditable}
-            gray={topLeftGray}
+            grayBackground={topLeftGrayBackground}
+            grayText={topLeftGrayText}
           />
           { /* Top Right */ }
           <MeterInfoContainer
             floatRight
             info={meterInfo[2]}
-            gray={topRightGray}
+            grayBackground={topRightGrayBackground}
+            grayText={topRightGrayText}
           />
           { /* Bottom Right */ }
           <MeterInfoContainer
             floatRight
             info={meterInfo[3]}
-            gray={bottomRightGray}
+            grayBackground={bottomRightGrayBackground}
+            grayText={bottomRightGrayText}
           />
           { /* Bottom Left */ }
           <MeterInfoContainer
             floatRight={false}
             info={meterInfo[1]}
-            gray={bottomLeftGray}
+            grayBackground={bottomLeftGrayBackground}
+            grayText={bottomLeftGrayText}
           />
         </div>
       </div>
+    );
+  }
+
+  const getTariffInfo = () => {
+    console.log(customer.meterType);
+    let tariffInfoGray;
+    if (customer.meterType === MeterType.INACTIVE) {
+      tariffInfo = [
+        { number: UNDEFINED_AMOUNT, label: 'Fixed\nTariff', unit: '' },
+        { number: UNDEFINED_AMOUNT, label: 'Unit\nTariff', unit: '' },
+        { number: UNDEFINED_AMOUNT, label: 'Free\nUnits', unit: '' }
+      ];
+      tariffInfoGray = true;
+    }
+    return (
+      <OutlinedCardList info={tariffInfo} primary={false} columns grayBackground={tariffInfoGray} grayText={tariffInfoGray} reverse />
     );
   }
 
@@ -203,13 +236,7 @@ function CustomerProfile(props: CustomerProps) {
     <BaseScreen leftIcon="backNav" title={`${customer.meterNumber}, ${customer.name}`} rightIcon="edit" match={match}>
       <BaseScrollView>
         <div className={classes.content}>
-          <TariffPlanInfo
-            undefinedAmount={UNDEFINED_AMOUNT}
-            meterType={customer.meterType}
-            fixedTariff={fixedTariff.toString()}
-            unitTariff={unitTariff.toString()}
-            freeUnits={freeUnits.toString()}
-          />
+          {getTariffInfo()}
           <div className={classes.headerWrapper}>
             <Typography variant="h2">Payment</Typography>
             <Link

@@ -15,6 +15,7 @@ interface CardProps {
   columns?: boolean;
   grayBackground?: boolean;
   grayText?: boolean;
+  reverse?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -30,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 1,
       padding: '8px 8px',
       display: 'flex',
-      flexDirection: props.columns ? 'row' : 'column'
+      flexDirection: props.columns ? 'row' : 'column',
     }),
     itemWrapper: {
       flex: 1,
@@ -42,7 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
       flex: 1,
       flexDirection: props.columns ? 'column-reverse' : 'column',
       display: 'flex',
-      color: theme.palette.text.primary,
       margin: '5px',
     }),
     fullItems: {
@@ -50,15 +50,16 @@ const useStyles = makeStyles((theme: Theme) =>
       color: theme.palette.text.primary,
       margin: '5px',
     },
-    red: {
-      color: theme.palette.error.main,
+    grayText: {
+      color: theme.palette.text.disabled,
     },
-    text: (props: CardProps) => ({
-      color: props.grayText ? theme.palette.text.secondary : theme.palette.text.primary,
-    }),
+    reverseLabel: {
+      wordSpacing: '100vw',
+      lineHeight: '1.2',
+      marginTop: '5px',
+    },
   }),
 );
-
 
 export default function OutlinedCardList(props: CardProps): JSX.Element {
   const classes = useStyles(props);
@@ -74,18 +75,27 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
   ) => {
     return (
       <div key={key} className={ classes.itemWrapper }>
-        <div className={rightIcon ? classes.items : classes.fullItems}>
-          <Typography variant="body1" align={columns ? 'center' : 'inherit'}>{label}</Typography>
-          <Typography variant="h3" align={columns ? 'center' : 'inherit'} className={primary ? classes.red : classes.text}>
-            {number} {props.columns ? '' : unit}
-          </Typography>
-          {/* Split unit to new line if in column layout */}
-          {props.columns &&
-            <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
-              {unit}
+        {props.reverse ?
+          <div className={rightIcon ? classes.items : classes.fullItems}>
+            <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'error' : 'inherit'} className={props.grayText ? classes.grayText : undefined}>
+              {number} {unit}
             </Typography>
-          }
-        </div>
+            <Typography variant="body1" align={columns ? 'center' : 'inherit'} className={classes.reverseLabel}>{label}</Typography>
+          </div>
+          :
+          <div className={rightIcon ? classes.items : classes.fullItems}>
+            <Typography variant="body1" align={columns ? 'center' : 'inherit'}>{label}</Typography>
+            <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'error' : 'inherit'} className={props.grayText ? classes.grayText : undefined}>
+              {number} {props.columns ? '' : unit}
+            </Typography>
+            {/* Split unit to new line if in column layout */}
+            {props.columns &&
+              <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
+                {unit}
+              </Typography>
+            }
+          </div>
+        }
         {rightIcon}
       </div>
     );

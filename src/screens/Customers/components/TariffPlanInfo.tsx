@@ -29,10 +29,13 @@ const styles = (theme: Theme) =>
       lineHeight: '1.2',
       marginTop: '5px',
     },
+    grayText: {
+      color: theme.palette.text.disabled,
+    },
   });
 
 interface TariffPlanInfoProps {
-  classes: { root: string; content: string; item: string; label: string; };
+  classes: { root: string; content: string; item: string; label: string; grayText: string; };
   undefinedAmount: string;
   meterType: string;
   fixedTariff: string;
@@ -44,8 +47,9 @@ function TariffPlanInfo(props: TariffPlanInfoProps) {
   const { classes, undefinedAmount, meterType, fixedTariff, unitTariff, freeUnits } = props;
 
   let tariffInfo : CardPropsInfo[];
+  let inactive = meterType === MeterType.INACTIVE;
   //TODO: swap with something like customer.inactive
-  if (meterType === MeterType.INACTIVE) {
+  if (inactive) {
     tariffInfo = [
       { number: undefinedAmount, label: 'Fixed\nTariff', unit: '' },
       { number: undefinedAmount, label: 'Unit\nTariff', unit: '' },
@@ -60,11 +64,11 @@ function TariffPlanInfo(props: TariffPlanInfoProps) {
   }
 
   return (
-    <div className={classes.root} style={{ backgroundColor: meterType != MeterType.INACTIVE ? 'white' : undefined }}>
+    <div className={classes.root} style={{ backgroundColor: inactive ? undefined : 'white' }}>
       <div className={classes.content}>
         {tariffInfo.map((info, index) => (
           <div key={index} className={classes.item}>
-            <Typography variant="h3" align={'center'}>
+            <Typography variant="h3" align={'center'} className={inactive ? classes.grayText: undefined}>
               {info.number} {info.unit}
             </Typography>
             <Typography variant="body1" align={'center'} className={classes.label}>{info.label}</Typography>
