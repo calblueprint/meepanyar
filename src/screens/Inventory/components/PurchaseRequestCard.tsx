@@ -1,6 +1,8 @@
-import { Card, CardActions, IconButton, Typography } from '@material-ui/core';
+import { Card, CardActions, CardContent, Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
@@ -14,54 +16,61 @@ import { RootState } from '../../../lib/redux/store';
 
 const styles = (theme: Theme) =>
   createStyles({
-    arrow: {
-      color: theme.palette.text.primary,
-    },
     cardContent: {
       flex: 1,
-      padding: 16,
+      alignItems: 'center',
+      display: 'flex',
+    },
+    leftContent: {
+      flex: 1,
+      marginRight: theme.spacing(1),
     },
     cardContainer: {
-      border: `1px solid ${theme.palette.divider}`,
-      boxShadow: 'none',
-      borderRadius: 10,
+      borderRadius: 6,
       display: 'flex',
-      marginBottom: 10,
-    },
-    arrowSpacing: {
-      padding: 0,
+      marginBottom: theme.spacing(1),
     },
   });
 
 interface PurchaseRequestCardProps {
-  classes: { arrow: string; cardContent: string; cardContainer: string; arrowSpacing: string };
+  classes: { cardContent: string; cardContainer: string; leftContent: string };
   inventoryId: string;
   amountPurchased: number;
   createdAt: string;
-  requesterId: string;
+  amountSpent: number;
   status: PurchaseRequestStatus;
 }
 
+export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus) => {
+  switch (status) {
+    case PurchaseRequestStatus.APPROVED:
+      return <CheckCircleOutlineIcon color={'primary'} />;
+    case PurchaseRequestStatus.DENIED:
+      return <CancelOutlinedIcon color={'error'} />;
+    default:
+      return <HourglassEmptyIcon />;
+  }
+};
+
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
-  const { classes, inventoryId, amountPurchased, createdAt, requesterId, status } = props;
+  const { classes, inventoryId, amountPurchased, createdAt, status, amountSpent } = props;
   const product =
     useSelector((state: RootState) =>
       selectProductById(state, selectCurrentSiteInventoryById(state, inventoryId)?.productId || ''),
     ) || EMPTY_PRODUCT;
 
   return (
-    <Card className={classes.cardContainer}>
-      <div className={classes.cardContent}>
-        <Typography variant="body1">{`${product.name}, ${amountPurchased} ${product.unit}(s)`}</Typography>
-        <Typography variant="body1">{`Created at: ${formatDateStringToLocal(createdAt)}`}</Typography>
-        <Typography variant="body1">{`Requested by: ${requesterId}`}</Typography>
-        <Typography variant="body1">{`Status: ${status}`}</Typography>
-      </div>
-      <CardActions>
-        <IconButton size="small">
-          <ArrowForwardIosIcon className={classes.arrow} fontSize="small" />
-        </IconButton>
-      </CardActions>
+    <Card variant="outlined" className={classes.cardContainer}>
+      <CardContent className={classes.cardContent}>
+        <div className={classes.leftContent}>
+          <Typography variant="h2">{product.name}</Typography>
+          <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(
+            createdAt,
+          )}  •  ${amountPurchased} ${product.unit}(s)`}</Typography>
+        </div>
+        <Typography variant="h2">{`${amountSpent} Ks`}</Typography>
+      </CardContent>
+      <CardActions>{getPurchaseRequestStatusIcon(status)}</CardActions>
     </Card>
   );
 }

@@ -33,7 +33,7 @@ function PurchaseRequests (props: PurchaseRequestsProps) {
               status={purchaseRequest.status}
               amountPurchased={purchaseRequest.amountPurchased}
               createdAt={purchaseRequest.createdAt}
-              requesterId={purchaseRequest.requesterId}
+              amountSpent={purchaseRequest.amountSpent}
               inventoryId={purchaseRequest.inventoryId}
             />
           </Link>
