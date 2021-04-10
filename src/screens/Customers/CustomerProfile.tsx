@@ -2,20 +2,21 @@ import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import { Add as AddIcon } from '@material-ui/icons';
-import { connect, useSelector } from 'react-redux';
+import AddIcon from '@material-ui/icons/Add';
+import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
+import { useSelector } from 'react-redux';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
-import { CustomerRecord, MeterReadingRecord, SiteRecord, PaymentRecord } from '../../lib/airtable/interface';
-import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { RootState } from '../../lib/redux/store';
-import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlan } from '../../lib/utils/customerUtils';
+import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import TariffPlanInfo from './components/TariffPlanInfo';
 import MeterInfoContainer from './components/MeterInfoContainer';
+import { RootState } from '../../lib/redux/store';
+import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -37,29 +38,24 @@ const styles = (theme: Theme) =>
       backgroundColor: theme.palette.primary.main,
     },
     buttonSecondary: {
-      color: theme.palette.primary.main,
-      fontSize: '12px',
-      textTransform: 'uppercase',
-      letterSpacing: '0.10em',
-      '&:hover': {
-        textDecoration: 'none',
-        color: theme.palette.primary.main,
-      },
+      borderRadius: '12px',
+      color: 'white',
+      backgroundColor: theme.palette.primary.main,
     },
     section: {
-      marginTop: '12px',
+      marginTop: '10px',
     },
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string; section: string; };
-  currentSite: SiteRecord;
+  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; buttonSecondary: string; };
   customer: CustomerRecord;
   location: any;
 }
 
 function CustomerProfile(props: CustomerProps) {
-  const { classes, match, currentSite } = props;
+  const { classes, match } = props;
+  const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation);
   const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
   const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
   const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
@@ -71,7 +67,7 @@ function CustomerProfile(props: CustomerProps) {
   // data retrieval
   const UNDEFINED_AMOUNT = '--';
 
-  const customerTariff = getTariffPlan(customer, currentSite);
+  const customerTariff = getTariffPlanByCustomer(customer);
 
   const fixedTariff = customerTariff ? customerTariff?.fixedTariff : UNDEFINED_AMOUNT;
   const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;
@@ -245,8 +241,4 @@ function CustomerProfile(props: CustomerProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  currentSite: state.siteData.currentSite || EMPTY_SITE,
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(CustomerProfile));
+export default withStyles(styles)(CustomerProfile);

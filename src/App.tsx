@@ -6,6 +6,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 import BaseNavigation from './components/BaseComponents/BaseNavigation';
 import { history, RootState } from './lib/redux/store';
+import BaseComponentsDemo from './screens/BaseComponentsDemo';
 import Camera from './screens/Camera/Camera';
 import CameraPreview from './screens/Camera/CameraPreview';
 import AddCustomer from './screens/Customers/AddCustomer';
@@ -70,6 +71,7 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 
       <AuthenticatedRoute path="/financial-summary" component={FinancialSummary} exact />
+      <AuthenticatedRoute path="/base-components" component={BaseComponentsDemo} exact />
       <BaseNavigation />
     </>
   );
