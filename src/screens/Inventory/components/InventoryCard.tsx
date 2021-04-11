@@ -12,6 +12,7 @@ const styles = (theme: Theme) =>
       flex: 1,
       display: 'flex',
       alignItems: 'center',
+      paddingRight: theme.spacing(1),
     },
     leftContent: {
       flex: 1,
@@ -42,10 +43,10 @@ function InventoryCard(props: InventoryCardProps) {
           <Typography  variant="h2">{product.name}</Typography>
           <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated}`} </Typography>
         </div>
-        <Typography variant="h2">{currentQuantity}</Typography>
+        <Typography variant="h2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
       </CardContent>
       <CardActions>
-        <IconButton size="small">
+        <IconButton edge="end" size="small">
           <ArrowForwardIosIcon fontSize="small"/>
         </IconButton>
       </CardActions>
