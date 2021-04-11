@@ -23,13 +23,13 @@ export type Row = {
 export interface UserRecord {
   id: string;
   username: string;
-  email: string;
-  photo?: Airtable.Attachment[];
-  siteIds: string[];
-  sites: SiteRecord[];
-  password: string;
-  name: string;
   admin: boolean;
+  name: string;
+  email?: string;
+  siteIds?: string[];
+  photo?: Airtable.Attachment[];
+  // TODO: scrub password out
+  password?: string;
 }
 
 export interface SiteRecord {
@@ -37,9 +37,9 @@ export interface SiteRecord {
   name: string;
   customerIds: string[];
   financialSummaryIds: string[];
-  financialSummaries: FinancialSummaryRecord[];
-  tariffPlans: TariffPlanRecord[];
-  // These are extracted to other slices and deleted from SiteRecord
+  // These are extracted to other slices or entities and deleted from SiteRecord
+  financialSummaries?: FinancialSummaryRecord[];
+  tariffPlans?: TariffPlanRecord[];
   inventoryIds?: string[];
   products?: ProductRecord[];
   inventory?: InventoryRecord[];
@@ -48,6 +48,7 @@ export interface SiteRecord {
   customers?: CustomerRecord[];
   payments?: PaymentRecord[];
   meterReadings?: MeterReadingRecord[];
+  users?: UserRecord[];
 }
 
 export interface TariffPlanRecord {

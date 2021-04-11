@@ -10,7 +10,8 @@ import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { selectProductByInventoryId } from '../../lib/redux/inventoryData';
 import { EMPTY_PRODUCT, EMPTY_PURCHASE_REQUEST, PurchaseRequestStatus } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { selectSiteUserById } from '../../lib/redux/userDataSlice';
 import { getInventoryLastUpdated, reviewPurchaseRequest } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
@@ -61,6 +62,9 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   const product =
     useSelector((state: RootState) => selectProductByInventoryId(state, purchaseRequest.inventoryId)) || EMPTY_PRODUCT;
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+  const currentUserId = useSelector(selectCurrentUserId);
+
+  const requester = useSelector((state: RootState) => selectSiteUserById(state, purchaseRequest.requesterId));
 
   // If no purchase request was passed in (i.e. reaching this URL directly), redirect to InventoryMain
   if (!props.location.state?.purchaseRequest || !product) {
@@ -68,7 +72,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   }
 
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
-    reviewPurchaseRequest(purchaseRequest, approved, getUserId());
+    reviewPurchaseRequest(purchaseRequest, approved, currentUserId);
     history.goBack();
   };
 
@@ -99,7 +103,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
         <TextField label={'Amount Spent'} currency disabled id={'amount-spent'} value={purchaseRequest.amountSpent} />
         <TextField label={'Notes'} disabled id={'notes'} value={purchaseRequest.notes || 'None'} />
         {/* TODO: lookup user name by id */}
-        <TextField label={'Submitted By'} disabled id={'submitted-by'} value={purchaseRequest.requesterId} />
+        <TextField label={'Submitted By'} disabled id={'submitted-by'} value={requester?.name || purchaseRequest.requesterId} />
         {purchaseRequest.receipt && (
           <img className={classes.imageContainer} src={purchaseRequest.receipt[0].url} alt="receipt" />
         )}

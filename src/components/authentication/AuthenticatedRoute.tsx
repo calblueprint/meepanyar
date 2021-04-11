@@ -1,18 +1,19 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { RootState } from '../../lib/redux/store';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { Redirect, Route } from 'react-router-dom';
+import { selectCurrentUserIsSignedIn, selectIsLoading } from '../../lib/redux/userData';
 import LoadingComponent from '../BaseComponents/LoadingComponent';
 
 interface AuthenticatedRouteProps {
-  isLoading: boolean;
-  isSignedIn: boolean;
   path: string;
   component: React.ComponentType<any>;
   exact?: boolean;
 }
 
-const AuthenticatedRoute = ({ isLoading, isSignedIn, path, component, exact }: AuthenticatedRouteProps) => {
+const AuthenticatedRoute = ({ path, component, exact }: AuthenticatedRouteProps) => {
+  const isSignedIn = useSelector(selectCurrentUserIsSignedIn);
+  const isLoading = useSelector(selectIsLoading);
+  
   if (isLoading) {
     return <LoadingComponent />;
   }
@@ -26,9 +27,4 @@ const AuthenticatedRoute = ({ isLoading, isSignedIn, path, component, exact }: A
   );
 };
 
-const mapStateToProps = (state: RootState) => ({
-  isLoading: state.userData.isLoading || state.siteData.isLoading,
-  isSignedIn: state.userData.user !== null,
-});
-
-export default connect(mapStateToProps)(AuthenticatedRoute);
+export default AuthenticatedRoute;
