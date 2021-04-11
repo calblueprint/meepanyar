@@ -14,11 +14,15 @@ import {
 import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import PurchaseRequestCard from './components/PurchaseRequestCard';
 
-// TODO @wangannie: remove before merge if not using
-const styles = (theme: Theme) => createStyles({});
+const styles = (theme: Theme) =>
+  createStyles({
+    tabs: {
+      marginBottom: theme.spacing(1),
+    },
+  });
 
 interface PurchaseRequestsProps extends RouteComponentProps {
-  classes: {};
+  classes: { tabs: string };
   siteInventoryData: SiteInventoryData;
 }
 
@@ -40,36 +44,34 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
       {purchaseRequests
         .filter((pr) => (status ? pr.status == status : true))
         .map((purchaseRequest: PurchaseRequestRecord) => (
-          <PurchaseRequestCard
-            key={purchaseRequest.id}
-            purchaseRequest={purchaseRequest}
-          />
+          <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest} />
         ))}
     </div>
   );
 
   return (
     <BaseScreen title="All Purchases" leftIcon="backNav">
+      {userIsAdmin && (
+        <Tabs
+          className={classes.tabs}
+          indicatorColor="primary"
+          value={tabValue}
+          onChange={handleTabChange}
+          aria-label="filter purchase requests"
+        >
+          <Tab label="All" id="tab-all" />
+          <Tab
+            style={{ overflow: 'visible' }}
+            label={
+              <Badge color="error" badgeContent={pendingCount}>
+                Pending
+              </Badge>
+            }
+            id="tab-pending"
+          />
+        </Tabs>
+      )}
       <BaseScrollView>
-        {userIsAdmin && (
-          <Tabs
-            indicatorColor="primary"
-            value={tabValue}
-            onChange={handleTabChange}
-            aria-label="filter purchase requests"
-          >
-            <Tab label="All" id="tab-all" />
-            <Tab
-              style={{ overflow: 'visible' }}
-              label={
-                <Badge color="error" badgeContent={pendingCount}>
-                  Pending
-                </Badge>
-              }
-              id="tab-pending"
-            />
-          </Tabs>
-        )}
         {/* Tab 0: All, Tab 1: Pending */}
         {tabValue == 0 ? getPurchaseRequests() : getPurchaseRequests(PurchaseRequestStatus.PENDING)}
       </BaseScrollView>
