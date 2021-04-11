@@ -3,10 +3,19 @@
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import moment from 'moment';
 import { UserRecord } from '../airtable/interface';
+import { RootState } from './store';
 
 // TODO: Think about what data should be stored in here
 
 const siteUsersAdapter = createEntityAdapter<UserRecord>();
+
+// Customized selectors for site users
+export const {
+  selectEntities: selectAllSiteUsersArray,
+  selectAll: selectAllSiteUsers,
+  selectById: selectSiteUserById,
+  selectIds: selectSiteUserIds,
+} = siteUsersAdapter.getSelectors((state: RootState) => state.userData.siteUsers);
 
 interface UserFields {
   ID: string;
@@ -71,17 +80,20 @@ const userDataSlice = createSlice({
       state.isOnline = true;
     },
     saveSiteUsersData(state, action) {
-      const siteUserEntities = siteUsersAdapter.addMany(
-        state.siteUsers,
-        action.payload,
-      );
+      const siteUserEntities = siteUsersAdapter.addMany(state.siteUsers, action.payload);
       state.siteUsers = siteUserEntities;
     },
     deauthenticateAndClearUserData() {
       return { ...initialState };
-    }
+    },
   },
 });
 
-export const { setLoadingForUserData, saveUserData, setIsOnline, saveSiteUsersData, deauthenticateAndClearUserData } = userDataSlice.actions;
+export const {
+  setLoadingForUserData,
+  saveUserData,
+  setIsOnline,
+  saveSiteUsersData,
+  deauthenticateAndClearUserData,
+} = userDataSlice.actions;
 export default userDataSlice.reducer;

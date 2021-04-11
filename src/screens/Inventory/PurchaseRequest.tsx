@@ -18,6 +18,7 @@ import {
 } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { selectSiteUserById } from '../../lib/redux/userDataSlice';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -46,6 +47,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   const purchaseRequest: PurchaseRequestRecord = props.location.state?.purchaseRequest || EMPTY_PURCHASE_REQUEST;
   const product = useSelector((state: RootState) => selectProductByInventoryId(state, purchaseRequest.inventoryId)) || EMPTY_PRODUCT;
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+  const requester = useSelector((state: RootState) => selectSiteUserById(state, purchaseRequest.requesterId));
 
 
   // If no purchase request was passed in (i.e. reaching this URL directly), redirect to InventoryMain
@@ -73,7 +75,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           <Typography variant="body1">{`Amount purchased ${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
           <Typography variant="body1">{`Amount spent ${purchaseRequest.amountSpent} ks`}</Typography>
           <Typography variant="body1">{`Created at ${formatDateStringToLocal(purchaseRequest.createdAt)}`}</Typography>
-          <Typography variant="body1">{`Submitted by ${purchaseRequest.requesterId}`}</Typography>
+          <Typography variant="body1">{`Submitted by ${requester?.username || purchaseRequest.requesterId}`}</Typography>
           {purchaseRequest.notes && <Typography variant="body1">{`Notes: ${purchaseRequest.notes}`}</Typography>}
           {purchaseRequest.receipt && <img className={classes.imageContainer} src={purchaseRequest.receipt[0].url} alt="receipt"/> }
           {userIsAdmin && purchaseRequest.status == PurchaseRequestStatus.PENDING && (
