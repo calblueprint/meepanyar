@@ -17,7 +17,7 @@ import {
   PurchaseRequestStatus
 } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { selectSiteUserById } from '../../lib/redux/userDataSlice';
 
 const styles = (theme: Theme) =>
@@ -47,6 +47,8 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   const purchaseRequest: PurchaseRequestRecord = props.location.state?.purchaseRequest || EMPTY_PURCHASE_REQUEST;
   const product = useSelector((state: RootState) => selectProductByInventoryId(state, purchaseRequest.inventoryId)) || EMPTY_PRODUCT;
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+  const currentUserId = useSelector(selectCurrentUserId);
+
   const requester = useSelector((state: RootState) => selectSiteUserById(state, purchaseRequest.requesterId));
 
 
@@ -57,7 +59,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
 
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
     const reviewData = {
-      reviewerId: getUserId(),
+      reviewerId: currentUserId,
       reviewedAt: moment().toISOString(),
       status: approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED,
     };

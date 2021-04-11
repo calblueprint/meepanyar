@@ -24,12 +24,12 @@ export interface UserRecord {
   id: string;
   username: string;
   admin: boolean;
+  name: string;
   email?: string;
-  photo?: Airtable.Attachment[];
   siteIds?: string[];
-  sites?: SiteRecord[];
+  photo?: Airtable.Attachment[];
+  // TODO: scrub password out
   password?: string;
-  name?: string;
 }
 
 export interface SiteRecord {

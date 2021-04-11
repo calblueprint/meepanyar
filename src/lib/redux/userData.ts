@@ -1,8 +1,11 @@
 import $ from 'jquery';
-import { SiteRecord } from '../airtable/interface';
+import { createSelector } from 'reselect';
+import { fromAirtableFormat } from '../airtable/airtable';
+import { SiteRecord, UserRecord } from '../airtable/interface';
+import { Tables } from '../airtable/schema';
 import refreshData from './refreshData';
 import { RootState, store } from './store';
-import { deauthenticateAndClearUserData, saveSiteUsersData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
+import { deauthenticateAndClearUserData, saveSiteUsersData, saveUserData, selectSiteUserById, setCurrentUserId, setIsOnline, setLoadingForUserData } from './userDataSlice';
 
 
 // TODO: Change from any when typing introduced
@@ -10,10 +13,12 @@ export const refreshUserData = async (user: any): Promise<void> => {
   if (!user) {
     return;
   }
+  const formattedUser : UserRecord = fromAirtableFormat(user.fields, Tables.Users) as UserRecord;
 
-  // Log in the user
   store.dispatch(setLoadingForUserData());
-  store.dispatch(saveUserData(user));
+  // Log in the user
+  store.dispatch(setCurrentUserId(formattedUser.id));
+  store.dispatch(saveUserData(formattedUser));
 
   try {
     refreshData(false);
@@ -29,7 +34,7 @@ export const refreshSiteUsersData = (site: SiteRecord): void => {
 //Function is called at a set interval and repulls data from backend 
 export const refreshDataBackground = async (): Promise<void> => {
   const state = store.getState();
-  if (!state.userData.user) {
+  if (!state.userData.currentUserId) {
     return;
   }
   try {
@@ -62,20 +67,11 @@ export const checkOnline = (): void => {
   });
 };
 
-export const getUserId = (): string => {
-  const state = store.getState();
-  let userId = '';
+export const selectCurrentUserId = (state: RootState): string => state.userData.currentUserId;
 
-  if (state.userData && state.userData.user) {
-    userId = state.userData.user.id;
-  }
+export const selectCurrentUser = createSelector(selectCurrentUserId, store.getState , (currentUserId, state) => selectSiteUserById(state, currentUserId));
 
-  return userId;
-};
-
-export const selectCurrentUserId = (state: RootState): string => state.userData.user?.id || "";
-
-export const selectCurrentUserIsAdmin = (state: RootState): boolean => state.userData.user?.fields.Admin || false;
+export const selectCurrentUserIsAdmin = createSelector(selectCurrentUser, (currentUser) => currentUser?.admin || false);
 
 export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());

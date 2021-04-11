@@ -38,29 +38,18 @@ export interface User {
 
 interface UserDataState {
   isLoading: boolean;
-  user: User | null;
   lastUpdated: string;
   isOnline: boolean;
   siteUsers: EntityState<UserRecord>;
+  currentUserId: string;
 }
 
 const initialState: UserDataState = {
   isLoading: false,
-  user: null,
   lastUpdated: '',
   isOnline: true,
   siteUsers: siteUsersAdapter.getInitialState(),
-};
-
-export const EMPTY_USER: User = {
-  id: '',
-  createdTime: '',
-  fields: {
-    ID: '',
-    Password: '',
-    Username: '',
-    Admin: false,
-  },
+  currentUserId: '',
 };
 
 const userDataSlice = createSlice({
@@ -70,17 +59,20 @@ const userDataSlice = createSlice({
     setLoadingForUserData(state) {
       state.isLoading = true;
     },
+    setCurrentUserId(state, action) {
+      state.currentUserId = action.payload;
+    },
     setIsOnline(state, action) {
       state.isOnline = action.payload.isOnline;
     },
     saveUserData(state, action) {
-      state.user = { ...action.payload };
+      siteUsersAdapter.upsertOne(state.siteUsers, action.payload);
       state.isLoading = false;
       state.lastUpdated = moment().toString();
       state.isOnline = true;
     },
     saveSiteUsersData(state, action) {
-      const siteUserEntities = siteUsersAdapter.addMany(state.siteUsers, action.payload);
+      const siteUserEntities = siteUsersAdapter.upsertMany(state.siteUsers, action.payload);
       state.siteUsers = siteUserEntities;
     },
     deauthenticateAndClearUserData() {
@@ -92,6 +84,7 @@ const userDataSlice = createSlice({
 export const {
   setLoadingForUserData,
   saveUserData,
+  setCurrentUserId,
   setIsOnline,
   saveSiteUsersData,
   deauthenticateAndClearUserData,

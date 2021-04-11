@@ -28,7 +28,7 @@ const AuthenticatedRoute = ({ isLoading, isSignedIn, path, component, exact }: A
 
 const mapStateToProps = (state: RootState) => ({
   isLoading: state.userData.isLoading || state.siteData.isLoading,
-  isSignedIn: state.userData.user !== null,
+  isSignedIn: state.userData.currentUserId !== '',
 });
 
 export default connect(mapStateToProps)(AuthenticatedRoute);

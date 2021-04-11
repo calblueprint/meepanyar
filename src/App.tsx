@@ -98,7 +98,7 @@ function App(isSignedIn: AppProps) {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  isSignedIn: state.userData.user !== null,
+  isSignedIn: state.userData.currentUserId !== '',
 });
 
 export default connect(mapStateToProps)(App);
