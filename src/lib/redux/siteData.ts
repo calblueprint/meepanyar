@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { SiteRecord } from '../airtable/interface';
 import { setCurrentSiteId } from './siteDataSlice';
-import { store, RootState } from './store';
+import { RootState, store } from './store';
 
 export const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrentSiteId(newSite.id))
@@ -16,3 +16,5 @@ export const selectCurrentSiteInformation = createSelector(
 
 // Returns all SiteRecord[] information
 export const selectAllSitesInformation = (state: RootState): SiteRecord[] => Object.values(state.siteData.sites).map(site => site.siteInformation);
+
+export const selectSiteDataIsLoading = (state: RootState): boolean => state.siteData.isLoading;

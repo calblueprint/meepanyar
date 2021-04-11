@@ -39,6 +39,7 @@ export const Columns = {
 	"Sites": {
 		// Custom objects added to the top of sites object to reduce
 		// likelihood of patch conflicts when new columns are added
+		users: {name: `SiteUsers`, type: `custom-object`},
 		products: {name: `Products`, type: `custom-object`},
 		inventory: {name: `SiteInventory`, type: `custom-object`},
 		purchaseRequests: {name: `PurchaseRequests`, type: `custom-object`},
