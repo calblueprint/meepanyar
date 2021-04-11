@@ -1,9 +1,12 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import moment from 'moment';
+import { UserRecord } from '../airtable/interface';
 
 // TODO: Think about what data should be stored in here
+
+const siteUsersAdapter = createEntityAdapter<UserRecord>();
 
 interface UserFields {
   ID: string;
@@ -29,6 +32,7 @@ interface UserDataState {
   user: User | null;
   lastUpdated: string;
   isOnline: boolean;
+  siteUsers: EntityState<UserRecord>;
 }
 
 const initialState: UserDataState = {
@@ -36,6 +40,7 @@ const initialState: UserDataState = {
   user: null,
   lastUpdated: '',
   isOnline: true,
+  siteUsers: siteUsersAdapter.getInitialState(),
 };
 
 export const EMPTY_USER: User = {
@@ -65,11 +70,18 @@ const userDataSlice = createSlice({
       state.lastUpdated = moment().toString();
       state.isOnline = true;
     },
+    saveSiteUsersData(state, action) {
+      const siteUserEntities = siteUsersAdapter.addMany(
+        state.siteUsers,
+        action.payload,
+      );
+      state.siteUsers = siteUserEntities;
+    },
     deauthenticateAndClearUserData() {
       return { ...initialState };
     }
   },
 });
 
-export const { setLoadingForUserData, saveUserData, setIsOnline, deauthenticateAndClearUserData } = userDataSlice.actions;
+export const { setLoadingForUserData, saveUserData, setIsOnline, saveSiteUsersData, deauthenticateAndClearUserData } = userDataSlice.actions;
 export default userDataSlice.reducer;

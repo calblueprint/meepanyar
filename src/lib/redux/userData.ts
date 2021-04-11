@@ -1,11 +1,12 @@
 import $ from 'jquery';
+import { SiteRecord } from '../airtable/interface';
 import refreshData from './refreshData';
 import { RootState, store } from './store';
-import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
+import { deauthenticateAndClearUserData, saveSiteUsersData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
 
 
 // TODO: Change from any when typing introduced
-const refreshUserData = async (user: any): Promise<void> => {
+export const refreshUserData = async (user: any): Promise<void> => {
   if (!user) {
     return;
   }
@@ -21,8 +22,12 @@ const refreshUserData = async (user: any): Promise<void> => {
   }
 };
 
+export const refreshSiteUsersData = (site: SiteRecord): void => {
+  store.dispatch(saveSiteUsersData(site.users));
+};
+
 //Function is called at a set interval and repulls data from backend 
-const refreshDataBackground = async (): Promise<void> => {
+export const refreshDataBackground = async (): Promise<void> => {
   const state = store.getState();
   if (!state.userData.user) {
     return;
@@ -38,7 +43,7 @@ const refreshDataBackground = async (): Promise<void> => {
 
 // Function is called at a set interval and updates redux's
 // isOnline value depending on if it gets a response from airlock
-const checkOnline = (): void => {
+export const checkOnline = (): void => {
   $.ajax({
     url: process.env.REACT_APP_AIRTABLE_ENDPOINT_URL,
     type: 'GET',
@@ -57,7 +62,7 @@ const checkOnline = (): void => {
   });
 };
 
-const getUserId = (): string => {
+export const getUserId = (): string => {
   const state = store.getState();
   let userId = '';
 
@@ -76,4 +81,3 @@ export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());
 };
 
-export { refreshUserData, checkOnline, getUserId, refreshDataBackground };
