@@ -12,18 +12,15 @@ interface InventoryInfoProps {
   lastUpdated: string;
   currentQuantity?: number;
   withActions?: boolean;
-  outlined?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    cardContainer: (props: InventoryInfoProps) => ({
-      backgroundColor: props.outlined ? theme.palette.background.paper : theme.palette.primary.light,
-      border: props.outlined ? `1px solid ${theme.palette.primary.light}` : 'none',
-      boxShadow: 'none',
+    cardContainer: {
+      borderColor: theme.palette.primary.light,
       borderRadius: 6,
       flex: 2,
-    }),
+    },
     cardContent: {
       display: 'flex',
       flex: 1,
@@ -40,7 +37,8 @@ const useStyles = makeStyles((theme: Theme) =>
     cardActions: {
       justifyContent: 'space-around',
     },
-  }));
+  }),
+);
 
 const getPurchaseRequestButton = () => (
   <Link to={'purchase-requests/create'}>
@@ -60,7 +58,7 @@ function InventoryInfo(props: InventoryInfoProps) {
   const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
   return (
-    <Card variant={props.outlined ? 'outlined' : undefined } className={classes.cardContainer}>
+    <Card variant="outlined" className={classes.cardContainer}>
       <CardContent className={classes.cardContent}>
         <div className={classes.leftContentColumnContainer}>
           <Typography variant="h2" color="textPrimary">
@@ -69,7 +67,9 @@ function InventoryInfo(props: InventoryInfoProps) {
           <Typography variant="caption">Last Updated</Typography>
           <Typography variant="caption">{lastUpdated}</Typography>
         </div>
-        { props.currentQuantity !== undefined && <Typography align="right" variant="body2">{`${currentQuantity} ${product.unit}(s)`}</Typography>}
+        {props.currentQuantity !== undefined && (
+          <Typography align="right" variant="body2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
+        )}
       </CardContent>
       {withActions && (
         <CardActions className={classes.cardActions}>

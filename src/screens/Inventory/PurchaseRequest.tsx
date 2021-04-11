@@ -79,7 +79,6 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           <InventoryInfo
             productId={product.id}
             lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)}
-            outlined
           />
           <div className={classes.reviewButtonsContainer}>
             {userIsAdmin && purchaseRequest.status == PurchaseRequestStatus.PENDING
