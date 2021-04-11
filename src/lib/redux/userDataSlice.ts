@@ -17,25 +17,6 @@ export const {
   selectIds: selectSiteUserIds,
 } = usersAdapter.getSelectors((state: RootState) => state.userData.users);
 
-interface UserFields {
-  ID: string;
-  Password: string;
-  Username: string;
-  Admin: boolean;
-  အမည်?: string;
-  Name?: string;
-  Email?: string;
-  Incidents?: string[];
-  Site?: string[];
-  Customers?: string[];
-}
-
-export interface User {
-  id: string;
-  createdTime: string;
-  fields: UserFields;
-}
-
 interface UserDataState {
   isLoading: boolean;
   lastUpdated: string;

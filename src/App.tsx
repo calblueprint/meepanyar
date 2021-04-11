@@ -6,7 +6,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 import BaseNavigation from './components/BaseComponents/BaseNavigation';
 import { history } from './lib/redux/store';
-import { selectUserIsSignedIn } from './lib/redux/userData';
+import { selectCurrentUserIsSignedIn } from './lib/redux/userData';
 import BaseComponentsDemo from './screens/BaseComponentsDemo';
 import Camera from './screens/Camera/Camera';
 import CameraPreview from './screens/Camera/CameraPreview';
@@ -34,7 +34,7 @@ import { theme } from './styles/ThemeStyles';
 
 
 function App() {
-  const isSignedIn = useSelector(selectUserIsSignedIn);
+  const isSignedIn = useSelector(selectCurrentUserIsSignedIn);
   const homeRedirect = isSignedIn ? '/home' : '/login';
 
   const Container = () => (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, Route } from 'react-router-dom';
-import { selectIsLoading, selectUserIsSignedIn } from '../../lib/redux/userData';
+import { selectCurrentUserIsSignedIn, selectIsLoading } from '../../lib/redux/userData';
 import LoadingComponent from '../BaseComponents/LoadingComponent';
 
 interface AuthenticatedRouteProps {
@@ -11,7 +11,7 @@ interface AuthenticatedRouteProps {
 }
 
 const AuthenticatedRoute = ({ path, component, exact }: AuthenticatedRouteProps) => {
-  const isSignedIn = useSelector(selectUserIsSignedIn);
+  const isSignedIn = useSelector(selectCurrentUserIsSignedIn);
   const isLoading = useSelector(selectIsLoading);
   
   if (isLoading) {

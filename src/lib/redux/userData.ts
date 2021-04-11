@@ -75,7 +75,7 @@ export const checkOnline = (): void => {
 
 export const selectCurrentUserId = (state: RootState): string => state.userData.currentUserId;
 
-export const selectUserIsSignedIn = createSelector(selectCurrentUserId, (currentUserId) => currentUserId !== '');
+export const selectCurrentUserIsSignedIn = createSelector(selectCurrentUserId, (currentUserId) => currentUserId !== '');
 
 export const selectCurrentUser = createSelector(selectCurrentUserId, store.getState, (currentUserId, state) =>
   selectSiteUserById(state, currentUserId),
