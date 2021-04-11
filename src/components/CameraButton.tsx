@@ -13,7 +13,6 @@ interface CameraButtonProps {
   helperText?: string,
 }
 
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     margin: {

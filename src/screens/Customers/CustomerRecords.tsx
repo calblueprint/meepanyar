@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import TabMenu from './components/TabMenu';
+import RecordsTabMenu from './components/RecordsTabMenu';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
 import { PaymentRecord, MeterReadingRecord } from '../../lib/airtable/interface';
@@ -30,7 +30,7 @@ function CustomerRecords(props: CustomerRecordsProps) {
     <BaseScreen leftIcon="backNav">
       <div className={classes.content}>
         <Typography variant="h1">Records</Typography>
-        <TabMenu invoices={invoices} payments={payments} />
+        <RecordsTabMenu invoices={invoices} payments={payments} />
       </div>
     </BaseScreen>
   );

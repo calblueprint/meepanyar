@@ -71,7 +71,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
             {number} {props.columns ? '' : unit}
           </Typography>
           {/* Split unit to new line if in column layout */}
-          {props.columns && 
+          {props.columns &&
             <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
               {unit}
             </Typography>

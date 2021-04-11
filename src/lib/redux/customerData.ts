@@ -82,12 +82,12 @@ export const selectAmountOwedInCurrentPeriodByCustomerId = createSelector(
     store.getState,
     getCustomerId,
     (state, customerId) => {
-        const currentPeriodMeterReadings = 
+        const currentPeriodMeterReadings =
         selectMeterReadingsByCustomerId(state, customerId)?.filter(meterReading => !isBeforeCurrentPeriod(meterReading.date));
         if (currentPeriodMeterReadings) {
             return currentPeriodMeterReadings.reduce((totalAmountOwed, meterReading: MeterReadingRecord) => totalAmountOwed + meterReading.amountBilled, 0);
         }
-    } 
+    }
 )
 
 export const selectAmountPaidInCurrentPeriodByCustomerId = createSelector(
@@ -101,7 +101,7 @@ export const selectAmountPaidInCurrentPeriodByCustomerId = createSelector(
     }
 )
 
-// For each customer who has been metered this period, 
+// For each customer who has been metered this period,
 // we calculate the amount they need to pay
 export const selectCustomersToCollect = createSelector(
     selectCustomersToMeter,
@@ -123,5 +123,17 @@ export const selectCustomersToCollect = createSelector(
             });
 
         return customersToCollect;
+    }
+)
+
+export const selectCustomersDone = createSelector(
+    selectCustomersToMeter,
+    selectCustomersToCollect,
+    selectAllCustomersArray,
+    store.getState,
+    (unmeteredCustomers, unpaidCustomers, allCustomers, state) => {
+        const unmeteredCustomerIds = new Set(unmeteredCustomers.map((customer: CustomerRecord) => customer.id));
+        const unpaidCustomerIds = new Set(unpaidCustomers.map((customer: CustomerRecord) => customer.id));
+        return allCustomers.filter(customer => !unmeteredCustomerIds.has(customer.id) && !unpaidCustomerIds.has(customer.id));
     }
 )

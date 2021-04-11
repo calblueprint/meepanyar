@@ -24,13 +24,13 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface TabProps {
+interface RecordsTabMenuProps {
   classes: { tabs: string; tab: string; tabPanel: string };
   invoices: MeterReadingRecord[];
   payments: PaymentRecord[];
 }
 
-function TabMenu(props: TabProps) {
+function RecordsTabMenu(props: RecordsTabMenuProps) {
   const { classes, invoices, payments } = props;
   const [value, setValue] = React.useState('0');
   const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
@@ -62,4 +62,4 @@ function TabMenu(props: TabProps) {
     </TabContext>
   );
 }
-export default withStyles(styles)(TabMenu);
+export default withStyles(styles)(RecordsTabMenu);
