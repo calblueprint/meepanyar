@@ -5,7 +5,7 @@ import { SiteRecord, UserRecord } from '../airtable/interface';
 import { Tables } from '../airtable/schema';
 import refreshData from './refreshData';
 import { RootState, store } from './store';
-import { deauthenticateAndClearUserData, saveSiteUsersData, saveUserData, selectSiteUserById, setCurrentUserId, setIsOnline, setLoadingForUserData } from './userDataSlice';
+import { deauthenticateAndClearUserData, saveCurrentUserData, saveUserData, selectSiteUserById, setCurrentUserId, setIsOnline, setLoadingForUserData } from './userDataSlice';
 
 
 // TODO: Change from any when typing introduced
@@ -18,7 +18,7 @@ export const refreshUserData = async (user: any): Promise<void> => {
   store.dispatch(setLoadingForUserData());
   // Log in the user
   store.dispatch(setCurrentUserId(formattedUser.id));
-  store.dispatch(saveUserData(formattedUser));
+  store.dispatch(saveCurrentUserData(formattedUser));
 
   try {
     refreshData(false);
@@ -28,7 +28,7 @@ export const refreshUserData = async (user: any): Promise<void> => {
 };
 
 export const refreshSiteUsersData = (site: SiteRecord): void => {
-  store.dispatch(saveSiteUsersData(site.users));
+  store.dispatch(saveUserData(site.users));
 };
 
 //Function is called at a set interval and repulls data from backend 

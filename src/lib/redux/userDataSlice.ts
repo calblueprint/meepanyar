@@ -7,15 +7,15 @@ import { RootState } from './store';
 
 // TODO: Think about what data should be stored in here
 
-const siteUsersAdapter = createEntityAdapter<UserRecord>();
+const usersAdapter = createEntityAdapter<UserRecord>();
 
-// Customized selectors for site users
+// Customized selectors for users
 export const {
   selectEntities: selectAllSiteUsersArray,
   selectAll: selectAllSiteUsers,
   selectById: selectSiteUserById,
   selectIds: selectSiteUserIds,
-} = siteUsersAdapter.getSelectors((state: RootState) => state.userData.siteUsers);
+} = usersAdapter.getSelectors((state: RootState) => state.userData.users);
 
 interface UserFields {
   ID: string;
@@ -40,7 +40,7 @@ interface UserDataState {
   isLoading: boolean;
   lastUpdated: string;
   isOnline: boolean;
-  siteUsers: EntityState<UserRecord>;
+  users: EntityState<UserRecord>;
   currentUserId: string;
 }
 
@@ -48,7 +48,7 @@ const initialState: UserDataState = {
   isLoading: false,
   lastUpdated: '',
   isOnline: true,
-  siteUsers: siteUsersAdapter.getInitialState(),
+  users: usersAdapter.getInitialState(),
   currentUserId: '',
 };
 
@@ -65,15 +65,15 @@ const userDataSlice = createSlice({
     setIsOnline(state, action) {
       state.isOnline = action.payload.isOnline;
     },
-    saveUserData(state, action) {
-      siteUsersAdapter.upsertOne(state.siteUsers, action.payload);
+    saveCurrentUserData(state, action) {
+      usersAdapter.upsertOne(state.users, action.payload);
       state.isLoading = false;
       state.lastUpdated = moment().toString();
       state.isOnline = true;
     },
-    saveSiteUsersData(state, action) {
-      const siteUserEntities = siteUsersAdapter.upsertMany(state.siteUsers, action.payload);
-      state.siteUsers = siteUserEntities;
+    saveUserData(state, action) {
+      const userEntities = usersAdapter.upsertMany(state.users, action.payload);
+      state.users = userEntities;
     },
     deauthenticateAndClearUserData() {
       return { ...initialState };
@@ -83,10 +83,10 @@ const userDataSlice = createSlice({
 
 export const {
   setLoadingForUserData,
-  saveUserData,
+  saveCurrentUserData,
   setCurrentUserId,
   setIsOnline,
-  saveSiteUsersData,
+  saveUserData,
   deauthenticateAndClearUserData,
 } = userDataSlice.actions;
 export default userDataSlice.reducer;
