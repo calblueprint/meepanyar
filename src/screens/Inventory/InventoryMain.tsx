@@ -1,20 +1,10 @@
-import {
-  AppBar,
-  Badge,
-  createStyles,
-  Fab,
-  IconButton,
-  Theme,
-  Toolbar,
-  Typography,
-  withStyles
-} from '@material-ui/core';
+import { Badge, createStyles, Fab, Theme, Typography, withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import MenuIcon from '@material-ui/icons/Menu';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import ScrollView from '../../components/BaseComponents/ScrollView';
+import BaseScreen from '../../components/BaseComponents/BaseScreen';
+import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { InventoryRecord } from '../../lib/airtable/interface';
 import { selectPendingPurchaseRequestCount, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
@@ -25,37 +15,37 @@ import InventoryCard from './components/InventoryCard';
 
 const styles = (theme: Theme) =>
   createStyles({
-    appBar: {
-      backgroundColor: 'white',
-      marginBottom: theme.spacing(2),
-    },
-    menuButton: {
-      marginLeft: theme.spacing(1),
-    },
-    bottomToolbar: {
-      justifyContent: 'space-between',
-    },
-    topToolbar: {
-      justifyContent: 'flex-end',
-      paddingTop: theme.spacing(2),
-    },
     fab: {
       position: 'fixed',
       bottom: theme.spacing(10),
       right: theme.spacing(2),
-      color: 'white',
+      color: theme.palette.background.paper,
+    },
+    headerWrapper: {
+      display: 'flex',
+      flex: 1,
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingBottom: theme.spacing(1),
     },
   });
 
 interface InventoryProps extends RouteComponentProps {
   classes: {
     fab: string;
-    menuButton: string;
-    topToolbar: string;
-    bottomToolbar: string;
-    appBar: string;
+    headerWrapper: string;
   };
 }
+
+// Needed to vertically align the badge with the text button
+const InlineBadge = withStyles(() =>
+  createStyles({
+    badge: {
+      right: -4,
+      top: 26,
+    },
+  }),
+)(Badge);
 
 // TODO @wangannie: address empty state
 function InventoryMain(props: InventoryProps) {
@@ -65,24 +55,17 @@ function InventoryMain(props: InventoryProps) {
   const pendingCount = useSelector(selectPendingPurchaseRequestCount);
 
   return (
-    <div>
-      <AppBar className={classes.appBar} position="sticky">
-        <Toolbar className={classes.topToolbar}>
-          <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
-        <Toolbar className={classes.bottomToolbar}>
-          <Typography variant="h1">Inventory</Typography>
-          <Link to={'/inventory/purchase-requests'}>
-            {/* Hide the badge for non-admin users */}
-            <Badge color="error" badgeContent={!userIsAdmin ? 0 : pendingCount}>
-              <Button variant="text" label="All Purchases" />
-            </Badge>
-          </Link>
-        </Toolbar>
-      </AppBar>
-      <ScrollView>
+    <BaseScreen>
+      <div className={classes.headerWrapper}>
+        <Typography variant="h1">Inventory</Typography>
+        <Link to={'/inventory/purchase-requests'}>
+          {/* Hide the badge for non-admin users */}
+          <InlineBadge color="error" badgeContent={!userIsAdmin ? 0 : pendingCount}>
+            <Button variant="text" label="All Purchases" />
+          </InlineBadge>
+        </Link>
+      </div>
+      <BaseScrollView>
         {siteInventory.map((inventory: InventoryRecord) => (
           <Link key={inventory.id} to={'/inventory/item'} onClick={() => setCurrentInventoryIdInRedux(inventory.id)}>
             <InventoryCard
@@ -93,13 +76,13 @@ function InventoryMain(props: InventoryProps) {
             />
           </Link>
         ))}
-      </ScrollView>
+      </BaseScrollView>
       <Link to={'/inventory/create'}>
         <Fab color="primary" aria-label="add inventory" className={classes.fab} size="medium">
           <AddIcon fontSize="large" />
         </Fab>
       </Link>
-    </div>
+    </BaseScreen>
   );
 }
 
