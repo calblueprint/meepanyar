@@ -1,4 +1,4 @@
-import { Typography, createStyles, Fab, Theme, withStyles } from '@material-ui/core';
+import { Typography, createStyles, Fab, Theme, withStyles, Tabs, Tab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -9,7 +9,10 @@ import { getLatestReadingDate } from '../../lib/utils/customerUtils';
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import TrieTree from '../../lib/utils/TrieTree';
 import { selectCustomersToMeter, selectCustomersToCollect, selectCustomersDone } from '../../lib/redux/customerData';
-import CustomersTabMenu, { CustomerMenu } from './components/CustomersTabMenu';
+import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import { TabContext, TabPanel } from '@material-ui/lab';
+import CustomerCard, { CustomerStatus } from './components/CustomerCard';
+import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -41,38 +44,72 @@ const styles = (theme: Theme) =>
       height: '20px',
       backgroundColor: 'white',
     },
+    tab: {
+      color: `${theme.palette.divider}`,
+      fontSize: '12px',
+      '&:focus': {
+        outline: 'none',
+      },
+    },
+    tabPanel: {
+      height: '100%',
+      padding: '10px 0 0',
+    },
+    active: {
+      height: '7px',
+      width: '7px',
+      borderRadius: '50%',
+      backgroundColor: theme.palette.secondary.light,
+      marginRight: '5px',
+    },
+    activeContainer: {
+      padding: '10px 5px',
+      display: 'inline-flex',
+      alignItems: 'center',
+    },
   });
 
+interface CustomerMenu {
+  all: CustomerRecord[];
+  toMeter: CustomerRecord[];
+  toCollect: CustomerRecord[];
+  done: CustomerRecord[];
+}
+
 interface CustomerMainProps extends RouteComponentProps {
-  classes: { title: string; headerWrapper: string; fab: string; searchIcon: string; searchBar: string; };
-  customers: CustomerRecord[]
+  classes: { title: string; headerWrapper: string; fab: string; searchIcon: string; searchBar: string; tab: string; tabPanel: string; active: string; activeContainer: string; };
+  customers: CustomerRecord[];
+  match: any;
 }
 
 function CustomerMain(props: CustomerMainProps) {
-  const { classes } = props;
-
-  const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
+  const { classes, match } = props;
   const [searchValue, setSearchValue] = useState<string>("");
+  const [value, setValue] = React.useState('0');
+  const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
+    setValue(newValue);
+  };
 
+  //default customer arrays
   const allCustomers = useSelector(selectAllCustomersArray) || [];
   const toMeterCustomers = useSelector(selectCustomersToMeter) || [];
   const toCollectCustomers = useSelector(selectCustomersToCollect) || [];
   const customersDone = useSelector(selectCustomersDone) || [];
-
   const defaultCustomers: CustomerMenu = {
-    all: allCustomers || [],
-    toMeter: toMeterCustomers || [],
-    toCollect: toCollectCustomers || [],
-    done: customersDone || [],
+    all: allCustomers,
+    toMeter: toMeterCustomers,
+    toCollect: toCollectCustomers,
+    done: customersDone,
   }
-  const [customers, setCustomers] = useState<CustomerMenu>(defaultCustomers);
 
-  //initial setup of trie
-  useEffect(() => {
-    const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
-    customersTrie.addAll(allCustomers);
-    setAllCustomersTrie(customersTrie);
-  }, [])
+  //customer states
+  const [customers, setCustomers] = useState<CustomerMenu>(defaultCustomers);
+  const allCustomersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
+  allCustomersTrie.addAll(allCustomers);
+
+  //default customer sets
+  const toMeterCustomersSet: Set<string> = new Set<string>(toMeterCustomers.map((customer: CustomerRecord) => customer.id));
+  const toCollectCustomersSet: Set<string> = new Set<string>(toCollectCustomers.map((customer: CustomerRecord) => customer.id));
 
   //updates after every character typed
   useEffect(() => {
@@ -86,12 +123,14 @@ function CustomerMain(props: CustomerMainProps) {
 
   const getCustomers = () => {
     if (searchValue !== '') {
-      const currentCustomers = allCustomersTrie.get(searchValue);
+      const searchedCustomersArray = allCustomersTrie.get(searchValue);
+      const searchedCustomers = new Set<string>(searchedCustomersArray.map((customer: CustomerRecord) => customer.id));
+
       const newCustomers: CustomerMenu = {
-        all: currentCustomers,
-        toMeter: customers.toMeter.filter((customer: CustomerRecord) => currentCustomers.includes(customer)),
-        toCollect: customers.toCollect.filter((customer: CustomerRecord) => currentCustomers.includes(customer)),
-        done: customers.done.filter((customer: CustomerRecord) => currentCustomers.includes(customer)),
+        all: searchedCustomersArray,
+        toMeter: customers.toMeter.filter((customer: CustomerRecord) => searchedCustomers.has(customer.id)),
+        toCollect: customers.toCollect.filter((customer: CustomerRecord) => searchedCustomers.has(customer.id)),
+        done: customers.done.filter((customer: CustomerRecord) => searchedCustomers.has(customer.id)),
       }
       setCustomers(newCustomers);
     } else {
@@ -104,14 +143,53 @@ function CustomerMain(props: CustomerMainProps) {
     setCustomers(defaultCustomers);
   }
 
+  const getCustomerStatus = (customer: CustomerRecord) => {
+    if (toMeterCustomersSet.has(customer.id)) {
+      return CustomerStatus.METER;
+    } else if (toCollectCustomersSet.has(customer.id)) {
+      return CustomerStatus.PAYMENT;
+    }
+    return undefined;
+  }
+
+  const getTabContent = (customers: CustomerRecord[], value: string) => (
+    <TabPanel className={classes.tabPanel} value={value}>
+      {customers.map((customer: CustomerRecord, index) => (
+        <Link key={index} to={`${match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)}>
+          <CustomerCard name={customer.name} meterNumber={customer.meterNumber} amount={customer.outstandingBalance} active={customer.isactive}
+          status={getCustomerStatus(customer)}/>
+        </Link>
+      ))}
+    </TabPanel>
+  );
+
   return (
     <BaseScreen rightIcon="user" title="Customers" searchAction={handleSearchChange} searchExit={exitSearch}>
-      <CustomersTabMenu customers={customers} url={props.match.url} />
-      <Link to={'/customers/create'}>
-        <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>
-          <AddIcon fontSize="large" />
-        </Fab>
-      </Link>
+      <BaseScrollView>
+        <TabContext value={value}>
+          <Tabs textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
+            <Tab className={classes.tab} label="All" value="0" />
+            <Tab className={classes.tab} label="Meter" value="1" />
+            <Tab className={classes.tab} label="Payment" value="2" />
+            <Tab className={classes.tab} label="Done" value="3" />
+          </Tabs>
+          <div className={classes.activeContainer}>
+            <div className={classes.active}></div>
+            <Typography>Status: Active</Typography>
+          </div>
+          <BaseScrollView>
+            {getTabContent(customers.all, "0")}
+            {getTabContent(customers.toMeter, "1")}
+            {getTabContent(customers.toCollect, "2")}
+            {getTabContent(customers.done, "3")}
+          </BaseScrollView>
+        </TabContext>
+        <Link to={'/customers/create'}>
+          <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>
+            <AddIcon fontSize="large" />
+          </Fab>
+        </Link>
+      </BaseScrollView>
     </BaseScreen>
   );
 }

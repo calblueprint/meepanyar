@@ -64,8 +64,8 @@ export interface HeaderProps {
   classes: any;
   match?: any;
   backAction?: () => void;
-  searchAction?: any;
-  searchExit?: any;
+  searchAction?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  searchExit?: () => void;
 }
 
 function BaseHeader(props: HeaderProps) {
@@ -132,8 +132,17 @@ function BaseHeader(props: HeaderProps) {
 
   const onSearchExit = () => {
     setSearchVisibility(false);
-    searchExit();
+    if (searchExit != undefined) {
+      searchExit();
+    }
   }
+
+  const getSearchBar = () => (
+    <div className={classes.searchBar} style={{display: searchVisibility ? 'block' : 'none' }}>
+      {/* typecasted searchAction to any because of type problems */}
+      <SearchBar placeholder="Search for a customer" onSearchChange={searchAction as any} onSearchExit={onSearchExit} />
+    </div>
+  );
 
   return (
     <div className={classes.root} style={{ marginTop: props.searchAction ? '20px' : undefined }}>
@@ -146,9 +155,7 @@ function BaseHeader(props: HeaderProps) {
         </div>
         {profileMenu}
       </div>
-      <div className={classes.searchBar} style={{display: searchVisibility ? 'block' : 'none' }}>
-        <SearchBar placeholder="Search for a customer" onSearchChange={searchAction} onSearchExit={onSearchExit} />
-      </div>
+      {searchAction ? getSearchBar() : null}
     </div>
   );
 }

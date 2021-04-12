@@ -8,9 +8,6 @@ import BaseScrollView from '../../../components/BaseComponents/BaseScrollView';
 
 const styles = (theme: Theme) =>
   createStyles({
-    tabs: {
-      background: 'white',
-    },
     tab: {
       color: `${theme.palette.divider}`,
       fontSize: '12px',
@@ -25,7 +22,7 @@ const styles = (theme: Theme) =>
   });
 
 interface RecordsTabMenuProps {
-  classes: { tabs: string; tab: string; tabPanel: string };
+  classes: { tab: string; tabPanel: string };
   invoices: MeterReadingRecord[];
   payments: PaymentRecord[];
 }
@@ -39,7 +36,7 @@ function RecordsTabMenu(props: RecordsTabMenuProps) {
 
   return (
     <TabContext value={value}>
-      <Tabs className={classes.tabs} textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
+      <Tabs textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
         <Tab className={classes.tab} label="Invoices" value="0" />
         <Tab className={classes.tab} label="Payment" value="1" />
       </Tabs>
