@@ -8,11 +8,11 @@ import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CreateIcon from '@material-ui/icons/Create';
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { logoutUser } from '../../lib/airlock/airlock';
-import { RootState } from '../../lib/redux/store';
+import { selectCurrentUser } from '../../lib/redux/userData';
 import SearchBar from '../../components/SearchBar';
+import { useSelector } from 'react-redux';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -71,9 +71,12 @@ export interface HeaderProps {
 }
 
 function BaseHeader(props: HeaderProps) {
-  const { leftIcon, title, rightIcon, classes, match, name, email, backAction, searchAction, searchExit } = props;
+  const { leftIcon, title, rightIcon, classes, match, backAction, searchAction, searchExit } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [searchVisibility, setSearchVisibility] = useState(false);
+  const currentUser = useSelector(selectCurrentUser);
+  const name = currentUser?.name || '';
+  const email = currentUser?.email || '';
 
   const history = useHistory();
   const backActionDefault = history.goBack;
@@ -152,9 +155,4 @@ function BaseHeader(props: HeaderProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  name: state.userData.user?.fields.Name || '',
-  email: state.userData.user?.fields.Email || '',
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(BaseHeader));
+export default withStyles(styles)(BaseHeader);
