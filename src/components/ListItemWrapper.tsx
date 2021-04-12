@@ -1,13 +1,17 @@
 import { useHistory } from 'react-router-dom'
 import { createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
-import { ListItem, ListItemText, ListItemSecondaryAction, IconButton, makeStyles } from '@material-ui/core';
+import { ListItem, ListItemText, ListItemSecondaryAction, IconButton, makeStyles, InputBase } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 interface ListItemWrapperProps {
   leftText: string;
-  rightText?: string
+  rightText?: string;
   linkTo?: string;
+  editable?: boolean;
+  onEditChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
+  editInputId?: string;
+  editValue?: string;
   dense?: boolean;
   divider?: boolean;
 }
@@ -18,13 +22,16 @@ const styles = makeStyles((theme: Theme) =>
       paddingRight: 0
     },
     rightTextStyles: {
+      color: theme.palette.text.disabled
+    },
+    inputStyles: {
       textAlign: 'right',
       color: theme.palette.text.disabled
     }
   }));
 
 const ListItemWrapper = (props: ListItemWrapperProps) => {
-  const { linkTo, leftText, rightText, ...listItemProps } = props;
+  const { linkTo, leftText, rightText, editable, editValue, onEditChange, editInputId, ...listItemProps } = props;
   const classes = styles(props);
 
   const history = useHistory();
@@ -43,7 +50,15 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
   const getRightText = () =>
   (<ListItemText
     className={classes.rightTextStyles}
-    primary={rightText}
+    primaryTypographyProps={{ align: 'right' }}
+    primary={editable ?
+      <InputBase
+        id={editInputId}
+        value={editValue}
+        margin={props.dense ? 'dense' : undefined}
+        onChange={onEditChange}
+        classes={{ input: classes.inputStyles }} />
+      : rightText}
   />)
 
   return (
@@ -51,9 +66,9 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
     <ListItem disableGutters button={(linkTo !== undefined) as any} onClick={navigateToLink} {...listItemProps} >
       <ListItemText
         primary={leftText}
-        primaryTypographyProps={{ color: 'textPrimary' }}
+        primaryTypographyProps={{ color: 'textPrimary', variant: 'body1' }}
       />
-      {rightText ? getRightText() : null}
+      {rightText || editable ? getRightText() : null}
       {linkTo ? getForwardIcon() : null}
     </ListItem>)
 }
