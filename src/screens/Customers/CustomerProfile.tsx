@@ -3,7 +3,6 @@ import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
-import ListAltOutlinedIcon from '@material-ui/icons/ListAltOutlined';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
@@ -12,7 +11,6 @@ import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardLi
 import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
-import MeterInfoContainer from './components/MeterInfoContainer';
 import { RootState } from '../../lib/redux/store';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
@@ -37,13 +35,17 @@ const styles = (theme: Theme) =>
       marginRight: '5px',
       backgroundColor: theme.palette.primary.main,
     },
-    section: {
-      marginTop: '10px',
+    meterInfoGrid: {
+      display: 'flex',
+    },
+    meterInfoCol: {
+      width: '50%',
+      padding: '5px',
     },
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; section: string; headerWrapper: string; buttonPrimary: string; };
+  classes: { content: string; headerWrapper: string; buttonPrimary: string; meterInfoGrid: string; meterInfoCol: string; };
   customer: CustomerRecord;
   location: any;
 }
@@ -92,18 +94,17 @@ function CustomerProfile(props: CustomerProps) {
   const getAddButton = (path: string) => {
     //TODO: separate into base component @wangannie
     return (
-      <div className={classes.buttonPrimary}>
-        <IconButton
-          component={Link}
-          to={{
-            pathname: `${match.url}${path}`,
-            state: { invoices: meterReadings, payments: payments },
-          }}
-          size="small"
-        >
-          <AddIcon style={{ color: 'white' }} />
-        </IconButton>
-      </div>
+      <IconButton
+        component={Link}
+        to={{
+          pathname: `${match.url}/${path}`,
+          state: { invoices: meterReadings, payments: payments },
+        }}
+        size="small"
+        className={classes.buttonPrimary}
+      >
+        <AddIcon style={{ color: 'white' }} />
+      </IconButton>
     );
   };
 
@@ -111,41 +112,26 @@ function CustomerProfile(props: CustomerProps) {
     if (customer.meterType === MeterType.INACTIVE) {
       balanceInfo = [{ number: UNDEFINED_AMOUNT, label: 'Remaining Balance', unit: '' }];
       return (
-        <OutlinedCardList info={balanceInfo} primary={false} grayBackground grayText />
+        <OutlinedCardList info={balanceInfo} primary={false} readOnly />
       );
     } else {
       return (
-        <OutlinedCardList info={balanceInfo} primary rightIcon={getAddButton('/meter-readings/create')} />
+        <OutlinedCardList info={balanceInfo} primary rightIcon={getAddButton('meter-readings/create')} />
       );
     }
   }
 
   const getReadingInfo = () => {
-    let meterRightIcon, meterGrayBackground, meterGrayText;
-    let topLeftGrayBackground, topRightGrayBackground, bottomRightGrayBackground, bottomLeftGrayBackground;
-    let topLeftGrayText, topRightGrayText, bottomRightGrayText, bottomLeftGrayText;
+    let meterReadOnly = true;
+    let topLeftReadOnly = true;
+    let topRightReadOnly = true;
+    let bottomRightReadOnly = true;
+    let bottomLeftReadOnly = true;
 
     if (customer.meterType === MeterType.ANALOG_METER) {
-      meterRightIcon = true;
-      topRightGrayBackground = true;
-      bottomRightGrayBackground = true;
-      bottomLeftGrayBackground = true;
-    } else if (customer.meterType === MeterType.SMART_METER) {
-      meterGrayBackground = true;
-      topLeftGrayBackground = true;
-      topRightGrayBackground = true;
-      bottomRightGrayBackground = true;
-      bottomLeftGrayBackground = true;
+      meterReadOnly = false;
+      topLeftReadOnly = false;
     } else if (customer.meterType === MeterType.NO_METER) {
-      meterGrayText = true;
-      meterGrayBackground = true;
-      topLeftGrayBackground = true;
-      topRightGrayBackground = true;
-      bottomRightGrayBackground = true;
-      bottomLeftGrayBackground = true;
-      topLeftGrayText = true;
-      topRightGrayText = true;
-      bottomRightGrayText = true;
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
@@ -153,17 +139,7 @@ function CustomerProfile(props: CustomerProps) {
         { number: UNDEFINED_AMOUNT, label: 'Ending Meter', unit: '' },
         { number: UNDEFINED_AMOUNT, label: 'Amount Billed', unit: '' },
       ];
-    } else {
-      meterGrayText = true;
-      meterGrayBackground = true;
-      topLeftGrayBackground = true;
-      topRightGrayBackground = true;
-      bottomRightGrayBackground = true;
-      bottomLeftGrayBackground = true;
-      topLeftGrayText = true;
-      topRightGrayText = true;
-      bottomRightGrayText = true;
-      bottomLeftGrayText = true;
+    } else if (customer.meterType === MeterType.INACTIVE) {
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
@@ -178,61 +154,62 @@ function CustomerProfile(props: CustomerProps) {
         <OutlinedCardList
           info={readingInfo}
           primary={false}
-          rightIcon={meterRightIcon ? getAddButton('/meter-readings/create') : undefined}
-          grayBackground={meterGrayBackground} grayText={meterGrayText}
+          rightIcon={meterReadOnly ? undefined : getAddButton('meter-readings/create')}
+          readOnly={meterReadOnly}
         />
-        <div className={classes.section}>
-          { /* Top Left */ }
-          <MeterInfoContainer
-            floatRight={false}
-            info={meterInfo[0]}
-            grayBackground={topLeftGrayBackground}
-            grayText={topLeftGrayText}
-          />
-          { /* Top Right */ }
-          <MeterInfoContainer
-            floatRight
-            info={meterInfo[2]}
-            grayBackground={topRightGrayBackground}
-            grayText={topRightGrayText}
-          />
-          { /* Bottom Right */ }
-          <MeterInfoContainer
-            floatRight
-            info={meterInfo[3]}
-            grayBackground={bottomRightGrayBackground}
-            grayText={bottomRightGrayText}
-          />
-          { /* Bottom Left */ }
-          <MeterInfoContainer
-            floatRight={false}
-            info={meterInfo[1]}
-            grayBackground={bottomLeftGrayBackground}
-            grayText={bottomLeftGrayText}
-          />
+        <div className={classes.meterInfoGrid}>
+          <div className={classes.meterInfoCol}>
+            { /* Top Left */ }
+            <OutlinedCardList
+              info={[meterInfo[0]]}
+              primary={false}
+              readOnly={topLeftReadOnly}
+              /* TODO: add valid link */
+              editPath={topLeftReadOnly ? undefined : `${match.url}`}
+            />
+            { /* Bottom Left */ }
+            <OutlinedCardList
+              info={[meterInfo[1]]}
+              primary={false}
+              readOnly={bottomLeftReadOnly}
+            />
+          </div>
+          <div className={classes.meterInfoCol}>
+            { /* Top Right */ }
+            <OutlinedCardList
+              info={[meterInfo[2]]}
+              primary={false}
+              readOnly={topRightReadOnly}
+            />
+            { /* Bottom Right */ }
+            <OutlinedCardList
+              info={[meterInfo[3]]}
+              primary={false}
+              readOnly={bottomRightReadOnly}
+            />
+          </div>
         </div>
       </div>
     );
   }
 
   const getTariffInfo = () => {
-    console.log(customer.meterType);
-    let tariffInfoGray;
+    let tariffReadOnly;
     if (customer.meterType === MeterType.INACTIVE) {
       tariffInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Fixed\nTariff', unit: '' },
         { number: UNDEFINED_AMOUNT, label: 'Unit\nTariff', unit: '' },
         { number: UNDEFINED_AMOUNT, label: 'Free\nUnits', unit: '' }
       ];
-      tariffInfoGray = true;
+      tariffReadOnly = true;
     }
     return (
-      <OutlinedCardList info={tariffInfo} primary={false} columns grayBackground={tariffInfoGray} grayText={tariffInfoGray} reverse />
+      <OutlinedCardList info={tariffInfo} primary={false} columns readOnly={tariffReadOnly} reverse />
     );
   }
 
   return (
-    <BaseScreen leftIcon="backNav" title={`${customer.meterNumber}, ${customer.name}`} rightIcon="edit" match={match}>
+    <BaseScreen leftIcon="backNav" title={`${customer.customerNumber}, ${customer.name}`} rightIcon="edit" match={match}>
       <BaseScrollView>
         <div className={classes.content}>
           {getTariffInfo()}

@@ -75,6 +75,7 @@ export interface CustomerRecord {
   totalAmountPaidfromPayments: number;
   meterType: MeterType;
   startingMeterReading: number;
+  customerNumber: number;
 }
 
 export interface CustomerUpdateRecord {
