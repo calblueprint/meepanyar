@@ -16,9 +16,9 @@ function UserProfile() {
   return (
     <BaseScreen title="My Information" leftIcon="backNav">
       <List>
-        <ListItemWrapper leftText={'Name'} rightText={user?.fields.Name} dense />
-        <ListItemWrapper leftText={'Email'} rightText={user?.fields.Email} dense />
-        <ListItemWrapper leftText={'Admin?'} rightText={user?.fields.Admin ? 'Yes' : 'No'} dense />
+        <ListItemWrapper leftText={'Name'} rightText={user.name} dense />
+        <ListItemWrapper leftText={'Email'} rightText={user.email} dense />
+        <ListItemWrapper leftText={'Admin?'} rightText={user.admin ? 'Yes' : 'No'} dense />
       </List>
     </BaseScreen>
   );

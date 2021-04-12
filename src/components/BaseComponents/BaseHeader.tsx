@@ -5,9 +5,9 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CreateIcon from '@material-ui/icons/Create';
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { RootState } from '../../lib/redux/store';
+
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -45,13 +45,11 @@ export interface HeaderProps {
   rightIcon?: string;
   classes: any;
   match?: any;
-  name?: string;
-  email?: string;
   backAction?: () => void;
 }
 
 function BaseHeader(props: HeaderProps) {
-  const { leftIcon, title, rightIcon, classes, match, name, email, backAction } = props;
+  const { leftIcon, title, rightIcon, classes, match, backAction } = props;
 
   const history = useHistory();
   const backActionDefault = history.goBack;
@@ -98,9 +96,4 @@ function BaseHeader(props: HeaderProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  name: state.userData.user?.fields.Name || '',
-  email: state.userData.user?.fields.Email || '',
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(BaseHeader));
+export default withStyles(styles)(BaseHeader);
