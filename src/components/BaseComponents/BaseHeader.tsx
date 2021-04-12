@@ -1,16 +1,19 @@
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
 import MenuItem from '@material-ui/core/MenuItem';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CreateIcon from '@material-ui/icons/Create';
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { logoutUser } from '../../lib/airlock/airlock';
-import { selectCurrentUser } from '../../lib/redux/userData';
+import { RootState } from '../../lib/redux/store';
+import SearchBar from '../../components/SearchBar';
+
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -36,9 +39,21 @@ const styles = (theme: Theme) =>
       float: 'right',
     },
     account: {
-      color: theme.palette.divider,
+      color: theme.palette.primary.main,
       fontSize: '30px',
       padding: 0,
+    },
+    searchBar: {
+      position: 'absolute',
+      width: '100%',
+      padding: '20px',
+      backgroundColor: 'white',
+    },
+    leftTitle: {
+      float: 'left',
+      padding: '0px 25px',
+      fontSize: '30px',
+      color: theme.palette.text.primary,
     },
   });
 
@@ -48,16 +63,17 @@ export interface HeaderProps {
   rightIcon?: string;
   classes: any;
   match?: any;
+  name?: string;
+  email?: string;
   backAction?: () => void;
+  searchAction?: any;
+  searchExit?: any;
 }
 
 function BaseHeader(props: HeaderProps) {
-  const { leftIcon, title, rightIcon, classes, match, backAction } = props;
-  const currentUser = useSelector(selectCurrentUser);
-  const name = currentUser?.name || '';
-  const email = currentUser?.email || '';
-
+  const { leftIcon, title, rightIcon, classes, match, name, email, backAction, searchAction, searchExit } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [searchVisibility, setSearchVisibility] = useState(false);
 
   const history = useHistory();
   const backActionDefault = history.goBack;
@@ -78,11 +94,10 @@ function BaseHeader(props: HeaderProps) {
     );
   };
 
-
   const openProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const closeProfileMenu = () => {
     setAnchorEl(null);
   };
@@ -103,27 +118,43 @@ function BaseHeader(props: HeaderProps) {
   const icons: { [key: string]: JSX.Element } = {
     backNav: getIcon(backAction || backActionDefault, <ArrowBackIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />, true),
-    user: getIcon(openProfileMenu, <AccountCircleIcon className={classes.account} fontSize="large" />),
+    user: getIcon(openProfileMenu, <MenuIcon className={classes.account} fontSize="large" />),
   };
 
   const left = leftIcon ? icons[leftIcon] : null;
   const header = title ? (
-    <Typography className={classes.title} variant="h2">
+    <Typography className={searchAction ? classes.leftTitle : classes.title} variant="h2">
       {title}
     </Typography>
   ) : null;
   const right = rightIcon ? icons[rightIcon] : null;
 
+  const onSearchExit = () => {
+    setSearchVisibility(false);
+    searchExit();
+  }
+
   return (
-    <div className={classes.root}>
+    <div className={classes.root} style={{ marginTop: props.searchAction ? '20px' : undefined }}>
       {header}
       <div className={classes.toolbar}>
         <div className={classes.left}>{left}</div>
-        <div className={classes.right}>{right}</div>
+        <div className={classes.right}>
+          {props.searchAction ? getIcon(() => setSearchVisibility(true), <SearchIcon className={classes.search} />) : null}
+          {right}
+        </div>
         {profileMenu}
+      </div>
+      <div className={classes.searchBar} style={{display: searchVisibility ? 'block' : 'none' }}>
+        <SearchBar placeholder="Search for a customer" onSearchChange={searchAction} onSearchExit={onSearchExit} />
       </div>
     </div>
   );
 }
 
-export default withStyles(styles)(BaseHeader);
+const mapStateToProps = (state: RootState) => ({
+  name: state.userData.user?.fields.Name || '',
+  email: state.userData.user?.fields.Email || '',
+});
+
+export default connect(mapStateToProps)(withStyles(styles)(BaseHeader));
