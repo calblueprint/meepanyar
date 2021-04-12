@@ -1,13 +1,13 @@
 // This file contains the overarching function that pulls data from the backend 
 // and places the payload contents into different redux store slices
 
-import { store } from './store';
-import { getAllSites } from '../airtable/request';
 import { SiteRecord } from '../airtable/interface';
-import { saveSiteData, setLoadingForSiteData } from './siteDataSlice';
-import { MeterReadingRecord } from '../airtable/interface';
-import { refreshInventoryData } from './inventoryData'
+import { getAllSites } from '../airtable/request';
 import { refreshCustomerData } from './customerData';
+import { refreshInventoryData } from './inventoryData';
+import { saveSiteData, setLoadingForSiteData } from './siteDataSlice';
+import { store } from './store';
+import { refreshSiteUsersData } from './userData';
 
 const refreshData = async (loadSilently: boolean): Promise<void> => {
 
@@ -30,6 +30,7 @@ const refreshData = async (loadSilently: boolean): Promise<void> => {
 
     extractCustomerDataFromSite(sites);
     extractInventoryDataFromSite(sites);
+    extractUserDataFromSite(sites);
 
     store.dispatch(saveSiteData(siteData));
 };
@@ -54,6 +55,15 @@ const extractCustomerDataFromSite = (sites: SiteRecord[]) => {
         delete site.customers;
         delete site.payments;
         delete site.meterReadings;
+    })
+}
+
+const extractUserDataFromSite = (sites: SiteRecord[]) => {
+    sites.map((site: SiteRecord) => {
+        refreshSiteUsersData(site);
+        // We delete users here so that there is no duplicate data
+        // between the siteDataSlice and userDataSlice
+        delete site.users;
     })
 }
 

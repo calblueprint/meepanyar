@@ -1,5 +1,5 @@
 diff --git a/src/lib/airtable/schema.js b/src/lib/airtable/schema.js
-index 50a2df4..90a5d60 100644
+index dff026e..1f9fa3d 100644
 --- a/src/lib/airtable/schema.js
 +++ b/src/lib/airtable/schema.js
 @@ -27,7 +27,7 @@ export const Columns = {
@@ -11,12 +11,13 @@ index 50a2df4..90a5d60 100644
  		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
  		id: {name:`ID`, type:`formula`},
  		purchaseRequestsCreatedIds: {name:`Purchase Requests Created`, type:`foreignKey-many`},
-@@ -37,10 +37,21 @@ export const Columns = {
+@@ -37,10 +37,22 @@ export const Columns = {
  		admin: {name:`Admin`, type:`checkbox`},
  	},
  	"Sites": {
 +		// Custom objects added to the top of sites object to reduce
 +		// likelihood of patch conflicts when new columns are added
++		users: {name: `SiteUsers`, type: `custom-object`},
 +		products: {name: `Products`, type: `custom-object`},
 +		inventory: {name: `SiteInventory`, type: `custom-object`},
 +		purchaseRequests: {name: `PurchaseRequests`, type: `custom-object`},

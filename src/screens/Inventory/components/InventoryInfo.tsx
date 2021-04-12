@@ -9,7 +9,7 @@ import { RootState } from '../../../lib/redux/store';
 const styles = (theme: Theme) =>
   createStyles({
     content: {
-      backgroundColor: theme.palette.secondary.main,
+      backgroundColor: theme.palette.primary.light,
       borderRadius: '6px',
       padding: '20px',
       display: 'flex',

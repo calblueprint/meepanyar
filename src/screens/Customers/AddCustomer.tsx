@@ -1,8 +1,8 @@
 import { createStyles, FormControl, InputLabel, MenuItem, Select, Theme } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
@@ -10,9 +10,9 @@ import TextField from '../../components/TextField';
 import { SiteRecord } from '../../lib/airtable/interface';
 import { createCustomer } from '../../lib/airtable/request';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
-import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { RootState } from '../../lib/redux/store';
+import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
+import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -32,7 +32,7 @@ interface AddCustomerProps extends RouteComponentProps {
 
 
 function AddCustomer(props: AddCustomerProps) {
-  const { classes, currentSite } = props;
+  const { classes } = props;
   const history = useHistory();
 
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState("");
@@ -41,6 +41,12 @@ function AddCustomer(props: AddCustomerProps) {
   // TODO: @julianrkung Look into constraints on meter number input.
   const [meterNumber, setMeterNumber] = useState("");
   const [customerInactive, setCustomerInactive] = useState(false);
+  const currentSite = useSelector(selectCurrentSiteInformation);
+  const tariffPlans = useSelector(selectAllTariffPlansArray);
+
+  if (!currentSite) {
+    return <Redirect to={'/customers'} />
+  }
 
   const handleSelectTariffPlan = (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectedTariffPlanId(event.target.value as string);
@@ -76,12 +82,10 @@ function AddCustomer(props: AddCustomerProps) {
     setMeterNumber(event.target.value as string);
   }
 
-  const tariffPlans = currentSite.tariffPlans;
-
   return (
     <BaseScreen title="Add New Customer" leftIcon="backNav">
       <form noValidate className={classes.content} onSubmit={() => false}>
-        <TextField label={'Name'} id={'name'} primary={true} onChange={handleNameInput} />
+        <TextField label={'Name'} id={'name'} onChange={handleNameInput} />
         <FormControl variant="outlined" className={classes.formControl}>
           <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
           <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId="select-tariff-plan-label" onChange={handleSelectTariffPlan}>
@@ -98,8 +102,4 @@ function AddCustomer(props: AddCustomerProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  currentSite: state.siteData.currentSite || EMPTY_SITE
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(AddCustomer));
+export default withStyles(styles)(AddCustomer);

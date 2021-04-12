@@ -1,11 +1,13 @@
 import { StylesProvider, ThemeProvider } from '@material-ui/core/styles';
 import { ConnectedRouter } from 'connected-react-router';
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import AuthenticatedRoute from './components/authentication/AuthenticatedRoute';
 import BaseNavigation from './components/BaseComponents/BaseNavigation';
-import { history, RootState } from './lib/redux/store';
+import { history } from './lib/redux/store';
+import { selectCurrentUserIsSignedIn } from './lib/redux/userData';
+import BaseComponentsDemo from './screens/BaseComponentsDemo';
 import Camera from './screens/Camera/Camera';
 import CameraPreview from './screens/Camera/CameraPreview';
 import AddCustomer from './screens/Customers/AddCustomer';
@@ -32,14 +34,8 @@ import Maintenance from './screens/Maintenance';
 import { theme } from './styles/ThemeStyles';
 
 
-
-
-
-interface AppProps {
-  isSignedIn: boolean;
-}
-
-function App(isSignedIn: AppProps) {
+function App() {
+  const isSignedIn = useSelector(selectCurrentUserIsSignedIn);
   const homeRedirect = isSignedIn ? '/home' : '/login';
 
   const Container = () => (
@@ -72,6 +68,7 @@ function App(isSignedIn: AppProps) {
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 
       <AuthenticatedRoute path="/financial-summary" component={FinancialSummary} exact />
+      <AuthenticatedRoute path="/base-components" component={BaseComponentsDemo} exact />
       <BaseNavigation />
     </>
   );
@@ -97,8 +94,5 @@ function App(isSignedIn: AppProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  isSignedIn: state.userData.user !== null,
-});
 
-export default connect(mapStateToProps)(App);
+export default App;
