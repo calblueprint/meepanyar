@@ -187,31 +187,29 @@ function CustomerMain(props: CustomerMainProps) {
 
   return (
     <BaseScreen rightIcon="user" title="Customers" searchAction={handleSearchChange} searchExit={exitSearch}>
-      <BaseScrollView>
-        <TabContext value={value}>
-          <Tabs textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
-            <Tab className={classes.tab} label="All" value="0" />
-            <Tab className={classes.tab} label={getMeterTabLabel()} value="1" />
-            <Tab className={classes.tab} label={getPaymentTabLabel()} value="2" />
-            <Tab className={classes.tab} label="Done" value="3" />
-          </Tabs>
-          <div className={classes.activeContainer}>
-            <div className={classes.active}></div>
-            <Typography>Status: Active</Typography>
-          </div>
-          <BaseScrollView>
-            {getTabContent(customers.all, "0")}
-            {getTabContent(customers.toMeter, "1")}
-            {getTabContent(customers.toCollect, "2")}
-            {getTabContent(customers.done, "3")}
-          </BaseScrollView>
-        </TabContext>
-        <Link to={'/customers/create'}>
-          <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>
-            <AddIcon fontSize="large" />
-          </Fab>
-        </Link>
-      </BaseScrollView>
+      <TabContext value={value}>
+        <Tabs textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
+          <Tab className={classes.tab} label="All" value="0" />
+          <Tab className={classes.tab} label={getMeterTabLabel()} value="1" />
+          <Tab className={classes.tab} label={getPaymentTabLabel()} value="2" />
+          <Tab className={classes.tab} label="Done" value="3" />
+        </Tabs>
+        <div className={classes.activeContainer}>
+          <div className={classes.active}></div>
+          <Typography>Status: Active</Typography>
+        </div>
+        <BaseScrollView>
+          {getTabContent(customers.all, "0")}
+          {getTabContent(customers.toMeter, "1")}
+          {getTabContent(customers.toCollect, "2")}
+          {getTabContent(customers.done, "3")}
+        </BaseScrollView>
+      </TabContext>
+      <Link to={'/customers/create'}>
+        <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>
+          <AddIcon fontSize="large" />
+        </Fab>
+      </Link>
     </BaseScreen>
   );
 }
