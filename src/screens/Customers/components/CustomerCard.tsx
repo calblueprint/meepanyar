@@ -65,9 +65,8 @@ const styles = (theme: Theme) =>
       borderRadius: '8px',
       color: 'white',
       padding: '5px',
-      width: '30px',
-      height: '30px',
       backgroundColor: theme.palette.primary.main,
+      fontSize: '30px',
     },
   });
 
@@ -93,9 +92,9 @@ function CustomerCard(props: CardProps) {
 
   const getStatusIcon = () => {
     if (props.status === CustomerStatus.METER) {
-      return ( <FlashOnIcon className={classes.icon} /> );
+      return ( <FlashOnIcon className={classes.icon} fontSize='inherit' /> );
     } else if (props.status === CustomerStatus.PAYMENT) {
-      return ( <AttachMoneyIcon className={classes.icon} /> );
+      return ( <AttachMoneyIcon className={classes.icon} fontSize='inherit' /> );
     }
   }
 

@@ -13,6 +13,8 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import CustomerCard, { CustomerStatus } from './components/CustomerCard';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import FlashOnIcon from '@material-ui/icons/FlashOn';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -67,6 +69,12 @@ const styles = (theme: Theme) =>
       display: 'inline-flex',
       alignItems: 'center',
     },
+    tabIcon: {
+      fontSize: '15px',
+    },
+    tabLabel: {
+      display: 'inline-flex',
+    },
   });
 
 interface CustomerMenu {
@@ -77,7 +85,7 @@ interface CustomerMenu {
 }
 
 interface CustomerMainProps extends RouteComponentProps {
-  classes: { title: string; headerWrapper: string; fab: string; searchIcon: string; searchBar: string; tab: string; tabPanel: string; active: string; activeContainer: string; };
+  classes: { title: string; headerWrapper: string; fab: string; searchIcon: string; searchBar: string; tab: string; tabPanel: string; active: string; activeContainer: string; tabIcon: string; tabLabel: string; };
   customers: CustomerRecord[];
   match: any;
 }
@@ -163,14 +171,28 @@ function CustomerMain(props: CustomerMainProps) {
     </TabPanel>
   );
 
+  const getMeterTabLabel = () => (
+    <div>
+      <FlashOnIcon fontSize='inherit' className={classes.tabIcon} />
+      <Typography className={classes.tabLabel}>Meter</Typography>
+    </div>
+  );
+
+  const getPaymentTabLabel = () => (
+    <div>
+      <AttachMoneyIcon fontSize='inherit' className={classes.tabIcon} />
+      <Typography className={classes.tabLabel}>Payment</Typography>
+    </div>
+  );
+
   return (
     <BaseScreen rightIcon="user" title="Customers" searchAction={handleSearchChange} searchExit={exitSearch}>
       <BaseScrollView>
         <TabContext value={value}>
           <Tabs textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
             <Tab className={classes.tab} label="All" value="0" />
-            <Tab className={classes.tab} label="Meter" value="1" />
-            <Tab className={classes.tab} label="Payment" value="2" />
+            <Tab className={classes.tab} label={getMeterTabLabel()} value="1" />
+            <Tab className={classes.tab} label={getPaymentTabLabel()} value="2" />
             <Tab className={classes.tab} label="Done" value="3" />
           </Tabs>
           <div className={classes.activeContainer}>
