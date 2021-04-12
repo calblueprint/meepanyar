@@ -124,9 +124,6 @@ function CustomerProfile(props: CustomerProps) {
   const getReadingInfo = () => {
     let meterReadOnly = true;
     let topLeftReadOnly = true;
-    let topRightReadOnly = true;
-    let bottomRightReadOnly = true;
-    let bottomLeftReadOnly = true;
 
     if (customer.meterType === MeterType.ANALOG_METER) {
       meterReadOnly = false;
@@ -171,7 +168,7 @@ function CustomerProfile(props: CustomerProps) {
             <OutlinedCardList
               info={[meterInfo[1]]}
               primary={false}
-              readOnly={bottomLeftReadOnly}
+              readOnly
             />
           </div>
           <div className={classes.meterInfoCol}>
@@ -179,13 +176,13 @@ function CustomerProfile(props: CustomerProps) {
             <OutlinedCardList
               info={[meterInfo[2]]}
               primary={false}
-              readOnly={topRightReadOnly}
+              readOnly
             />
             { /* Bottom Right */ }
             <OutlinedCardList
               info={[meterInfo[3]]}
               primary={false}
-              readOnly={bottomRightReadOnly}
+              readOnly
             />
           </div>
         </div>

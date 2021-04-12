@@ -70,11 +70,11 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function OutlinedCardList(props: CardProps): JSX.Element {
   const classes = useStyles(props);
 
-  const getEditButton = (path: string) => {
+  const getEditButton = (pathname: string) => {
     return (
       <IconButton
         component={Link}
-        to={{ pathname: path }}
+        to={{ pathname }}
         size="small"
         className={classes.editButton}
       >
