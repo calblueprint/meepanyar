@@ -25,6 +25,7 @@ import ProfileMain from './screens/Profile/ProfileMain';
 import UserProfile from './screens/Profile/UserProfile';
 import SiteProfileMain from './screens/Profile/SiteProfileMain';
 import SiteNameEdit from './screens/Profile/SiteNameEdit';
+import TariffPlans from './screens/Profile/TariffPlans';
 import AddInventory from './screens/Inventory/AddInventory';
 import CreateInventoryUpdate from './screens/Inventory/CreateInventoryUpdate';
 import CreatePurchaseRequest from './screens/Inventory/CreatePurchaseRequest';
@@ -48,6 +49,7 @@ function App() {
       <AuthenticatedRoute path="/profile/user" component={UserProfile} exact />
       <AuthenticatedRoute path="/profile/site" component={SiteProfileMain} exact />
       <AuthenticatedRoute path="/profile/site/name" component={SiteNameEdit} exact />
+      <AuthenticatedRoute path="/profile/site/tariff-plans" component={TariffPlans} exact />
       <AuthenticatedRoute path="/customers" component={CustomerMain} exact />
       <AuthenticatedRoute path="/customers/create" component={AddCustomer} exact />
       <AuthenticatedRoute path={'/customers/customer'} component={CustomerProfile} exact />
