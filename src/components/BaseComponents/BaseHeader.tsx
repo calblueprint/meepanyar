@@ -63,8 +63,6 @@ export interface HeaderProps {
   rightIcon?: string;
   classes: any;
   match?: any;
-  name?: string;
-  email?: string;
   backAction?: () => void;
   searchAction?: any;
   searchExit?: any;

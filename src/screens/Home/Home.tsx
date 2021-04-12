@@ -1,6 +1,5 @@
 import React from 'react';
-import { connect, useSelector } from 'react-redux';
-import { RootState } from '../../lib/redux/store';
+import { useSelector } from 'react-redux';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
@@ -15,6 +14,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
 import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
 
 const styles = () =>
   createStyles({
@@ -32,17 +32,16 @@ const styles = () =>
 
 interface HomeProps {
   classes: { header: string; network: string };
-  lastUpdated: string;
-  isOnline: boolean;
-  currentSite: SiteRecord;
 }
 
 function Home(props: HomeProps) {
-  const { classes, lastUpdated, isOnline } = props;
+  const { classes } = props;
   const numCustomersToMeter = useSelector(selectCustomersToMeter)?.length || 0;
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
   const allSites: SiteRecord[] = useSelector(selectAllSitesInformation) || [];
   const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation) || EMPTY_SITE;
+  const isOnline = useSelector(selectIsOnline);
+  const lastUpdated = formatDateStringToLocal(useSelector(selectLastUpdated));
 
   return (
     <BaseScreen rightIcon="user">
@@ -78,15 +77,5 @@ function Home(props: HomeProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => {
-  let lastUpdated = '';
 
-  if (state.userData.lastUpdated) {
-    lastUpdated = formatDateStringToLocal(state.userData.lastUpdated);
-  }
-  const isOnline = state.userData.isOnline;
-
-  return { lastUpdated, isOnline };
-};
-
-export default connect(mapStateToProps)(withStyles(styles)(Home));
+export default withStyles(styles)(Home);
