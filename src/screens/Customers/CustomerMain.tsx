@@ -54,8 +54,7 @@ const styles = (theme: Theme) =>
       },
     },
     tabPanel: {
-      height: '100%',
-      padding: '10px 0 0',
+      padding: '10px 0 20px',
     },
     active: {
       height: '7px',
