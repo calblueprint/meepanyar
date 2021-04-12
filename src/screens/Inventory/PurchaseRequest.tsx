@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import CameraButton from '../../components/CameraButton';
 import TextField from '../../components/TextField';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { selectProductByInventoryId } from '../../lib/redux/inventoryData';
@@ -80,10 +81,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
     <BaseScreen title="Inventory Receipt" leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.headerContainer}>
-          <InventoryInfo
-            productId={product.id}
-            lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)}
-          />
+          <InventoryInfo productId={product.id} lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)} />
           <div className={classes.reviewButtonsContainer}>
             {userIsAdmin && purchaseRequest.status == PurchaseRequestStatus.PENDING
               ? getPurchaseRequestReviewButtons(
@@ -102,10 +100,14 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
         />
         <TextField label={'Amount Spent'} currency disabled id={'amount-spent'} value={purchaseRequest.amountSpent} />
         <TextField label={'Notes'} disabled id={'notes'} value={purchaseRequest.notes || 'None'} />
-        {/* TODO: lookup user name by id */}
-        <TextField label={'Submitted By'} disabled id={'submitted-by'} value={requester?.name || purchaseRequest.requesterId} />
+        <TextField
+          label={'Submitted By'}
+          disabled
+          id={'submitted-by'}
+          value={requester?.name || purchaseRequest.requesterId}
+        />
         {purchaseRequest.receipt && (
-          <img className={classes.imageContainer} src={purchaseRequest.receipt[0].url} alt="receipt" />
+          <CameraButton staticPreview label="Receipt" photoUri={purchaseRequest.receipt[0].url} id="receipt" />
         )}
       </BaseScrollView>
     </BaseScreen>
