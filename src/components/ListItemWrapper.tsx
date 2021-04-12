@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import { ListItem, ListItemText, ListItemSecondaryAction, IconButton, makeStyles } from '@material-ui/core';
@@ -27,9 +27,15 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
   const { linkTo, leftText, rightText, ...listItemProps } = props;
   const classes = styles(props);
 
+  const history = useHistory();
+
+  const navigateToLink = () => {
+    return linkTo ? history.push(linkTo) : null;
+  };
+
   const getForwardIcon = () =>
   (<ListItemSecondaryAction>
-    <IconButton edge="end" className={classes.iconStyles}>
+    <IconButton edge="end" className={classes.iconStyles} onClick={navigateToLink}>
       <ArrowForwardIosIcon fontSize='small' />
     </IconButton>
   </ListItemSecondaryAction>)
@@ -41,7 +47,8 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
   />)
 
   return (
-    <ListItem disableGutters component={linkTo ? Link : 'li'} to={linkTo} {...listItemProps} >
+    // Need to case as any here because of https://github.com/mui-org/material-ui/issues/14971
+    <ListItem disableGutters button={(linkTo !== undefined) as any} onClick={navigateToLink} {...listItemProps} >
       <ListItemText
         primary={leftText}
         primaryTypographyProps={{ color: 'textPrimary' }}
