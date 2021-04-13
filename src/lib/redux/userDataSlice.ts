@@ -60,6 +60,16 @@ const userDataSlice = createSlice({
     deauthenticateAndClearUserData() {
       return { ...initialState };
     },
+    updateUser(state, action) {
+      const { id, ...changes } = action.payload;
+
+      const update = {
+        id,
+        changes
+      }
+
+      usersAdapter.updateOne(state.users, update);
+    }
   },
 });
 
@@ -70,5 +80,6 @@ export const {
   setIsOnline,
   saveUserData,
   deauthenticateAndClearUserData,
+  updateUser,
 } = userDataSlice.actions;
 export default userDataSlice.reducer;

@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router-dom'
 import { createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
-import { ListItem, ListItemText, ListItemSecondaryAction, IconButton, makeStyles, InputBase } from '@material-ui/core';
+import { ListItem, ListItemText, ListItemSecondaryAction, IconButton, makeStyles, InputBase, InputAdornment } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 interface ListItemWrapperProps {
@@ -10,8 +10,12 @@ interface ListItemWrapperProps {
   linkTo?: string;
   editable?: boolean;
   onEditChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
+  editUnit?: string;
+  editType?: string;
+  editError?: boolean;
   editInputId?: string;
   editValue?: string;
+  editPlaceholder?: string;
   dense?: boolean;
   divider?: boolean;
 }
@@ -31,7 +35,19 @@ const styles = makeStyles((theme: Theme) =>
   }));
 
 const ListItemWrapper = (props: ListItemWrapperProps) => {
-  const { linkTo, leftText, rightText, editable, editValue, onEditChange, editInputId, ...listItemProps } = props;
+  const { 
+    linkTo, 
+    leftText, 
+    rightText, 
+    editable, 
+    editValue, 
+    onEditChange, 
+    editInputId, 
+    editUnit, 
+    editType, 
+    editError, 
+    editPlaceholder,
+    ...listItemProps } = props;
   const classes = styles(props);
 
   const history = useHistory();
@@ -55,9 +71,13 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
       <InputBase
         id={editInputId}
         value={editValue}
-        margin={props.dense ? 'dense' : undefined}
         onChange={onEditChange}
-        classes={{ input: classes.inputStyles }} />
+        classes={{ input: classes.inputStyles }}
+        endAdornment={editUnit ? <InputAdornment position="end">{`${editUnit}`}</InputAdornment> : null }
+        type={editType ? editType : 'text'}
+        error={editError}
+        placeholder={editPlaceholder}
+      />
       : rightText}
   />)
 

@@ -14,7 +14,8 @@ import {
   setCurrentUserId,
   setIsOnline,
   setLoadingForUserData,
-  selectAllUsersArray
+  selectAllUsersArray,
+  updateUser
 } from './userDataSlice';
 import { selectCurrentSiteId } from './siteData';
 
@@ -55,6 +56,10 @@ export const refreshDataBackground = async (): Promise<void> => {
     console.log('Error occurred pulling data', err);
   }
 };
+
+export const updateUserInRedux = (userChanges: Partial<UserRecord>) => {
+  store.dispatch(updateUser(userChanges));
+}
 
 // Function is called at a set interval and updates redux's
 // isOnline value depending on if it gets a response from airlock

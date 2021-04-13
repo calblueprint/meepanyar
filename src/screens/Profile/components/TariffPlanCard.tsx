@@ -30,14 +30,18 @@ function TariffPlanCard(props: TariffPlanProps) {
   const getTariffPlanDescription = (tariffPlan: TariffPlanRecord) => (
     <div className={classes.description}>
       <Typography variant='body2'>
+        {/* Right now just hardcoding. We need to add a lookup field to Tariff Plans for this */}
         Customers: {10}
       </Typography>
       <Typography variant='body2'>
+        Fixed Payment: {tariffPlan.fixedTariff} Ks
+      </Typography>
+      <Typography variant='body2'>
         Per Unit Payment: {tariffPlan.tariffByUnit} Ks
-          </Typography>
+      </Typography>
       <Typography variant='body2'>
         Free Units:  {tariffPlan.freeUnits} Kwh
-          </Typography>
+      </Typography>
     </div>)
 
 

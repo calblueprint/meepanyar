@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { SiteRecord } from '../airtable/interface';
-import { setCurrentSiteId } from './siteDataSlice';
+import { SiteRecord, TariffPlanRecord } from '../airtable/interface';
+import { setCurrentSiteId, updateTariffPlan } from './siteDataSlice';
 import { RootState, store } from './store';
 
 export const setCurrentSite = (newSite: any): void => {
@@ -18,3 +18,11 @@ export const selectCurrentSiteInformation = createSelector(
 export const selectAllSitesInformation = (state: RootState): SiteRecord[] => Object.values(state.siteData.sites).map(site => site.siteInformation);
 
 export const selectSiteDataIsLoading = (state: RootState): boolean => state.siteData.isLoading;
+
+export const updateTariffPlanInRedux = (tariffPlan: Partial<TariffPlanRecord>) => {
+  const tariffPlanUpdates = {
+    ...tariffPlan,
+    siteId: selectCurrentSiteId(store.getState()),
+  };
+  store.dispatch(updateTariffPlan(tariffPlanUpdates));
+};
