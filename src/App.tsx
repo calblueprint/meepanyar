@@ -22,7 +22,7 @@ import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummary
 import Home from './screens/Home/Home';
 import Incidents from './screens/Incidents';
 import ProfileMain from './screens/Profile/ProfileMain';
-import UserProfile from './screens/Profile/UserProfile';
+import EditUserProfile from './screens/Profile/EditUserProfile';
 import SiteProfileMain from './screens/Profile/SiteProfileMain';
 import UserInformationMain from './screens/Profile/UserInformationMain';
 import EditUserInformation from './screens/Profile/EditUserInformation';
@@ -49,7 +49,7 @@ function App() {
     <>
       <AuthenticatedRoute path="/home" component={Home} />
       <AuthenticatedRoute path="/profile" component={ProfileMain} exact />
-      <AuthenticatedRoute path="/profile/user" component={UserProfile} exact />
+      <AuthenticatedRoute path="/profile/user" component={EditUserProfile} exact />
       <AuthenticatedRoute path="/profile/site" component={SiteProfileMain} exact />
       <AuthenticatedRoute path="/profile/site/name" component={EditSiteInformation} exact />
       <AuthenticatedRoute path="/profile/site/tariff-plans" component={TariffPlans} exact />
