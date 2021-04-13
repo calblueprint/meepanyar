@@ -24,6 +24,8 @@ import Incidents from './screens/Incidents';
 import ProfileMain from './screens/Profile/ProfileMain';
 import UserProfile from './screens/Profile/UserProfile';
 import SiteProfileMain from './screens/Profile/SiteProfileMain';
+import UserInformationMain from './screens/Profile/UserInformationMain';
+import EditUserInformation from './screens/Profile/EditUserInformation';
 import EditSiteInformation from './screens/Profile/EditSiteInformation';
 import TariffPlans from './screens/Profile/TariffPlans';
 import EditTariffPlanInformation from './screens/Profile/EditTariffPlanInformation';
@@ -52,6 +54,8 @@ function App() {
       <AuthenticatedRoute path="/profile/site/name" component={EditSiteInformation} exact />
       <AuthenticatedRoute path="/profile/site/tariff-plans" component={TariffPlans} exact />
       <AuthenticatedRoute path="/profile/site/tariff-plans/tariff-plan" component={EditTariffPlanInformation} exact />
+      <AuthenticatedRoute path="/profile/site/user-information" component={UserInformationMain} exact />
+      <AuthenticatedRoute path="/profile/site/user-information/user" component={EditUserInformation} exact />
       <AuthenticatedRoute path="/customers" component={CustomerMain} exact />
       <AuthenticatedRoute path="/customers/create" component={AddCustomer} exact />
       <AuthenticatedRoute path={'/customers/customer'} component={CustomerProfile} exact />

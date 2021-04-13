@@ -13,8 +13,10 @@ import {
   selectSiteUserById,
   setCurrentUserId,
   setIsOnline,
-  setLoadingForUserData
+  setLoadingForUserData,
+  selectAllUsersArray
 } from './userDataSlice';
+import { selectCurrentSiteId } from './siteData';
 
 // TODO: Change from any when typing introduced
 export const refreshUserData = async (user: any): Promise<void> => {
@@ -99,3 +101,8 @@ export const selectIsLoading = createSelector(
   selectSiteDataIsLoading,
   (userLoading, siteLoading) => userLoading || siteLoading,
 );
+
+export const selectAllSiteUsersArray = createSelector(
+  selectAllUsersArray,
+  selectCurrentSiteId,
+  (allUsers, siteId) => allUsers.filter((user: UserRecord) => user.siteIds?.includes(siteId)))
