@@ -14,12 +14,6 @@ const styles = makeStyles((theme: Theme) =>
       color: theme.palette.primary.dark,
       paddingBottom: 0
     },
-    description: {
-      color: theme.palette.text.disabled
-    },
-    iconStyles: {
-      paddingRight: 0
-    },
   }));
 
 function TariffPlans() {
@@ -38,7 +32,6 @@ function TariffPlans() {
         <ListItem disableGutters>
           <ListItemText primary='Unused' className={classes.header} />
         </ListItem>
-        <ListItemWrapper leftText='Tariff Plan 2' divider />
       </List>
     </BaseScreen>
   );
