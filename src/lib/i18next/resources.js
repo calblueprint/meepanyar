@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   "my": {
     "translation": {
       "Cancel": "ဖျက်သိမ်းမည်",
@@ -196,10 +196,9 @@ export default {
       "Select frequency": "အကြိမ်နှုန်းရွေးချယ်ရန်",
       "Select equipment": "ပစ္စည်းအစိတ်အပိုင်းရွေးချယ်ရန်...",
       "No Remaining Tasks": "ကျန်ရှိနေသေးသောတာဝန်မရှိပါ။",
-      "No Readings": "ကျန်ရှိနေသေ",
       "Scheduled Date": "စီစဉ်ထားသည့်နေ့စွဲ",
       "Equipment / Component": "ပစ္စည်းအစိတ်အပိုင်း",
-      "Last Updated [Date]": "နောက်ဆုံးမှတ်တမ်းတင်နေ့စွဲ [Date]",
+      "Last Updated [Date] / Last marked done on": "နောက်ဆုံးမှတ်တမ်းတင်နေ့စွဲ",
       "Date": "ရက်စွဲ",
       "Event Type": "ဖြစ်ပျက်မှုအမျိုးအစား",
       "PM Schedule": "ကြိုထိန်းသိမ်းမှုဇယား",
