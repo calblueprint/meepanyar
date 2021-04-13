@@ -34,7 +34,7 @@ function TariffPlans() {
         <ListItem disableGutters>
           <ListItemText primary='Used' primaryTypographyProps={{ color: 'inherit' }} className={classes.header} />
         </ListItem>
-        {tariffPlans.map((tariffPlan: TariffPlanRecord) => <TariffPlanCard tariffPlan={tariffPlan} />)}
+        {tariffPlans.map((tariffPlan: TariffPlanRecord) => <TariffPlanCard key={tariffPlan.id} tariffPlan={tariffPlan} />)}
         <ListItem disableGutters>
           <ListItemText primary='Unused' className={classes.header} />
         </ListItem>

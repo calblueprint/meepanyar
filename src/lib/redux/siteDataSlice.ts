@@ -121,9 +121,14 @@ const siteDataSlice = createSlice({
         changes
       }
       tariffPlanAdapter.updateOne(state.sites[siteId].tariffPlans, updates);
+    },
+    updateSite(state, action) {
+      const { id } = action.payload;
+      const newSiteInformation = {...state.sites[id].siteInformation, ...action.payload};
+      state.sites[id].siteInformation = newSiteInformation;
     }
   },
 });
 
-export const { setLoadingForSiteData, saveSiteData, setCurrentSiteId, updateTariffPlan } = siteDataSlice.actions;
+export const { setLoadingForSiteData, saveSiteData, setCurrentSiteId, updateTariffPlan, updateSite } = siteDataSlice.actions;
 export default siteDataSlice.reducer;

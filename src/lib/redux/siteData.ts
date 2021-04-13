@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { SiteRecord, TariffPlanRecord } from '../airtable/interface';
-import { setCurrentSiteId, updateTariffPlan } from './siteDataSlice';
+import { setCurrentSiteId, updateTariffPlan, updateSite } from './siteDataSlice';
 import { RootState, store } from './store';
 
 export const setCurrentSite = (newSite: any): void => {
@@ -26,3 +26,7 @@ export const updateTariffPlanInRedux = (tariffPlan: Partial<TariffPlanRecord>) =
   };
   store.dispatch(updateTariffPlan(tariffPlanUpdates));
 };
+
+export const updateSiteInRedux = (siteUpdates : Partial<SiteRecord>) => {
+  store.dispatch(updateSite(siteUpdates))
+}
