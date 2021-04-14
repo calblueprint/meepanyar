@@ -148,7 +148,13 @@ export const createPaymentAndUpdateCustomerBalance = async (payment, customer) =
 
   // Customer's outstanding balance is automatically updated on Airtable but needs to
   // be manually updated clientside to account for offline situations
-  updateCustomerInRedux({id: customerId, outstandingBalance: customer.outstandingBalance - payment.amount });
+  updateCustomerInRedux(
+    {
+      id: customerId,
+      outstandingBalance: customer.outstandingBalance - payment.amount,
+      totalAmountPaidfromPayments: customer.totalAmountPaidfromPayments + payment.amount,
+    }
+  );
 
   return paymentId;
 }
@@ -238,7 +244,7 @@ export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) =
   try {
     delete purchaseRequest.id; // Remove the id field to add to Airtable
     purchaseRequestId = await createPurchaseRequest(purchaseRequest);
-    updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
+    updateInventory(purchaseRequest.inventoryId, { currentQuantity: newQuantity });
   } catch (err) {
     purchaseRequestId = generateOfflineId();
     console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
@@ -271,7 +277,7 @@ export const createInventoryUpdate = async (record) => {
 // NONGENERATED: Create an Inventory Update and update the inventory's current qty
 // TODO: handle offline workflow of creating inventory updates for inventory
 // that was created offline (no Airtable id).
-export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount ) => {
+export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount) => {
   const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE));
   inventoryUpdate.userId = userId;
   inventoryUpdate.previousQuantity = inventory.currentQuantity;
@@ -283,7 +289,7 @@ export const createInventoryUpdateAndUpdateInventory = async (userId, inventory,
   try {
     delete inventoryUpdate.id; // Remove the id field to add to Airtable
     inventoryUpdateId = await createInventoryUpdate(inventoryUpdate);
-    updateInventory(inventoryUpdate.inventoryId, {currentQuantity: inventoryUpdate.updatedQuantity });
+    updateInventory(inventoryUpdate.inventoryId, { currentQuantity: inventoryUpdate.updatedQuantity });
   } catch (err) {
     inventoryUpdateId = generateOfflineId();
     console.log('(createInventoryUpdateAndUpdateInventory) Error: ', err);

@@ -59,16 +59,16 @@ function AddPayment(props: AddPaymentProps) {
         createPaymentAndUpdateCustomerBalance(payment, currentCustomer).then(history.goBack);
     }
 
-    const totalAmountOwed = currentCustomer.totalAmountBilledfromInvoices - currentCustomer.totalAmountPaidfromPayments;
+    const remainingBalance = currentCustomer.totalAmountBilledfromInvoices - currentCustomer.totalAmountPaidfromPayments;
 
-    const cardInfo = [{ number: totalAmountOwed.toString(), label: 'Remaining Balance', unit: 'Ks' }]
+    const cardInfo = [{ number: remainingBalance.toString(), label: 'Remaining Balance', unit: 'Ks' }]
 
     return (
         <BaseScreen title="Add Payment" leftIcon="backNav">
             <div className={classes.amountOwedContainer}>
                 <OutlinedCardList info={cardInfo} />
             </div>
-            <TextField label={'Amount Paid (Ks)'} id={'new-payment'} onChange={handleSetPaymentAmountInput} />
+            <TextField label={'Amount Paid (Ks)'} id={'amount-paid'} onChange={handleSetPaymentAmountInput} />
             <Button label={'+ ADD PAYMENT'} onClick={handleSubmit} loading={loading} />
         </BaseScreen>
     );
