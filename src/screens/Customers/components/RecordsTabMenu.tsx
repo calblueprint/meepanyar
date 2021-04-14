@@ -25,11 +25,12 @@ interface RecordsTabMenuProps {
   classes: { tab: string; tabPanel: string };
   invoices: MeterReadingRecord[];
   payments: PaymentRecord[];
+  defaultTab?: string;
 }
 
 function RecordsTabMenu(props: RecordsTabMenuProps) {
-  const { classes, invoices, payments } = props;
-  const [value, setValue] = React.useState('0');
+  const { classes, invoices, payments, defaultTab } = props;
+  const [value, setValue] = React.useState(defaultTab ? defaultTab : "0");
   const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
     setValue(newValue);
   };

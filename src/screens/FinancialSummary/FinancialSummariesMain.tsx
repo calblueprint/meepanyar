@@ -80,14 +80,14 @@ function FinancialSummariesMain(props: FinancialSummariesMainProps) {
         </Typography>
         {/* Report is put into an array for styling, to make a new card for each given report. */}
         {unpaidFinancialSummaries.map((report: any, index: number) => (
-          <OutlinedCardList key={index} info={[report]} primary={false} rightIcon={getPaymentButton()} />
+          <OutlinedCardList key={index} info={[report]} rightIcon={getPaymentButton()} />
         ))}
         <Typography className={classes.title} variant="body1">
           Paid Reports
         </Typography>
         {/* Report is put into an array for styling, to make a new card for each given report. */}
         {paidFinancialSummaries.map((report: any, index: number) => (
-          <OutlinedCardList key={index} info={[report]} primary={false} rightIcon={getViewButton()} />
+          <OutlinedCardList key={index} info={[report]} rightIcon={getViewButton()} />
         ))}
       </BaseScrollView>
     </BaseScreen>

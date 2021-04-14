@@ -23,6 +23,7 @@ interface CustomerRecordsProps extends RouteComponentProps {
 
 function CustomerRecords(props: CustomerRecordsProps) {
   const { classes } = props;
+  const defaultTab: string = props.location.state.defaultTab ? props.location.state.defaultTab : '0';
   const payments: PaymentRecord[] = props.location.state.payments;
   const invoices: MeterReadingRecord[] = props.location.state.invoices;
 

@@ -1,4 +1,4 @@
-import { Typography, createStyles, Fab, Theme, withStyles, Tabs, Tab } from '@material-ui/core';
+import { Typography, createStyles, Fab, Theme, makeStyles, Tabs, Tab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -16,7 +16,7 @@ import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 
-const styles = (theme: Theme) =>
+const styles = makeStyles((theme: Theme) =>
   createStyles({
     title: {
       color: theme.palette.text.primary,
@@ -53,9 +53,6 @@ const styles = (theme: Theme) =>
         outline: 'none',
       },
     },
-    tabPanel: {
-      padding: '10px 0 20px',
-    },
     active: {
       height: '7px',
       width: '7px',
@@ -74,7 +71,7 @@ const styles = (theme: Theme) =>
     tabLabel: {
       display: 'inline-flex',
     },
-  });
+  }));
 
 interface CustomerMenu {
   all: CustomerRecord[];
@@ -84,13 +81,13 @@ interface CustomerMenu {
 }
 
 interface CustomerMainProps extends RouteComponentProps {
-  classes: { title: string; headerWrapper: string; fab: string; searchIcon: string; searchBar: string; tab: string; tabPanel: string; active: string; activeContainer: string; tabIcon: string; tabLabel: string; };
   customers: CustomerRecord[];
   match: any;
 }
 
 function CustomerMain(props: CustomerMainProps) {
-  const { classes, match } = props;
+  const classes = styles(props);
+  const { match } = props;
   const [searchValue, setSearchValue] = useState<string>("");
   const [value, setValue] = React.useState('0');
   const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
@@ -159,16 +156,19 @@ function CustomerMain(props: CustomerMainProps) {
     return undefined;
   }
 
-  const getTabContent = (customers: CustomerRecord[], value: string) => (
-    <TabPanel className={classes.tabPanel} value={value}>
-      {customers.map((customer: CustomerRecord, index) => (
-        <Link key={index} to={`${match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)}>
-          <CustomerCard name={customer.name} meterNumber={customer.meterNumber} amount={customer.outstandingBalance} active={customer.isactive}
-          status={getCustomerStatus(customer)}/>
-        </Link>
-      ))}
-    </TabPanel>
-  );
+  const getTabContent = (customers: CustomerRecord[], tabValue: string) => {
+      // For rendering efficiency, we hide the components instead of using Material-UI's
+      // https://stackoverflow.com/questions/61097440/reactjs-material-ui-prevent-re-render-tabs-on-enter TabPanel and show only when their tab is selected.
+      const showTab = tabValue === value;
+      return <div style={{visibility: showTab ? 'visible' : 'hidden', height: showTab ? 'auto' : 0, overflow: showTab ? 'visible' : 'hidden'}} >
+        {customers.map((customer: CustomerRecord, index) => (
+          <Link key={index} to={`${match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)}>
+            <CustomerCard name={customer.name} meterNumber={customer.meterNumber} amount={customer.outstandingBalance} active={customer.isactive}
+            status={getCustomerStatus(customer)}/>
+          </Link>
+        ))}
+      </div>
+    };
 
   const getMeterTabLabel = () => (
     <div>
@@ -213,4 +213,4 @@ function CustomerMain(props: CustomerMainProps) {
   );
 }
 
-export default withStyles(styles)(CustomerMain);
+export default React.memo(CustomerMain);
