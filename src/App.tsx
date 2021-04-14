@@ -13,6 +13,7 @@ import CameraPreview from './screens/Camera/CameraPreview';
 import AddCustomer from './screens/Customers/AddCustomer';
 import AddMeterReading from './screens/Customers/AddMeterReading';
 import CustomerMain from './screens/Customers/CustomerMain';
+import EditCustomerInformation from './screens/Customers/EditCustomerInformation';
 import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
 import EditCustomer from './screens/Customers/EditCustomer';
@@ -60,6 +61,7 @@ function App() {
       <AuthenticatedRoute path="/customers/create" component={AddCustomer} exact />
       <AuthenticatedRoute path={'/customers/customer'} component={CustomerProfile} exact />
       <AuthenticatedRoute path={'/customers/customer/edit'} component={EditCustomer} exact />
+      <AuthenticatedRoute path={'/customers/customer/edit/information'} component={EditCustomerInformation} exact />
       <AuthenticatedRoute path="/customers/customer/meter-readings/create" component={AddMeterReading} exact />
       <AuthenticatedRoute path={'/customers/customer/records'} component={CustomerRecords} exact />
       <AuthenticatedRoute path="/financial-summaries" component={FinancialSummariesMain} />
