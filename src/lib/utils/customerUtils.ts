@@ -2,6 +2,7 @@
 import { CustomerRecord, MeterReadingRecord, SiteRecord, TariffPlanRecord } from '../../lib/airtable/interface';
 import { isBeforeCurrentPeriod } from '../../lib/moment/momentUtils';
 import { selectMeterReadingsByCustomerId } from '../../lib/redux/customerData';
+import { selectTariffPlanById } from '../../lib/redux/siteDataSlice';
 import { store } from '../redux/store';
 
 // Returns the last reading in the period or undefined if no reading has been made in the current period
@@ -36,9 +37,8 @@ export const getAmountBilled = (currReading: MeterReadingRecord) => {
 };
 
 // TODO: add better error handling
-export const getTariffPlan = (customer: CustomerRecord, currentSite: SiteRecord): TariffPlanRecord | undefined => {
-  const tariffPlanId = customer.tariffPlanId;
-  return currentSite.tariffPlans.find((plan: TariffPlanRecord) => plan.id === tariffPlanId);
+export const getTariffPlanByCustomer = (customer: CustomerRecord): TariffPlanRecord | undefined => {
+  return selectTariffPlanById(store.getState(), customer.tariffPlanId);
 }
 
 export const calculateAmountBilled = (reading: number, tariffPlan: TariffPlanRecord): number => {

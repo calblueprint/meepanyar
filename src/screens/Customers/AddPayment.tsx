@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { Typography } from '@material-ui/core';
+=======
+>>>>>>> 0ea472a416178f70c4d2600ff7e5b799c7ad7172
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -12,30 +15,17 @@ import { EMPTY_PAYMENT } from '../../lib/redux/customerDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { createPaymentAndUpdateCustomerBalance } from '../../lib/airtable/request';
 import moment from 'moment';
+import OutlinedCardList from '../../components/OutlinedCardList';
 
 const styles = (theme: Theme) =>
     createStyles({
-        content: {
-            color: theme.palette.text.primary,
-        },
         amountOwedContainer: {
-            display: 'flex',
-            flexDirection: 'column',
-            border: `1px solid ${theme.palette.text.secondary}`,
-            padding: '10px',
-            borderRadius: '6px',
-            marginBottom: '20px',
-        },
-        outlined: {
-            padding: '15px 15px 10px',
-            border: `1px solid ${theme.palette.text.secondary}`,
-            borderRadius: '6px',
-            marginTop: '10px',
+            margin: '20px 0px'
         },
     });
 
 interface AddPaymentProps extends RouteComponentProps {
-    classes: { content: string; outlined: string; amountOwedContainer: string; };
+    classes: { amountOwedContainer: string; };
 }
 
 
@@ -73,25 +63,17 @@ function AddPayment(props: AddPaymentProps) {
         createPaymentAndUpdateCustomerBalance(payment, currentCustomer).then(history.goBack);
     }
 
-    const totalAmountOwed = currentCustomer.totalAmountBilledfromInvoices - currentCustomer.totalAmountPaidfromPayments;
+    const remainingBalance = currentCustomer.totalAmountBilledfromInvoices - currentCustomer.totalAmountPaidfromPayments;
+
+    const cardInfo = [{ number: remainingBalance.toString(), label: 'Remaining Balance', unit: 'Ks' }]
 
     return (
         <BaseScreen title="Add Payment" leftIcon="backNav">
-            <div className={classes.content}>
-                <div className={classes.amountOwedContainer}>
-                    <Typography variant='body1' gutterBottom>
-                        Remaining Balance
-                    </Typography>
-                    <Typography variant='h1'>
-                        {totalAmountOwed} Ks
-                    </Typography>
-                </div>
-
-                <form noValidate>
-                    <TextField label={'Amount Paid (Ks)'} id={'new-payment'} primary={true} onChange={handleSetPaymentAmountInput} />
-                    <Button label={'+ ADD PAYMENT'} onClick={handleSubmit} loading={loading} />
-                </form>
+            <div className={classes.amountOwedContainer}>
+                <OutlinedCardList info={cardInfo} />
             </div>
+            <TextField label={'Amount Paid (Ks)'} id={'amount-paid'} onChange={handleSetPaymentAmountInput} />
+            <Button label={'+ ADD PAYMENT'} onClick={handleSubmit} loading={loading} />
         </BaseScreen>
     );
 }

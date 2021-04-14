@@ -20,7 +20,7 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     badge: {
-      backgroundColor: theme.palette.info.main,
+      backgroundColor: theme.palette.error.main,
       fontSize: '16px',
       fontWeight: 700,
       marginLeft: '50px',

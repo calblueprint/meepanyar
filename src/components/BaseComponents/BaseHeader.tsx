@@ -4,13 +4,13 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CreateIcon from '@material-ui/icons/Create';
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { logoutUser } from '../../lib/airlock/airlock';
-import { RootState } from '../../lib/redux/store';
+import { selectCurrentUser } from '../../lib/redux/userData';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -48,13 +48,15 @@ export interface HeaderProps {
   rightIcon?: string;
   classes: any;
   match?: any;
-  name?: string;
-  email?: string;
   backAction?: () => void;
 }
 
 function BaseHeader(props: HeaderProps) {
-  const { leftIcon, title, rightIcon, classes, match, name, email, backAction } = props;
+  const { leftIcon, title, rightIcon, classes, match, backAction } = props;
+  const currentUser = useSelector(selectCurrentUser);
+  const name = currentUser?.name || '';
+  const email = currentUser?.email || '';
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const history = useHistory();
@@ -68,9 +70,9 @@ function BaseHeader(props: HeaderProps) {
     }
   };
 
-  const getIcon = (onClick: (event: React.MouseEvent<HTMLElement>) => void, icon: JSX.Element) => {
+  const getIcon = (onClick: (event: React.MouseEvent<HTMLElement>) => void, icon: JSX.Element, primary?: boolean) => {
     return (
-      <IconButton onClick={onClick} color="primary">
+      <IconButton onClick={onClick} color={primary? "primary" : "default"}>
         {icon}
       </IconButton>
     );
@@ -99,8 +101,8 @@ function BaseHeader(props: HeaderProps) {
 
   //TODO: allow users to input icons rather than map strings to icons
   const icons: { [key: string]: JSX.Element } = {
-    backNav: getIcon(backAction || backActionDefault, <ArrowBackIosIcon />),
-    edit: getIcon(navigateToEdit, <CreateIcon />),
+    backNav: getIcon(backAction || backActionDefault, <ArrowBackIcon />),
+    edit: getIcon(navigateToEdit, <CreateIcon />, true),
     user: getIcon(openProfileMenu, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
 
@@ -124,9 +126,4 @@ function BaseHeader(props: HeaderProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  name: state.userData.user?.fields.Name || '',
-  email: state.userData.user?.fields.Email || '',
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(BaseHeader));
+export default withStyles(styles)(BaseHeader);

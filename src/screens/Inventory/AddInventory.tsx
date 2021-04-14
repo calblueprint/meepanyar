@@ -16,7 +16,7 @@ import {
   selectAllCurrentSiteInventoryArray,
   selectAllProducts
 } from '../../lib/redux/inventoryDataSlice';
-import { getCurrentSiteId } from '../../lib/redux/siteData';
+import { selectCurrentSiteId } from '../../lib/redux/siteData';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 
 const styles = (theme: Theme) =>
@@ -43,6 +43,7 @@ function AddInventory(props: AddInventoryProps) {
   const products = useSelector(selectAllProducts);
   const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
   const userId = useSelector(selectCurrentUserId);
+  const siteId = useSelector(selectCurrentSiteId);
   const history = useHistory();
 
   // Product IDs for items that the site already has inventory for
@@ -78,7 +79,7 @@ function AddInventory(props: AddInventoryProps) {
     // Make a deep copy of an empty inventory record
     let inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY));
     inventory.productId = productId;
-    inventory.siteId = getCurrentSiteId();
+    inventory.siteId = siteId;
     inventory.currentQuantity = startingAmount;
     inventory.periodStartQuantity = startingAmount;
 
@@ -138,17 +139,16 @@ function AddInventory(props: AddInventoryProps) {
         {selectedProductId === NEW_PRODUCT_LABEL && (
           <div className={classes.newProductContainer}>
             <div style={{ marginRight: 10, flex: 2 }}>
-              <TextField label={'New Item'} id={'new-item'} primary={true} onChange={handleNewProductName} />
+              <TextField label={'New Item'} id={'new-item'} onChange={handleNewProductName} />
             </div>
             <div style={{ flex: 1 }}>
-              <TextField label={'Unit'} id={'unit'} primary={true} onChange={handleUnitInput} />
+              <TextField label={'Unit'} id={'unit'} onChange={handleUnitInput} />
             </div>
           </div>
         )}
         <TextField
           label={'Starting Amount'}
           id={'starting-amount'}
-          primary={true}
           onChange={handleStartingAmountInput}
         />
         <Button loading={loading} label={'Add'} onClick={handleSubmit} />

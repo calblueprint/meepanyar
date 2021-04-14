@@ -1,50 +1,36 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-param-reassign */
-import { createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import moment from 'moment';
+import { UserRecord } from '../airtable/interface';
+import { RootState } from './store';
 
 // TODO: Think about what data should be stored in here
 
-interface UserFields {
-  ID: string;
-  Password: string;
-  Username: string;
-  အမည်?: string;
-  Name?: string;
-  Email?: string;
-  Incidents?: string[];
-  Site?: string[];
-  Customers?: string[];
-}
+const usersAdapter = createEntityAdapter<UserRecord>();
 
-export interface User {
-  id: string;
-  createdTime: string;
-  fields: UserFields;
-}
+// Customized selectors for users
+export const {
+  selectEntities: selectAllSiteUsersArray,
+  selectAll: selectAllSiteUsers,
+  selectById: selectSiteUserById,
+  selectIds: selectSiteUserIds,
+} = usersAdapter.getSelectors((state: RootState) => state.userData.users);
 
 interface UserDataState {
   isLoading: boolean;
-  user: User | null;
   lastUpdated: string;
   isOnline: boolean;
+  users: EntityState<UserRecord>;
+  currentUserId: string;
 }
 
 const initialState: UserDataState = {
   isLoading: false,
-  user: null,
   lastUpdated: '',
   isOnline: true,
-};
-
-export const EMPTY_USER: User = {
-  id: '',
-  createdTime: '',
-  fields: {
-    ID: '',
-    Password: '',
-    Username: '',
-  },
+  users: usersAdapter.getInitialState(),
+  currentUserId: '',
 };
 
 const userDataSlice = createSlice({
@@ -54,20 +40,34 @@ const userDataSlice = createSlice({
     setLoadingForUserData(state) {
       state.isLoading = true;
     },
+    setCurrentUserId(state, action) {
+      state.currentUserId = action.payload;
+    },
     setIsOnline(state, action) {
       state.isOnline = action.payload.isOnline;
     },
-    saveUserData(state, action) {
-      state.user = { ...action.payload };
+    saveCurrentUserData(state, action) {
+      usersAdapter.upsertOne(state.users, action.payload);
       state.isLoading = false;
       state.lastUpdated = moment().toString();
       state.isOnline = true;
     },
+    saveUserData(state, action) {
+      const userEntities = usersAdapter.upsertMany(state.users, action.payload);
+      state.users = userEntities;
+    },
     deauthenticateAndClearUserData() {
       return { ...initialState };
-    }
+    },
   },
 });
 
-export const { setLoadingForUserData, saveUserData, setIsOnline, deauthenticateAndClearUserData } = userDataSlice.actions;
+export const {
+  setLoadingForUserData,
+  saveCurrentUserData,
+  setCurrentUserId,
+  setIsOnline,
+  saveUserData,
+  deauthenticateAndClearUserData,
+} = userDataSlice.actions;
 export default userDataSlice.reducer;

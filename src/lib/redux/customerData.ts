@@ -12,7 +12,7 @@ import {
     addMeterReading
 } from './customerDataSlice';
 import { isBeforeCurrentPeriod } from '../moment/momentUtils';
-import { getCurrentSiteId } from './siteData';
+import { selectCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
 import { createSelector } from '@reduxjs/toolkit';
 
@@ -31,7 +31,7 @@ export const refreshCustomerData = (site: SiteRecord): void => {
 };
 
 export const addCustomerToRedux = (customer: CustomerRecord): void => {
-    const siteId = getCurrentSiteId();
+    const siteId = selectCurrentSiteId(store.getState());
     store.dispatch(addCustomer({ siteId, customer }));
 };
 
@@ -39,7 +39,7 @@ export const addMeterReadingToRedux = (meterReading: MeterReadingRecord): void =
 
     const meterReadingPayload = {
         ...meterReading,
-        siteId: getCurrentSiteId()
+        siteId: selectCurrentSiteId(store.getState())
     };
 
     store.dispatch(addMeterReading(meterReadingPayload));
@@ -48,7 +48,7 @@ export const addMeterReadingToRedux = (meterReading: MeterReadingRecord): void =
 export const updateCustomerInRedux = (customer: Partial<CustomerRecord>): void => {
     const customerUpdates = {
         ...customer,
-        siteId: getCurrentSiteId()
+        siteId: selectCurrentSiteId(store.getState())
     }
     store.dispatch(updateCustomer(customerUpdates));
 };
@@ -56,7 +56,7 @@ export const updateCustomerInRedux = (customer: Partial<CustomerRecord>): void =
 export const addPaymentToRedux = (payment: PaymentRecord) => {
     const paymentPayload = {
         ...payment,
-        siteId: getCurrentSiteId()
+        siteId: selectCurrentSiteId(store.getState())
     }
     store.dispatch(addPayment(paymentPayload));
 }
