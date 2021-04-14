@@ -596,7 +596,7 @@ export const updateCustomer = async (customer, customerUpdate) => {
   try {
     const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
     const { dateUpdated, customerId, explanation, userId } = customerUpdate;
-    await updateCustomer(customer.id, {
+    await updateRecord(Tables.Customers, customer.id, {
       name,
       meterNumber,
       tariffPlanId,
