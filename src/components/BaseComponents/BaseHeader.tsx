@@ -3,7 +3,7 @@ import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import MenuItem from '@material-ui/core/MenuItem';
-import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CreateIcon from '@material-ui/icons/Create';
@@ -14,18 +14,21 @@ import { selectCurrentUser } from '../../lib/redux/userData';
 import SearchBar from '../../components/SearchBar';
 import { useSelector } from 'react-redux';
 
-const styles = (theme: Theme) =>
+const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
+    root: (props: HeaderProps) => ({
       display: 'flex',
       alignItems: 'center',
       height: '85px',
-      backgroundColor: 'white',
       textAlign: 'center',
-    },
+      marginTop: '20px',
+    }),
     title: {
       flexGrow: 1,
-      color: theme.palette.text.primary,
+    },
+    leftTitle: {
+      float: 'left',
+      padding: '0px 25px',
     },
     toolbar: {
       position: 'absolute',
@@ -49,29 +52,25 @@ const styles = (theme: Theme) =>
       padding: '20px',
       backgroundColor: 'white',
     },
-    leftTitle: {
-      float: 'left',
-      padding: '0px 25px',
-      fontSize: '30px',
-      color: theme.palette.text.primary,
-    },
-  });
+  }),
+);
 
 export interface HeaderProps {
   leftIcon?: string;
   title?: string;
   rightIcon?: string;
-  classes: any;
   match?: any;
   backAction?: () => void;
   searchAction?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   searchExit?: () => void;
 }
 
-function BaseHeader(props: HeaderProps) {
-  const { leftIcon, title, rightIcon, classes, match, backAction, searchAction, searchExit } = props;
+export default function BaseHeader(props: HeaderProps): JSX.Element {
+  const { leftIcon, title, rightIcon, match, backAction, searchAction, searchExit } = props;
+  const classes = useStyles(props);
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [searchVisibility, setSearchVisibility] = useState(false);
+  const [searchVisible, setSearchVisible] = useState(false);
   const currentUser = useSelector(selectCurrentUser);
   const name = currentUser?.name || '';
   const email = currentUser?.email || '';
@@ -124,40 +123,38 @@ function BaseHeader(props: HeaderProps) {
 
   const left = leftIcon ? icons[leftIcon] : null;
   const header = title ? (
-    <Typography className={searchAction ? classes.leftTitle : classes.title} variant="h2">
+    <Typography className={searchAction ? classes.leftTitle : classes.title} variant={searchAction ? 'h1' : 'h2'}>
       {title}
     </Typography>
   ) : null;
   const right = rightIcon ? icons[rightIcon] : null;
 
   const onSearchExit = () => {
-    setSearchVisibility(false);
+    setSearchVisible(false);
     if (searchExit != undefined) {
       searchExit();
     }
   }
 
   const getSearchBar = () => (
-    <div className={classes.searchBar} style={{display: searchVisibility ? 'block' : 'none' }}>
+    <div className={classes.searchBar} style={{display: searchVisible ? 'block' : 'none' }}>
       {/* typecasted searchAction to any because of type problems */}
-      <SearchBar placeholder="Search for a customer" onSearchChange={searchAction as any} onSearchExit={onSearchExit} />
+      <SearchBar placeholder="Search for a customer" onSearchChange={searchAction as any} onSearchExit={onSearchExit} autoFocus />
     </div>
   );
 
   return (
-    <div className={classes.root} style={{ marginTop: props.searchAction ? '20px' : undefined }}>
+    <div className={classes.root}>
       {header}
       <div className={classes.toolbar}>
         <div className={classes.left}>{left}</div>
         <div className={classes.right}>
-          {props.searchAction ? getIcon(() => setSearchVisibility(true), <SearchIcon className={classes.search} />) : null}
+          {searchAction && getIcon(() => setSearchVisible(true), <SearchIcon />)}
           {right}
         </div>
         {profileMenu}
       </div>
-      {searchAction ? getSearchBar() : null}
+      {searchAction && getSearchBar()}
     </div>
   );
 }
-
-export default withStyles(styles)(BaseHeader);

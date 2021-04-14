@@ -1,24 +1,26 @@
-import { TextField as MaterialTextField, makeStyles, Theme } from '@material-ui/core';
+import { TextField as MaterialTextField, withStyles, Theme } from '@material-ui/core';
 import { createStyles } from '@material-ui/core/styles';
 import React from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 
 interface SearchProps {
+  classes: { root: string; };
   onSearchChange: (event: React.ChangeEvent<{ value: unknown }>) => void;
   onSearchExit?: any;
   placeholder?: string;
+  autoFocus?: boolean;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
+const styles = (theme: Theme) =>
   createStyles({
     root: {
       display: 'inline-flex',
       width: '100%',
     },
-  }));
+  });
 
 function SearchBar(props: SearchProps) {
-  const classes = useStyles(props);
+  const { classes } = props;
 
   return (
     <div className={classes.root}>
@@ -28,11 +30,11 @@ function SearchBar(props: SearchProps) {
         variant="standard"
         fullWidth
         placeholder={props.placeholder}
-        inputRef={input => input && input.focus()}
+        inputRef={props.autoFocus ? input => input && input.focus() : undefined}
       />
       <CloseIcon onClick={props.onSearchExit} />
     </div>
   );
 }
 
-export default SearchBar;
+export default withStyles(styles)(SearchBar);;
