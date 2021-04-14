@@ -13,7 +13,7 @@ export interface CardPropsInfo {
 
 interface CardProps {
   info: CardPropsInfo[];
-  primary: boolean;
+  highlighted?: boolean;
   rightIcon?: JSX.Element;
   columns?: boolean;
   readOnly?: boolean;
@@ -88,9 +88,8 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
     number: string,
     label: string,
     unit: string,
-    primary: boolean,
   ) => {
-    const { columns, rightIcon, editPath } = props;
+    const { columns, rightIcon, editPath, highlighted } = props;
     const getFormattedLabel = () => (
       <div>
         {editPath ? getEditButton(editPath) : null}
@@ -98,7 +97,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
       </div>
     );
     const getFormattedNumber = () => (
-      <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'error' : 'inherit'}>
+      <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={highlighted ? 'error' : 'inherit'}>
         {number} {unit}
       </Typography>
     );
@@ -109,7 +108,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
           {props.reverse ? getFormattedLabel() : getFormattedNumber()}
           {/* Split unit to new line if in column layout */}
           {!props.reverse && columns &&
-            <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={primary ? 'primary' : 'inherit'}>
+            <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={highlighted ? 'primary' : 'inherit'}>
               {unit}
             </Typography>
           }
@@ -123,7 +122,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
     <div className={classes.root}>
       <div className={classes.content}>
         {props.info.map((info, index) =>
-          getLabeledNumber(index, info.number, info.label, info.unit, props.primary),
+          getLabeledNumber(index, info.number, info.label, info.unit),
         )}
       </div>
     </div>
@@ -133,4 +132,5 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
 OutlinedCardList.defaultProps = {
   rightIcon: null,
   columns: false,
+  highlighted: false,
 };

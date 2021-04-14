@@ -52,7 +52,6 @@ interface CustomerProps extends RouteComponentProps {
 
 function CustomerProfile(props: CustomerProps) {
   const { classes, match } = props;
-  const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation);
   const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
   const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
   const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
@@ -103,7 +102,7 @@ function CustomerProfile(props: CustomerProps) {
         size="small"
         className={classes.buttonPrimary}
       >
-        <AddIcon style={{ color: 'white' }} />
+        <AddIcon />
       </IconButton>
     );
   };
@@ -112,11 +111,11 @@ function CustomerProfile(props: CustomerProps) {
     if (customer.meterType === MeterType.INACTIVE) {
       balanceInfo = [{ number: UNDEFINED_AMOUNT, label: 'Remaining Balance', unit: '' }];
       return (
-        <OutlinedCardList info={balanceInfo} primary={false} readOnly />
+        <OutlinedCardList info={balanceInfo} readOnly />
       );
     } else {
       return (
-        <OutlinedCardList info={balanceInfo} primary rightIcon={getAddButton('meter-readings/create')} />
+        <OutlinedCardList info={balanceInfo} highlighted rightIcon={getAddButton('meter-readings/create')} />
       );
     }
   }
@@ -150,7 +149,6 @@ function CustomerProfile(props: CustomerProps) {
       <div>
         <OutlinedCardList
           info={readingInfo}
-          primary={false}
           rightIcon={meterReadOnly ? undefined : getAddButton('meter-readings/create')}
           readOnly={meterReadOnly}
         />
@@ -159,7 +157,6 @@ function CustomerProfile(props: CustomerProps) {
             { /* Top Left */ }
             <OutlinedCardList
               info={[meterInfo[0]]}
-              primary={false}
               readOnly={topLeftReadOnly}
               /* TODO: add valid link */
               editPath={topLeftReadOnly ? undefined : `${match.url}`}
@@ -167,7 +164,6 @@ function CustomerProfile(props: CustomerProps) {
             { /* Bottom Left */ }
             <OutlinedCardList
               info={[meterInfo[1]]}
-              primary={false}
               readOnly
             />
           </div>
@@ -175,13 +171,11 @@ function CustomerProfile(props: CustomerProps) {
             { /* Top Right */ }
             <OutlinedCardList
               info={[meterInfo[2]]}
-              primary={false}
               readOnly
             />
             { /* Bottom Right */ }
             <OutlinedCardList
               info={[meterInfo[3]]}
-              primary={false}
               readOnly
             />
           </div>
@@ -201,7 +195,7 @@ function CustomerProfile(props: CustomerProps) {
       tariffReadOnly = true;
     }
     return (
-      <OutlinedCardList info={tariffInfo} primary={false} columns readOnly={tariffReadOnly} reverse />
+      <OutlinedCardList info={tariffInfo} columns readOnly={tariffReadOnly} reverse />
     );
   }
 
