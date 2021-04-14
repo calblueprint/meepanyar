@@ -26,13 +26,14 @@ const styles = (theme: Theme) =>
 
 interface TabProps {
   classes: { tabs: string; tab: string; tabPanel: string };
+  defaultTab: string;
   invoices: MeterReadingRecord[];
   payments: PaymentRecord[];
 }
 
 function TabMenu(props: TabProps) {
-  const { classes, invoices, payments } = props;
-  const [value, setValue] = React.useState('0');
+  const { classes, invoices, payments, defaultTab } = props;
+  const [value, setValue] = React.useState(defaultTab);
   const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
     setValue(newValue);
   };

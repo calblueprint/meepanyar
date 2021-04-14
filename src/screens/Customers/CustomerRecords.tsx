@@ -23,6 +23,7 @@ interface CustomerRecordsProps extends RouteComponentProps {
 
 function CustomerRecords(props: CustomerRecordsProps) {
   const { classes } = props;
+  const defaultTab: string = props.location.state.defaultTab ? props.location.state.defaultTab : '0';
   const payments: PaymentRecord[] = props.location.state.payments;
   const invoices: MeterReadingRecord[] = props.location.state.invoices;
 
@@ -30,7 +31,7 @@ function CustomerRecords(props: CustomerRecordsProps) {
     <BaseScreen leftIcon="backNav">
       <div className={classes.content}>
         <Typography variant="h1">Records</Typography>
-        <TabMenu invoices={invoices} payments={payments} />
+        <TabMenu defaultTab={defaultTab} invoices={invoices} payments={payments} />
       </div>
     </BaseScreen>
   );
