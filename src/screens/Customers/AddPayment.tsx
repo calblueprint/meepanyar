@@ -16,7 +16,7 @@ import OutlinedCardList from '../../components/OutlinedCardList';
 const styles = (theme: Theme) =>
     createStyles({
         amountOwedContainer: {
-            margin: '40px 0px'
+            margin: '20px 0px'
         },
     });
 
@@ -66,7 +66,7 @@ function AddPayment(props: AddPaymentProps) {
     return (
         <BaseScreen title="Add Payment" leftIcon="backNav">
             <div className={classes.amountOwedContainer}>
-                <OutlinedCardList info={cardInfo} primary={false} />
+                <OutlinedCardList info={cardInfo} />
             </div>
             <TextField label={'Amount Paid (Ks)'} id={'new-payment'} onChange={handleSetPaymentAmountInput} />
             <Button label={'+ ADD PAYMENT'} onClick={handleSubmit} loading={loading} />
