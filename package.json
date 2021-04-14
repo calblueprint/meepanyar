@@ -42,7 +42,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-html5-camera-photo": "^1.5.4",
-    "react-i18next": "^11.8.10",
+    "react-i18next": "^11.8.12",
     "react-icons": "^3.11.0",
     "react-material-navbar": "^1.2.1",
     "react-native": "^0.63.3",
