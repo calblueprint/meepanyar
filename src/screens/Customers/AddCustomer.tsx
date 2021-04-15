@@ -21,6 +21,10 @@ const styles = (theme: Theme) =>
     formControl: {
       width: '100%',
     },
+    disabledFormControl: {
+      width: '100%',
+      backgroundColor: theme.palette.background.default,
+    },
     textContainer: {
       padding: '2px 0px',
     },
@@ -43,7 +47,7 @@ const styles = (theme: Theme) =>
   });
 
 interface AddCustomerProps extends RouteComponentProps {
-  classes: { formControl: string, twoColumnContainer: string, textContainer: string, selectContainer: string, buttonContainer: string, button: string, };
+  classes: { formControl: string, disabledFormControl: string, twoColumnContainer: string, textContainer: string, selectContainer: string, buttonContainer: string, button: string, };
   currentSite: SiteRecord;
   location: any;
 }
@@ -54,7 +58,7 @@ function AddCustomer(props: AddCustomerProps) {
 
   const [customerName, setCustomerName] = useState("");
   const [customerNumber, setCustomerNumber] = useState("");
-  const [selectedMeterType, setSelectedMeterType] = useState(MeterType.ANALOG_METER);
+  const [selectedMeterType, setSelectedMeterType] = useState(MeterType.NO_METER);
   const [meterNumber, setMeterNumber] = useState(""); // TODO: @julianrkung Look into constraints on meter number input.
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -141,7 +145,28 @@ function AddCustomer(props: AddCustomerProps) {
             </div>
           </div>
           <div className={classes.selectContainer}>
-            <FormControl required variant="outlined" className={classes.formControl}>
+            <FormControl
+              variant="outlined"
+              required
+              className={classes.formControl}
+            >
+              <InputLabel>Tariff Plan</InputLabel>
+              <Select onChange={handleSelectTariffPlan} label={'Tariff Plan'}>
+                {tariffPlans.map((plan) =>
+                  <MenuItem key={plan.id} value={plan.id}>
+                    <TariffPlanCard tariffPlan={plan} />
+                  </MenuItem>
+                )}
+              </Select>
+            </FormControl>
+          </div>
+          <div className={classes.selectContainer}>
+            <FormControl
+              disabled={selectedTariffPlanId === ""}
+              required={selectedTariffPlanId != ""}
+              variant="outlined"
+              className={selectedTariffPlanId === "" ? classes.disabledFormControl : classes.formControl}
+            >
               <InputLabel>Meter Type</InputLabel>
               <Select onChange={handleSelectMeterType} label={'Meter Type'}>
                 <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
@@ -160,18 +185,6 @@ function AddCustomer(props: AddCustomerProps) {
               disabled={selectedMeterType === MeterType.NO_METER}
               required={selectedMeterType != MeterType.NO_METER}
             />
-          </div>
-          <div className={classes.selectContainer}>
-            <FormControl required variant="outlined" className={classes.formControl}>
-              <InputLabel>Tariff Plan</InputLabel>
-              <Select onChange={handleSelectTariffPlan} label={'Tariff Plan'}>
-                {tariffPlans.map((plan) =>
-                  <MenuItem key={plan.id} value={plan.id}>
-                    <TariffPlanCard tariffPlan={plan} />
-                  </MenuItem>
-                )}
-              </Select>
-            </FormControl>
           </div>
           <div className={classes.buttonContainer}>
             <div className={classes.button}>
