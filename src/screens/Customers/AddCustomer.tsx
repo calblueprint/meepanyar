@@ -21,22 +21,15 @@ const styles = (theme: Theme) =>
     formControl: {
       width: '100%',
     },
-    inline: {
-      display: 'inline-flex',
-      width: '100%',
-    },
     textContainer: {
       padding: '2px 0px',
     },
     selectContainer: {
       padding: '10px 0px',
     },
-    nameInput: {
-      width: '130%',
-      paddingRight: '10px',
-    },
-    numberInput: {
-      width: '50%',
+    twoColumnContainer: {
+      flexDirection: 'row',
+      display: 'flex',
     },
     buttonContainer: {
       width: '100%',
@@ -47,16 +40,10 @@ const styles = (theme: Theme) =>
     button: {
       width: '70%',
     },
-    tariffLabel: {
-      whiteSpace: 'pre-line',
-    },
-    tariffInfo: {
-      whiteSpace: 'pre-line',
-    },
   });
 
 interface AddCustomerProps extends RouteComponentProps {
-  classes: { formControl: string, nameInput: string, numberInput: string, textContainer: string, selectContainer: string, buttonContainer: string, button: string, inline: string, tariffLabel: string, tariffInfo: string };
+  classes: { formControl: string, twoColumnContainer: string, textContainer: string, selectContainer: string, buttonContainer: string, button: string, };
   currentSite: SiteRecord;
   location: any;
 }
@@ -71,9 +58,13 @@ function AddCustomer(props: AddCustomerProps) {
   const [selectedMeterType, setSelectedMeterType] = useState(MeterType.ANALOG_METER);
   const [meterNumber, setMeterNumber] = useState(""); // TODO: @julianrkung Look into constraints on meter number input.
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const currentSite = useSelector(selectCurrentSiteInformation);
   const tariffPlans = useSelector(selectAllTariffPlansArray);
+  tariffPlans.sort(function(a, b) {
+    return b.numberOfCustomers - a.numberOfCustomers;
+  });
 
   if (!currentSite) {
     return <Redirect to={'/customers'} />
@@ -89,6 +80,9 @@ function AddCustomer(props: AddCustomerProps) {
 
   // TODO: Add form input validation and error messaging
   const handleSubmit = (event: React.MouseEvent) => {
+    // Set button as loading
+    setLoading(!loading);
+
     // Prevent page refresh on submit
     event.preventDefault();
 
@@ -126,33 +120,31 @@ function AddCustomer(props: AddCustomerProps) {
     <BaseScreen title="Add New Customer" leftIcon="backNav">
       <BaseScrollView>
         <form noValidate onSubmit={() => false}>
-          <div className={classes.textContainer}>
-            <div className={classes.inline}>
-              <div className={classes.nameInput}>
-                <TextField
-                  label={'Name'}
-                  id={'name'}
-                  placeholder={'e.g. Tom'}
-                  onChange={handleNameInput}
-                  required
-                />
-              </div>
-              <div className={classes.numberInput}>
-                <TextField
-                  label={'Number'}
-                  id={'number'}
-                  placeholder={'e.g. 12'}
-                  type="number"
-                  onChange={handleCustomerNumberInput}
-                  required
-                />
-              </div>
+          <div className={classes.twoColumnContainer}>
+            <div style={{ marginRight: 10, flex: 2 }}>
+              <TextField
+                label={'Name'}
+                id={'name'}
+                placeholder={'e.g. Tom'}
+                onChange={handleNameInput}
+                required
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <TextField
+                label={'Number'}
+                id={'number'}
+                placeholder={'e.g. 12'}
+                type="number"
+                onChange={handleCustomerNumberInput}
+                required
+              />
             </div>
           </div>
           <div className={classes.selectContainer}>
             <FormControl required variant="outlined" className={classes.formControl}>
               <InputLabel>Meter Type</InputLabel>
-              <Select onChange={handleSelectMeterType}>
+              <Select onChange={handleSelectMeterType} label={'Meter Type'}>
                 <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
                 <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
                 <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
@@ -173,7 +165,7 @@ function AddCustomer(props: AddCustomerProps) {
           <div className={classes.selectContainer}>
             <FormControl required variant="outlined" className={classes.formControl}>
               <InputLabel>Tariff Plan</InputLabel>
-              <Select onChange={handleSelectTariffPlan}>
+              <Select onChange={handleSelectTariffPlan} label={'Tariff Plan'}>
                 {tariffPlans.map((plan) =>
                   <MenuItem key={plan.id} value={plan.id}>
                     <TariffPlanCard tariffPlan={plan} />
@@ -184,7 +176,12 @@ function AddCustomer(props: AddCustomerProps) {
           </div>
           <div className={classes.buttonContainer}>
             <div className={classes.button}>
-              <Button label={'Add'} onClick={handleSubmit} fullWidth />
+              <Button
+                label={'Add'}
+                onClick={handleSubmit}
+                fullWidth
+                loading={loading}
+              />
             </div>
           </div>
         </form>

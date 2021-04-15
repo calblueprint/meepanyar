@@ -32,7 +32,7 @@ function TariffPlanCard(props: TariffPlanProps) {
     <div className={classes.description}>
       <Typography variant='body2'>
         {/* Right now just hardcoding. We need to add a lookup field to Tariff Plans for this */}
-        Customers: --
+        Customers: {tariffPlan.numberOfCustomers}
       </Typography>
       <Typography variant='body2'>
         Fixed Payment: {tariffPlan.fixedTariff} Ks
