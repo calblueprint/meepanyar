@@ -11,23 +11,53 @@ import { SiteRecord } from '../../lib/airtable/interface';
 import { createCustomer } from '../../lib/airtable/request';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
-import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
+import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import TariffPlanCard from '../Profile/components/TariffPlanCard';
 
 const styles = (theme: Theme) =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-    },
     formControl: {
       width: '100%',
+    },
+    inline: {
+      display: 'inline-flex',
+    },
+    textContainer: {
+      padding: '2px 0px',
+    },
+    selectContainer: {
+      padding: '10px 0px',
+    },
+    nameInput: {
+      width: '130%',
+      paddingRight: '10px',
+    },
+    numberInput: {
+      width: '50%',
+    },
+    buttonContainer: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+    },
+    button: {
+      position: 'absolute',
+      width: '60%',
+      bottom: 30,
+    },
+    tariffLabel: {
+      whiteSpace: 'pre-line',
+    },
+    tariffInfo: {
+      whiteSpace: 'pre-line',
     },
   });
 
 interface AddCustomerProps extends RouteComponentProps {
-  classes: { content: string, formControl: string };
-  location: any;
+  classes: { formControl: string, nameInput: string, numberInput: string, textContainer: string, selectContainer: string, buttonContainer: string, button: string, inline: string, tariffLabel: string, tariffInfo: string };
   currentSite: SiteRecord;
+  location: any;
 }
 
 
@@ -35,12 +65,13 @@ function AddCustomer(props: AddCustomerProps) {
   const { classes } = props;
   const history = useHistory();
 
-  const [selectedTariffPlanId, setSelectedTariffPlanId] = useState("");
+
   const [customerName, setCustomerName] = useState("");
-  const [hasMeter, setHasMeter] = useState(false);
-  // TODO: @julianrkung Look into constraints on meter number input.
-  const [meterNumber, setMeterNumber] = useState("");
-  const [customerInactive, setCustomerInactive] = useState(false);
+  const [customerNumber, setCustomerNumber] = useState("");
+  const [selectedMeterType, setSelectedMeterType] = useState(MeterType.ANALOG_METER);
+  const [meterNumber, setMeterNumber] = useState(""); // TODO: @julianrkung Look into constraints on meter number input.
+  const [selectedTariffPlanId, setSelectedTariffPlanId] = useState("");
+
   const currentSite = useSelector(selectCurrentSiteInformation);
   const tariffPlans = useSelector(selectAllTariffPlansArray);
 
@@ -52,6 +83,10 @@ function AddCustomer(props: AddCustomerProps) {
     setSelectedTariffPlanId(event.target.value as string);
   }
 
+  const handleSelectMeterType = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setSelectedMeterType(event.target.value as MeterType);
+  }
+
   // TODO: Add form input validation and error messaging
   const handleSubmit = (event: React.MouseEvent) => {
     // Prevent page refresh on submit
@@ -60,8 +95,9 @@ function AddCustomer(props: AddCustomerProps) {
     // Make a deep copy of an empty customer record
     const customer = JSON.parse(JSON.stringify(EMPTY_CUSTOMER));
     customer.name = customerName;
+    customer.customerNumber = parseInt(customerNumber);
+    customer.meterType = selectedMeterType;
     customer.meterNumber = parseInt(meterNumber);
-    customer.isactive = !customerInactive;
     customer.tariffPlanId = selectedTariffPlanId;
 
     // Add other info necessary to create the Airtable record
@@ -78,25 +114,76 @@ function AddCustomer(props: AddCustomerProps) {
     setCustomerName(event.target.value as string);
   }
 
-  const handleMeterInput = (event: React.ChangeEvent<{ value: unknown }>) => {
+  const handleMeterNumberInput = (event: React.ChangeEvent<{ value: unknown }>) => {
     setMeterNumber(event.target.value as string);
+  }
+
+  const handleCustomerNumberInput = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setCustomerNumber(event.target.value as string);
   }
 
   return (
     <BaseScreen title="Add New Customer" leftIcon="backNav">
-      <form noValidate className={classes.content} onSubmit={() => false}>
-        <TextField label={'Name'} id={'name'} onChange={handleNameInput} />
-        <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
-          <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId="select-tariff-plan-label" onChange={handleSelectTariffPlan}>
-            {tariffPlans.map((plan) =>
-              <MenuItem key={plan.id} value={plan.id}>{plan.name}</MenuItem>
-            )}
-          </Select>
-        </FormControl>
-        <Checkbox label={'Meter:'} textField={hasMeter} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput} />
-        <Checkbox label={'Customer is inactive'} checkboxOnChange={() => setCustomerInactive(!customerInactive)} />
-        <Button label={'Add'} onClick={handleSubmit} />
+      <form noValidate onSubmit={() => false}>
+        <div className={`${classes.textContainer} ${classes.inline}`}>
+          <div className={classes.nameInput}>
+            <TextField
+              label={'Name'}
+              id={'name'}
+              placeholder={'e.g. Tom'}
+              onChange={handleNameInput}
+              required
+            />
+          </div>
+          <div className={classes.numberInput}>
+            <TextField
+              label={'Number'}
+              id={'number'}
+              placeholder={'e.g. 12'}
+              type="number"
+              onChange={handleCustomerNumberInput}
+              required
+            />
+          </div>
+        </div>
+        <div className={classes.selectContainer}>
+          <FormControl required variant="outlined" className={classes.formControl}>
+            <InputLabel>Meter Type</InputLabel>
+            <Select onChange={handleSelectMeterType}>
+              <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
+              <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
+              <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
+        <div className={classes.textContainer}>
+          <TextField
+            label={'Meter Number'}
+            id={'meter-number'}
+            placeholder={'Input'}
+            type="number"
+            onChange={handleMeterNumberInput}
+            disabled={selectedMeterType === MeterType.NO_METER}
+            required={selectedMeterType != MeterType.NO_METER}
+          />
+        </div>
+        <div className={classes.selectContainer}>
+          <FormControl required variant="outlined" className={classes.formControl}>
+            <InputLabel>Tariff Plan</InputLabel>
+            <Select onChange={handleSelectTariffPlan}>
+              {tariffPlans.map((plan) =>
+                <MenuItem key={plan.id} value={plan.id}>
+                  <TariffPlanCard tariffPlan={plan} />
+                </MenuItem>
+              )}
+            </Select>
+          </FormControl>
+        </div>
+        <div className={classes.buttonContainer}>
+          <div className={classes.button}>
+            <Button label={'Add'} onClick={handleSubmit} fullWidth />
+          </div>
+        </div>
       </form>
     </BaseScreen>
   );
