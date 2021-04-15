@@ -82,9 +82,21 @@ export default function BaseHeader(props: HeaderProps): JSX.Element {
     );
   };
 
-  const navigateToProfile = () => {
-    history.push('/profile')
+  const openProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
   };
+
+  const closeProfileMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const profileMenu = (
+    <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeProfileMenu}>
+      <MenuItem>{name}</MenuItem>
+      <MenuItem>{email}</MenuItem>
+      <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+    </Menu>
+  );
 
   const navigateToEdit = () => {
     history.push(`${match.url}/edit`);
