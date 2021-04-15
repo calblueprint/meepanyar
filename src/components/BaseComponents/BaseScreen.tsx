@@ -19,11 +19,20 @@ interface BaseScreenProps extends HeaderProps {
 }
 
 const BaseScreen: React.FC<BaseScreenProps> = (props) => {
-  const { classes, leftIcon, title, rightIcon, match, backAction, searchAction, searchExit } = props;
+  const { classes, leftIcon, title, rightIcon, match, backAction, searchAction, searchExit, searchPlaceholder } = props;
 
   return (
     <>
-      <BaseHeader leftIcon={leftIcon} title={title} rightIcon={rightIcon} match={match} backAction={backAction} searchAction={searchAction} searchExit={searchExit} />
+      <BaseHeader
+        leftIcon={leftIcon}
+        title={title}
+        rightIcon={rightIcon}
+        match={match}
+        backAction={backAction}
+        searchAction={searchAction}
+        searchExit={searchExit}
+        searchPlaceholder={searchPlaceholder}
+      />
       <div className={classes.content}>{props.children}</div>
     </>
   );

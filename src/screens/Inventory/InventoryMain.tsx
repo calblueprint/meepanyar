@@ -1,14 +1,19 @@
 import { Badge, createStyles, Fab, Theme, Typography, withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { InventoryRecord } from '../../lib/airtable/interface';
-import { selectPendingPurchaseRequestCount, setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import {
+  selectPendingPurchaseRequestCount,
+  selectProductByInventoryId,
+  setCurrentInventoryIdInRedux
+} from '../../lib/redux/inventoryData';
 import { selectAllCurrentSiteInventoryArray } from '../../lib/redux/inventoryDataSlice';
+import { store } from '../../lib/redux/store';
 import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryCard from './components/InventoryCard';
@@ -50,12 +55,40 @@ const InlineBadge = withStyles(() =>
 // TODO @wangannie: address empty state
 function InventoryMain(props: InventoryProps) {
   const { classes } = props;
-  const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
+  const defaultSiteInventory = useSelector(selectAllCurrentSiteInventoryArray);
+  const [siteInventory, setSiteInventory] = useState(defaultSiteInventory);
+  const [searchValue, setSearchValue] = useState('');
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
   const pendingCount = useSelector(selectPendingPurchaseRequestCount);
 
+  useEffect(() => {
+    getInventory();
+  }, [searchValue]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const searchVal = e.target.value.trim();
+    setSearchValue(searchVal);
+  };
+
+  const exitSearch = () => {
+    setSearchValue('');
+    setSiteInventory(defaultSiteInventory);
+  };
+
+  const getInventory = () => {
+    if (searchValue !== '') {
+      // Search by product name
+      const filteredInventory = defaultSiteInventory.filter((inv) =>
+        selectProductByInventoryId(store.getState(), inv.id)?.name.toLowerCase().includes(searchValue.toLowerCase()),
+      );
+      setSiteInventory(filteredInventory);
+    } else {
+      setSiteInventory(defaultSiteInventory);
+    }
+  };
+
   return (
-    <BaseScreen>
+    <BaseScreen searchAction={handleSearchChange} searchPlaceholder={"Search by inventory name"} searchExit={exitSearch}>
       <div className={classes.headerWrapper}>
         <Typography variant="h1">Inventory</Typography>
         <Link to={'/inventory/purchase-requests'}>

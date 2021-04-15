@@ -1,19 +1,13 @@
 import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import MenuItem from '@material-ui/core/MenuItem';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import CreateIcon from '@material-ui/icons/Create';
+import SearchIcon from '@material-ui/icons/Search';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { logoutUser } from '../../lib/airlock/airlock';
-import { selectCurrentUser } from '../../lib/redux/userData';
 import SearchBar from '../../components/SearchBar';
-import { useSelector } from 'react-redux';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,10 +58,11 @@ export interface HeaderProps {
   backAction?: () => void;
   searchAction?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   searchExit?: () => void;
+  searchPlaceholder?: string;
 }
 
 export default function BaseHeader(props: HeaderProps): JSX.Element {
-  const { leftIcon, title, rightIcon, match, backAction, searchAction, searchExit } = props;
+  const { leftIcon, title, rightIcon, match, backAction, searchAction, searchExit, searchPlaceholder } = props;
   const classes = useStyles(props);
 
   const [searchVisible, setSearchVisible] = useState(false);
@@ -115,7 +110,7 @@ export default function BaseHeader(props: HeaderProps): JSX.Element {
   const getSearchBar = () => (
     <div className={classes.searchBar} style={{display: searchVisible ? 'block' : 'none' }}>
       {/* typecasted searchAction to any because of type problems */}
-      <SearchBar placeholder="Search for a customer" onSearchChange={searchAction as any} onSearchExit={onSearchExit} autoFocus />
+      <SearchBar placeholder={searchPlaceholder || ""} onSearchChange={searchAction as any} onSearchExit={onSearchExit} autoFocus />
     </div>
   );
 
