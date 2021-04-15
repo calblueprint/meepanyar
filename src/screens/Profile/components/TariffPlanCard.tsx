@@ -17,6 +17,7 @@ const styles = makeStyles((theme: Theme) =>
 
 interface TariffPlanProps {
   tariffPlan: TariffPlanRecord;
+  readOnly?: boolean;
 }
 
 function TariffPlanCard(props: TariffPlanProps) {
@@ -44,18 +45,21 @@ function TariffPlanCard(props: TariffPlanProps) {
       </Typography>
     </div>)
 
+  const getTariffPlanButton = () => (
+    <ListItemSecondaryAction>
+      <IconButton edge="end" className={classes.iconStyles}>
+        <ArrowForwardIosIcon fontSize='small' />
+      </IconButton>
+    </ListItemSecondaryAction>
+  );
 
   return (
-    <ListItem disableGutters button onClick={handleTariffPlanClick(tariffPlan)} alignItems='flex-start' dense>
+    <ListItem disableGutters button onClick={props.readOnly ? handleTariffPlanClick(tariffPlan) : undefined} alignItems='flex-start' dense>
       <ListItemText
         primary={tariffPlan.name}
         secondary={getTariffPlanDescription(tariffPlan)}
       />
-      <ListItemSecondaryAction>
-        <IconButton edge="end" className={classes.iconStyles}>
-          <ArrowForwardIosIcon fontSize='small' />
-        </IconButton>
-      </ListItemSecondaryAction>
+      {props.readOnly && getTariffPlanButton()}
     </ListItem>
   );
 }

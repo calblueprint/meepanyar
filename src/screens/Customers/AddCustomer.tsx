@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
+import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
@@ -22,6 +23,7 @@ const styles = (theme: Theme) =>
     },
     inline: {
       display: 'inline-flex',
+      width: '100%',
     },
     textContainer: {
       padding: '2px 0px',
@@ -40,11 +42,10 @@ const styles = (theme: Theme) =>
       width: '100%',
       display: 'flex',
       justifyContent: 'center',
+      paddingTop: '10px',
     },
     button: {
-      position: 'absolute',
-      width: '60%',
-      bottom: 30,
+      width: '70%',
     },
     tariffLabel: {
       whiteSpace: 'pre-line',
@@ -64,7 +65,6 @@ interface AddCustomerProps extends RouteComponentProps {
 function AddCustomer(props: AddCustomerProps) {
   const { classes } = props;
   const history = useHistory();
-
 
   const [customerName, setCustomerName] = useState("");
   const [customerNumber, setCustomerNumber] = useState("");
@@ -124,67 +124,71 @@ function AddCustomer(props: AddCustomerProps) {
 
   return (
     <BaseScreen title="Add New Customer" leftIcon="backNav">
-      <form noValidate onSubmit={() => false}>
-        <div className={`${classes.textContainer} ${classes.inline}`}>
-          <div className={classes.nameInput}>
-            <TextField
-              label={'Name'}
-              id={'name'}
-              placeholder={'e.g. Tom'}
-              onChange={handleNameInput}
-              required
-            />
+      <BaseScrollView>
+        <form noValidate onSubmit={() => false}>
+          <div className={classes.textContainer}>
+            <div className={classes.inline}>
+              <div className={classes.nameInput}>
+                <TextField
+                  label={'Name'}
+                  id={'name'}
+                  placeholder={'e.g. Tom'}
+                  onChange={handleNameInput}
+                  required
+                />
+              </div>
+              <div className={classes.numberInput}>
+                <TextField
+                  label={'Number'}
+                  id={'number'}
+                  placeholder={'e.g. 12'}
+                  type="number"
+                  onChange={handleCustomerNumberInput}
+                  required
+                />
+              </div>
+            </div>
           </div>
-          <div className={classes.numberInput}>
+          <div className={classes.selectContainer}>
+            <FormControl required variant="outlined" className={classes.formControl}>
+              <InputLabel>Meter Type</InputLabel>
+              <Select onChange={handleSelectMeterType}>
+                <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
+                <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
+                <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+          <div className={classes.textContainer}>
             <TextField
-              label={'Number'}
-              id={'number'}
-              placeholder={'e.g. 12'}
+              label={'Meter Number'}
+              id={'meter-number'}
+              placeholder={'Input'}
               type="number"
-              onChange={handleCustomerNumberInput}
-              required
+              onChange={handleMeterNumberInput}
+              disabled={selectedMeterType === MeterType.NO_METER}
+              required={selectedMeterType != MeterType.NO_METER}
             />
           </div>
-        </div>
-        <div className={classes.selectContainer}>
-          <FormControl required variant="outlined" className={classes.formControl}>
-            <InputLabel>Meter Type</InputLabel>
-            <Select onChange={handleSelectMeterType}>
-              <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
-              <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
-              <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
-            </Select>
-          </FormControl>
-        </div>
-        <div className={classes.textContainer}>
-          <TextField
-            label={'Meter Number'}
-            id={'meter-number'}
-            placeholder={'Input'}
-            type="number"
-            onChange={handleMeterNumberInput}
-            disabled={selectedMeterType === MeterType.NO_METER}
-            required={selectedMeterType != MeterType.NO_METER}
-          />
-        </div>
-        <div className={classes.selectContainer}>
-          <FormControl required variant="outlined" className={classes.formControl}>
-            <InputLabel>Tariff Plan</InputLabel>
-            <Select onChange={handleSelectTariffPlan}>
-              {tariffPlans.map((plan) =>
-                <MenuItem key={plan.id} value={plan.id}>
-                  <TariffPlanCard tariffPlan={plan} />
-                </MenuItem>
-              )}
-            </Select>
-          </FormControl>
-        </div>
-        <div className={classes.buttonContainer}>
-          <div className={classes.button}>
-            <Button label={'Add'} onClick={handleSubmit} fullWidth />
+          <div className={classes.selectContainer}>
+            <FormControl required variant="outlined" className={classes.formControl}>
+              <InputLabel>Tariff Plan</InputLabel>
+              <Select onChange={handleSelectTariffPlan}>
+                {tariffPlans.map((plan) =>
+                  <MenuItem key={plan.id} value={plan.id}>
+                    <TariffPlanCard tariffPlan={plan} />
+                  </MenuItem>
+                )}
+              </Select>
+            </FormControl>
           </div>
-        </div>
-      </form>
+          <div className={classes.buttonContainer}>
+            <div className={classes.button}>
+              <Button label={'Add'} onClick={handleSubmit} fullWidth />
+            </div>
+          </div>
+        </form>
+      </BaseScrollView>
     </BaseScreen>
   );
 }
