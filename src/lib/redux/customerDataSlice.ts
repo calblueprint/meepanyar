@@ -78,6 +78,7 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     meterType: MeterType.ANALOG_METER,
     startingMeterReading: 0,
     customerNumber: 0,
+    startingMeterLastChanged: '',
 }
 
 export const EMPTY_PAYMENT: PaymentRecord = {
@@ -134,13 +135,17 @@ const customerDataSlice = createSlice({
 
             customersAdapter.addOne(state.sitesCustomers[siteId].customers, customer);
         },
-        editCustomer(state, action) {
+        updateCustomer(state, action) {
             const { siteId, id, ...changes } = action.payload;
             const update = {
                 id,
                 changes,
             };
             customersAdapter.updateOne(state.sitesCustomers[siteId].customers, update);
+        },
+        addPayment(state, action) {
+            const { siteId, ...payload } = action.payload;
+            paymentsAdapter.addOne(state.sitesCustomers[siteId].payments, payload);
         }
     },
     extraReducers: {
@@ -152,5 +157,5 @@ const customerDataSlice = createSlice({
     }
 });
 
-export const { saveCustomerData, setCurrentCustomerId, addCustomer, editCustomer } = customerDataSlice.actions;
+export const { saveCustomerData, setCurrentCustomerId, addCustomer, updateCustomer, addPayment } = customerDataSlice.actions;
 export default customerDataSlice.reducer;

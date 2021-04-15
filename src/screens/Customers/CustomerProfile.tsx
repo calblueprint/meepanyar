@@ -8,11 +8,10 @@ import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
-import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteRecord } from '../../lib/airtable/interface';
+import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
 import Button from '../../components/Button';
 
@@ -115,7 +114,7 @@ function CustomerProfile(props: CustomerProps) {
       );
     } else {
       return (
-        <OutlinedCardList info={balanceInfo} highlighted rightIcon={getAddButton('meter-readings/create')} />
+        <OutlinedCardList info={balanceInfo} highlighted rightIcon={getAddButton('payments/create')} />
       );
     }
   }

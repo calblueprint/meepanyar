@@ -43,11 +43,11 @@ export const theme = createMuiTheme({
     },
     //caption
     body1: {
-      fontSize: '12px',
+      fontSize: '14px',
       fontWeight: 500,
     },
     body2: {
-      fontSize: '14px',
+      fontSize: '12px',
       fontWeight: 500,
     },
     caption: {

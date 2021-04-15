@@ -7,7 +7,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
-import { editCustomer } from '../../lib/airtable/request';
+import { updateCustomer } from '../../lib/airtable/request';
 import { CustomerRecord, CustomerUpdateRecord } from '../../lib/airtable/interface';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { EMPTY_CUSTOMER, setCurrentCustomerId } from '../../lib/redux/customerDataSlice';
@@ -82,7 +82,7 @@ function EditCustomer(props: EditCustomerProps) {
     // TODO: add error handling
     // We goBack instead of replace so there aren't 2 
     // "/customers/customer" routes in the history stack
-    editCustomer(customer, customerUpdate).then(() => {
+    updateCustomer(customer, customerUpdate).then(() => {
       setCurrentCustomerId(customer.id);
       history.goBack();
     });

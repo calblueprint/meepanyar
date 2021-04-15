@@ -13,8 +13,11 @@ import {
   selectSiteUserById,
   setCurrentUserId,
   setIsOnline,
-  setLoadingForUserData
+  setLoadingForUserData,
+  selectAllUsersArray,
+  updateUser
 } from './userDataSlice';
+import { selectCurrentSiteId } from './siteData';
 
 // TODO: Change from any when typing introduced
 export const refreshUserData = async (user: any): Promise<void> => {
@@ -53,6 +56,10 @@ export const refreshDataBackground = async (): Promise<void> => {
     console.log('Error occurred pulling data', err);
   }
 };
+
+export const updateUserInRedux = (userChanges: Partial<UserRecord>) => {
+  store.dispatch(updateUser(userChanges));
+}
 
 // Function is called at a set interval and updates redux's
 // isOnline value depending on if it gets a response from airlock
@@ -99,3 +106,8 @@ export const selectIsLoading = createSelector(
   selectSiteDataIsLoading,
   (userLoading, siteLoading) => userLoading || siteLoading,
 );
+
+export const selectAllSiteUsersArray = createSelector(
+  selectAllUsersArray,
+  selectCurrentSiteId,
+  (allUsers, siteId) => allUsers.filter((user: UserRecord) => user.siteIds?.includes(siteId)))
