@@ -16,7 +16,7 @@ interface MainButtonProps {
 const styles = makeStyles((theme: Theme) =>
   createStyles({
     button: (props: MainButtonProps) => ({
-      color: props.variant && props.variant != 'contained' ? undefined : 'white',
+      color: props.variant && props.variant !== 'contained' ? undefined : 'white',
       borderWidth: 2,
       display: 'flex',
       borderRadius: 6,

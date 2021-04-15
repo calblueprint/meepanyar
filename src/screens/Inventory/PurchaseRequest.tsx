@@ -83,7 +83,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
         <div className={classes.headerContainer}>
           <InventoryInfo productId={product.id} lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)} />
           <div className={classes.reviewButtonsContainer}>
-            {userIsAdmin && purchaseRequest.status == PurchaseRequestStatus.PENDING
+            {userIsAdmin && purchaseRequest.status === PurchaseRequestStatus.PENDING
               ? getPurchaseRequestReviewButtons(
                   () => handleSubmit(purchaseRequest, true),
                   () => handleSubmit(purchaseRequest, false),

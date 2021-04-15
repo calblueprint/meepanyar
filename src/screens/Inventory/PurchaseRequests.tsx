@@ -42,7 +42,7 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
   const getPurchaseRequests = (status?: PurchaseRequestStatus) => (
     <div>
       {purchaseRequests
-        .filter((pr) => (status ? pr.status == status : true))
+        .filter((pr) => (status ? pr.status === status : true))
         .map((purchaseRequest: PurchaseRequestRecord) => (
           <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest} />
         ))}
@@ -73,7 +73,7 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
       )}
       <BaseScrollView>
         {/* Tab 0: All, Tab 1: Pending */}
-        {tabValue == 0 ? getPurchaseRequests() : getPurchaseRequests(PurchaseRequestStatus.PENDING)}
+        {tabValue === 0 ? getPurchaseRequests() : getPurchaseRequests(PurchaseRequestStatus.PENDING)}
       </BaseScrollView>
     </BaseScreen>
   );

@@ -95,7 +95,7 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
         </CardContent>
       </Link>
       <CardActions className={classes.cardActions}>
-        {status == PurchaseRequestStatus.PENDING && userIsAdmin
+        {status === PurchaseRequestStatus.PENDING && userIsAdmin
           ? getPurchaseRequestReviewButtons(
               () => handleSubmitReview(true),
               () => handleSubmitReview(false),

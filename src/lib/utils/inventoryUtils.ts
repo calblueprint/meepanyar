@@ -58,6 +58,7 @@ export const reviewPurchaseRequest = (purchaseRequest: PurchaseRequestRecord, ap
     reviewedAt: moment().toISOString(),
     status: approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED,
   };
+  // Additional authentication against Airtable is done on the backend
   updatePurchaseRequest(purchaseRequest.id, reviewData);
   updatePurchaseRequestInRedux({ id: purchaseRequest.id, ...reviewData });
 }
