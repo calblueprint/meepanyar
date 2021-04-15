@@ -13,6 +13,7 @@ import { logoutUser } from '../../lib/airlock/airlock';
 import { selectCurrentUser } from '../../lib/redux/userData';
 import SearchBar from '../../components/SearchBar';
 import { useSelector } from 'react-redux';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -69,12 +70,7 @@ export default function BaseHeader(props: HeaderProps): JSX.Element {
   const { leftIcon, title, rightIcon, match, backAction, searchAction, searchExit } = props;
   const classes = useStyles(props);
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [searchVisible, setSearchVisible] = useState(false);
-  const currentUser = useSelector(selectCurrentUser);
-  const name = currentUser?.name || '';
-  const email = currentUser?.email || '';
-
   const history = useHistory();
   const backActionDefault = history.goBack;
 
@@ -86,21 +82,9 @@ export default function BaseHeader(props: HeaderProps): JSX.Element {
     );
   };
 
-  const openProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const navigateToProfile = () => {
+    history.push('/profile')
   };
-
-  const closeProfileMenu = () => {
-    setAnchorEl(null);
-  };
-
-  const profileMenu = (
-    <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeProfileMenu}>
-      <MenuItem>{name}</MenuItem>
-      <MenuItem>{email}</MenuItem>
-      <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-    </Menu>
-  );
 
   const navigateToEdit = () => {
     history.push(`${match.url}/edit`);
@@ -110,7 +94,7 @@ export default function BaseHeader(props: HeaderProps): JSX.Element {
   const icons: { [key: string]: JSX.Element } = {
     backNav: getIcon(backAction || backActionDefault, <ArrowBackIcon />),
     edit: getIcon(navigateToEdit, <CreateIcon />, true),
-    user: getIcon(openProfileMenu, <MenuIcon className={classes.account} fontSize="large" />),
+    user: getIcon(navigateToProfile, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
 
   const left = leftIcon ? icons[leftIcon] : null;
@@ -144,7 +128,6 @@ export default function BaseHeader(props: HeaderProps): JSX.Element {
           {searchAction && getIcon(() => setSearchVisible(true), <SearchIcon />)}
           {right}
         </div>
-        {profileMenu}
       </div>
       {searchAction && getSearchBar()}
     </div>
