@@ -9,6 +9,7 @@ export interface CardPropsInfo {
   number: string;
   label: string;
   unit: string;
+  secondaryLabel?: string; // Label shown on the top right of OutlinedCardList
 }
 
 interface CardProps {
@@ -64,6 +65,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontSize: '14px',
       marginLeft: '5px',
     },
+    headerContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    }
   }),
 );
 
@@ -88,12 +93,16 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
     number: string,
     label: string,
     unit: string,
+    secondaryLabel?: string,
   ) => {
     const { columns, rightIcon, editPath, highlighted } = props;
     const getFormattedLabel = () => (
-      <div>
-        {editPath ? getEditButton(editPath) : null}
-        <Typography align={columns ? 'center' : 'inherit'} className={props.reverse ? classes.reverseLabel : undefined}>{label}</Typography>
+      <div className={classes.headerContainer}>
+        <div>
+          {editPath ? getEditButton(editPath) : null}
+          <Typography align={columns ? 'center' : 'inherit'} className={props.reverse ? classes.reverseLabel : undefined}>{label}</Typography>
+        </div>
+        {secondaryLabel && <Typography align='right' color='secondary'> {secondaryLabel} </Typography> }
       </div>
     );
     const getFormattedNumber = () => (
@@ -102,7 +111,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
       </Typography>
     );
     return (
-      <div key={key} className={ classes.itemWrapper }>
+      <div key={key} className={classes.itemWrapper}>
         <div className={rightIcon ? classes.items : classes.fullItems}>
           {props.reverse ? getFormattedNumber() : getFormattedLabel()}
           {props.reverse ? getFormattedLabel() : getFormattedNumber()}
@@ -122,7 +131,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
     <div className={classes.root}>
       <div className={classes.content}>
         {props.info.map((info, index) =>
-          getLabeledNumber(index, info.number, info.label, info.unit),
+          getLabeledNumber(index, info.number, info.label, info.unit, info.secondaryLabel),
         )}
       </div>
     </div>

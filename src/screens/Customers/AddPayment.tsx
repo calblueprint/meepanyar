@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import { Typography } from '@material-ui/core';
-=======
->>>>>>> 0ea472a416178f70c4d2600ff7e5b799c7ad7172
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
