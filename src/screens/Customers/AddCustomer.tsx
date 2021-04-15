@@ -48,7 +48,6 @@ interface AddCustomerProps extends RouteComponentProps {
   location: any;
 }
 
-
 function AddCustomer(props: AddCustomerProps) {
   const { classes } = props;
   const history = useHistory();
