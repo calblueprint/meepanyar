@@ -67,8 +67,8 @@ export const Columns = {
 		customerIds: {name:`Customer`, type:`foreignKey-many`},
 		siteIds: {name:`Sites`, type:`foreignKey-many`},
 		id: {name:`ID`, type:`formula`},
-		numberOfCustomers: {name:`Number of Customers`, type:`count`},
 		meterTypes: {name:`Meter Types`, type:`multiSelect`},
+		numberOfCustomers: {name:`Number of Customers`, type:`count`},
 	},
 	"Customers": {
 		name: {name:`Name`, type:`text`},
@@ -166,6 +166,7 @@ export const Columns = {
 		siteName: {name:`Site Name`, type:`lookup`},
 		amountSpent: {name:`Amount Spent`, type:`number`},
 		id: {name:`ID`, type:`formula`},
+		updatedQuantity: {name:`Updated Quantity`, type:`number`},
 	},
 	"Inventory Updates": {
 		primaryKey: {name:`Primary Key`, type:`formula`},
