@@ -138,6 +138,7 @@ export interface PurchaseRequestRecord {
   amountSpent: number;
   receipt?: Airtable.Attachment[];
   inventoryId: string;
+  updatedQuantity: number;
 }
 
 
