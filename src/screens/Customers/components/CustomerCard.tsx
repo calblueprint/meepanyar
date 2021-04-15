@@ -4,25 +4,20 @@ import { Card, CardActions, Typography, IconButton } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
+import { Link } from 'react-router-dom';
+import { setCurrentCustomerIdInRedux } from '../../../lib/redux/customerData';
 
 const styles = (theme: Theme) =>
   createStyles({
-    arrow: {
-      color: theme.palette.text.secondary,
-      fontSize: '15px',
-      marginLeft: '0px',
-    },
     cardContent: {
       flexGrow: 1,
       display: 'flex',
       alignItems: 'center',
       paddingLeft: '17px',
+      color: theme.palette.text.primary,
     },
     totalText: {
       color: theme.palette.text.secondary,
-    },
-    titleText: {
-      fontSize: '19px',
     },
     numberText: {
       color: theme.palette.error.main,
@@ -72,12 +67,14 @@ const styles = (theme: Theme) =>
 
 interface CardProps {
   name: string;
+  customerId: string;
   meterNumber: number;
   amount: string;
   active: boolean;
+  match: any;
   status?: CustomerStatus;
   classes: {
-    arrow: string; cardContent: string; singleCard: string; totalText: string; numberText: string; divSpacing: string; active: string; notActive: string; arrowSpacing: string; indicator: string; icon: string; titleText: string;
+    cardContent: string; singleCard: string; totalText: string; numberText: string; divSpacing: string; active: string; notActive: string; arrowSpacing: string; indicator: string; icon: string;
   };
 }
 
@@ -91,31 +88,52 @@ function CustomerCard(props: CardProps) {
   const { classes } = props;
 
   const getStatusIcon = () => {
+    /* TODO: replace paths /customer/edit with actual paths */
     if (props.status === CustomerStatus.METER) {
-      return ( <FlashOnIcon className={classes.icon} fontSize='inherit' /> );
+      return (
+        <IconButton
+          component={Link}
+          to={{
+            pathname: `${props.match.url}/customer/edit`,
+          }}
+          size="small"
+        >
+          <FlashOnIcon className={classes.icon} fontSize='inherit' />
+        </IconButton>
+      );
     } else if (props.status === CustomerStatus.PAYMENT) {
-      return ( <AttachMoneyIcon className={classes.icon} fontSize='inherit' /> );
+      return (
+        <IconButton
+          component={Link}
+          to={{
+            pathname: `${props.match.url}/customer/edit`,
+          }}
+          size="small"
+        >
+          <AttachMoneyIcon className={classes.icon} fontSize='inherit' />
+        </IconButton>
+      );
     }
   }
 
   return (
-    <Card className={classes.singleCard} variant="outlined">
-      <div className={classes.cardContent}>
-        <div className={classes.indicator}>
-          {props.active ? <div className={classes.active} /> : <div className={classes.notActive} />}
-        </div>
-        <div>
-          <Typography variant="h2" className={classes.titleText}>{props.meterNumber}, {props.name}</Typography>
-          <Typography variant="body1" className={classes.totalText}>Total owed <span className={classes.numberText}>{props.amount} Ks</span></Typography>
-        </div>
-      </div>
-      <CardActions className={classes.arrowSpacing}>
+      <Card className={classes.singleCard} variant="outlined">
+        <Link to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(props.customerId)} className={classes.cardContent}>
+          <div className={classes.indicator}>
+            {props.active ? <div className={classes.active} /> : <div className={classes.notActive} />}
+          </div>
+          <div>
+            <Typography variant="h2">{props.meterNumber}, {props.name}</Typography>
+            <Typography className={classes.totalText}>Total owed <span className={classes.numberText}>{props.amount} Ks</span></Typography>
+          </div>
+        </Link>
         {getStatusIcon()}
-        <IconButton>
-          <ArrowForwardIosIcon className={classes.arrow} />
-        </IconButton>
-      </CardActions>
-    </Card>
+        <CardActions className={classes.arrowSpacing}>
+          <IconButton component={Link} to={`${props.match.url}/customer`}>
+            <ArrowForwardIosIcon fontSize='small' />
+          </IconButton>
+        </CardActions>
+      </Card>
   );
 }
 export default withStyles(styles)(CustomerCard);

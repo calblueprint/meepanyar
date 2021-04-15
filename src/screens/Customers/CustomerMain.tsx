@@ -5,14 +5,12 @@ import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { CustomerRecord } from '../../lib/airtable/interface';
-import { getLatestReadingDate } from '../../lib/utils/customerUtils';
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import TrieTree from '../../lib/utils/TrieTree';
 import { selectCustomersToMeter, selectCustomersToCollect, selectCustomersDone } from '../../lib/redux/customerData';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import { TabContext, TabPanel } from '@material-ui/lab';
 import CustomerCard, { CustomerStatus } from './components/CustomerCard';
-import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 
@@ -156,18 +154,35 @@ function CustomerMain(props: CustomerMainProps) {
     return undefined;
   }
 
-  const getTabContent = (customers: CustomerRecord[], tabValue: string) => {
-      // For rendering efficiency, we hide the components instead of using Material-UI's
-      // https://stackoverflow.com/questions/61097440/reactjs-material-ui-prevent-re-render-tabs-on-enter TabPanel and show only when their tab is selected.
-      const showTab = tabValue === value;
-      return <div style={{visibility: showTab ? 'visible' : 'hidden', height: showTab ? 'auto' : 0, overflow: showTab ? 'visible' : 'hidden'}} >
-        {customers.map((customer: CustomerRecord, index) => (
-          <Link key={index} to={`${match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)}>
-            <CustomerCard name={customer.name} meterNumber={customer.meterNumber} amount={customer.outstandingBalance} active={customer.isactive}
-            status={getCustomerStatus(customer)}/>
-          </Link>
-        ))}
-      </div>
+  const getTabContent = () => {
+      let shownCustomers;
+      if (value === '0') {
+        shownCustomers = customers.all;
+      } else if (value === '1') {
+        shownCustomers = customers.toMeter;
+      } else if (value === '2') {
+        shownCustomers = customers.toCollect;
+      } else {
+        shownCustomers = customers.done;
+      }
+
+      return (
+        <div>
+          {shownCustomers.map((customer: CustomerRecord, index) => (
+              <div key={index}>
+                <CustomerCard
+                  name={customer.name}
+                  customerId={customer.id}
+                  match={match}
+                  meterNumber={customer.meterNumber}
+                  amount={customer.outstandingBalance}
+                  active={customer.isactive}
+                  status={getCustomerStatus(customer)}
+                />
+              </div>
+            ))}
+        </div>
+      );
     };
 
   const getMeterTabLabel = () => (
@@ -198,10 +213,7 @@ function CustomerMain(props: CustomerMainProps) {
           <Typography>Status: Active</Typography>
         </div>
         <BaseScrollView>
-          {getTabContent(customers.all, "0")}
-          {getTabContent(customers.toMeter, "1")}
-          {getTabContent(customers.toCollect, "2")}
-          {getTabContent(customers.done, "3")}
+          {getTabContent()}
         </BaseScrollView>
       </TabContext>
       <Link to={'/customers/create'}>
