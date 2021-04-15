@@ -78,6 +78,7 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     meterType: MeterType.ANALOG_METER,
     startingMeterReading: 0,
     customerNumber: 0,
+    startingMeterLastChanged: '',
 }
 
 export const EMPTY_PAYMENT: PaymentRecord = {
