@@ -79,21 +79,21 @@ function InventoryProfile(props: InventoryProps) {
                     )}
                   </ListItemIcon>
                   <ListItemText
+                    primaryTypographyProps={{variant: 'body2'}}
                     className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                     primary={formatDateStringToLocal(historyRecord.createdAt)}
                   />
                   {isPurchaseRequest && (
                     <ListItemText
                       className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
-                      primaryTypographyProps={{ align: 'right' }}
+                      primaryTypographyProps={{ variant: 'body2', align: 'right' }}
                       primary={`${historyRecord.amountSpent || 0} kS`}
                     />
                   )}
-                  {/* TODO: update to updated quantity for purchase requests */}
                   <ListItemText
                     className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
-                    primaryTypographyProps={{ align: 'right' }}
-                    primary={`${historyRecord.updatedQuantity || historyRecord.amountPurchased || 0} ${
+                    primaryTypographyProps={{ variant: 'body2', align: 'right' }}
+                    primary={`${historyRecord.updatedQuantity || 0} ${
                       product.unit
                     }(s)`}
                   />

@@ -251,18 +251,17 @@ export const createManyInventorys = async (records) => {
 // that was created offline (no Airtable id).
 export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) => {
   let purchaseRequestId = "";
-  const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
   try {
     delete purchaseRequest.id; // Remove the id field to add to Airtable
     purchaseRequestId = await createPurchaseRequest(purchaseRequest);
-    updateInventory(purchaseRequest.inventoryId, { currentQuantity: newQuantity });
+    updateInventory(purchaseRequest.inventoryId, { currentQuantity: purchaseRequest.updatedQuantity });
   } catch (err) {
     purchaseRequestId = generateOfflineId();
     console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
   }
   purchaseRequest.id = purchaseRequestId;
   addPurchaseRequestToRedux(purchaseRequest);
-  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
+  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, purchaseRequest.updatedQuantity);
   return purchaseRequest;
 };
 

@@ -40,7 +40,7 @@ const styles = (theme: Theme) =>
       marginBottom: theme.spacing(1),
     },
     cardActions: {
-      width: 70,
+      minWidth: 70,
       justifyContent: 'flex-end',
     },
   });
