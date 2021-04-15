@@ -59,10 +59,11 @@ export interface HeaderProps {
   searchAction?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   searchExit?: () => void;
   searchPlaceholder?: string;
+  bigTitle?: boolean;
 }
 
 export default function BaseHeader(props: HeaderProps): JSX.Element {
-  const { leftIcon, title, rightIcon, match, backAction, searchAction, searchExit, searchPlaceholder } = props;
+  const { leftIcon, title, rightIcon, match, backAction, searchAction, searchExit, searchPlaceholder, bigTitle } = props;
   const classes = useStyles(props);
 
   const [searchVisible, setSearchVisible] = useState(false);
@@ -94,7 +95,7 @@ export default function BaseHeader(props: HeaderProps): JSX.Element {
 
   const left = leftIcon ? icons[leftIcon] : null;
   const header = title ? (
-    <Typography className={searchAction ? classes.leftTitle : classes.title} variant={searchAction ? 'h1' : 'h2'}>
+    <Typography className={bigTitle ? classes.leftTitle : classes.title} variant={bigTitle ? 'h1' : 'h2'}>
       {title}
     </Typography>
   ) : null;
