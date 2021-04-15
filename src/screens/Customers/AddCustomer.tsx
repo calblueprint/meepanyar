@@ -8,7 +8,7 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
-import { SiteRecord } from '../../lib/airtable/interface';
+import { SiteRecord, TariffPlanRecord } from '../../lib/airtable/interface';
 import { createCustomer } from '../../lib/airtable/request';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
@@ -58,7 +58,7 @@ function AddCustomer(props: AddCustomerProps) {
 
   const [customerName, setCustomerName] = useState("");
   const [customerNumber, setCustomerNumber] = useState("");
-  const [selectedMeterType, setSelectedMeterType] = useState(MeterType.NO_METER);
+  const [selectedMeterType, setSelectedMeterType] = useState(MeterType.INACTIVE);
   const [meterNumber, setMeterNumber] = useState(""); // TODO: @julianrkung Look into constraints on meter number input.
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState("");
   const [loading, setLoading] = useState(false);
@@ -119,6 +119,20 @@ function AddCustomer(props: AddCustomerProps) {
     setCustomerNumber(event.target.value as string);
   }
 
+  const getTariffPlans = () => {
+    let availableTariffPlans = tariffPlans;
+    availableTariffPlans = availableTariffPlans.filter((plan) => plan.meterTypes && plan.meterTypes.includes(selectedMeterType));
+    return (
+      <Select onChange={handleSelectTariffPlan} label={'Tariff Plan'}>
+        {availableTariffPlans.map((plan) =>
+          <MenuItem key={plan.id} value={plan.id}>
+            <TariffPlanCard tariffPlan={plan} />
+          </MenuItem>
+        )}
+      </Select>
+    );
+  }
+
   return (
     <BaseScreen title="Add New Customer" leftIcon="backNav">
       <BaseScrollView>
@@ -146,29 +160,13 @@ function AddCustomer(props: AddCustomerProps) {
           </div>
           <div className={classes.selectContainer}>
             <FormControl
-              variant="outlined"
               required
-              className={classes.formControl}
-            >
-              <InputLabel>Tariff Plan</InputLabel>
-              <Select onChange={handleSelectTariffPlan} label={'Tariff Plan'}>
-                {tariffPlans.map((plan) =>
-                  <MenuItem key={plan.id} value={plan.id}>
-                    <TariffPlanCard tariffPlan={plan} />
-                  </MenuItem>
-                )}
-              </Select>
-            </FormControl>
-          </div>
-          <div className={classes.selectContainer}>
-            <FormControl
-              disabled={selectedTariffPlanId === ""}
-              required={selectedTariffPlanId != ""}
               variant="outlined"
-              className={selectedTariffPlanId === "" ? classes.disabledFormControl : classes.formControl}
+              className={classes.formControl}
             >
               <InputLabel>Meter Type</InputLabel>
               <Select onChange={handleSelectMeterType} label={'Meter Type'}>
+                <MenuItem hidden value={MeterType.INACTIVE}>Ianactive</MenuItem>
                 <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
                 <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
                 <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
@@ -182,9 +180,20 @@ function AddCustomer(props: AddCustomerProps) {
               placeholder={'Input'}
               type="number"
               onChange={handleMeterNumberInput}
-              disabled={selectedMeterType === MeterType.NO_METER}
-              required={selectedMeterType != MeterType.NO_METER}
+              disabled={selectedMeterType === MeterType.INACTIVE || selectedMeterType === MeterType.NO_METER}
+              required={selectedMeterType != MeterType.INACTIVE && selectedMeterType != MeterType.NO_METER}
             />
+          </div>
+          <div className={classes.selectContainer}>
+            <FormControl
+              variant="outlined"
+              disabled={selectedMeterType === MeterType.INACTIVE}
+              required={selectedMeterType != MeterType.INACTIVE}
+              className={ selectedMeterType === MeterType.INACTIVE ? classes.disabledFormControl : classes.formControl}
+            >
+              <InputLabel>Tariff Plan</InputLabel>
+              {getTariffPlans()}
+            </FormControl>
           </div>
           <div className={classes.buttonContainer}>
             <div className={classes.button}>
