@@ -26,6 +26,7 @@ export interface UserRecord {
   username: string;
   admin: boolean;
   name: string;
+  inactive: boolean;
   email?: string;
   siteIds?: string[];
   photo?: Airtable.Attachment[];
@@ -59,6 +60,7 @@ export interface TariffPlanRecord {
   tariffByUnit: number;
   freeUnits: number;
   numberOfCustomers: number;
+  meterTypes: string[];
 }
 
 export interface CustomerRecord {
@@ -77,6 +79,7 @@ export interface CustomerRecord {
   totalAmountPaidfromPayments: number;
   meterType: MeterType;
   startingMeterReading: number;
+  startingMeterLastChanged: string;
   customerNumber: number;
 }
 
@@ -135,6 +138,7 @@ export interface PurchaseRequestRecord {
   amountSpent: number;
   receipt?: Airtable.Attachment[];
   inventoryId: string;
+  updatedQuantity: number;
 }
 
 
