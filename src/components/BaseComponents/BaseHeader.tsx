@@ -77,14 +77,6 @@ export default function BaseHeader(props: HeaderProps): JSX.Element {
 
   const history = useHistory();
   const backActionDefault = history.goBack;
-  const handleLogoutClick = async () => {
-    const logoutSuccess = await logoutUser();
-    if (logoutSuccess){
-      history.push('/login');
-    } else {
-      console.warn('Logout failed');
-    }
-  };
 
   const getIcon = (onClick: (event: React.MouseEvent<HTMLElement>) => void, icon: JSX.Element, primary?: boolean) => {
     return (

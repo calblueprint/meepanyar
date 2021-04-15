@@ -123,6 +123,7 @@ export const EMPTY_PURCHASE_REQUEST: PurchaseRequestRecord = {
   amountPurchased: 0.0,
   amountSpent: 0.0,
   inventoryId: '',
+  updatedQuantity: 0,
 };
 
 const inventoryDataSlice = createSlice({
