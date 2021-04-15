@@ -7,10 +7,10 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { CustomerRecord } from '../../lib/airtable/interface';
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import TrieTree from '../../lib/utils/TrieTree';
-import { selectCustomersToMeter, selectCustomersToCollect, selectCustomersDone } from '../../lib/redux/customerData';
+import { selectCustomersToMeter, selectCustomersToCollect, selectCustomersDone, CustomerStatus } from '../../lib/redux/customerData';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import { TabContext, TabPanel } from '@material-ui/lab';
-import CustomerCard, { CustomerStatus } from './components/CustomerCard';
+import CustomerCard from './components/CustomerCard';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 
@@ -90,9 +90,9 @@ function CustomerMain(props: CustomerMainProps) {
   const classes = styles(props);
   const { match } = props;
   const [searchValue, setSearchValue] = useState<string>("");
-  const [value, setValue] = React.useState('0');
-  const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
-    setValue(newValue);
+  const [tabValue, setTabValue] = useState<CustomerStatus>(CustomerStatus.ALL);
+  const changeTab = (event: React.ChangeEvent<{}>, newValue: CustomerStatus) => {
+    setTabValue(newValue);
   };
 
   //default customer arrays
@@ -109,8 +109,10 @@ function CustomerMain(props: CustomerMainProps) {
 
   //customer states
   const [customers, setCustomers] = useState<CustomerMenu>(defaultCustomers);
-  const allCustomersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
-  allCustomersTrie.addAll(allCustomers);
+  const allCustomerNamesTrie: TrieTree<CustomerRecord> = new TrieTree('name');
+  const allCustomerNumbersTrie: TrieTree<CustomerRecord> = new TrieTree('customerNumber');
+  allCustomerNamesTrie.addAll(allCustomers);
+  allCustomerNumbersTrie.addAll(allCustomers);
 
   //default customer sets
   const toMeterCustomersSet: Set<string> = new Set<string>(toMeterCustomers.map((customer: CustomerRecord) => customer.id));
@@ -128,7 +130,15 @@ function CustomerMain(props: CustomerMainProps) {
 
   const getCustomers = () => {
     if (searchValue !== '') {
-      const searchedCustomersArray = allCustomersTrie.get(searchValue);
+      let searchedCustomersArray;
+
+      // checks whether first character is number or letter
+      if (isNaN(parseInt(searchValue[0]))) {
+        searchedCustomersArray = allCustomerNamesTrie.get(searchValue);
+      } else {
+        searchedCustomersArray = allCustomerNumbersTrie.get(searchValue);
+      }
+
       const searchedCustomers = new Set<string>(searchedCustomersArray.map((customer: CustomerRecord) => customer.id));
 
       const newCustomers: CustomerMenu = {
@@ -159,14 +169,14 @@ function CustomerMain(props: CustomerMainProps) {
 
   const getTabContent = () => {
       let shownCustomers;
-      if (value === '0') {
-        shownCustomers = customers.all;
-      } else if (value === '1') {
+      if (tabValue === CustomerStatus.METER) {
         shownCustomers = customers.toMeter;
-      } else if (value === '2') {
+      } else if (tabValue === CustomerStatus.PAYMENT) {
         shownCustomers = customers.toCollect;
-      } else {
+      } else if (tabValue === CustomerStatus.DONE) {
         shownCustomers = customers.done;
+      } else {
+        shownCustomers = customers.all;
       }
 
       return (
@@ -174,12 +184,8 @@ function CustomerMain(props: CustomerMainProps) {
           {shownCustomers.map((customer: CustomerRecord, index) => (
               <div key={index}>
                 <CustomerCard
-                  name={customer.name}
-                  customerId={customer.id}
+                  customer={customer}
                   match={match}
-                  meterNumber={customer.meterNumber}
-                  amount={customer.outstandingBalance}
-                  active={customer.isactive}
                   status={getCustomerStatus(customer)}
                 />
               </div>
@@ -204,12 +210,18 @@ function CustomerMain(props: CustomerMainProps) {
 
   return (
     <BaseScreen rightIcon="user" title="Customers" searchAction={handleSearchChange} searchExit={exitSearch}>
-      <TabContext value={value}>
-        <Tabs textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
-          <Tab className={classes.tab} label="All" value="0" />
-          <Tab className={classes.tab} label={getMeterTabLabel()} value="1" />
-          <Tab className={classes.tab} label={getPaymentTabLabel()} value="2" />
-          <Tab className={classes.tab} label="Done" value="3" />
+      <TabContext value={tabValue.toString()}>
+        <Tabs
+          textColor="primary"
+          indicatorColor="primary"
+          value={tabValue}
+          onChange={changeTab}
+          variant="scrollable"
+        >
+          <Tab className={classes.tab} label="All" value={CustomerStatus.ALL} />
+          <Tab className={classes.tab} label={getMeterTabLabel()} value={CustomerStatus.METER} />
+          <Tab className={classes.tab} label={getPaymentTabLabel()} value={CustomerStatus.PAYMENT} />
+          <Tab className={classes.tab} label="Done" value={CustomerStatus.DONE} />
         </Tabs>
         <div className={classes.activeContainer}>
           <div className={classes.active}></div>

@@ -15,6 +15,13 @@ import { selectCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
 import { createSelector } from '@reduxjs/toolkit';
 
+export enum CustomerStatus {
+  ALL = 'All' as any,
+  METER = 'Meter' as any,
+  PAYMENT = 'Payment' as any,
+  DONE = 'Done' as any,
+}
+
 export const refreshCustomerData = (site: SiteRecord): void => {
     if (site) {
         const { customers, payments, meterReadings } = site;
