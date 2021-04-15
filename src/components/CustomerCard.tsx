@@ -4,6 +4,9 @@ import { Card, CardActions, Typography, IconButton } from '@material-ui/core';
 
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
+import { useInternationalization } from '../lib/i18next/translator';
+import words from '../lib/i18next/words';
+
 const styles = (theme: Theme) =>
   createStyles({
     arrow: {
@@ -97,6 +100,7 @@ interface CardProps {
 }
 
 function CustomerCard(props: CardProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   return (
     <Card className={classes.singleCard}>
@@ -104,11 +108,11 @@ function CustomerCard(props: CardProps) {
         {props.active ? <div className={classes.active} /> : <div className={classes.notActive} />}
         <div>
           <Typography className={classes.titleText}>{props.name}</Typography>
-          <Typography className={classes.updatedText}>Last Updated: {props.date}</Typography>
+          <Typography className={classes.updatedText}>{intl(words.last_updated_date, props.date)}</Typography>
         </div>
         <div className={classes.divSpacing}>
-          <Typography className={classes.totalText}>Total owed: </Typography>
-          <Typography className={classes.numberText}>{props.amount} Ks</Typography>
+          <Typography className={classes.totalText}>{intl(words.total_owed)}</Typography>
+          <Typography className={classes.numberText}>{props.amount} {intl(words.ks)}</Typography>
         </div>
       </div>
       <CardActions className={classes.arrowSpacing}>
