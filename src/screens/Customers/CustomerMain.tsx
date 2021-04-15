@@ -13,6 +13,9 @@ import { getLatestReadingDate } from '../../lib/utils/customerUtils';
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import TrieTree from '../../lib/utils/TrieTree';
 
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -55,25 +58,26 @@ interface CustomerMainProps extends RouteComponentProps {
 }
 
 enum SortBy {
-  NAME = 'Name (A - Z)' as any,
-  METER = 'Meter Number' as any
+  NAME = words.name_a__z as any,
+  METER = words.meter_number as any
 }
 
 enum FilterBy {
-  PAYMENT_STATUS = 'Payment Status' as any,
-  METER_STATUS = 'Meter Status' as any,
-  ACTIVE_STATUS = 'Active Status' as any,
+  PAYMENT_STATUS = words.payment_status as any,
+  METER_STATUS = words.meter_status as any,
+  ACTIVE_STATUS = words.active_status as any,
 }
 
 type FilterByLabel = Record<keyof typeof FilterBy, string[]>;
 
 const labels: FilterByLabel = {
-  'PAYMENT_STATUS': ['Unpaid', 'Paid'],
-  'METER_STATUS': ['Has Meter', 'No Meter'],
-  'ACTIVE_STATUS': ['Active', 'Inactive']
+  'PAYMENT_STATUS': [words.unpaid, words.paid],
+  'METER_STATUS': [words.has_meter, words.no_meter],
+  'ACTIVE_STATUS': [words.active_user, words.inactive_user]
 }
 
 function CustomerMain(props: CustomerMainProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
   const [filteredCustomersAlt, setFilteredCustomersAlt] = useState<CustomerRecord[]>([]);
@@ -182,32 +186,32 @@ function CustomerMain(props: CustomerMainProps) {
   return (
     <BaseScreen rightIcon="user">
       <div className={classes.headerWrapper}>
-        <h1 className={classes.title}>Customers</h1>
+        <h1 className={classes.title}>{intl(words.customers)}</h1>
       </div>
       <div className={classes.selectionHeader}>
         <SearchBar placeholder="Search for a customer" onSearchChange={handleSearchChange} />
         <FormControl>
           <Select onChange={handleMenuSelect} multiple value={sortAndFilter} inputProps={{ 'aria-label': 'Without label' }}>
-            <ListSubheader>Sort By</ListSubheader>
-            <MenuItem value="NAME">{SortBy.NAME}</MenuItem>
-            <MenuItem value="METER">{SortBy.METER}</MenuItem>
-            <ListSubheader>Filter By</ListSubheader>
-            <MenuItem value="PAYMENT_STATUS">{FilterBy.PAYMENT_STATUS}</MenuItem>
-            <MenuItem value="METER_STATUS">{FilterBy.METER_STATUS}</MenuItem>
-            <MenuItem value="ACTIVE_STATUS">{FilterBy.ACTIVE_STATUS}</MenuItem>
+            <ListSubheader>{intl(words.sort_by)}</ListSubheader>
+            <MenuItem value="NAME">{intl(words.name_a__z)}</MenuItem>
+            <MenuItem value="METER">{intl(words.meter_number)}</MenuItem>
+            <ListSubheader>{intl(words.filter_by)}</ListSubheader>
+            <MenuItem value="PAYMENT_STATUS">{intl(words.payment_status)}</MenuItem>
+            <MenuItem value="METER_STATUS">{intl(words.meter_status)}</MenuItem>
+            <MenuItem value="ACTIVE_STATUS">{intl(words.active_status)}</MenuItem>
           </Select>
-          <div className={classes.rightAlign}><FormHelperText>Sort and Filter</FormHelperText></div>
+          <div className={classes.rightAlign}><FormHelperText>{intl(words.sort_and_filter)}</FormHelperText></div>
         </FormControl>
       </div>
       <BaseScrollView>
-        <FormHelperText>{filterLabels[0]}</FormHelperText>
+        <FormHelperText>{intl(filterLabels[0])}</FormHelperText>
         {filteredCustomers.map((customer, index) => (
           <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)} >
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
         }
-        <FormHelperText>{filterLabels[1]}</FormHelperText>
+        <FormHelperText>{intl(filterLabels[1])}</FormHelperText>
         {filteredCustomersAlt.map((customer, index) => (
           <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)} >
             <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
