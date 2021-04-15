@@ -11,8 +11,7 @@ interface PastReportButtonProps {
 const styles = (theme: Theme) =>
     createStyles({
         root: {
-            width: '90px',
-            height: '60px',
+
             border: '1px solid',
             borderColor: theme.palette.primary.main,
             borderRadius: '8px',

@@ -20,12 +20,12 @@ const styles = (theme: Theme) =>
             marginBottom: '12px',
         },
         text: {
-            fontSize: '12px',
-            color: '#424242',
+            fontSize: theme.typography.body2.fontSize,
+            color: theme.palette.error.dark,
         },
         paymentText: {
-            fontSize: '18px',
-            color: '#FF6142',
+            fontSize: theme.typography.h2.fontSize,
+            color: theme.palette.info.main,
         }, content: {
             display: 'flex',
             width: 'inherit',

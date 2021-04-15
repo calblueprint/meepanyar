@@ -2,7 +2,7 @@ import React from 'react';
 import { connect, useSelector } from 'react-redux';
 import { RootState } from '../../lib/redux/store';
 import { formatDateStringToLocal, getCurrentPeriod, getNextPeriod } from '../../lib/moment/momentUtils';
-import { withStyles, createStyles } from '@material-ui/core/styles';
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
 import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
@@ -20,7 +20,7 @@ import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redu
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 
-const styles = () =>
+const styles = (theme: Theme) =>
   createStyles({
     header: {
       display: 'flex',
@@ -28,18 +28,18 @@ const styles = () =>
       marginBottom: '35px',
     },
     network: {
-      color: '#BDBDBD',
+      color: theme.palette.error.light,
       textAlign: 'right',
       width: '100px',
-      fontSize: '10px',
+      fontSize: theme.typography.caption.fontSize,
     },
     periodDescription: {
-      fontSize: '14px',
-      color: '#757575',
+      fontSize: theme.typography.body2.fontSize,
+      color: theme.palette.error.main,
     },
     categoryText: {
-      fontSize: '18px',
-      color: '424242',
+      fontSize: theme.typography.body2.fontSize,
+      color: theme.palette.error.dark,
     },
     financialSums: {
       display: 'flex',
@@ -106,7 +106,7 @@ function Home(props: HomeProps) {
           <HomeMenuItem
             label="Maintenance"
             amount={0}
-            iconType="maintain"
+            iconType="maintenance"
           />
         </Link>
         <HomeMenuItem label="Incidents" amount={0} iconType="incident" />

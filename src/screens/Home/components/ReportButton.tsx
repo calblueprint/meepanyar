@@ -12,8 +12,7 @@ interface ReportButtonProps {
 const styles = (theme: Theme) =>
     createStyles({
         root: {
-            width: '180px',
-            height: '60px',
+
             background: theme.palette.primary.main,
             borderRadius: '8px',
             padding: '18px',

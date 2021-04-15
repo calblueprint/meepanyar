@@ -43,7 +43,7 @@ const styles = (theme: Theme) =>
       opacity: '50%',
     },
     sublabel: {
-      color: '#BDBDBD',
+      color: theme.palette.error.light,
     },
     icon: {
       width: '20px',
@@ -53,15 +53,15 @@ const styles = (theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: '50%',
-      backgroundColor: '#FF6142',
+      backgroundColor: theme.palette.info.main,
     },
     checked: {
       backgroundColor: theme.palette.primary.main,
     },
     label: {
       marginLeft: '15px',
-      color: '#757575',
-      size: '14px',
+      color: theme.palette.error.main,
+      size: theme.typography.body2.fontSize,
     },
     innerContent: {
       display: 'flex',
@@ -86,7 +86,7 @@ function HomeMenuItem(props: HomeMenuItemProps) {
         <AccountBoxIcon color="primary" />
       );
     }
-    if (iconType == 'maintain') {
+    if (iconType == 'maintenance') {
       return (
         <BuildIcon color="primary" />
       );

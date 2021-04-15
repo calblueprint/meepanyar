@@ -16,6 +16,11 @@ export const theme = createMuiTheme({
       secondary: '#C4C4C4',
     },
     divider: '#E5E5E5',
+    error: {
+      light: '#BDBDBD',
+      main: '#757575',
+      dark: '#424242'
+    },
   },
   typography: {
     fontFamily: 'Helvetica Neue',
@@ -54,3 +59,4 @@ export const theme = createMuiTheme({
     },
   },
 });
+
