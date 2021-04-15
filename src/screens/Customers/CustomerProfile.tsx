@@ -14,6 +14,8 @@ import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
 import Button from '../../components/Button';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -50,6 +52,7 @@ interface CustomerProps extends RouteComponentProps {
 }
 
 function CustomerProfile(props: CustomerProps) {
+  const intl = useInternationalization();
   const { classes, match } = props;
   const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
   const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
@@ -69,9 +72,9 @@ function CustomerProfile(props: CustomerProps) {
   const freeUnits = customerTariff ? customerTariff?.freeUnits : UNDEFINED_AMOUNT;
 
   let tariffInfo: CardPropsInfo[] = [
-    { number: fixedTariff.toString(), label: 'Fixed Tariff', unit: 'Ks' },
-    { number: unitTariff.toString(), label: 'Unit Tariff', unit: 'Ks' },
-    { number: freeUnits.toString(), label: 'Free Units', unit: 'kWh' },
+    { number: fixedTariff.toString(), label: words.fixed_tariff, unit: words.ks },
+    { number: unitTariff.toString(), label: words.per_unit_tariff, unit: words.ks },
+    { number: freeUnits.toString(), label: words.free_units, unit: words.kwh },
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
@@ -81,13 +84,13 @@ function CustomerProfile(props: CustomerProps) {
 
   let meterInfo: CardPropsInfo[] = [
     //TODO: include actual starting reading - currentCustomer.startingMeterReading
-    { number: startingReading? startingReading.amountBilled.toString() : '0', label: 'Starting Meter', unit: 'kWh' },
-    { number: periodUsage.toString(), label: 'Period Usage', unit: 'kWh' },
-    { number: currReading ? currReading.reading.toString() : '0', label: 'Ending Meter', unit: 'kWh' },
-    { number: amountBilled.toString(), label: 'Amount Billed', unit: 'kS' },
+    { number: startingReading? startingReading.amountBilled.toString() : '0', label: words.starting_meter, unit: words.kwh },
+    { number: periodUsage.toString(), label: words.period_usage, unit: words.kwh },
+    { number: currReading ? currReading.reading.toString() : '0', label: words.ending_meter, unit: words.kwh },
+    { number: amountBilled.toString(), label: words.amount_billed, unit: words.ks },
   ];
-  let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
-  let readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.reading.toString() : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
+  let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: words.remaining_balance, unit: words.ks }];
+  let readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.reading.toString() : '0', label: words.last_recorded_reading, unit: words.kwh }];
 
   const getAddButton = (path: string) => {
     //TODO: separate into base component @wangannie
@@ -108,7 +111,7 @@ function CustomerProfile(props: CustomerProps) {
 
   const getPaymentInfo = () => {
     if (customer.meterType === MeterType.INACTIVE) {
-      balanceInfo = [{ number: UNDEFINED_AMOUNT, label: 'Remaining Balance', unit: '' }];
+      balanceInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.remaining_balance), unit: '' }];
       return (
         <OutlinedCardList info={balanceInfo} readOnly />
       );
@@ -127,20 +130,20 @@ function CustomerProfile(props: CustomerProps) {
       meterReadOnly = false;
       topLeftReadOnly = false;
     } else if (customer.meterType === MeterType.NO_METER) {
-      readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
+      readingInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.last_recorded_reading), unit: '' }];
       meterInfo = [
-        { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
-        { number: periodUsage.toString(), label: 'Period Usage', unit: 'kWh' },
-        { number: UNDEFINED_AMOUNT, label: 'Ending Meter', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Amount Billed', unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
+        { number: periodUsage.toString(), label: intl(words.period_usage), unit: words.kwh },
+        { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
       ];
     } else if (customer.meterType === MeterType.INACTIVE) {
-      readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
+      readingInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.last_recorded_reading), unit: '' }];
       meterInfo = [
-        { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Period Usage', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Ending Meter', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Amount Billed', unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.period_usage), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
       ];
     }
 
@@ -187,9 +190,9 @@ function CustomerProfile(props: CustomerProps) {
     let tariffReadOnly;
     if (customer.meterType === MeterType.INACTIVE) {
       tariffInfo = [
-        { number: UNDEFINED_AMOUNT, label: 'Fixed\nTariff', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Unit\nTariff', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Free\nUnits', unit: '' }
+        { number: UNDEFINED_AMOUNT, label: intl(words.fixed_tariff), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.per_unit_tariff), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.free_units), unit: '' }
       ];
       tariffReadOnly = true;
     }
@@ -204,20 +207,20 @@ function CustomerProfile(props: CustomerProps) {
         <div className={classes.content}>
           {getTariffInfo()}
           <div className={classes.headerWrapper}>
-            <Typography variant="h2">Payment</Typography>
+            <Typography variant="h2">{intl(words.payment)}</Typography>
             <Link
               to={{
                 pathname: `${match.url}/records`,
                 state: { invoices: meterReadings, payments: payments, defaultTab: '1' }
               }}
             >
-              <Button label={'View All'} variant="text" />
+              <Button label={intl(words.view_all)} variant="text" />
             </Link>
           </div>
           {getPaymentInfo()}
           <div className={classes.headerWrapper}>
             <Typography variant="h2">
-              Meter Reading
+              {intl(words.current_meter_reading_kwh)}
             </Typography>
             <Link
               to={{
@@ -225,7 +228,7 @@ function CustomerProfile(props: CustomerProps) {
                 state: { invoices: meterReadings, payments: payments, defaultTab: '0' }
               }}
             >
-              <Button label={'View All'} variant="text" />
+              <Button label={intl(words.view_all)} variant="text" />
             </Link>
           </div>
           {getReadingInfo()}
