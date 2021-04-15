@@ -1,6 +1,4 @@
 import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
@@ -9,8 +7,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { logoutUser } from '../../lib/airlock/airlock';
-import { selectCurrentUser } from '../../lib/redux/userData';
+
 const styles = (theme: Theme) =>
   createStyles({
     root: {
@@ -53,22 +50,9 @@ export interface HeaderProps {
 
 function BaseHeader(props: HeaderProps) {
   const { leftIcon, title, rightIcon, classes, match, backAction } = props;
-  const currentUser = useSelector(selectCurrentUser);
-  const name = currentUser?.name || '';
-  const email = currentUser?.email || '';
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const history = useHistory();
   const backActionDefault = history.goBack;
-  const handleLogoutClick = async () => {
-    const logoutSuccess = await logoutUser();
-    if (logoutSuccess){
-      history.push('/login');
-    } else {
-      console.warn('Logout failed');
-    }
-  };
 
   const getIcon = (onClick: (event: React.MouseEvent<HTMLElement>) => void, icon: JSX.Element, primary?: boolean) => {
     return (
@@ -78,22 +62,9 @@ function BaseHeader(props: HeaderProps) {
     );
   };
 
-
-  const openProfileMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const navigateToProfile = () => {
+    history.push('/profile')
   };
-  
-  const closeProfileMenu = () => {
-    setAnchorEl(null);
-  };
-
-  const profileMenu = (
-    <Menu anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={closeProfileMenu}>
-      <MenuItem>{name}</MenuItem>
-      <MenuItem>{email}</MenuItem>
-      <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-    </Menu>
-  );
 
   const navigateToEdit = () => {
     history.push(`${match.url}/edit`);
@@ -102,8 +73,8 @@ function BaseHeader(props: HeaderProps) {
   //TODO: allow users to input icons rather than map strings to icons
   const icons: { [key: string]: JSX.Element } = {
     backNav: getIcon(backAction || backActionDefault, <ArrowBackIcon />),
-    edit: getIcon(navigateToEdit, <CreateIcon />, true),
-    user: getIcon(openProfileMenu, <AccountCircleIcon className={classes.account} fontSize="large" />),
+    edit: getIcon(navigateToEdit, <CreateIcon />),
+    user: getIcon(navigateToProfile, <AccountCircleIcon className={classes.account} fontSize="large" />),
   };
 
   const left = leftIcon ? icons[leftIcon] : null;
@@ -120,7 +91,6 @@ function BaseHeader(props: HeaderProps) {
       <div className={classes.toolbar}>
         <div className={classes.left}>{left}</div>
         <div className={classes.right}>{right}</div>
-        {profileMenu}
       </div>
     </div>
   );

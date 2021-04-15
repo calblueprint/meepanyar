@@ -22,6 +22,14 @@ import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummaryPayment';
 import Home from './screens/Home/Home';
 import Incidents from './screens/Incidents';
+import ProfileMain from './screens/Profile/ProfileMain';
+import EditUserProfile from './screens/Profile/EditUserProfile';
+import SiteProfileMain from './screens/Profile/SiteProfileMain';
+import UserInformationMain from './screens/Profile/UserInformationMain';
+import EditUserInformation from './screens/Profile/EditUserInformation';
+import EditSiteInformation from './screens/Profile/EditSiteInformation';
+import TariffPlans from './screens/Profile/TariffPlans';
+import EditTariffPlanInformation from './screens/Profile/EditTariffPlanInformation';
 import AddInventory from './screens/Inventory/AddInventory';
 import CreateInventoryUpdate from './screens/Inventory/CreateInventoryUpdate';
 import CreatePurchaseRequest from './screens/Inventory/CreatePurchaseRequest';
@@ -41,7 +49,14 @@ function App() {
   const Container = () => (
     <>
       <AuthenticatedRoute path="/home" component={Home} />
-
+      <AuthenticatedRoute path="/profile" component={ProfileMain} exact />
+      <AuthenticatedRoute path="/profile/user" component={EditUserProfile} exact />
+      <AuthenticatedRoute path="/profile/site" component={SiteProfileMain} exact />
+      <AuthenticatedRoute path="/profile/site/name" component={EditSiteInformation} exact />
+      <AuthenticatedRoute path="/profile/site/tariff-plans" component={TariffPlans} exact />
+      <AuthenticatedRoute path="/profile/site/tariff-plans/tariff-plan" component={EditTariffPlanInformation} exact />
+      <AuthenticatedRoute path="/profile/site/user-information" component={UserInformationMain} exact />
+      <AuthenticatedRoute path="/profile/site/user-information/user" component={EditUserInformation} exact />
       <AuthenticatedRoute path="/customers" component={CustomerMain} exact />
       <AuthenticatedRoute path="/customers/create" component={AddCustomer} exact />
       <AuthenticatedRoute path={'/customers/customer'} component={CustomerProfile} exact />
