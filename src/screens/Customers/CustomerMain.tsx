@@ -69,6 +69,9 @@ const styles = makeStyles((theme: Theme) =>
     tabLabel: {
       display: 'inline-flex',
     },
+    tabContent: {
+      marginBottom: '50px',
+    },
   }));
 
 interface CustomerMenu {
@@ -167,7 +170,7 @@ function CustomerMain(props: CustomerMainProps) {
       }
 
       return (
-        <div>
+        <div className={classes.tabContent}>
           {shownCustomers.map((customer: CustomerRecord, index) => (
               <div key={index}>
                 <CustomerCard
