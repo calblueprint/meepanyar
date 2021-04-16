@@ -24,7 +24,7 @@ import {
   deleteRecord,
 } from './airtable';
 
-import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux, addMeterReadingToRedux, updateMeterReadingInRedux } from '../../lib/redux/customerData';
+import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux, addMeterReadingToRedux, removeMeterReadingFromRedux } from '../../lib/redux/customerData';
 import { getCurrentReading, isReadingFromLatestPeriod } from '../utils/customerUtils';
 import { generateOfflineId } from '../utils/offlineUtils';
 import {
@@ -131,7 +131,7 @@ export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, c
   delete meterReading.id;
   try {
     // Backend checks that a previous meter reading if a previous meter reading has been
-    // created for this period. If one has, the previous meter reading is updated to keep 1 reading per period
+    // created for this period. If one has, the previous meter reading is deleted to keep 1 reading per period
     meterReadingId = await createRecord(Tables.MeterReadingsandInvoices, meterReading);
   } catch (error) {
     console.log('(Meter Reading) Error occurred when creating meter reading: ', meterReading);
@@ -141,16 +141,16 @@ export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, c
   const latestMeterReading = getCurrentReading(customer);
   let balanceToAdd = meterReading.amountBilled;
 
-  // If a meter reading was made in the same period, we update the existing 
-  // reading instead of creating a new one because only 1 reading can be made per period.
+  // If a meter reading was made in the same period, we delete the existing 
+  // reading and replace it with the new one creating a new one because only 1 reading can be made per period.
   // This same logic occurs on the backend to ensure only 1 reading is made per period after the grace period.
   if (latestMeterReading && isReadingFromLatestPeriod(latestMeterReading)) {
-    updateMeterReadingInRedux({ ...meterReading, id: latestMeterReading.id });
+    removeMeterReadingFromRedux(latestMeterReading.id)
     balanceToAdd = meterReading.amountBilled - latestMeterReading.amountBilled;
-  } else {
-    meterReading.id = meterReadingId;
-    addMeterReadingToRedux(meterReading);
   }
+
+  meterReading.id = meterReadingId;
+  addMeterReadingToRedux(meterReading);
 
   // Customer's outstanding balance is automatically updated on Airtable but needs to
   // be manually updated clientside to account for offline situations. The "Outstanding Balance" 
@@ -624,7 +624,7 @@ export const updateCustomer = async (id, recordUpdates, customerUpdate) => {
   } catch (error) {
     console.log("An error occurred while updating the customer: ", error);
   }
-  updateCustomerInRedux({...recordUpdates, id});
+  updateCustomerInRedux({ ...recordUpdates, id });
 
   try {
     delete customerUpdate.id;

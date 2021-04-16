@@ -71,7 +71,7 @@ export interface CustomerRecord {
   tariffPlanId: string;
   isactive: boolean;
   hasmeter: boolean;
-  outstandingBalance: string;
+  outstandingBalance: number;
   meterReadingIds: string[];
   paymentIds: string[];
   customerUpdateIds: string[];

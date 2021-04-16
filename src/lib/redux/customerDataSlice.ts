@@ -68,7 +68,7 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     tariffPlanId: '',
     isactive: false,
     hasmeter: false,
-    outstandingBalance: '',
+    outstandingBalance: 0,
     meterReadingIds: [],
     paymentIds: [],
     customerUpdateIds: [],
@@ -139,13 +139,9 @@ const customerDataSlice = createSlice({
             const { siteId, ...payload } = action.payload;
             meterReadingsAdapter.addOne(state.sitesCustomers[siteId].meterReadings, payload);
         },
-        updateMeterReading(state, action) {
-            const {siteId, id, ...changes } = action.payload;
-            const update = {
-                id, 
-                changes
-            };
-            meterReadingsAdapter.updateOne(state.sitesCustomers[siteId].meterReadings, update);
+        removeMeterReading(state, action) {
+            const { siteId, id} = action.payload;
+            meterReadingsAdapter.removeOne(state.sitesCustomers[siteId].meterReadings, id);
         },
         updateCustomer(state, action) {
             const { siteId, id, ...changes } = action.payload;
@@ -169,5 +165,5 @@ const customerDataSlice = createSlice({
     }
 });
 
-export const { saveCustomerData, setCurrentCustomerId, addCustomer, updateCustomer, addPayment, addMeterReading, updateMeterReading } = customerDataSlice.actions;
+export const { saveCustomerData, setCurrentCustomerId, addCustomer, updateCustomer, addPayment, addMeterReading, removeMeterReading } = customerDataSlice.actions;
 export default customerDataSlice.reducer;

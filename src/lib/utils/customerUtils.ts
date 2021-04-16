@@ -44,7 +44,7 @@ export const getTariffPlanByCustomer = (customer: CustomerRecord): TariffPlanRec
 export const calculateAmountBilled = (reading: number, tariffPlan: TariffPlanRecord): number => {
   let amountCharged = tariffPlan.fixedTariff;
 
-  if (reading <= tariffPlan.freeUnits) {
+  if (reading >= tariffPlan.freeUnits) {
     amountCharged += tariffPlan.tariffByUnit * reading
   }
 
@@ -62,7 +62,11 @@ export const getLatestReadingDate = (customer: CustomerRecord): string => {
 }
 
 // We don't naively check if they were in the same month to avoid conflicts with meter readings made on the 1st of the month.
-export const isReadingFromLatestPeriod = (meterReading: MeterReadingRecord): boolean => {
+export const isReadingFromLatestPeriod = (meterReading: MeterReadingRecord | undefined): boolean => {
+  if (!meterReading) {
+    return false
+  }
+  
   const latestMeterReadingDate = moment(meterReading.date);
   return latestMeterReadingDate && latestMeterReadingDate.isSameOrAfter(getCurrentMonthGracePeriodDeadline())
 }

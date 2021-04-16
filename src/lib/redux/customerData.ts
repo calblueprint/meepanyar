@@ -10,7 +10,7 @@ import {
     selectAllPaymentsArray,
     addPayment,
     addMeterReading,
-    updateMeterReading,
+    removeMeterReading,
 } from './customerDataSlice';
 import { isBeforeCurrentPeriod } from '../moment/momentUtils';
 import { selectCurrentSiteId } from './siteData';
@@ -46,12 +46,12 @@ export const addMeterReadingToRedux = (meterReading: MeterReadingRecord): void =
     store.dispatch(addMeterReading(meterReadingPayload));
 }
 
-export const updateMeterReadingInRedux = (meterReading: Partial<MeterReadingRecord>): void => {
-    const meterReadingUpdate = {
-        ...meterReading,
-        siteId: selectCurrentSiteId(store.getState()),
+export const removeMeterReadingFromRedux = (meterReadingId : string) => {
+    const meterReadingPayload = {
+        id: meterReadingId,
+        siteId: selectCurrentSiteId(store.getState())
     }
-    store.dispatch(updateMeterReading(meterReadingUpdate))
+    store.dispatch(removeMeterReading(meterReadingPayload))
 }
 
 export const updateCustomerInRedux = (customer: Partial<CustomerRecord>): void => {

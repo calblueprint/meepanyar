@@ -57,9 +57,6 @@ const useStyles = makeStyles((theme: Theme) =>
       wordSpacing: '100vw',
       lineHeight: '1.2',
     },
-    editButton: {
-      float: 'right',
-    },
     editIcon: {
       color: theme.palette.primary.main,
       fontSize: '14px',
@@ -81,7 +78,6 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
         component={Link}
         to={{ pathname }}
         size="small"
-        className={classes.editButton}
       >
         <CreateIcon className={classes.editIcon} />
       </IconButton>
@@ -98,11 +94,11 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
     const { columns, rightIcon, editPath, highlighted } = props;
     const getFormattedLabel = () => (
       <div className={classes.headerContainer}>
-        <div>
+        <div style={{ display: 'flex' }}>
+          <Typography align={columns ? 'center' : 'inherit'} noWrap={props.editPath !== undefined} className={props.reverse ? classes.reverseLabel : undefined}>{label}</Typography>
           {editPath ? getEditButton(editPath) : null}
-          <Typography align={columns ? 'center' : 'inherit'} className={props.reverse ? classes.reverseLabel : undefined}>{label}</Typography>
         </div>
-        {secondaryLabel && <Typography align='right' color='secondary'> {secondaryLabel} </Typography> }
+        {secondaryLabel && <Typography align='right' color='secondary'> {secondaryLabel} </Typography>}
       </div>
     );
     const getFormattedNumber = () => (

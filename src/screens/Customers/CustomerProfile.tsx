@@ -3,6 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
@@ -12,7 +13,7 @@ import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../lib/air
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer, isReadingFromLatestPeriod } from '../../lib/utils/customerUtils';
 import Button from '../../components/Button';
 
 const styles = (theme: Theme) =>
@@ -78,6 +79,8 @@ function CustomerProfile(props: CustomerProps) {
   const startingReading : number = customer.startingMeterReading;
   const periodUsage: number = currReading ? getPeriodUsage(currReading, startingReading) : 0;
   const amountBilled: number = currReading ? getAmountBilled(currReading) : 0;
+
+  const customerMeteredForPeriod = isReadingFromLatestPeriod(currReading);
 
   let meterInfo: CardPropsInfo[] = [
     { number: startingReading.toString(), label: 'Starting Meter', unit: 'kWh' },
@@ -147,8 +150,9 @@ function CustomerProfile(props: CustomerProps) {
       <div>
         <OutlinedCardList
           info={readingInfo}
-          rightIcon={meterReadOnly ? undefined : getAddButton('meter-readings/create')}
+          rightIcon={meterReadOnly ? undefined : (customerMeteredForPeriod ? <CheckCircleOutlineIcon /> : getAddButton('meter-readings/create'))}
           readOnly={meterReadOnly}
+          editPath={!meterReadOnly && customerMeteredForPeriod ? `${match.url}/meter-readings/create` : undefined}
         />
         <div className={classes.meterInfoGrid}>
           <div className={classes.meterInfoCol}>
