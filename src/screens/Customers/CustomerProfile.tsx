@@ -157,7 +157,7 @@ function CustomerProfile(props: CustomerProps) {
               info={[meterInfo[0]]}
               readOnly={topLeftReadOnly}
               /* TODO: add valid link */
-              editPath={topLeftReadOnly ? undefined : `${match.url}`}
+              editPath={topLeftReadOnly ? undefined : `${match.url}/starting-meter-reading/edit`}
             />
             { /* Bottom Left */ }
             <OutlinedCardList

@@ -25,7 +25,7 @@ import {
 } from './airtable';
 
 import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux, addMeterReadingToRedux, updateMeterReadingInRedux } from '../../lib/redux/customerData';
-import { getCurrentReading, isReadingFromLatestPeriod }from '../utils/customerUtils';
+import { getCurrentReading, isReadingFromLatestPeriod } from '../utils/customerUtils';
 import { generateOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
@@ -130,6 +130,8 @@ export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, c
   let meterReadingId = '';
   delete meterReading.id;
   try {
+    // Backend checks that a previous meter reading if a previous meter reading has been
+    // created for this period. If one has, the previous meter reading is updated to keep 1 reading per period
     meterReadingId = await createRecord(Tables.MeterReadingsandInvoices, meterReading);
   } catch (error) {
     console.log('(Meter Reading) Error occurred when creating meter reading: ', meterReading);
@@ -143,7 +145,7 @@ export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, c
   // reading instead of creating a new one because only 1 reading can be made per period.
   // This same logic occurs on the backend to ensure only 1 reading is made per period after the grace period.
   if (latestMeterReading && isReadingFromLatestPeriod(latestMeterReading)) {
-    updateMeterReadingInRedux({...meterReading, id: latestMeterReading.id});
+    updateMeterReadingInRedux({ ...meterReading, id: latestMeterReading.id });
     balanceToAdd = meterReading.amountBilled - latestMeterReading.amountBilled;
   } else {
     meterReading.id = meterReadingId;
@@ -154,7 +156,7 @@ export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, c
   // be manually updated clientside to account for offline situations. The "Outstanding Balance" 
   // persisted to Airtable is based off backend calculations for security reasons
   updateCustomerInRedux({
-    id: customer.id, 
+    id: customer.id,
     outstandingBalance: customer.outstandingBalance + balanceToAdd,
     totalAmountBilledfromInvoices: customer.totalAmountBilledfromInvoices + balanceToAdd
   })
@@ -615,32 +617,21 @@ export const updateManyTariffPlans = async (recordUpdates) => {
 };
 
 // NONGENERATED: Update the customer record, create a customer update, and update the record in redux
-export const updateCustomer = async (customer, customerUpdate) => {
+export const updateCustomer = async (id, recordUpdates, customerUpdate) => {
   try {
-    const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
-    const { dateUpdated, customerId, explanation, userId } = customerUpdate;
-    await updateRecord(Tables.Customers, customer.id, {
-      name,
-      meterNumber,
-      tariffPlanId,
-      siteId,
-      isactive,
-      hasmeter,
-    });
+    await updateRecord(Tables.Customers, id, recordUpdates);
     console.log("Customer edited!");
+  } catch (error) {
+    console.log("An error occurred while updating the customer: ", error);
+  }
+  updateCustomerInRedux({...recordUpdates, id});
 
-    const updateId = await createCustomerUpdate({
-      dateUpdated,
-      customerId,
-      explanation,
-      userId
-    });
-    console.log("Update id: ", updateId);
-    console.log("Created updates!");
-
-    updateCustomerInRedux(customer);
-  } catch (err) {
-    console.log(err);
+  try {
+    delete customerUpdate.id;
+    await createCustomerUpdate(customerUpdate);
+    console.log("Created Customer update!");
+  } catch (error) {
+    console.log("AN error occurred while creating a customer update: ", error)
   }
 }
 

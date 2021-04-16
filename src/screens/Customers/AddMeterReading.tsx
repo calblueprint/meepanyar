@@ -59,7 +59,6 @@ function AddMeterReading(props: AddMeterReadingProps) {
   const handleSubmit = (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
-    setLoading(true);
 
     const currentReadingAmount = parseFloat(meterReadingAmount);
     if (isNaN(currentReadingAmount)) {
@@ -90,11 +89,11 @@ function AddMeterReading(props: AddMeterReadingProps) {
   }]
 
   return (
-    <BaseScreen title="Add Payment" leftIcon="backNav">
+    <BaseScreen title="Add Meter Reading" leftIcon="backNav">
       <div className={classes.amountOwedContainer}>
         <OutlinedCardList info={cardInfo} />
       </div>
-      <TextField label='New Meter Reading (kWh)' unit='kWh' id={'amount-paid'} placeholder='e.g. 12' type='number' onChange={handleSetMeterReadingAmount} />
+      <TextField label='New Meter Reading (kWh)' unit='kWh' id={'amount-metered'} placeholder='e.g. 100' type='number' onChange={handleSetMeterReadingAmount} />
       <Button label={'ADD'} onClick={handleSubmit} loading={loading} />
       {errorMessage && <Typography color='error' align='center'> {errorMessage} </Typography>}
     </BaseScreen>
