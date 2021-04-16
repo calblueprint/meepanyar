@@ -83,7 +83,7 @@ function EditStartingMeter(props: EditStartingMeterProps) {
     }]
 
     return (
-        <BaseScreen title="Add Payment" leftIcon="backNav">
+        <BaseScreen title="Edit Starting Meter" leftIcon="backNav">
             <div className={classes.amountOwedContainer}>
                 <OutlinedCardList info={cardInfo} />
             </div>
