@@ -75,13 +75,12 @@ function CustomerProfile(props: CustomerProps) {
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
-  const startingReading: MeterReadingRecord | undefined = getStartingReading(customer);
-  const periodUsage: number | string = currReading ? getPeriodUsage(currReading, startingReading) : '0';
-  const amountBilled: number | string = currReading ? getAmountBilled(currReading) : '0';
+  const startingReading : number = customer.startingMeterReading;
+  const periodUsage: number = currReading ? getPeriodUsage(currReading, startingReading) : 0;
+  const amountBilled: number = currReading ? getAmountBilled(currReading) : 0;
 
   let meterInfo: CardPropsInfo[] = [
-    //TODO: include actual starting reading - currentCustomer.startingMeterReading
-    { number: startingReading? startingReading.amountBilled.toString() : '0', label: 'Starting Meter', unit: 'kWh' },
+    { number: startingReading.toString(), label: 'Starting Meter', unit: 'kWh' },
     { number: periodUsage.toString(), label: 'Period Usage', unit: 'kWh' },
     { number: currReading ? currReading.reading.toString() : '0', label: 'Ending Meter', unit: 'kWh' },
     { number: amountBilled.toString(), label: 'Amount Billed', unit: 'kS' },

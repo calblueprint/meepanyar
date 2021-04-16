@@ -13,6 +13,7 @@ import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { EMPTY_CUSTOMER } from '../../lib/redux/customerDataSlice';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import moment from 'moment';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -63,6 +64,8 @@ function AddCustomer(props: AddCustomerProps) {
     customer.meterNumber = parseInt(meterNumber);
     customer.isactive = !customerInactive;
     customer.tariffPlanId = selectedTariffPlanId;
+    customer.startingMeterReading = 0;
+    customer.startingMeterLastChanged = moment().toISOString();
 
     // Add other info necessary to create the Airtable record
     createCustomer({

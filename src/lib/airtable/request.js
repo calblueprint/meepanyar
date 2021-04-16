@@ -24,7 +24,8 @@ import {
   deleteRecord,
 } from './airtable';
 
-import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux, addMeterReadingToRedux } from '../../lib/redux/customerData';
+import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux, addMeterReadingToRedux, updateMeterReadingInRedux } from '../../lib/redux/customerData';
+import { getCurrentReading, isReadingFromLatestPeriod }from '../utils/customerUtils';
 import { generateOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
@@ -135,13 +136,28 @@ export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, c
     meterReadingId = generateOfflineId();
   }
 
-  meterReading.id = meterReadingId;
-  addMeterReadingToRedux(meterReading);
-  
+  const latestMeterReading = getCurrentReading(customer);
+  let balanceToAdd = meterReading.amountBilled;
+
+  // If a meter reading was made in the same period, we update the existing 
+  // reading instead of creating a new one because only 1 reading can be made per period.
+  // This same logic occurs on the backend to ensure only 1 reading is made per period after the grace period.
+  if (latestMeterReading && isReadingFromLatestPeriod(latestMeterReading)) {
+    updateMeterReadingInRedux({...meterReading, id: latestMeterReading.id});
+    balanceToAdd = meterReading.amountBilled - latestMeterReading.amountBilled;
+  } else {
+    meterReading.id = meterReadingId;
+    addMeterReadingToRedux(meterReading);
+  }
+
   // Customer's outstanding balance is automatically updated on Airtable but needs to
   // be manually updated clientside to account for offline situations. The "Outstanding Balance" 
   // persisted to Airtable is based off backend calculations for security reasons
-  updateCustomerInRedux({id: customer.id, outstandingBalance: customer.outstandingBalance + meterReading.amountBilled})
+  updateCustomerInRedux({
+    id: customer.id, 
+    outstandingBalance: customer.outstandingBalance + balanceToAdd,
+    totalAmountBilledfromInvoices: customer.totalAmountBilledfromInvoices + balanceToAdd
+  })
 
   return meterReadingId;
 }

@@ -1,6 +1,7 @@
 
 import { CustomerRecord, MeterReadingRecord, SiteRecord, TariffPlanRecord } from '../../lib/airtable/interface';
-import { isBeforeCurrentPeriod } from '../../lib/moment/momentUtils';
+import { isBeforeCurrentPeriod, getCurrentMonthGracePeriodDeadline } from '../../lib/moment/momentUtils';
+import moment from 'moment';
 import { selectMeterReadingsByCustomerId } from '../../lib/redux/customerData';
 import { selectTariffPlanById } from '../../lib/redux/siteDataSlice';
 import { store } from '../redux/store';
@@ -27,9 +28,8 @@ export const getStartingReading = (customer: CustomerRecord): MeterReadingRecord
   }
 };
 
-export const getPeriodUsage = (currReading: MeterReadingRecord, startingMeter: MeterReadingRecord | undefined) => {
-  const periodUsage = currReading.reading - (startingMeter ? startingMeter.reading : 0);
-  return periodUsage;
+export const getPeriodUsage = (currReading: MeterReadingRecord, startingMeterReading : number) => {
+  return currReading.reading - startingMeterReading;
 }
 
 export const getAmountBilled = (currReading: MeterReadingRecord) => {
@@ -59,4 +59,10 @@ export const getLatestReadingDate = (customer: CustomerRecord): string => {
   } else {
     return 'No Readings'
   }
+}
+
+// We don't naively check if they were in the same month to avoid conflicts with meter readings made on the 1st of the month.
+export const isReadingFromLatestPeriod = (meterReading: MeterReadingRecord): boolean => {
+  const latestMeterReadingDate = moment(meterReading.date);
+  return latestMeterReadingDate && latestMeterReadingDate.isSameOrAfter(getCurrentMonthGracePeriodDeadline())
 }

@@ -18,11 +18,11 @@ import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 
 
 const styles = (theme: Theme) =>
-    createStyles({
-        amountOwedContainer: {
-            margin: '20px 0px'
-        },
-    });
+  createStyles({
+    amountOwedContainer: {
+      margin: '20px 0px'
+    },
+  });
 
 interface AddMeterReadingProps extends RouteComponentProps {
   classes: { amountOwedContainer: string; };
@@ -44,7 +44,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
   const tariffPlan = getTariffPlanByCustomer(currentCustomer);
 
   if (!tariffPlan) {
-    console.log("(Meter Readings) Could not find customer tariff plan, redirecting to Customer Main")
+    console.error("(Meter Readings) Could not find customer tariff plan, redirecting to Customer Main")
     return <Redirect to={'/customers'} />
   }
 
@@ -69,6 +69,8 @@ function AddMeterReading(props: AddMeterReadingProps) {
       setLoading(true);
     }
 
+    // WARNING: Client-side Amount Billed is treated as a source of truth in order to 
+    // accomodate for offline functionality when a user adjusts a Customer's startingMeterAmount when offline
     const meterReading = JSON.parse(JSON.stringify(EMPTY_METER_READING));
     meterReading.reading = currentReadingAmount;
     meterReading.amountBilled = calculateAmountBilled(currentReadingAmount - startingMeterAmount, tariffPlan);
@@ -80,22 +82,22 @@ function AddMeterReading(props: AddMeterReadingProps) {
     createMeterReadingAndUpdateCustomerBalance(meterReading, currentCustomer).then(history.goBack);
   }
 
-  const cardInfo = [{ 
-    number: startingMeterAmount.toString(), 
-    label: 'Current Reading', 
-    unit: 'Kwh', 
-    secondaryLabel: formatDateStringToLocal(currentCustomer.startingMeterLastChanged) 
+  const cardInfo = [{
+    number: startingMeterAmount.toString(),
+    label: 'Current Reading',
+    unit: 'Kwh',
+    secondaryLabel: formatDateStringToLocal(startingMeterLastRecorded)
   }]
 
   return (
-      <BaseScreen title="Add Payment" leftIcon="backNav">
-          <div className={classes.amountOwedContainer}>
-              <OutlinedCardList info={cardInfo} />
-          </div>
-          <TextField label='New Meter Reading (kWh)' unit='kWh' id={'amount-paid'} placeholder='e.g. 12' type='number' onChange={handleSetMeterReadingAmount} />
-          <Button label={'ADD'} onClick={handleSubmit} loading={loading} />
-          {errorMessage && <Typography color='error' align='center'> {errorMessage} </Typography> }
-      </BaseScreen>
+    <BaseScreen title="Add Payment" leftIcon="backNav">
+      <div className={classes.amountOwedContainer}>
+        <OutlinedCardList info={cardInfo} />
+      </div>
+      <TextField label='New Meter Reading (kWh)' unit='kWh' id={'amount-paid'} placeholder='e.g. 12' type='number' onChange={handleSetMeterReadingAmount} />
+      <Button label={'ADD'} onClick={handleSubmit} loading={loading} />
+      {errorMessage && <Typography color='error' align='center'> {errorMessage} </Typography>}
+    </BaseScreen>
   );
 }
 

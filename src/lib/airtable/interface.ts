@@ -39,6 +39,7 @@ export interface SiteRecord {
   name: string;
   customerIds: string[];
   financialSummaryIds: string[];
+  gracePeriod: number;
   // These are extracted to other slices or entities and deleted from SiteRecord
   financialSummaries?: FinancialSummaryRecord[];
   tariffPlans?: TariffPlanRecord[];
