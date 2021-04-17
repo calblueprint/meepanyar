@@ -12,6 +12,8 @@ import { selectCurrentUserId } from '../../lib/redux/userData';
 import { createPaymentAndUpdateCustomerBalance } from '../../lib/airtable/request';
 import moment from 'moment';
 import OutlinedCardList from '../../components/OutlinedCardList';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -26,6 +28,7 @@ interface AddPaymentProps extends RouteComponentProps {
 
 
 function AddPayment(props: AddPaymentProps) {
+    const intl = useInternationalization(); 
     const { classes } = props;
     const history = useHistory();
 
@@ -61,15 +64,15 @@ function AddPayment(props: AddPaymentProps) {
 
     const remainingBalance = currentCustomer.totalAmountBilledfromInvoices - currentCustomer.totalAmountPaidfromPayments;
 
-    const cardInfo = [{ number: remainingBalance.toString(), label: 'Remaining Balance', unit: 'Ks' }]
+    const cardInfo = [{ number: remainingBalance.toString(), label: intl(words.remaining_balance), unit: intl(words.ks) }]
 
     return (
-        <BaseScreen title="Add Payment" leftIcon="backNav">
+        <BaseScreen title={intl(words.add_x, words.payment)} leftIcon="backNav">
             <div className={classes.amountOwedContainer}>
                 <OutlinedCardList info={cardInfo} />
             </div>
-            <TextField label={'Amount Paid (Ks)'} id={'amount-paid'} onChange={handleSetPaymentAmountInput} />
-            <Button label={'+ ADD PAYMENT'} onClick={handleSubmit} loading={loading} />
+            <TextField label={intl(words.amount_spent_paid) + ' (' + intl(words.ks) + ')'} id={'amount-paid'} onChange={handleSetPaymentAmountInput} />
+            <Button label={intl(words.add_x, words.payment)} onClick={handleSubmit} loading={loading} />
         </BaseScreen>
     );
 }
