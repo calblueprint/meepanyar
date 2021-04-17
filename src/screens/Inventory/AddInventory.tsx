@@ -74,7 +74,6 @@ function AddInventory(props: AddInventoryProps) {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      console.log(values);
       handleSubmit(values);
     },
   });
