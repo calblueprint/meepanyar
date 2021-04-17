@@ -72,7 +72,9 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
 
   const handleSubmitReview = (approved: boolean) => {
-    setStatus(approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED);
+    const newStatus = approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED;
+    setStatus(newStatus);
+    purchaseRequest.status = newStatus;
     reviewPurchaseRequest(purchaseRequest, approved, userId);
   };
 
