@@ -17,6 +17,7 @@ interface TextFieldProps {
   required? : boolean;
   type?: string;
   unit?: string;
+  currency?: boolean;
   onChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 
@@ -61,7 +62,12 @@ function Field(props: TextFieldProps) {
         error={props.error}
         helperText={props.helperText}
         InputProps={{
-          endAdornment: props.unit? <InputAdornment position="end">{`${props.unit}(s)`}</InputAdornment> : props.error ? <ErrorIcon color="error" /> : undefined,
+          endAdornment:
+          props.unit || props.currency ? (
+            <InputAdornment position="end">{props.currency ? 'Ks' : `${props.unit}(s)`}</InputAdornment>
+          ) : props.error ? (
+            <ErrorIcon color="error" />
+          ) : undefined,
         }}
       />
     </div>

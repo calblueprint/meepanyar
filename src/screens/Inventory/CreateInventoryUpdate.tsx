@@ -14,15 +14,13 @@ import InventoryInfo from './components/InventoryInfo';
 
 const styles = (theme: Theme) =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-      display: 'flex',
-      flexDirection: 'column',
+    headerContainer: {
+      marginBottom: theme.spacing(2),
     },
   });
 
 interface CreateInventoryUpdateProps extends RouteComponentProps {
-  classes: { content: string };
+  classes: { headerContainer: string };
 }
 
 function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
@@ -33,7 +31,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const product = useSelector(selectCurrentInventoryProduct);
 
   const [loading, setLoading] = useState(false);
-  const [updatedAmount, setUpdatedAmount] = useState(0.0);
+  const [updatedAmount, setUpdatedAmount] = useState('');
 
   // Redirect to InventoryMain if undefined
   if (!userId || !inventory || !product) {
@@ -42,33 +40,39 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
 
   // TODO @wangannie: add better edge case handling
   const handleUpdatedAmount = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setUpdatedAmount(parseFloat(event.target.value as string) || 0);
+    setUpdatedAmount(event.target.value as string || '');
   };
 
   const handleSubmit = (event: React.MouseEvent) => {
     // Prevent page refresh on submit
     event.preventDefault();
     setLoading(true);
-    createInventoryUpdateAndUpdateInventory(userId, inventory, updatedAmount).then(() => history.goBack());
+    createInventoryUpdateAndUpdateInventory(userId, inventory, parseFloat(updatedAmount) || 0).then(() => history.goBack());
   };
 
   return (
     <BaseScreen title="Update Item" leftIcon="backNav">
       <BaseScrollView>
-        <div className={classes.content}>
+        <div className={classes.headerContainer}>
           <InventoryInfo
             productId={inventory.productId}
-            lastUpdated={getInventoryLastUpdated(inventory)}
+            lastUpdated={getInventoryLastUpdated(inventory.id)}
             currentQuantity={inventory.currentQuantity}
           />
-          {/* TODO fix requred/optional fields */}
+        </div>
+        <form>
           <TextField
-            label={`Updated amount in ${product.unit}(s)`}
+            placeholder={'e.g. 5'}
+            required
+            type="number"
+            unit={product.unit}
+            label={`Updated Amount`}
             id={'updated-amount'}
+            value={updatedAmount}
             onChange={handleUpdatedAmount}
           />
-          <Button loading={loading} label="Update" onClick={handleSubmit} />
-        </div>
+          <Button fullWidth loading={loading} label="Update" onClick={handleSubmit} />
+        </form>
       </BaseScrollView>
     </BaseScreen>
   );

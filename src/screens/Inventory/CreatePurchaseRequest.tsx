@@ -9,7 +9,11 @@ import Button from '../../components/Button';
 import CameraButton from '../../components/CameraButton';
 import TextField from '../../components/TextField';
 import { createPurchaseRequestAndUpdateInventory } from '../../lib/airtable/request';
-import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
+import {
+  getInventoryCurrentQuantity,
+  selectCurrentInventory,
+  selectCurrentInventoryProduct
+} from '../../lib/redux/inventoryData';
 import { EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
@@ -17,15 +21,13 @@ import InventoryInfo from './components/InventoryInfo';
 
 const styles = (theme: Theme) =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-      display: 'flex',
-      flexDirection: 'column',
+    headerContainer: {
+      marginBottom: theme.spacing(2),
     },
   });
 
 interface CreatePurchaseRequestProps extends RouteComponentProps {
-  classes: { content: string; };
+  classes: { headerContainer: string };
   location: any;
 }
 
@@ -36,8 +38,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const inventory = useSelector(selectCurrentInventory);
   const product = useSelector(selectCurrentInventoryProduct);
 
-  const [amountPurchased, setAmountPurchased] = useState(props.location.state?.amountPurchased || 0.0);
-  const [amountSpent, setAmountSpent] = useState(props.location.state?.amountSpent || 0.0);
+  const [amountPurchased, setAmountPurchased] = useState(props.location.state?.amountPurchased || '');
+  const [amountSpent, setAmountSpent] = useState(props.location.state?.amountSpent || '');
   const [notes, setNotes] = useState(props.location.state?.notes || '');
   const [submitIsLoading, setSubmitIsLoading] = useState(false);
   const goBack = props.location.state?.goBack || -1;
@@ -51,11 +53,11 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
 
   // TODO @wangannie: add better edge case handling
   const handleAmountPurchasedInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAmountPurchased(parseFloat(event.target.value as string) || 0);
+    setAmountPurchased((event.target.value as string) || '');
   };
 
   const handleAmountSpentInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAmountSpent(parseFloat(event.target.value as string) || 0);
+    setAmountSpent((event.target.value as string) || '');
   };
 
   const handleNotesInput = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -70,40 +72,57 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     const purchaseRequest = JSON.parse(JSON.stringify(EMPTY_PURCHASE_REQUEST));
     purchaseRequest.requesterId = userId;
     purchaseRequest.createdAt = moment().toISOString();
-    purchaseRequest.amountPurchased = amountPurchased;
-    purchaseRequest.amountSpent = amountSpent;
+    purchaseRequest.amountPurchased = parseFloat(amountPurchased) || 0;
+    purchaseRequest.amountSpent = parseFloat(amountSpent) || 0;
     purchaseRequest.notes = notes;
     purchaseRequest.inventoryId = inventory.id;
+    purchaseRequest.updatedQuantity =
+      getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
     if (photoUri) {
       purchaseRequest.receipt = [{ url: photoUri }];
     }
 
     createPurchaseRequestAndUpdateInventory(purchaseRequest).then(() => history.go(goBack));
-  }
+  };
 
   return (
     <BaseScreen title="Inventory Purchase" leftIcon="backNav">
       <BaseScrollView>
-        <div className={classes.content}>
+        <div className={classes.headerContainer}>
           <InventoryInfo
             productId={inventory.productId}
-            lastUpdated={getInventoryLastUpdated(inventory)}
+            lastUpdated={getInventoryLastUpdated(inventory.id)}
             currentQuantity={inventory.currentQuantity}
           />
-          {/* TODO fix requred/optional fields */}
+        </div>
+        <form>
           <TextField
+            required
+            type="number"
             value={amountPurchased}
-            label={`Amount Purchased (${product.unit})`}
+            label={`Amount Purchased`}
             id={'amount-purchased'}
+            placeholder="e.g. 5"
+            unit={product.unit}
             onChange={handleAmountPurchasedInput}
           />
           <TextField
+            required
+            type="number"
+            currency
             value={amountSpent}
-            label={'Amount Spent (ks)'}
+            label={'Amount Spent'}
             id={'amount-spent'}
+            placeholder="e.g. 5"
             onChange={handleAmountSpentInput}
           />
-          <TextField value={notes} label={'Notes (optional)'} id={'notes'} onChange={handleNotesInput} />
+          <TextField
+            placeholder="Enter Notes..."
+            value={notes}
+            label={'Notes'}
+            id={'notes'}
+            onChange={handleNotesInput}
+          />
           <CameraButton
             preservedState={{ amountPurchased, amountSpent, notes }}
             goBack={goBack + 1}
@@ -111,8 +130,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             label="Receipt"
             photoUri={photoUri}
           />
-          <Button loading={submitIsLoading} label="Submit" onClick={handleSubmit} />
-        </div>
+          <Button fullWidth loading={submitIsLoading} label="Submit" onClick={handleSubmit} />
+        </form>
       </BaseScrollView>
     </BaseScreen>
   );
