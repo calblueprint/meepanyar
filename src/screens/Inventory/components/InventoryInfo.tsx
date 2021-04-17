@@ -42,14 +42,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const getPurchaseRequestButton = () => {
+function PurchaseRequestButton() {
   const intl = useInternationalization(); 
   return (<Link to={'purchase-requests/create'}>
-  <Button label={intl(words.purchase)} />
+  <Button label={intl(words.inventory_purchase)} />
   </Link>)
 };
 
-const getUpdateButton = () => {
+function UpdateButton() {
   const intl = useInternationalization(); 
   return (<Link to={'updates/create'}>
     <Button variant="outlined" label={intl(words.update)} />
@@ -78,8 +78,8 @@ function InventoryInfo(props: InventoryInfoProps) {
       </CardContent>
       {withActions && (
         <CardActions className={classes.cardActions}>
-          {getUpdateButton()}
-          {getPurchaseRequestButton()}
+          {UpdateButton()}
+          {PurchaseRequestButton()}
         </CardActions>
       )}
     </Card>
