@@ -1,4 +1,4 @@
-import { createStyles, FormControl, TextField as MaterialTextField, Theme } from '@material-ui/core';
+import { createStyles, TextField as MaterialTextField } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { Autocomplete, createFilterOptions } from '@material-ui/lab';
 import React, { useState } from 'react';
@@ -19,23 +19,16 @@ import {
 import { selectCurrentSiteId } from '../../lib/redux/siteData';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 
-const styles = (theme: Theme) =>
+const styles = () =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-    },
-    formControl: {
-      width: '100%',
-    },
     newProductContainer: {
       flexDirection: 'row',
       display: 'flex',
-      marginBottom: 40,
     },
   });
 
 interface AddInventoryProps extends RouteComponentProps {
-  classes: { content: string; formControl: string; newProductContainer: string };
+  classes: { newProductContainer: string };
 }
 
 function AddInventory(props: AddInventoryProps) {
@@ -54,7 +47,7 @@ function AddInventory(props: AddInventoryProps) {
     .map((item) => item[0]);
 
   const [selectedProductId, setSelectedProductId] = useState('');
-  const [startingAmount, setStartingAmount] = useState(0);
+  const [startingAmount, setStartingAmount] = useState('');
   const [unit, setUnit] = useState('');
   const [newProductName, setNewProductName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -80,8 +73,8 @@ function AddInventory(props: AddInventoryProps) {
     let inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY));
     inventory.productId = productId;
     inventory.siteId = siteId;
-    inventory.currentQuantity = startingAmount;
-    inventory.periodStartQuantity = startingAmount;
+    inventory.currentQuantity = parseFloat(startingAmount) || 0;
+    inventory.periodStartQuantity = parseFloat(startingAmount) || 0;
 
     // createInventory returns the inventory item with an id
     inventory = await createInventory(inventory);
@@ -93,13 +86,13 @@ function AddInventory(props: AddInventoryProps) {
     setCurrentInventoryIdInRedux(inventory.id);
     history.replace(`item`);
   };
-  
+
   const handleSelectItem = (event: React.ChangeEvent<{}>, value: string | null) => {
     setSelectedProductId(value || '');
   };
 
   const handleStartingAmountInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setStartingAmount(parseFloat(event.target.value as string) || 0);
+    setStartingAmount((event.target.value as string) || '');
   };
 
   const handleNewProductName = (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -114,44 +107,54 @@ function AddInventory(props: AddInventoryProps) {
 
   return (
     <BaseScreen title="New Inventory" leftIcon="backNav">
-      <form noValidate className={classes.content} onSubmit={() => false}>
-        <FormControl variant="outlined" className={classes.formControl}>
-          <Autocomplete
-            value={selectedProductId}
-            style={{ marginBottom: 20 }}
-            onChange={handleSelectItem}
-            filterOptions={(options, params) => {
-              const filtered = filter(options, params);
-              filtered.push(NEW_PRODUCT_LABEL);
-              return filtered;
-            }}
-            selectOnFocus
-            clearOnBlur
-            id="select-item"
-            options={productOptionIds}
-            getOptionLabel={(option) =>
-              products[option] ? `${products[option]?.name} (${products[option]?.unit})` : option
-            }
-            renderInput={(params) => <MaterialTextField {...params} label="Item" variant="outlined" />}
-          />
-        </FormControl>
+      <form>
+        <Autocomplete
+          aria-required
+          value={selectedProductId}
+          style={{ marginBottom: 8 }}
+          onChange={handleSelectItem}
+          filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+            filtered.push(NEW_PRODUCT_LABEL);
+            return filtered;
+          }}
+          selectOnFocus
+          clearOnBlur
+          id="select-item"
+          options={productOptionIds}
+          getOptionLabel={(option) =>
+            products[option] ? `${products[option]?.name} (${products[option]?.unit})` : option
+          }
+          renderInput={(params) => <MaterialTextField {...params} label="Item" variant="outlined" />}
+        />
         {/* If the user selected the New Inventory Item option, display extra fields */}
         {selectedProductId === NEW_PRODUCT_LABEL && (
           <div className={classes.newProductContainer}>
-            <div style={{ marginRight: 10, flex: 2 }}>
-              <TextField label={'New Item'} id={'new-item'} onChange={handleNewProductName} />
+            <div style={{ marginRight: 8, flex: 2 }}>
+              <TextField
+                required
+                label={'New Item Name'}
+                id={'new-item-name'}
+                value={newProductName}
+                onChange={handleNewProductName}
+              />
             </div>
             <div style={{ flex: 1 }}>
-              <TextField label={'Unit'} id={'unit'} onChange={handleUnitInput} />
+              <TextField required label={'Unit'} id={'unit'} value={unit} onChange={handleUnitInput} />
             </div>
           </div>
         )}
         <TextField
+          required
+          placeholder="e.g. 5"
+          unit={unit}
+          type="number"
           label={'Starting Amount'}
           id={'starting-amount'}
+          value={startingAmount}
           onChange={handleStartingAmountInput}
         />
-        <Button loading={loading} label={'Add'} onClick={handleSubmit} />
+        <Button fullWidth loading={loading} label={'Add'} onClick={handleSubmit} />
       </form>
     </BaseScreen>
   );

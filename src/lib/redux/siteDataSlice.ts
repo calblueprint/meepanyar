@@ -52,6 +52,7 @@ export const EMPTY_SITE: SiteRecord = {
   financialSummaryIds: [],
   financialSummaries: [],
   tariffPlans: [],
+  gracePeriod: 0,
 };
 
 export const EMPTY_FINANCIAL_SUMMARY: FinancialSummaryRecord = {
@@ -113,8 +114,22 @@ const siteDataSlice = createSlice({
     setCurrentSiteId(state, action) {
       state.currentSiteId = action.payload;
     },
+    updateTariffPlan(state, action) {
+      const { siteId, id, ...changes } = action.payload;
+
+      const updates = {
+        id,
+        changes
+      }
+      tariffPlanAdapter.updateOne(state.sites[siteId].tariffPlans, updates);
+    },
+    updateSite(state, action) {
+      const { id } = action.payload;
+      const newSiteInformation = {...state.sites[id].siteInformation, ...action.payload};
+      state.sites[id].siteInformation = newSiteInformation;
+    }
   },
 });
 
-export const { setLoadingForSiteData, saveSiteData, setCurrentSiteId } = siteDataSlice.actions;
+export const { setLoadingForSiteData, saveSiteData, setCurrentSiteId, updateTariffPlan, updateSite } = siteDataSlice.actions;
 export default siteDataSlice.reducer;

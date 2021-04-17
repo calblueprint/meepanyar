@@ -3,6 +3,7 @@ import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { useSelector } from 'react-redux';
 import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
@@ -12,7 +13,7 @@ import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../lib/air
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer } from '../../lib/utils/customerUtils';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer, isReadingFromLatestPeriod } from '../../lib/utils/customerUtils';
 import Button from '../../components/Button';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
@@ -78,9 +79,11 @@ function CustomerProfile(props: CustomerProps) {
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
-  const startingReading: MeterReadingRecord | undefined = getStartingReading(customer);
-  const periodUsage: number | string = currReading ? getPeriodUsage(currReading, startingReading) : '0';
-  const amountBilled: number | string = currReading ? getAmountBilled(currReading) : '0';
+  const startingReading : number = customer.startingMeterReading;
+  const periodUsage: number = currReading ? getPeriodUsage(currReading, startingReading) : 0;
+  const amountBilled: number = currReading ? getAmountBilled(currReading) : 0;
+
+  const customerMeteredForPeriod = isReadingFromLatestPeriod(currReading);
 
   let meterInfo: CardPropsInfo[] = [
     //TODO: include actual starting reading - currentCustomer.startingMeterReading
@@ -151,8 +154,9 @@ function CustomerProfile(props: CustomerProps) {
       <div>
         <OutlinedCardList
           info={readingInfo}
-          rightIcon={meterReadOnly ? undefined : getAddButton('meter-readings/create')}
+          rightIcon={meterReadOnly ? undefined : (customerMeteredForPeriod ? <CheckCircleOutlineIcon /> : getAddButton('meter-readings/create'))}
           readOnly={meterReadOnly}
+          editPath={!meterReadOnly && customerMeteredForPeriod ? `${match.url}/meter-readings/create` : undefined}
         />
         <div className={classes.meterInfoGrid}>
           <div className={classes.meterInfoCol}>
@@ -160,8 +164,7 @@ function CustomerProfile(props: CustomerProps) {
             <OutlinedCardList
               info={[meterInfo[0]]}
               readOnly={topLeftReadOnly}
-              /* TODO: add valid link */
-              editPath={topLeftReadOnly ? undefined : `${match.url}`}
+              editPath={topLeftReadOnly ? undefined : `${match.url}/starting-meter-reading/edit`}
             />
             { /* Bottom Left */ }
             <OutlinedCardList

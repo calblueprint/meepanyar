@@ -142,7 +142,7 @@ function CustomerMain(props: CustomerMainProps) {
         return customer.hasmeter
       }
       case (FilterBy.PAYMENT_STATUS): {
-        return parseInt(customer.outstandingBalance) > 0
+        return customer.outstandingBalance > 0
       }
       case (FilterBy.ACTIVE_STATUS): {
         return customer.isactive
@@ -207,14 +207,14 @@ function CustomerMain(props: CustomerMainProps) {
         <FormHelperText>{intl(filterLabels[0])}</FormHelperText>
         {filteredCustomers.map((customer, index) => (
           <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)} >
-            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
+            <CustomerCard name={customer.name} amount={customer.outstandingBalance.toString()} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
         }
         <FormHelperText>{intl(filterLabels[1])}</FormHelperText>
         {filteredCustomersAlt.map((customer, index) => (
           <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)} >
-            <CustomerCard name={customer.name} amount={customer.outstandingBalance} date={getLatestReadingDate(customer)} active={customer.isactive} />
+            <CustomerCard name={customer.name} amount={customer.outstandingBalance.toString()} date={getLatestReadingDate(customer)} active={customer.isactive} />
           </Link>
         ))
         }
