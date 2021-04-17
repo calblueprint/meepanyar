@@ -16,13 +16,6 @@ const meterReadingsAdapter = createEntityAdapter<MeterReadingRecord>({
     sortComparer: (a, b) => moment(b.date).diff(a.date),
 });
 
-export enum MeterType {
-  ANALOG_METER = 'Analog Meter',
-  SMART_METER = 'Smart Meter',
-  NO_METER = 'No Meter',
-  INACTIVE = 'Inactive'
-}
-
 // Returns customers in the context of the current site
 export const {
     selectEntities: selectAllCustomers,
@@ -61,6 +54,13 @@ interface customerDataSliceState {
     currentCustomerId: string;
 }
 
+export enum MeterType {
+  ANALOG_METER = 'Analog Meter',
+  SMART_METER = 'Smart Meter',
+  NO_METER = 'No Meter',
+  INACTIVE = 'Inactive'
+}
+
 export const EMPTY_CUSTOMER: CustomerRecord = {
     id: '',
     name: '',
@@ -68,7 +68,7 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     tariffPlanId: '',
     isactive: false,
     hasmeter: false,
-    outstandingBalance: '',
+    outstandingBalance: 0,
     meterReadingIds: [],
     paymentIds: [],
     customerUpdateIds: [],
@@ -135,6 +135,14 @@ const customerDataSlice = createSlice({
 
             customersAdapter.addOne(state.sitesCustomers[siteId].customers, customer);
         },
+        addMeterReading(state, action) {
+            const { siteId, ...payload } = action.payload;
+            meterReadingsAdapter.addOne(state.sitesCustomers[siteId].meterReadings, payload);
+        },
+        removeMeterReading(state, action) {
+            const { siteId, id} = action.payload;
+            meterReadingsAdapter.removeOne(state.sitesCustomers[siteId].meterReadings, id);
+        },
         updateCustomer(state, action) {
             const { siteId, id, ...changes } = action.payload;
             const update = {
@@ -157,5 +165,5 @@ const customerDataSlice = createSlice({
     }
 });
 
-export const { saveCustomerData, setCurrentCustomerId, addCustomer, updateCustomer, addPayment } = customerDataSlice.actions;
+export const { saveCustomerData, setCurrentCustomerId, addCustomer, updateCustomer, addPayment, addMeterReading, removeMeterReading } = customerDataSlice.actions;
 export default customerDataSlice.reducer;

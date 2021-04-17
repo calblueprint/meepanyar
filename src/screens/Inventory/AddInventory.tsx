@@ -33,7 +33,7 @@ const NEW_PRODUCT_LABEL = '+ New Inventory Item';
 
 const validationSchema = yup.object({
   selectedProductId: yup.string().required('Must select a product'),
-  startingAmount: yup.number().positive('Please enter a positive number').required('Must enter an amount'),
+  startingAmount: yup.number().min(0, 'Please enter a valid amount').required('Must enter an amount'),
   newProductName: yup.string().when('selectedProductId', {
     is: NEW_PRODUCT_LABEL,
     then: yup.string().required('Must enter new product name'),

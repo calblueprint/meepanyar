@@ -8,12 +8,21 @@ import {
     selectAllMeterReadingsArray,
     selectAllCustomersArray,
     selectAllPaymentsArray,
-    addPayment
+    addPayment,
+    addMeterReading,
+    removeMeterReading,
 } from './customerDataSlice';
 import { isBeforeCurrentPeriod } from '../moment/momentUtils';
 import { selectCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
 import { createSelector } from '@reduxjs/toolkit';
+
+export enum CustomerStatus {
+  ALL = 'All',
+  METER = 'Meter',
+  PAYMENT = 'Payment',
+  DONE = 'Done',
+}
 
 export const refreshCustomerData = (site: SiteRecord): void => {
     if (site) {
@@ -33,6 +42,24 @@ export const addCustomerToRedux = (customer: CustomerRecord): void => {
     const siteId = selectCurrentSiteId(store.getState());
     store.dispatch(addCustomer({ siteId, customer }));
 };
+
+export const addMeterReadingToRedux = (meterReading: MeterReadingRecord): void => {
+
+    const meterReadingPayload = {
+        ...meterReading,
+        siteId: selectCurrentSiteId(store.getState())
+    };
+
+    store.dispatch(addMeterReading(meterReadingPayload));
+}
+
+export const removeMeterReadingFromRedux = (meterReadingId : string) => {
+    const meterReadingPayload = {
+        id: meterReadingId,
+        siteId: selectCurrentSiteId(store.getState())
+    }
+    store.dispatch(removeMeterReading(meterReadingPayload))
+}
 
 export const updateCustomerInRedux = (customer: Partial<CustomerRecord>): void => {
     const customerUpdates = {
@@ -101,7 +128,7 @@ export const selectAmountOwedInCurrentPeriodByCustomerId = createSelector(
     getCustomerId,
     (state, customerId) => {
         const currentPeriodMeterReadings =
-            selectMeterReadingsByCustomerId(state, customerId)?.filter(meterReading => !isBeforeCurrentPeriod(meterReading.date));
+        selectMeterReadingsByCustomerId(state, customerId)?.filter(meterReading => !isBeforeCurrentPeriod(meterReading.date));
         if (currentPeriodMeterReadings) {
             return currentPeriodMeterReadings.reduce((totalAmountOwed, meterReading: MeterReadingRecord) => totalAmountOwed + meterReading.amountBilled, 0);
         }
@@ -119,7 +146,7 @@ export const selectAmountPaidInCurrentPeriodByCustomerId = createSelector(
     }
 )
 
-// For each customer who has been metered this period, 
+// For each customer who has been metered this period,
 // we calculate the amount they need to pay
 export const selectCustomersToCollect = createSelector(
     selectCustomersToMeter,
@@ -141,5 +168,18 @@ export const selectCustomersToCollect = createSelector(
             });
 
         return customersToCollect;
+    }
+)
+
+// TODO: Could break this into smaller pieces
+export const selectCustomersDone = createSelector(
+    selectCustomersToMeter,
+    selectCustomersToCollect,
+    selectAllCustomersArray,
+    store.getState,
+    (unmeteredCustomers, unpaidCustomers, allCustomers, state) => {
+        const unmeteredCustomerIds = new Set(unmeteredCustomers.map((customer: CustomerRecord) => customer.id));
+        const unpaidCustomerIds = new Set(unpaidCustomers.map((customer: CustomerRecord) => customer.id));
+        return allCustomers.filter(customer => !unmeteredCustomerIds.has(customer.id) && !unpaidCustomerIds.has(customer.id));
     }
 )

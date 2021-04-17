@@ -3,8 +3,7 @@ import { createStyles, Theme } from '@material-ui/core/styles';
 import ErrorIcon from '@material-ui/icons/Error';
 import React, { useState } from 'react';
 
-
-  // TODO: @wangannie: make onChange not optional
+// TODO: @wangannie: make onChange not optional
 interface TextFieldProps {
   label: string;
   id: string;

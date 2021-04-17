@@ -29,10 +29,10 @@ const styles = (theme: Theme) =>
   });
 
 const validationSchema = yup.object({
-  amountPurchased: yup.number().positive('Please enter a positive number').required('Please enter an amount'),
-  amountSpent: yup.number().positive('Please enter a positive number').required('Please enter an amount'),
+  amountPurchased: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
+  amountSpent: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
   notes: yup.string(),
-  receipt: yup.string(),
+  receipt: yup.string().required('Please upload a receipt image'),
 });
 
 interface CreatePurchaseRequestProps extends RouteComponentProps {
@@ -140,6 +140,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             id="receipt"
             label="Receipt"
             photoUri={photoUri}
+            required
             error={formik.touched.receipt && Boolean(formik.errors.receipt)}
             helperText={formik.touched.receipt && formik.errors.receipt}
           />

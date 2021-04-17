@@ -1,12 +1,13 @@
 diff --git a/src/lib/airtable/request.js b/src/lib/airtable/request.js
-index ae23270..73d5a14 100644
+index ae23270..c23c42c 100644
 --- a/src/lib/airtable/request.js
 +++ b/src/lib/airtable/request.js
-@@ -24,6 +24,17 @@ import {
+@@ -24,6 +24,18 @@ import {
    deleteRecord,
  } from './airtable';
  
-+import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux } from '../../lib/redux/customerData';
++import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux, addMeterReadingToRedux, removeMeterReadingFromRedux } from '../../lib/redux/customerData';
++import { getCurrentReading, isReadingFromLatestPeriod } from '../utils/customerUtils';
 +import { generateOfflineId } from '../utils/offlineUtils';
 +import {
 +  addInventoryToRedux,
@@ -20,7 +21,7 @@ index ae23270..73d5a14 100644
  /*
   ******* CREATE RECORDS *******
   */
-@@ -73,20 +84,29 @@ export const createManyTariffPlans = async (records) => {
+@@ -73,20 +85,29 @@ export const createManyTariffPlans = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -63,17 +64,41 @@ index ae23270..73d5a14 100644
  
  export const createCustomerUpdate = async (record) => {
    return createRecord(Tables.CustomerUpdates, record);
-@@ -118,22 +138,38 @@ export const createManyMeterReadingsandInvoices = async (records) => {
+@@ -103,37 +124,77 @@ export const createManyCustomerUpdates = async (records) => {
    return Promise.all(createPromises);
  };
+ 
+-export const createMeterReadingsandInvoice = async (record) => {
+-  return createRecord(Tables.MeterReadingsandInvoices, record);
+-};
+-
+-export const createManyMeterReadingsandInvoices = async (records) => {
+-  const createPromises = [];
+-  const numCalls = Math.ceil(records.length / 10);
+-  for (let i = 0; i < numCalls; i += 1) {
+-    const subset = records.slice(i * 10, (i + 1) * 10);
+-    if (subset.length > 0)
+-      createPromises.push(createRecords(Tables.MeterReadingsandInvoices, subset));
++// NONGENERATED: Create a meter reading for a customer
++export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, customer) => {
++  let meterReadingId = '';
++  delete meterReading.id;
++  try {
++    // Backend checks that a previous meter reading if a previous meter reading has been
++    // created for this period. If one has, the previous meter reading is deleted to keep 1 reading per period
++    meterReadingId = await createRecord(Tables.MeterReadingsandInvoices, meterReading);
++  } catch (error) {
++    console.log('(Meter Reading) Error occurred when creating meter reading: ', error);
++    meterReadingId = generateOfflineId();
+   }
+-  return Promise.all(createPromises);
+-};
  
 -export const createPayment = async (record) => {
 -  return createRecord(Tables.Payments, record);
 -};
-+// NONGENERATED: Create a payment for a customer
-+export const createPaymentAndUpdateCustomerBalance = async (payment, customer) => {
-+  const customerId = payment.billedToId;
-+  let paymentId = '';
++  const latestMeterReading = getCurrentReading(customer);
++  let balanceToAdd = meterReading.amountBilled;
  
 -export const createManyPayments = async (records) => {
 -  const createPromises = [];
@@ -82,6 +107,34 @@ index ae23270..73d5a14 100644
 -    const subset = records.slice(i * 10, (i + 1) * 10);
 -    if (subset.length > 0)
 -      createPromises.push(createRecords(Tables.Payments, subset));
++  // If a meter reading was made in the same period, we delete the existing 
++  // reading and replace it with the new one creating a new one because only 1 reading can be made per period.
++  // This same logic occurs on the backend to ensure only 1 reading is made per period after the grace period.
++  if (latestMeterReading && isReadingFromLatestPeriod(latestMeterReading)) {
++    removeMeterReadingFromRedux(latestMeterReading.id)
++    balanceToAdd = meterReading.amountBilled - latestMeterReading.amountBilled;
++  }
++
++  meterReading.id = meterReadingId;
++  addMeterReadingToRedux(meterReading);
++
++  // Customer's outstanding balance is automatically updated on Airtable but needs to
++  // be manually updated clientside to account for offline situations. The "Outstanding Balance" 
++  // persisted to Airtable is based off backend calculations for security reasons
++  updateCustomerInRedux({
++    id: customer.id,
++    outstandingBalance: customer.outstandingBalance + balanceToAdd,
++    totalAmountBilledfromInvoices: customer.totalAmountBilledfromInvoices + balanceToAdd
++  })
++
++  return meterReadingId;
++}
++
++// NONGENERATED: Create a payment for a customer
++export const createPaymentAndUpdateCustomerBalance = async (payment, customer) => {
++  const customerId = payment.billedToId;
++  let paymentId = '';
++
 +  // Customer has an id so it is in the airtable.
 +  // Make a standard request to create a payment.
 +  delete payment.id
@@ -115,7 +168,7 @@ index ae23270..73d5a14 100644
    return createRecord(Tables.FinancialSummaries, record);
  };
  
-@@ -148,9 +184,20 @@ export const createManyFinancialSummaries = async (records) => {
+@@ -148,9 +209,20 @@ export const createManyFinancialSummaries = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -139,7 +192,7 @@ index ae23270..73d5a14 100644
  
  export const createManyProducts = async (records) => {
    const createPromises = [];
-@@ -163,9 +210,29 @@ export const createManyProducts = async (records) => {
+@@ -163,9 +235,29 @@ export const createManyProducts = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -172,7 +225,7 @@ index ae23270..73d5a14 100644
  
  export const createManyInventorys = async (records) => {
    const createPromises = [];
-@@ -178,6 +245,25 @@ export const createManyInventorys = async (records) => {
+@@ -178,6 +270,25 @@ export const createManyInventorys = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -198,7 +251,7 @@ index ae23270..73d5a14 100644
  export const createPurchaseRequest = async (record) => {
    return createRecord(Tables.PurchaseRequests, record);
  };
-@@ -197,6 +283,32 @@ export const createInventoryUpdate = async (record) => {
+@@ -197,6 +308,32 @@ export const createInventoryUpdate = async (record) => {
    return createRecord(Tables.InventoryUpdates, record);
  };
  
@@ -231,7 +284,7 @@ index ae23270..73d5a14 100644
  export const createManyInventoryUpdates = async (records) => {
    const createPromises = [];
    const numCalls = Math.ceil(records.length / 10);
-@@ -216,7 +328,7 @@ export const getUserById = async (id) => {
+@@ -216,7 +353,7 @@ export const getUserById = async (id) => {
    return getRecordById(Tables.Users, id);
  };
  
@@ -240,7 +293,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -234,7 +346,7 @@ export const getSiteById = async (id) => {
+@@ -234,7 +371,7 @@ export const getSiteById = async (id) => {
    return getRecordById(Tables.Sites, id);
  };
  
@@ -249,7 +302,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -252,7 +364,7 @@ export const getTariffPlanById = async (id) => {
+@@ -252,7 +389,7 @@ export const getTariffPlanById = async (id) => {
    return getRecordById(Tables.TariffPlans, id);
  };
  
@@ -258,7 +311,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -270,7 +382,7 @@ export const getCustomerById = async (id) => {
+@@ -270,7 +407,7 @@ export const getCustomerById = async (id) => {
    return getRecordById(Tables.Customers, id);
  };
  
@@ -267,7 +320,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -288,7 +400,7 @@ export const getCustomerUpdateById = async (id) => {
+@@ -288,7 +425,7 @@ export const getCustomerUpdateById = async (id) => {
    return getRecordById(Tables.CustomerUpdates, id);
  };
  
@@ -276,7 +329,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -302,11 +414,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
+@@ -302,11 +439,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
    return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
  };
  
@@ -290,7 +343,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -324,7 +436,7 @@ export const getPaymentById = async (id) => {
+@@ -324,7 +461,7 @@ export const getPaymentById = async (id) => {
    return getRecordById(Tables.Payments, id);
  };
  
@@ -299,7 +352,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -338,11 +450,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
+@@ -338,11 +475,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
    return getAllRecords(Tables.Payments, filterByFormula, sort);
  };
  
@@ -313,7 +366,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -360,7 +472,7 @@ export const getProductById = async (id) => {
+@@ -360,7 +497,7 @@ export const getProductById = async (id) => {
    return getRecordById(Tables.Products, id);
  };
  
@@ -322,7 +375,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -378,7 +490,7 @@ export const getInventoryById = async (id) => {
+@@ -378,7 +515,7 @@ export const getInventoryById = async (id) => {
    return getRecordById(Tables.Inventory, id);
  };
  
@@ -331,7 +384,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -396,7 +508,7 @@ export const getPurchaseRequestById = async (id) => {
+@@ -396,7 +533,7 @@ export const getPurchaseRequestById = async (id) => {
    return getRecordById(Tables.PurchaseRequests, id);
  };
  
@@ -340,7 +393,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -414,7 +526,7 @@ export const getInventoryUpdateById = async (id) => {
+@@ -414,7 +551,7 @@ export const getInventoryUpdateById = async (id) => {
    return getRecordById(Tables.InventoryUpdates, id);
  };
  
@@ -349,7 +402,7 @@ index ae23270..73d5a14 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -477,9 +589,35 @@ export const updateManyTariffPlans = async (recordUpdates) => {
+@@ -477,9 +614,24 @@ export const updateManyTariffPlans = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -357,38 +410,27 @@ index ae23270..73d5a14 100644
 -  return updateRecord(Tables.Customers, id, recordUpdates);
 -};
 +// NONGENERATED: Update the customer record, create a customer update, and update the record in redux
-+export const updateCustomer = async (customer, customerUpdate) => {
++export const updateCustomer = async (id, recordUpdates, customerUpdate) => {
 +  try {
-+    const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
-+    const { dateUpdated, customerId, explanation, userId } = customerUpdate;
-+    await updateRecord(Tables.Customers, customer.id, {
-+      name,
-+      meterNumber,
-+      tariffPlanId,
-+      siteId,
-+      isactive,
-+      hasmeter,
-+    });
++    await updateRecord(Tables.Customers, id, recordUpdates);
 +    console.log("Customer edited!");
++  } catch (error) {
++    console.log("An error occurred while updating the customer: ", error);
++  }
++  updateCustomerInRedux({ ...recordUpdates, id });
 +
-+    const updateId = await createCustomerUpdate({
-+      dateUpdated,
-+      customerId,
-+      explanation,
-+      userId
-+    });
-+    console.log("Update id: ", updateId);
-+    console.log("Created updates!");
-+
-+    updateCustomerInRedux(customer);
-+  } catch (err) {
-+    console.log(err);
++  try {
++    delete customerUpdate.id;
++    await createCustomerUpdate(customerUpdate);
++    console.log("Created Customer update!");
++  } catch (error) {
++    console.log("An error occurred while creating a customer update: ", error)
 +  }
 +}
  
  export const updateManyCustomers = async (recordUpdates) => {
    const updatePromises = [];
-@@ -507,7 +645,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
+@@ -507,7 +659,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -397,7 +439,7 @@ index ae23270..73d5a14 100644
    return updateRecord(Tables.MeterReadingsandInvoices, id, recordUpdates);
  };
  
-@@ -537,7 +675,7 @@ export const updateManyPayments = async (recordUpdates) => {
+@@ -537,7 +689,7 @@ export const updateManyPayments = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -406,7 +448,7 @@ index ae23270..73d5a14 100644
    return updateRecord(Tables.FinancialSummaries, id, recordUpdates);
  };
  
-@@ -637,7 +775,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
+@@ -637,7 +789,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
  export const deletePayment = async (id) => {
    return deleteRecord(Tables.Payments, id);
  };
