@@ -52,6 +52,7 @@ export const EMPTY_SITE: SiteRecord = {
   financialSummaryIds: [],
   financialSummaries: [],
   tariffPlans: [],
+  gracePeriod: 0,
 };
 
 export const EMPTY_FINANCIAL_SUMMARY: FinancialSummaryRecord = {

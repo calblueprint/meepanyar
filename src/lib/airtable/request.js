@@ -24,7 +24,8 @@ import {
   deleteRecord,
 } from './airtable';
 
-import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux } from '../../lib/redux/customerData';
+import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux, addMeterReadingToRedux, removeMeterReadingFromRedux } from '../../lib/redux/customerData';
+import { getCurrentReading, isReadingFromLatestPeriod } from '../utils/customerUtils';
 import { generateOfflineId } from '../utils/offlineUtils';
 import {
   addInventoryToRedux,
@@ -123,20 +124,44 @@ export const createManyCustomerUpdates = async (records) => {
   return Promise.all(createPromises);
 };
 
-export const createMeterReadingsandInvoice = async (record) => {
-  return createRecord(Tables.MeterReadingsandInvoices, record);
-};
-
-export const createManyMeterReadingsandInvoices = async (records) => {
-  const createPromises = [];
-  const numCalls = Math.ceil(records.length / 10);
-  for (let i = 0; i < numCalls; i += 1) {
-    const subset = records.slice(i * 10, (i + 1) * 10);
-    if (subset.length > 0)
-      createPromises.push(createRecords(Tables.MeterReadingsandInvoices, subset));
+// NONGENERATED: Create a meter reading for a customer
+export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, customer) => {
+  let meterReadingId = '';
+  delete meterReading.id;
+  try {
+    // Backend checks that a previous meter reading if a previous meter reading has been
+    // created for this period. If one has, the previous meter reading is deleted to keep 1 reading per period
+    meterReadingId = await createRecord(Tables.MeterReadingsandInvoices, meterReading);
+  } catch (error) {
+    console.log('(Meter Reading) Error occurred when creating meter reading: ', error);
+    meterReadingId = generateOfflineId();
   }
-  return Promise.all(createPromises);
-};
+
+  const latestMeterReading = getCurrentReading(customer);
+  let balanceToAdd = meterReading.amountBilled;
+
+  // If a meter reading was made in the same period, we delete the existing
+  // reading and replace it with the new one creating a new one because only 1 reading can be made per period.
+  // This same logic occurs on the backend to ensure only 1 reading is made per period after the grace period.
+  if (latestMeterReading && isReadingFromLatestPeriod(latestMeterReading)) {
+    removeMeterReadingFromRedux(latestMeterReading.id)
+    balanceToAdd = meterReading.amountBilled - latestMeterReading.amountBilled;
+  }
+
+  meterReading.id = meterReadingId;
+  addMeterReadingToRedux(meterReading);
+
+  // Customer's outstanding balance is automatically updated on Airtable but needs to
+  // be manually updated clientside to account for offline situations. The "Outstanding Balance"
+  // persisted to Airtable is based off backend calculations for security reasons
+  updateCustomerInRedux({
+    id: customer.id,
+    outstandingBalance: customer.outstandingBalance + balanceToAdd,
+    totalAmountBilledfromInvoices: customer.totalAmountBilledfromInvoices + balanceToAdd
+  })
+
+  return meterReadingId;
+}
 
 // NONGENERATED: Create a payment for a customer
 export const createPaymentAndUpdateCustomerBalance = async (payment, customer) => {
@@ -590,32 +615,21 @@ export const updateManyTariffPlans = async (recordUpdates) => {
 };
 
 // NONGENERATED: Update the customer record, create a customer update, and update the record in redux
-export const updateCustomer = async (customer, customerUpdate) => {
+export const updateCustomer = async (id, recordUpdates, customerUpdate) => {
   try {
-    const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
-    const { dateUpdated, customerId, explanation, userId } = customerUpdate;
-    await updateRecord(Tables.Customers, customer.id, {
-      name,
-      meterNumber,
-      tariffPlanId,
-      siteId,
-      isactive,
-      hasmeter,
-    });
+    await updateRecord(Tables.Customers, id, recordUpdates);
     console.log("Customer edited!");
+  } catch (error) {
+    console.log("An error occurred while updating the customer: ", error);
+  }
+  updateCustomerInRedux({ ...recordUpdates, id });
 
-    const updateId = await createCustomerUpdate({
-      dateUpdated,
-      customerId,
-      explanation,
-      userId
-    });
-    console.log("Update id: ", updateId);
-    console.log("Created updates!");
-
-    updateCustomerInRedux(customer);
-  } catch (err) {
-    console.log(err);
+  try {
+    delete customerUpdate.id;
+    await createCustomerUpdate(customerUpdate);
+    console.log("Created Customer update!");
+  } catch (error) {
+    console.log("An error occurred while creating a customer update: ", error)
   }
 }
 

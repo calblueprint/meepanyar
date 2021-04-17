@@ -1,4 +1,4 @@
-import { Button, CircularProgress, makeStyles, Theme } from '@material-ui/core';
+import { Button, CircularProgress, makeStyles, Theme, Typography } from '@material-ui/core';
 import { createStyles } from '@material-ui/core/styles';
 import React from 'react';
 
@@ -11,6 +11,7 @@ interface MainButtonProps {
   variant?: 'text' | 'outlined' | 'contained';
   fullWidth?: boolean;
   startIcon?: React.ReactNode;
+  errorMessage?: string;
 }
 
 const styles = makeStyles((theme: Theme) =>
@@ -30,7 +31,7 @@ const styles = makeStyles((theme: Theme) =>
 
 function MainButton(props: MainButtonProps) {
   const classes = styles(props);
-  return (
+  return <>
     <Button
       startIcon={props.startIcon}
       fullWidth={props.fullWidth}
@@ -44,7 +45,8 @@ function MainButton(props: MainButtonProps) {
     >
       {props.loading ? <CircularProgress size={24} /> : props.label}
     </Button>
-  );
+    {props.errorMessage && <Typography color='error' align='center'> {props.errorMessage} </Typography>}
+  </>
 }
 
 export default MainButton;
