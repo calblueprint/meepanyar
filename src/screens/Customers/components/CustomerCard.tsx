@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginLeft: '5px',
     },
     singleCard: {
+      /* TODO: could replace with CardContent */
       width: '100%',
       height: '93px',
       border: `1px solid ${theme.palette.text.disabled}`,

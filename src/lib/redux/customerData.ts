@@ -171,6 +171,7 @@ export const selectCustomersToCollect = createSelector(
     }
 )
 
+// TODO: Could break this into smaller pieces
 export const selectCustomersDone = createSelector(
     selectCustomersToMeter,
     selectCustomersToCollect,
