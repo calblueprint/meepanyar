@@ -13,6 +13,8 @@ import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import moment from 'moment';
 
 const styles = (theme: Theme) =>
@@ -33,6 +35,7 @@ interface AddCustomerProps extends RouteComponentProps {
 
 
 function AddCustomer(props: AddCustomerProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const history = useHistory();
 
@@ -87,20 +90,20 @@ function AddCustomer(props: AddCustomerProps) {
   }
 
   return (
-    <BaseScreen title="Add New Customer" leftIcon="backNav">
+    <BaseScreen title={intl(words.add_new_customer)} leftIcon="backNav">
       <form noValidate className={classes.content} onSubmit={() => false}>
-        <TextField label={'Name'} id={'name'} onChange={handleNameInput} />
+        <TextField label={intl(words.name)} id={'name'} onChange={handleNameInput} />
         <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
-          <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId="select-tariff-plan-label" onChange={handleSelectTariffPlan}>
+          <InputLabel id="select-tariff-plan-label">{intl(words.select_tariff_plan)}</InputLabel>
+          <Select label={intl(words.select_tariff_plan)} id={'select-tariff-plan'} labelId="select-tariff-plan-label" onChange={handleSelectTariffPlan}>
             {tariffPlans.map((plan) =>
               <MenuItem key={plan.id} value={plan.id}>{plan.name}</MenuItem>
             )}
           </Select>
         </FormControl>
-        <Checkbox label={'Meter:'} textField={hasMeter} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput} />
-        <Checkbox label={'Customer is inactive'} checkboxOnChange={() => setCustomerInactive(!customerInactive)} />
-        <Button label={'Add'} onClick={handleSubmit} />
+        <Checkbox label={`${intl(words.meter)}:`} textField={hasMeter} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput} />
+        <Checkbox label={`${intl(words.customer_is_inactive)}`} checkboxOnChange={() => setCustomerInactive(!customerInactive)} />
+        <Button label={intl(words.add_customer)} onClick={handleSubmit} />
       </form>
     </BaseScreen>
   );

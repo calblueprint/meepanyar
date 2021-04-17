@@ -86,8 +86,7 @@ function CustomerProfile(props: CustomerProps) {
   const customerMeteredForPeriod = isReadingFromLatestPeriod(currReading);
 
   let meterInfo: CardPropsInfo[] = [
-    //TODO: include actual starting reading - currentCustomer.startingMeterReading
-    { number: startingReading? startingReading.amountBilled.toString() : '0', label: words.starting_meter, unit: words.kwh },
+    { number: startingReading.toString(), label: words.starting_meter, unit: words.kwh },
     { number: periodUsage.toString(), label: words.period_usage, unit: words.kwh },
     { number: currReading ? currReading.reading.toString() : '0', label: words.ending_meter, unit: words.kwh },
     { number: amountBilled.toString(), label: words.amount_billed, unit: words.ks },
