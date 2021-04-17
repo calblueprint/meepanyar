@@ -15,6 +15,7 @@ import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import TariffPlanCard from '../Profile/components/TariffPlanCard';
+import moment from 'moment';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -98,6 +99,9 @@ function AddCustomer(props: AddCustomerProps) {
     customer.meterType = selectedMeterType;
     customer.meterNumber = parseInt(meterNumber);
     customer.tariffPlanId = selectedTariffPlanId;
+    customer.startingMeterReading = 0;
+    customer.startingMeterLastChanged = moment().toISOString();
+    customer.meterType = MeterType.ANALOG_METER; // TODO: Change so you pick meter
 
     // Add other info necessary to create the Airtable record
     createCustomer({

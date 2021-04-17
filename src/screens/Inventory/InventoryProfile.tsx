@@ -1,80 +1,113 @@
-import { Typography } from '@material-ui/core';
-import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { List, ListItem, ListItemIcon, ListItemText, Typography, withStyles } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import { createStyles, Theme } from '@material-ui/core/styles';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import Button from '../../components/Button';
-import { InventoryUpdateRecord } from '../../lib/airtable/interface';
-import { selectCurrentInventory, selectCurrentInventoryProduct, selectInventoryUpdatesArrayByInventoryId } from '../../lib/redux/inventoryData';
+import { PurchaseRequestRecord } from '../../lib/airtable/interface';
+import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
+import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
-import { RootState } from '../../lib/redux/store';
-import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
+import { getInventoryHistory, getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
-import InventoryUpdateCard from './components/InventoryUpdateCard';
+import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
 
 const styles = (theme: Theme) =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-    },
     section: {
-      marginTop: '30px',
+      marginTop: theme.spacing(2),
+    },
+    purchaseRequestText: {
+      textDecoration: 'underline',
     },
   });
 
 interface InventoryProps extends RouteComponentProps {
-  classes: { content: string; section: string };
+  classes: { section: string; purchaseRequestText: string };
 }
-
-const getPurchaseRequestButton = () => (
-  <Link to={'purchase-requests/create'}>
-    <Button label={'Purchase'} />
-  </Link>
-);
-
-const getUpdateButton = () => (
-  <Link to={'updates/create'}>
-    <Button label={'Update'} />
-  </Link>
-);
 
 function InventoryProfile(props: InventoryProps) {
   const { classes } = props;
   const inventory = useSelector(selectCurrentInventory) || EMPTY_INVENTORY;
   const product = useSelector(selectCurrentInventoryProduct);
-  const inventoryUpdates = useSelector((state: RootState) => selectInventoryUpdatesArrayByInventoryId(state, inventory.id));
+  const inventoryHistory = getInventoryHistory(inventory.id);
+  const history = useHistory();
 
   // Redirect to InventoryMain if either are undefined
   if (inventory === EMPTY_INVENTORY || !product) {
     return <Redirect to={'/inventory'} />;
   }
 
+  const navigateToPurchaseRequest = (purchaseRequest: PurchaseRequestRecord) => {
+    history.push('/inventory/purchase-requests/purchase-request', {
+      purchaseRequest,
+    });
+  };
+
   return (
-    <BaseScreen leftIcon="backNav" title={product.name}>
+    <BaseScreen leftIcon="backNav">
       <BaseScrollView>
-        <div className={classes.content}>
-          <InventoryInfo
-            productId={inventory.productId}
-            lastUpdated={getInventoryLastUpdated(inventory)}
-            currentQuantity={inventory.currentQuantity}
-          />
-          {getPurchaseRequestButton()}
-          {getUpdateButton()}
-          <div className={classes.section}></div>
-        </div>
-        <div className={classes.content}>
-        <Typography variant="body2">Recent Updates</Typography>
-        {inventoryUpdates.map((inventoryUpdate: InventoryUpdateRecord) =>  (
-          <InventoryUpdateCard 
-            key={inventoryUpdate.id} 
-            updatedQuantity={inventoryUpdate.updatedQuantity}
-            createdAt={inventoryUpdate.createdAt}
-            inventoryId={inventoryUpdate.inventoryId}
-            userId={inventoryUpdate.userId}
-          />
-        ))}
+        <InventoryInfo
+          productId={inventory.productId}
+          lastUpdated={getInventoryLastUpdated(inventory.id)}
+          currentQuantity={inventory.currentQuantity}
+          withActions
+        />
+        <div className={classes.section}>
+          <Typography variant="body2">Recent Updates</Typography>
+          <List>
+            {inventoryHistory.map((historyRecord: any) => {
+              const isPurchaseRequest = 'amountPurchased' in historyRecord;
+              return (
+                <ListItem
+                  disableGutters
+                  key={historyRecord.id}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  button={isPurchaseRequest as any} // necessary workaround for material-ui bug
+                  onClick={() => isPurchaseRequest && navigateToPurchaseRequest(historyRecord)}
+                >
+                  <ListItemIcon style={{ minWidth: 28 }}>
+                    {historyRecord.status ? (
+                      <AttachMoneyIcon color="primary" fontSize="small" />
+                    ) : (
+                      <FiberManualRecordIcon color="primary" fontSize="small" />
+                    )}
+                  </ListItemIcon>
+                  <ListItemText
+                    primaryTypographyProps={{variant: 'body2'}}
+                    className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
+                    primary={formatDateStringToLocal(historyRecord.createdAt)}
+                  />
+                  {isPurchaseRequest && (
+                    <ListItemText
+                      className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
+                      primaryTypographyProps={{ variant: 'body2', align: 'right' }}
+                      primary={`${historyRecord.amountSpent || 0} kS`}
+                    />
+                  )}
+                  <ListItemText
+                    className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
+                    primaryTypographyProps={{ variant: 'body2', align: 'right' }}
+                    primary={`${historyRecord.updatedQuantity || 0} ${
+                      product.unit
+                    }(s)`}
+                  />
+                  <ListItemSecondaryAction>
+                    {historyRecord.status && (
+                      <IconButton disabled edge="end" aria-label="delete" style={{ paddingRight: 0 }}>
+                        {getPurchaseRequestStatusIcon(historyRecord.status, 'small')}
+                      </IconButton>
+                    )}
+                  </ListItemSecondaryAction>
+                </ListItem>
+              );
+            })}
+          </List>
         </div>
       </BaseScrollView>
     </BaseScreen>
