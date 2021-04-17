@@ -5,6 +5,8 @@ import TabMenu from './components/TabMenu';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
 import { PaymentRecord, MeterReadingRecord } from '../../lib/airtable/interface';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -22,6 +24,7 @@ interface CustomerRecordsProps extends RouteComponentProps {
 }
 
 function CustomerRecords(props: CustomerRecordsProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const defaultTab: string = props.location.state.defaultTab ? props.location.state.defaultTab : '0';
   const payments: PaymentRecord[] = props.location.state.payments;
@@ -30,7 +33,7 @@ function CustomerRecords(props: CustomerRecordsProps) {
   return (
     <BaseScreen leftIcon="backNav">
       <div className={classes.content}>
-        <Typography variant="h1">Records</Typography>
+        <Typography variant="h1">{intl(words.records)}</Typography>
         <TabMenu defaultTab={defaultTab} invoices={invoices} payments={payments} />
       </div>
     </BaseScreen>

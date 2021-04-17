@@ -12,6 +12,8 @@ import moment from 'moment';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import OutlinedCardList from '../../components/OutlinedCardList';
 import { updateCustomer } from '../../lib/airtable/request';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 
 const styles = (theme: Theme) =>
@@ -26,6 +28,7 @@ interface EditStartingMeterProps extends RouteComponentProps {
 }
 
 function EditStartingMeter(props: EditStartingMeterProps) {
+    const intl = useInternationalization(); 
     const { classes } = props;
     const history = useHistory();
     const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
@@ -55,7 +58,7 @@ function EditStartingMeter(props: EditStartingMeterProps) {
 
         const newStartingMeterAmount = parseFloat(startingMeterAmount);
         if (isNaN(newStartingMeterAmount) || !explanation) {
-            setErrorMessage('Updated Starting Meter must be a number and Reason for Change must be filled out');
+            setErrorMessage(intl(words.updated_starting_meter_must_be_a_number_and_reason_for_change_must_be_filled_out));
             return;
         }
         setLoading(true);
@@ -77,34 +80,34 @@ function EditStartingMeter(props: EditStartingMeterProps) {
 
     const cardInfo = [{
         number: currentStartingMeterAmount.toString(),
-        label: 'Current Starting Meter',
-        unit: 'kWh',
+        label: intl(words.current_x, words.starting_meter),
+        unit: words.kwh,
     }]
 
     return (
-        <BaseScreen title="Edit Starting Meter" leftIcon="backNav">
+        <BaseScreen title={intl(words.edit_x, words.starting_meter)} leftIcon="backNav">
             <div className={classes.amountOwedContainer}>
                 <OutlinedCardList info={cardInfo} />
             </div>
             <TextField
-                label='Updated Starting Meter'
-                unit='kWh'
+                label={intl(words.updated_x, words.starting_meter)}
+                unit={intl(words.kwh)}
                 id={'amount-metered'}
-                placeholder='e.g. 100'
+                placeholder={intl(words.eg_x, '100')}
                 type='number'
                 required
                 value={startingMeterAmount}
                 onChange={handleSetStartingMeterAmount}
             />
             <TextField
-                label='Reason for change'
+                label={intl(words.reason_for_change)}
                 id={'reason-for-change'}
-                placeholder='e.g. reset broken meter'
+                placeholder={intl(words.eg_x, words.reset_broken_meter)}
                 required
                 value={explanation}
                 onChange={handleSetExplanation}
             />
-            <Button label={'Update'} onClick={handleSubmit} loading={loading} errorMessage={errorMessage} />
+            <Button label={intl(words.update)} onClick={handleSubmit} loading={loading} errorMessage={errorMessage} />
         </BaseScreen>
     );
 }

@@ -15,6 +15,8 @@ import { getTariffPlanByCustomer, calculateAmountBilled } from '../../lib/utils/
 import { createMeterReadingAndUpdateCustomerBalance } from '../../lib/airtable/request';
 import OutlinedCardList from '../../components/OutlinedCardList';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 
 const styles = (theme: Theme) =>
@@ -29,6 +31,7 @@ interface AddMeterReadingProps extends RouteComponentProps {
 }
 
 function AddMeterReading(props: AddMeterReadingProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   const history = useHistory();
   const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
@@ -61,7 +64,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
 
     const currentReadingAmount = parseFloat(meterReadingAmount);
     if (isNaN(currentReadingAmount)) {
-      setErrorMessage('Meter Reading Amount must be a number');
+      setErrorMessage(intl(words.meter_reading_amount_must_be_a_number));
       return;
     } else {
       setLoading(true);
@@ -82,19 +85,19 @@ function AddMeterReading(props: AddMeterReadingProps) {
 
   const cardInfo = [{
     number: startingMeterAmount.toString(),
-    label: 'Current Reading',
-    unit: 'kWh',
+    label: intl(words.current_x, words.reading),
+    unit: intl(words.kwh),
     secondaryLabel: formatDateStringToLocal(startingMeterLastRecorded)
   }]
 
   return (
-    <BaseScreen title="Add Meter Reading" leftIcon="backNav">
+    <BaseScreen title={intl(words.add_meter_reading)} leftIcon="backNav">
       <div className={classes.amountOwedContainer}>
         <OutlinedCardList info={cardInfo} />
       </div>
       <TextField
-        label='New Meter Reading (kWh)'
-        unit='kWh'
+        label={intl(words.new_meter_reading)}
+        unit={intl(words.kwh)}
         id={'amount-metered'}
         placeholder='e.g. 100'
         type='number'
@@ -102,7 +105,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
         required
         value={meterReadingAmount}
       />
-      <Button label={'Add'} onClick={handleSubmit} loading={loading} errorMessage={errorMessage} />
+      <Button label={intl(words.add)} onClick={handleSubmit} loading={loading} errorMessage={errorMessage} />
     </BaseScreen>
   );
 }

@@ -14,6 +14,8 @@ import { EMPTY_CUSTOMER, setCurrentCustomerId } from '../../lib/redux/customerDa
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { selectCurrentCustomer } from '../../lib/redux/customerData';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -35,6 +37,7 @@ interface EditCustomerProps extends RouteComponentProps {
 }
 
 function EditCustomer(props: EditCustomerProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   const history = useHistory();
 
@@ -101,21 +104,21 @@ function EditCustomer(props: EditCustomerProps) {
   }
 
   return (
-    <BaseScreen title="Edit Customer" leftIcon="backNav">
+    <BaseScreen title={intl(words.edit_customer)} leftIcon="backNav">
       <form noValidate className={classes.content}>
-        <TextField label={'Name'} id={'name'} value={customerName} onChange={handleNameInput} />
-        <Checkbox label={'Select if customer is inactive'} checked={customerInactive} checkboxOnChange = {() => setCustomerInactive(!customerInactive)} />
-        <Checkbox label={'Select if customer has meter'} checked={hasMeter} textField={hasMeter} textFieldValue={meterNumber} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput}/>
+        <TextField label={intl(words.name)} id={'name'} value={customerName} onChange={handleNameInput} />
+        <Checkbox label={intl(words.select_if_x, words.customer_is_inactive)} checked={customerInactive} checkboxOnChange = {() => setCustomerInactive(!customerInactive)} />
+        <Checkbox label={intl(words.select_if_x, words.has_meter)} checked={hasMeter} textField={hasMeter} textFieldValue={meterNumber} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput}/>
         <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel id="select-tariff-plan-label">Select Tariff Plan</InputLabel>
-          <Select label={"Select Tariff Plan"} id={'select-tariff-plan'} labelId = "select-tariff-plan-label" value={selectedTariffPlanId} onChange={handleSelectTariffPlan}>
+          <InputLabel id="select-tariff-plan-label">{intl(words.select_tariff_plan)}</InputLabel>
+          <Select label={intl(words.select_tariff_plan)} id={'select-tariff-plan'} labelId = "select-tariff-plan-label" value={selectedTariffPlanId} onChange={handleSelectTariffPlan}>
             {tariffPlans.map((plan) =>
                 <MenuItem key={plan.id} value={plan.id}>{plan.name}</MenuItem>
             )}
           </Select>
         </FormControl>
-        <TextField label={'Explanation'} id={'explanation'} onChange={handleExplanationInput}/>
-        <Button label={'SAVE'} onClick={handleSubmit} />
+        <TextField label={intl(words.explanation)} id={'explanation'} onChange={handleExplanationInput}/>
+        <Button label={intl(words.save)} onClick={handleSubmit} />
       </form>
     </BaseScreen>
   );

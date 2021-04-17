@@ -1,6 +1,8 @@
 import React from 'react';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -22,6 +24,7 @@ interface RecordProps {
 }
 
 function Record(props: RecordProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   return (
     <div className={classes.root}>
@@ -29,7 +32,7 @@ function Record(props: RecordProps) {
         {props.date}
       </Typography>
       <Typography variant="h1">
-        {props.used ? props.used + ' kWh |' : null} {props.amount} Ks
+        {props.used ? props.used + ` ${intl(words.kwh)} |` : null} {props.amount} {intl(words.ks)}
       </Typography>
     </div>
   );
