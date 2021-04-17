@@ -1,21 +1,24 @@
 import moment, { Moment } from 'moment';
-import { InventoryRecord, InventoryUpdateRecord, PurchaseRequestRecord } from '../airtable/interface';
+import { updatePurchaseRequest } from '../../lib/airtable/request';
+import { InventoryUpdateRecord, PurchaseRequestRecord } from '../airtable/interface';
 import { formatDateStringToLocal } from '../moment/momentUtils';
 import {
   selectInventoryUpdatesArrayByInventoryId,
-  selectPurchaseRequestsArrayByInventoryId
+  selectPurchaseRequestsArrayByInventoryId,
+  updatePurchaseRequestInRedux
 } from '../redux/inventoryData';
+import { PurchaseRequestStatus } from '../redux/inventoryDataSlice';
 import { store } from '../redux/store';
 
 // Calculate when an inventory record was last updated
-export const getInventoryLastUpdated = (inventory: InventoryRecord): string => {
+export const getInventoryLastUpdated = (inventoryId: string): string => {
   const purchaseRequests: PurchaseRequestRecord[] = selectPurchaseRequestsArrayByInventoryId(
     store.getState(),
-    inventory.id,
+    inventoryId,
   );
   const inventoryUpdates: InventoryUpdateRecord[] = selectInventoryUpdatesArrayByInventoryId(
     store.getState(),
-    inventory.id,
+    inventoryId,
   );
 
   const updateTimes: Moment[] = [];
@@ -28,3 +31,34 @@ export const getInventoryLastUpdated = (inventory: InventoryRecord): string => {
   }
   return 'Unknown'; // TODO @wangannie: address design edge case
 };
+
+// Get the full history of an inventory item including updates and purchase requests
+// sorted from most to least recent createdAt date.
+// TODO: cleanup to extract only relevant data points (?)
+export const getInventoryHistory = (inventoryId: string): any[] => {
+  const purchaseRequests: PurchaseRequestRecord[] = selectPurchaseRequestsArrayByInventoryId(
+    store.getState(),
+    inventoryId,
+  );
+  const inventoryUpdates: InventoryUpdateRecord[] = selectInventoryUpdatesArrayByInventoryId(
+    store.getState(),
+    inventoryId,
+  );
+
+  const history: any[] = [];
+  history.push(...purchaseRequests);
+  history.push(...inventoryUpdates);
+  history.sort((a,b) => moment(b.createdAt).diff(a.createdAt));
+  return history;
+};
+
+export const reviewPurchaseRequest = (purchaseRequest: PurchaseRequestRecord, approved: boolean, userId: string) => {
+  const reviewData = {
+    reviewerId: userId,
+    reviewedAt: moment().toISOString(),
+    status: approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED,
+  };
+  // Additional authentication against Airtable is done on the backend
+  updatePurchaseRequest(purchaseRequest.id, reviewData);
+  updatePurchaseRequestInRedux({ id: purchaseRequest.id, ...reviewData });
+}

@@ -5,7 +5,7 @@ import moment from 'moment';
 export const formatDateStringToLocal = (dateString: string): string => {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
-    month: 'long',
+    month: 'numeric',
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
