@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Theme, Typography } from '@material-ui/core';
 import { createStyles, withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -14,10 +14,10 @@ import OutlinedCardList from '../../components/OutlinedCardList';
 import { updateCustomer } from '../../lib/airtable/request';
 
 
-const styles = () =>
+const styles = (theme: Theme) =>
     createStyles({
         amountOwedContainer: {
-            margin: '30px 0px'
+            margin: theme.spacing(3, 0)
         },
     });
 
@@ -57,9 +57,8 @@ function EditStartingMeter(props: EditStartingMeterProps) {
         if (isNaN(newStartingMeterAmount) || !explanation) {
             setErrorMessage('Updated Starting Meter must be a number and Reason for Change must be filled out');
             return;
-        } else {
-            setLoading(true);
         }
+        setLoading(true);
 
         const customerRecordUpdates = {
             startingMeterReading: newStartingMeterAmount,
@@ -79,7 +78,7 @@ function EditStartingMeter(props: EditStartingMeterProps) {
     const cardInfo = [{
         number: currentStartingMeterAmount.toString(),
         label: 'Current Starting Meter',
-        unit: 'Kwh',
+        unit: 'kWh',
     }]
 
     return (
@@ -87,10 +86,25 @@ function EditStartingMeter(props: EditStartingMeterProps) {
             <div className={classes.amountOwedContainer}>
                 <OutlinedCardList info={cardInfo} />
             </div>
-            <TextField label='Updated Starting Meter' unit='kWh' id={'amount-metered'} placeholder='e.g. 100' type='number' required onChange={handleSetStartingMeterAmount} />
-            <TextField label='Reason for change' id={'reason-for-change'} placeholder='e.g. reset broken meter' required onChange={handleSetExplanation} />
-            <Button label={'UPDATE'} onClick={handleSubmit} loading={loading} />
-            {errorMessage && <Typography color='error' align='center'> {errorMessage} </Typography>}
+            <TextField
+                label='Updated Starting Meter'
+                unit='kWh'
+                id={'amount-metered'}
+                placeholder='e.g. 100'
+                type='number'
+                required
+                value={startingMeterAmount}
+                onChange={handleSetStartingMeterAmount}
+            />
+            <TextField
+                label='Reason for change'
+                id={'reason-for-change'}
+                placeholder='e.g. reset broken meter'
+                required
+                value={explanation}
+                onChange={handleSetExplanation}
+            />
+            <Button label={'Update'} onClick={handleSubmit} loading={loading} errorMessage={errorMessage} />
         </BaseScreen>
     );
 }

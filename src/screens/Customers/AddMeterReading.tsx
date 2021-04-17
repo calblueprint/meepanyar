@@ -20,7 +20,7 @@ import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 const styles = (theme: Theme) =>
   createStyles({
     amountOwedContainer: {
-      margin: '20px 0px'
+      margin: theme.spacing(3, 0)
     },
   });
 
@@ -44,7 +44,6 @@ function AddMeterReading(props: AddMeterReadingProps) {
   const tariffPlan = getTariffPlanByCustomer(currentCustomer);
 
   if (!tariffPlan) {
-    console.error("(Meter Readings) Could not find customer tariff plan, redirecting to Customer Main")
     return <Redirect to={'/customers'} />
   }
 
@@ -84,7 +83,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
   const cardInfo = [{
     number: startingMeterAmount.toString(),
     label: 'Current Reading',
-    unit: 'Kwh',
+    unit: 'kWh',
     secondaryLabel: formatDateStringToLocal(startingMeterLastRecorded)
   }]
 
@@ -93,9 +92,17 @@ function AddMeterReading(props: AddMeterReadingProps) {
       <div className={classes.amountOwedContainer}>
         <OutlinedCardList info={cardInfo} />
       </div>
-      <TextField label='New Meter Reading (kWh)' unit='kWh' id={'amount-metered'} placeholder='e.g. 100' type='number' onChange={handleSetMeterReadingAmount} />
-      <Button label={'ADD'} onClick={handleSubmit} loading={loading} />
-      {errorMessage && <Typography color='error' align='center'> {errorMessage} </Typography>}
+      <TextField
+        label='New Meter Reading (kWh)'
+        unit='kWh'
+        id={'amount-metered'}
+        placeholder='e.g. 100'
+        type='number'
+        onChange={handleSetMeterReadingAmount}
+        required
+        value={meterReadingAmount}
+      />
+      <Button label={'Add'} onClick={handleSubmit} loading={loading} errorMessage={errorMessage} />
     </BaseScreen>
   );
 }

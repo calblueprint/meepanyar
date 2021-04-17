@@ -134,7 +134,7 @@ export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, c
     // created for this period. If one has, the previous meter reading is deleted to keep 1 reading per period
     meterReadingId = await createRecord(Tables.MeterReadingsandInvoices, meterReading);
   } catch (error) {
-    console.log('(Meter Reading) Error occurred when creating meter reading: ', meterReading);
+    console.log('(Meter Reading) Error occurred when creating meter reading: ', error);
     meterReadingId = generateOfflineId();
   }
 
@@ -631,7 +631,7 @@ export const updateCustomer = async (id, recordUpdates, customerUpdate) => {
     await createCustomerUpdate(customerUpdate);
     console.log("Created Customer update!");
   } catch (error) {
-    console.log("AN error occurred while creating a customer update: ", error)
+    console.log("An error occurred while creating a customer update: ", error)
   }
 }
 

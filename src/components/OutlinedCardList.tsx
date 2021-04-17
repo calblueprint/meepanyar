@@ -95,8 +95,14 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
     const getFormattedLabel = () => (
       <div className={classes.headerContainer}>
         <div style={{ display: 'flex' }}>
-          <Typography align={columns ? 'center' : 'inherit'} noWrap={props.editPath !== undefined} className={props.reverse ? classes.reverseLabel : undefined}>{label}</Typography>
-          {editPath ? getEditButton(editPath) : null}
+          <Typography
+            align={columns ? 'center' : 'inherit'}
+            noWrap={props.editPath !== undefined}
+            className={props.reverse ? classes.reverseLabel : undefined}
+          >
+            {label}
+          </Typography>
+          {editPath && getEditButton(editPath)}
         </div>
         {secondaryLabel && <Typography align='right' color='secondary'> {secondaryLabel} </Typography>}
       </div>
