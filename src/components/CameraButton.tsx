@@ -14,7 +14,6 @@ interface CameraButtonProps {
   staticPreview?: boolean;
 }
 
-
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     margin: {
