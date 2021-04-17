@@ -67,8 +67,8 @@ export const Columns = {
 		customerIds: {name:`Customer`, type:`foreignKey-many`},
 		siteIds: {name:`Sites`, type:`foreignKey-many`},
 		id: {name:`ID`, type:`formula`},
-		meterTypes: {name:`Meter Types`, type:`multiSelect`},
 		numberOfCustomers: {name:`Number of Customers`, type:`count`},
+		meterTypes: {name:`Meter Types`, type:`multiSelect`},
 	},
 	"Customers": {
 		name: {name:`Name`, type:`text`},

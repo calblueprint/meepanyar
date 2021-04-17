@@ -9,6 +9,7 @@ export interface CardPropsInfo {
   number: string;
   label: string;
   unit: string;
+  secondaryLabel?: string; // Label shown on the top right of OutlinedCardList
 }
 
 interface CardProps {
@@ -56,14 +57,15 @@ const useStyles = makeStyles((theme: Theme) =>
       wordSpacing: '100vw',
       lineHeight: '1.2',
     },
-    editButton: {
-      float: 'right',
-    },
     editIcon: {
       color: theme.palette.primary.main,
       fontSize: '14px',
       marginLeft: '5px',
     },
+    headerContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+    }
   }),
 );
 
@@ -76,7 +78,6 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
         component={Link}
         to={{ pathname }}
         size="small"
-        className={classes.editButton}
       >
         <CreateIcon className={classes.editIcon} />
       </IconButton>
@@ -88,12 +89,22 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
     number: string,
     label: string,
     unit: string,
+    secondaryLabel?: string,
   ) => {
     const { columns, rightIcon, editPath, highlighted } = props;
     const getFormattedLabel = () => (
-      <div>
-        {editPath ? getEditButton(editPath) : null}
-        <Typography align={columns ? 'center' : 'inherit'} className={props.reverse ? classes.reverseLabel : undefined}>{label}</Typography>
+      <div className={classes.headerContainer}>
+        <div style={{ display: 'flex' }}>
+          <Typography
+            align={columns ? 'center' : 'inherit'}
+            noWrap={props.editPath !== undefined}
+            className={props.reverse ? classes.reverseLabel : undefined}
+          >
+            {label}
+          </Typography>
+          {editPath && getEditButton(editPath)}
+        </div>
+        {secondaryLabel && <Typography align='right' color='secondary'> {secondaryLabel} </Typography>}
       </div>
     );
     const getFormattedNumber = () => (
@@ -102,7 +113,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
       </Typography>
     );
     return (
-      <div key={key} className={ classes.itemWrapper }>
+      <div key={key} className={classes.itemWrapper}>
         <div className={rightIcon ? classes.items : classes.fullItems}>
           {props.reverse ? getFormattedNumber() : getFormattedLabel()}
           {props.reverse ? getFormattedLabel() : getFormattedNumber()}
@@ -122,7 +133,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
     <div className={classes.root}>
       <div className={classes.content}>
         {props.info.map((info, index) =>
-          getLabeledNumber(index, info.number, info.label, info.unit),
+          getLabeledNumber(index, info.number, info.label, info.unit, info.secondaryLabel),
         )}
       </div>
     </div>

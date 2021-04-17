@@ -126,6 +126,7 @@ function CustomerMain(props: CustomerMainProps) {
         toCollect: customers.toCollect.filter((customer: CustomerRecord) => searchedCustomers.has(customer.id)),
         done: customers.done.filter((customer: CustomerRecord) => searchedCustomers.has(customer.id)),
       }
+
       setCustomers(newCustomers);
     } else {
       setCustomers(defaultCustomers);

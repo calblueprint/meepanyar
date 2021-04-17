@@ -14,6 +14,11 @@ export const selectCurrentSiteInformation = createSelector(
   store.getState,
   (siteId, state) => state.siteData.sites[siteId].siteInformation)
 
+export const selectCurrentSiteGracePeriod = createSelector(
+  selectCurrentSiteInformation, 
+  (currentSiteRecord : SiteRecord) => currentSiteRecord.gracePeriod)
+
+
 // Returns all SiteRecord[] information
 export const selectAllSitesInformation = (state: RootState): SiteRecord[] => Object.values(state.siteData.sites).map(site => site.siteInformation);
 

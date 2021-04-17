@@ -72,18 +72,18 @@ function EditCustomer(props: EditCustomerProps) {
       userId: userId,
     };
 
-    // Make a deep copy of an empty customer record
-    const customer: CustomerRecord = JSON.parse(JSON.stringify(currentCustomer));
-    customer.name = customerName;
-    customer.hasmeter = hasMeter;
-    customer.isactive = !customerInactive;
-    customer.tariffPlanId = selectedTariffPlanId;
+    const recordUpdates = {
+      name: customerName,
+      isactive: !customerInactive,
+      tariffPlanId: selectedTariffPlanId,
+      hasmeter: hasMeter
+    }
 
     // TODO: add error handling
     // We goBack instead of replace so there aren't 2 
     // "/customers/customer" routes in the history stack
-    updateCustomer(customer, customerUpdate).then(() => {
-      setCurrentCustomerId(customer.id);
+    updateCustomer(currentCustomer.id, recordUpdates, customerUpdate).then(() => {
+      setCurrentCustomerId(currentCustomer.id);
       history.goBack();
     });
   }
