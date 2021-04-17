@@ -18,6 +18,8 @@ import {
 } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentSiteId } from '../../lib/redux/siteData';
 import { selectCurrentUserId } from '../../lib/redux/userData';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = () =>
   createStyles({
@@ -32,6 +34,7 @@ interface AddInventoryProps extends RouteComponentProps {
 }
 
 function AddInventory(props: AddInventoryProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const products = useSelector(selectAllProducts);
   const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
@@ -51,7 +54,7 @@ function AddInventory(props: AddInventoryProps) {
   const [unit, setUnit] = useState('');
   const [newProductName, setNewProductName] = useState('');
   const [loading, setLoading] = useState(false);
-  const NEW_PRODUCT_LABEL = '+ New Inventory Item';
+  const NEW_PRODUCT_LABEL = `+ ${intl(words.new_inventory_item)}`;
 
   // TODO: Add form input validation and error messaging
   const handleSubmit = async (event: React.MouseEvent) => {
@@ -106,7 +109,7 @@ function AddInventory(props: AddInventoryProps) {
   const filter = createFilterOptions<string>();
 
   return (
-    <BaseScreen title="New Inventory" leftIcon="backNav">
+    <BaseScreen title={intl(words.new_inventory_item)} leftIcon="backNav">
       <form>
         <Autocomplete
           aria-required
@@ -125,7 +128,7 @@ function AddInventory(props: AddInventoryProps) {
           getOptionLabel={(option) =>
             products[option] ? `${products[option]?.name} (${products[option]?.unit})` : option
           }
-          renderInput={(params) => <MaterialTextField {...params} label="Item" variant="outlined" />}
+          renderInput={(params) => <MaterialTextField {...params} label={intl(words.item)} variant="outlined" />}
         />
         {/* If the user selected the New Inventory Item option, display extra fields */}
         {selectedProductId === NEW_PRODUCT_LABEL && (
@@ -133,28 +136,28 @@ function AddInventory(props: AddInventoryProps) {
             <div style={{ marginRight: 8, flex: 2 }}>
               <TextField
                 required
-                label={'New Item Name'}
+                label={intl(words.unit_name)}
                 id={'new-item-name'}
                 value={newProductName}
                 onChange={handleNewProductName}
               />
             </div>
             <div style={{ flex: 1 }}>
-              <TextField required label={'Unit'} id={'unit'} value={unit} onChange={handleUnitInput} />
+              <TextField required label={intl(words.unit)} id={'unit'} value={unit} onChange={handleUnitInput} />
             </div>
           </div>
         )}
         <TextField
           required
-          placeholder="e.g. 5"
+          placeholder={intl(words.eg_x, "5")}
           unit={unit}
           type="number"
-          label={'Starting Amount'}
+          label={intl(words.starting_amount)}
           id={'starting-amount'}
           value={startingAmount}
           onChange={handleStartingAmountInput}
         />
-        <Button fullWidth loading={loading} label={'Add'} onClick={handleSubmit} />
+        <Button fullWidth loading={loading} label={intl(words.add)} onClick={handleSubmit} />
       </form>
     </BaseScreen>
   );
