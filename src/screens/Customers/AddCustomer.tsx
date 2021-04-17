@@ -8,7 +8,7 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
-import { SiteRecord, TariffPlanRecord } from '../../lib/airtable/interface';
+import { SiteRecord } from '../../lib/airtable/interface';
 import { createCustomer } from '../../lib/airtable/request';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
@@ -83,8 +83,10 @@ function AddCustomer(props: AddCustomerProps) {
 
   // TODO: Add form input validation and error messaging
   const handleSubmit = (event: React.MouseEvent) => {
+
     // Set button as loading
-    setLoading(!loading);
+    // TODO: error handling
+    setLoading(true);
 
     // Prevent page refresh on submit
     event.preventDefault();
@@ -123,7 +125,7 @@ function AddCustomer(props: AddCustomerProps) {
     let availableTariffPlans = tariffPlans;
     availableTariffPlans = availableTariffPlans.filter((plan) => plan.meterTypes && plan.meterTypes.includes(selectedMeterType));
     return (
-      <Select onChange={handleSelectTariffPlan} label={'Tariff Plan'}>
+      <Select onChange={handleSelectTariffPlan} label={'Tariff Plan'} value={selectedTariffPlanId}>
         {availableTariffPlans.map((plan) =>
           <MenuItem key={plan.id} value={plan.id}>
             <TariffPlanCard tariffPlan={plan} />
@@ -144,6 +146,7 @@ function AddCustomer(props: AddCustomerProps) {
                 id={'name'}
                 placeholder={'e.g. Tom'}
                 onChange={handleNameInput}
+                value={customerName}
                 required
               />
             </div>
@@ -154,6 +157,7 @@ function AddCustomer(props: AddCustomerProps) {
                 placeholder={'e.g. 12'}
                 type="number"
                 onChange={handleCustomerNumberInput}
+                value={customerNumber}
                 required
               />
             </div>
@@ -165,8 +169,8 @@ function AddCustomer(props: AddCustomerProps) {
               className={classes.formControl}
             >
               <InputLabel>Meter Type</InputLabel>
-              <Select onChange={handleSelectMeterType} label={'Meter Type'}>
-                <MenuItem hidden value={MeterType.INACTIVE}>Ianactive</MenuItem>
+              <Select onChange={handleSelectMeterType} label={'Meter Type'} value={selectedMeterType}>
+                <MenuItem hidden value={MeterType.INACTIVE}>Inactive</MenuItem>
                 <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
                 <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
                 <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
@@ -179,16 +183,17 @@ function AddCustomer(props: AddCustomerProps) {
               id={'meter-number'}
               placeholder={'Input'}
               type="number"
+              value={meterNumber}
               onChange={handleMeterNumberInput}
               disabled={selectedMeterType === MeterType.INACTIVE || selectedMeterType === MeterType.NO_METER}
-              required={selectedMeterType != MeterType.INACTIVE && selectedMeterType != MeterType.NO_METER}
+              required={selectedMeterType !== MeterType.INACTIVE && selectedMeterType !== MeterType.NO_METER}
             />
           </div>
           <div className={classes.selectContainer}>
             <FormControl
               variant="outlined"
               disabled={selectedMeterType === MeterType.INACTIVE}
-              required={selectedMeterType != MeterType.INACTIVE}
+              required={selectedMeterType !== MeterType.INACTIVE}
               className={ selectedMeterType === MeterType.INACTIVE ? classes.disabledFormControl : classes.formControl}
             >
               <InputLabel>Tariff Plan</InputLabel>

@@ -17,7 +17,7 @@ const styles = makeStyles((theme: Theme) =>
 
 interface TariffPlanProps {
   tariffPlan: TariffPlanRecord;
-  readOnly?: boolean;
+  editOnClick?: boolean;
 }
 
 function TariffPlanCard(props: TariffPlanProps) {
@@ -54,12 +54,12 @@ function TariffPlanCard(props: TariffPlanProps) {
   );
 
   return (
-    <ListItem disableGutters button onClick={props.readOnly ? handleTariffPlanClick(tariffPlan) : undefined} alignItems='flex-start' dense>
+    <ListItem disableGutters button onClick={props.editOnClick ? handleTariffPlanClick(tariffPlan) : undefined} alignItems='flex-start' dense>
       <ListItemText
         primary={tariffPlan.name}
         secondary={getTariffPlanDescription(tariffPlan)}
       />
-      {props.readOnly && getTariffPlanButton()}
+      {props.editOnClick && getTariffPlanButton()}
     </ListItem>
   );
 }
