@@ -12,7 +12,7 @@ interface TextFieldProps {
   disabled?: boolean;
   placeholder?: string;
   error?: boolean;
-  helperText?: string;
+  helperText?: string | false;
   required? : boolean;
   type?: string;
   unit?: string;
