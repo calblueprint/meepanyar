@@ -18,6 +18,8 @@ import { EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -32,6 +34,7 @@ interface CreatePurchaseRequestProps extends RouteComponentProps {
 }
 
 function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const history = useHistory();
   const userId = useSelector(selectCurrentUserId);
@@ -86,7 +89,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   };
 
   return (
-    <BaseScreen title="Inventory Purchase" leftIcon="backNav">
+    <BaseScreen title={intl(words.inventory_purchase)} leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.headerContainer}>
           <InventoryInfo
@@ -100,9 +103,9 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             required
             type="number"
             value={amountPurchased}
-            label={`Amount Purchased`}
+            label={intl(words.amount_purchased)}
             id={'amount-purchased'}
-            placeholder="e.g. 5"
+            placeholder={intl(words.eg_x, "5")}
             unit={product.unit}
             onChange={handleAmountPurchasedInput}
           />
@@ -111,15 +114,15 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             type="number"
             currency
             value={amountSpent}
-            label={'Amount Spent'}
+            label={intl(words.amount_spent_paid)}
             id={'amount-spent'}
-            placeholder="e.g. 5"
+            placeholder={intl(words.eg_x, "5")}
             onChange={handleAmountSpentInput}
           />
           <TextField
-            placeholder="Enter Notes..."
+            placeholder={intl(words.enter_notes)}
             value={notes}
-            label={'Notes'}
+            label={intl(words.notes)}
             id={'notes'}
             onChange={handleNotesInput}
           />
@@ -127,10 +130,10 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             preservedState={{ amountPurchased, amountSpent, notes }}
             goBack={goBack + 1}
             id="upload-receipt"
-            label="Receipt"
+            label={intl(words.receipt)}
             photoUri={photoUri}
           />
-          <Button fullWidth loading={submitIsLoading} label="Submit" onClick={handleSubmit} />
+          <Button fullWidth loading={submitIsLoading} label={intl(words.submit)} onClick={handleSubmit} />
         </form>
       </BaseScrollView>
     </BaseScreen>

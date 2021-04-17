@@ -16,6 +16,8 @@ import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
 import { getInventoryHistory, getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -32,6 +34,7 @@ interface InventoryProps extends RouteComponentProps {
 }
 
 function InventoryProfile(props: InventoryProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const inventory = useSelector(selectCurrentInventory) || EMPTY_INVENTORY;
   const product = useSelector(selectCurrentInventoryProduct);
@@ -59,7 +62,7 @@ function InventoryProfile(props: InventoryProps) {
           withActions
         />
         <div className={classes.section}>
-          <Typography variant="body2">Recent Updates</Typography>
+          <Typography variant="body2">{intl(words.latest_updates)}</Typography>
           <List>
             {inventoryHistory.map((historyRecord: any) => {
               const isPurchaseRequest = 'amountPurchased' in historyRecord;
@@ -87,7 +90,7 @@ function InventoryProfile(props: InventoryProps) {
                     <ListItemText
                       className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                       primaryTypographyProps={{ variant: 'body2', align: 'right' }}
-                      primary={`${historyRecord.amountSpent || 0} kS`}
+                      primary={`${historyRecord.amountSpent || 0} ${intl(words.ks)}`}
                     />
                   )}
                   <ListItemText
@@ -95,7 +98,7 @@ function InventoryProfile(props: InventoryProps) {
                     primaryTypographyProps={{ variant: 'body2', align: 'right' }}
                     primary={`${historyRecord.updatedQuantity || 0} ${
                       product.unit
-                    }(s)`}
+                    }(${intl(words.s)})`}
                   />
                   <ListItemSecondaryAction>
                     {historyRecord.status && (

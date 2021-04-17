@@ -11,6 +11,8 @@ import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -24,6 +26,7 @@ interface CreateInventoryUpdateProps extends RouteComponentProps {
 }
 
 function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const history = useHistory();
   const userId = useSelector(selectCurrentUserId);
@@ -51,7 +54,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   };
 
   return (
-    <BaseScreen title="Update Item" leftIcon="backNav">
+    <BaseScreen title={intl(words.updated_x, words.item)} leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.headerContainer}>
           <InventoryInfo
@@ -62,16 +65,16 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
         </div>
         <form>
           <TextField
-            placeholder={'e.g. 5'}
+            placeholder={intl(words.eg_x, "5")}
             required
             type="number"
             unit={product.unit}
-            label={`Updated Amount`}
+            label={intl(words.last_updated_amount)}
             id={'updated-amount'}
             value={updatedAmount}
             onChange={handleUpdatedAmount}
           />
-          <Button fullWidth loading={loading} label="Update" onClick={handleSubmit} />
+          <Button fullWidth loading={loading} label={intl(words.update)} onClick={handleSubmit} />
         </form>
       </BaseScrollView>
     </BaseScreen>
