@@ -7,6 +7,7 @@ import FlashOnIcon from '@material-ui/icons/FlashOn';
 import { Link } from 'react-router-dom';
 import { CustomerRecord } from '../../../lib/airtable/interface';
 import { setCurrentCustomerIdInRedux, CustomerStatus } from '../../../lib/redux/customerData';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,15 +18,9 @@ const useStyles = makeStyles((theme: Theme) =>
       paddingLeft: '17px',
       color: theme.palette.text.primary,
     },
-    totalText: {
-      color: theme.palette.text.secondary,
-    },
     numberText: {
       color: theme.palette.error.main,
       marginLeft: '5px',
-    },
-    divSpacing: {
-      paddingLeft: '15px',
     },
     singleCard: {
       width: '100%',
@@ -38,14 +33,10 @@ const useStyles = makeStyles((theme: Theme) =>
       marginBottom: '10px',
     },
     indicator: (props: CustomerCardProps) => ({
-      height: '7px',
-      width: '7px',
-      borderRadius: '50%',
-      backgroundColor: props.customer.isactive ? theme.palette.secondary.light : theme.palette.text.disabled,
+      fontSize: '10px',
+      color: props.customer.isactive ? theme.palette.success.main : theme.palette.text.disabled,
+      marginRight: '5px',
     }),
-    arrowSpacing: {
-      padding: '0px',
-    },
     indicatorContainer: {
       display: 'flex',
       alignItems: 'center',
@@ -72,45 +63,39 @@ export default function CustomerCard(props: CustomerCardProps): JSX.Element {
   const customer = props.customer;
 
   const getStatusIcon = () => {
-    if (props.status === CustomerStatus.METER) {
+    if (props.status === CustomerStatus.METER || props.status === CustomerStatus.PAYMENT) {
       return (
         <IconButton
           component={Link}
-          to={{ pathname: `${props.match.url}/customer/meter-readings/create` }}
+          to={{ pathname: props.status === CustomerStatus.METER ? `${props.match.url}/customer/meter-readings/create` : `${props.match.url}/customer/payments/create` }}
           size="small"
           onClick={() => setCurrentCustomerIdInRedux(customer.id)}
         >
-          <FlashOnIcon className={classes.icon} fontSize='inherit' />
-        </IconButton>
-      );
-    } else if (props.status === CustomerStatus.PAYMENT) {
-      return (
-        <IconButton
-          component={Link}
-          to={{ pathname: `${props.match.url}/customer/payments/create` }}
-          size="small"
-          onClick={() => setCurrentCustomerIdInRedux(customer.id)}
-        >
-          <AttachMoneyIcon className={classes.icon} fontSize='inherit' />
+          {props.status === CustomerStatus.METER ?
+            <FlashOnIcon className={classes.icon} />
+            :
+            <AttachMoneyIcon className={classes.icon} />
+          }
         </IconButton>
       );
     }
   }
 
+
   return (
       <Card className={classes.singleCard} variant="outlined">
         <Link to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)} className={classes.cardContent}>
           <div className={classes.indicatorContainer}>
-            <div className={classes.indicator} />
+            <FiberManualRecordIcon className={classes.indicator} />
           </div>
           <div>
             <Typography variant="h2">{customer.customerNumber}, {customer.name}</Typography>
-            <Typography className={classes.totalText}>Total owed <span className={classes.numberText}>{customer.outstandingBalance} Ks</span></Typography>
+            <Typography color="textSecondary">Total owed <span className={classes.numberText}>{customer.outstandingBalance} Ks</span></Typography>
           </div>
         </Link>
-        {getStatusIcon()}
-        <CardActions className={classes.arrowSpacing}>
-          <IconButton component={Link} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)}>
+        <CardActions>
+          {getStatusIcon()}
+          <IconButton component={Link} to={`${props.match.url}/customer`} edge="end" onClick={() => setCurrentCustomerIdInRedux(customer.id)}>
             <ArrowForwardIosIcon fontSize='small' />
           </IconButton>
         </CardActions>

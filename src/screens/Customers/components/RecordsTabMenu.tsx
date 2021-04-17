@@ -9,7 +9,6 @@ import BaseScrollView from '../../../components/BaseComponents/BaseScrollView';
 const styles = (theme: Theme) =>
   createStyles({
     tab: {
-      color: `${theme.palette.divider}`,
       fontSize: '12px',
       '&:focus': {
         outline: 'none',

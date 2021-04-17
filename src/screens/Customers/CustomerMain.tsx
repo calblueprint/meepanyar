@@ -13,52 +13,28 @@ import { TabContext, TabPanel } from '@material-ui/lab';
 import CustomerCard from './components/CustomerCard';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 const styles = makeStyles((theme: Theme) =>
   createStyles({
-    title: {
-      color: theme.palette.text.primary,
-      flexGrow: 1,
-    },
-    headerWrapper: {
-      display: 'flex',
-      flexDirection: 'row',
-      width: '100%',
-      marginTop: '-55px',
-    },
     fab: {
       position: 'absolute',
       bottom: theme.spacing(1),
       right: theme.spacing(2),
       color: 'white',
     },
-    searchIcon: {
-      color: theme.palette.text.secondary,
-      marginRight: '40px',
-    },
-    searchBar: {
-      zIndex: 1,
-      position: 'absolute',
-      marginTop: '-20px',
-      width: '90%',
-      height: '20px',
-      backgroundColor: 'white',
-    },
     tab: {
-      color: `${theme.palette.divider}`,
       fontSize: '12px',
       '&:focus': {
         outline: 'none',
       },
     },
-    active: {
-      height: '7px',
-      width: '7px',
-      borderRadius: '50%',
-      backgroundColor: theme.palette.secondary.light,
+    indicator: {
+      fontSize: '10px',
+      color: theme.palette.success.main,
       marginRight: '5px',
     },
-    activeContainer: {
+    indicatorContainer: {
       padding: '10px 5px',
       display: 'inline-flex',
       alignItems: 'center',
@@ -71,6 +47,9 @@ const styles = makeStyles((theme: Theme) =>
     },
     tabContent: {
       marginBottom: '50px',
+    },
+    blankDiv: {
+      padding: '10px 0px',
     },
   }));
 
@@ -95,7 +74,7 @@ function CustomerMain(props: CustomerMainProps) {
     setTabValue(newValue);
   };
 
-  //default customer arrays
+  // Default customer arrays
   const allCustomers = useSelector(selectAllCustomersArray) || [];
   const toMeterCustomers = useSelector(selectCustomersToMeter) || [];
   const toCollectCustomers = useSelector(selectCustomersToCollect) || [];
@@ -107,18 +86,18 @@ function CustomerMain(props: CustomerMainProps) {
     done: customersDone,
   }
 
-  //customer states
+  // Customer states
   const [customers, setCustomers] = useState<CustomerMenu>(defaultCustomers);
   const allCustomerNamesTrie: TrieTree<CustomerRecord> = new TrieTree('name');
   const allCustomerNumbersTrie: TrieTree<CustomerRecord> = new TrieTree('customerNumber');
   allCustomerNamesTrie.addAll(allCustomers);
   allCustomerNumbersTrie.addAll(allCustomers);
 
-  //default customer sets
+  // Default customer sets
   const toMeterCustomersSet: Set<string> = new Set<string>(toMeterCustomers.map((customer: CustomerRecord) => customer.id));
   const toCollectCustomersSet: Set<string> = new Set<string>(toCollectCustomers.map((customer: CustomerRecord) => customer.id));
 
-  //updates after every character typed
+  // Updates after every character typed
   useEffect(() => {
     getCustomers();
   }, [searchValue]);
@@ -132,7 +111,7 @@ function CustomerMain(props: CustomerMainProps) {
     if (searchValue !== '') {
       let searchedCustomersArray;
 
-      // checks whether first character is number or letter
+      // Checks whether first character is number or letter
       if (isNaN(parseInt(searchValue[0]))) {
         searchedCustomersArray = allCustomerNamesTrie.get(searchValue);
       } else {
@@ -168,15 +147,23 @@ function CustomerMain(props: CustomerMainProps) {
   }
 
   const getTabContent = () => {
+      // TODO: useMemo could speed up tabbing
+      // https://github.com/calblueprint/meepanyar/pull/85#discussion_r614478966
       let shownCustomers;
-      if (tabValue === CustomerStatus.METER) {
-        shownCustomers = customers.toMeter;
-      } else if (tabValue === CustomerStatus.PAYMENT) {
-        shownCustomers = customers.toCollect;
-      } else if (tabValue === CustomerStatus.DONE) {
-        shownCustomers = customers.done;
-      } else {
-        shownCustomers = customers.all;
+
+      switch (tabValue) {
+        case CustomerStatus.METER:
+          shownCustomers = customers.toMeter;
+          break;
+        case CustomerStatus.PAYMENT:
+          shownCustomers = customers.toCollect;
+          break;
+        case CustomerStatus.DONE:
+          shownCustomers = customers.done;
+          break;
+        default:
+          shownCustomers = customers.all;
+          break;
       }
 
       return (
@@ -190,47 +177,46 @@ function CustomerMain(props: CustomerMainProps) {
                 />
               </div>
             ))}
+          <div className={classes.blankDiv}></div>
         </div>
       );
     };
 
   const getMeterTabLabel = () => (
     <div>
-      <FlashOnIcon fontSize='inherit' className={classes.tabIcon} />
+      <FlashOnIcon className={classes.tabIcon} />
       <Typography className={classes.tabLabel}>Meter</Typography>
     </div>
   );
 
   const getPaymentTabLabel = () => (
     <div>
-      <AttachMoneyIcon fontSize='inherit' className={classes.tabIcon} />
+      <AttachMoneyIcon className={classes.tabIcon} />
       <Typography className={classes.tabLabel}>Payment</Typography>
     </div>
   );
 
   return (
     <BaseScreen rightIcon="user" title="Customers" searchAction={handleSearchChange} searchExit={exitSearch}>
-      <TabContext value={tabValue.toString()}>
-        <Tabs
-          textColor="primary"
-          indicatorColor="primary"
-          value={tabValue}
-          onChange={changeTab}
-          variant="scrollable"
-        >
-          <Tab className={classes.tab} label="All" value={CustomerStatus.ALL} />
-          <Tab className={classes.tab} label={getMeterTabLabel()} value={CustomerStatus.METER} />
-          <Tab className={classes.tab} label={getPaymentTabLabel()} value={CustomerStatus.PAYMENT} />
-          <Tab className={classes.tab} label="Done" value={CustomerStatus.DONE} />
-        </Tabs>
-        <div className={classes.activeContainer}>
-          <div className={classes.active}></div>
-          <Typography>Status: Active</Typography>
-        </div>
-        <BaseScrollView>
-          {getTabContent()}
-        </BaseScrollView>
-      </TabContext>
+      <Tabs
+        textColor="primary"
+        indicatorColor="primary"
+        value={tabValue}
+        onChange={changeTab}
+        variant="scrollable"
+      >
+        <Tab className={classes.tab} label="All" value={CustomerStatus.ALL} />
+        <Tab className={classes.tab} label={getMeterTabLabel()} value={CustomerStatus.METER} />
+        <Tab className={classes.tab} label={getPaymentTabLabel()} value={CustomerStatus.PAYMENT} />
+        <Tab className={classes.tab} label="Done" value={CustomerStatus.DONE} />
+      </Tabs>
+      <div className={classes.indicatorContainer}>
+        <FiberManualRecordIcon className={classes.indicator}/>
+        <Typography>Status: Active</Typography>
+      </div>
+      <BaseScrollView>
+        {getTabContent()}
+      </BaseScrollView>
       <Link to={'/customers/create'}>
         <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>
           <AddIcon fontSize="large" />

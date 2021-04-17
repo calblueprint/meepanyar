@@ -8,7 +8,7 @@ const styles = () =>
       top: '85px',
       bottom: '56px',
       width: '100%',
-      height: '70%',
+      height: 'auto',
       position: 'absolute',
       padding: '0 25px',
     },

@@ -9,7 +9,6 @@ export const theme = createMuiTheme({
     },
     secondary: {
       main: '#757575',
-      light: '#64DD17', /* active green */
     },
     text: {
       primary: '#424242',
@@ -18,6 +17,9 @@ export const theme = createMuiTheme({
     },
     error: {
       main: '#FF6142',
+    },
+    success: {
+      main: '#64DD17',
     },
     divider: '#E5E5E5',
     background: {

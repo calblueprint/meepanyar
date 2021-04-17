@@ -16,10 +16,10 @@ import { RootState, store } from './store';
 import { createSelector } from '@reduxjs/toolkit';
 
 export enum CustomerStatus {
-  ALL = 'All' as any,
-  METER = 'Meter' as any,
-  PAYMENT = 'Payment' as any,
-  DONE = 'Done' as any,
+  ALL = 'All',
+  METER = 'Meter',
+  PAYMENT = 'Payment',
+  DONE = 'Done',
 }
 
 export const refreshCustomerData = (site: SiteRecord): void => {
