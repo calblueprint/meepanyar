@@ -1,7 +1,9 @@
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
+import * as yup from 'yup';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
@@ -21,6 +23,10 @@ const styles = (theme: Theme) =>
     },
   });
 
+const validationSchema = yup.object({
+  updatedAmount: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
+});
+
 interface CreateInventoryUpdateProps extends RouteComponentProps {
   classes: { headerContainer: string };
 }
@@ -32,25 +38,29 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const userId = useSelector(selectCurrentUserId);
   const inventory = useSelector(selectCurrentInventory);
   const product = useSelector(selectCurrentInventoryProduct);
-
   const [loading, setLoading] = useState(false);
-  const [updatedAmount, setUpdatedAmount] = useState('');
+
+  const formik = useFormik({
+    initialValues: {
+      updatedAmount: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values);
+    },
+  });
 
   // Redirect to InventoryMain if undefined
   if (!userId || !inventory || !product) {
     return <Redirect to={'/inventory'} />;
   }
 
-  // TODO @wangannie: add better edge case handling
-  const handleUpdatedAmount = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setUpdatedAmount(event.target.value as string || '');
-  };
-
-  const handleSubmit = (event: React.MouseEvent) => {
-    // Prevent page refresh on submit
-    event.preventDefault();
+  const handleSubmit = (values: any) => {
+    const { updatedAmount } = values;
     setLoading(true);
-    createInventoryUpdateAndUpdateInventory(userId, inventory, parseFloat(updatedAmount) || 0).then(() => history.goBack());
+    createInventoryUpdateAndUpdateInventory(userId, inventory, parseFloat(updatedAmount) || 0).then(() =>
+      history.goBack(),
+    );
   };
 
   return (
@@ -63,18 +73,20 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
             currentQuantity={inventory.currentQuantity}
           />
         </div>
-        <form>
+        <form onSubmit={formik.handleSubmit} noValidate>
           <TextField
             placeholder={intl(words.eg_x, "5")}
             required
             type="number"
             unit={product.unit}
             label={intl(words.last_updated_amount)}
-            id={'updated-amount'}
-            value={updatedAmount}
-            onChange={handleUpdatedAmount}
+            id={'updatedAmount'}
+            value={formik.values.updatedAmount}
+            onChange={formik.handleChange}
+            error={formik.touched.updatedAmount && Boolean(formik.errors.updatedAmount)}
+            helperText={formik.touched.updatedAmount && formik.errors.updatedAmount}
           />
-          <Button fullWidth loading={loading} label={intl(words.update)} onClick={handleSubmit} />
+          <Button fullWidth loading={loading} label={intl(words.update)} />
         </form>
       </BaseScrollView>
     </BaseScreen>

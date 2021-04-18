@@ -10,10 +10,10 @@ interface CameraButtonProps {
   photoUri?: string;
   preservedState?: {};
   error?: boolean;
-  helperText?: string;
+  helperText?: string | false;
   staticPreview?: boolean;
+  required?: boolean;
 }
-
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,7 +47,13 @@ function CameraButton(props: CameraButtonProps) {
 
   return (
     <div className={classes.margin}>
-      <InputLabel error={props.error} disabled={staticPreview} htmlFor={props.id} className={classes.label}>
+      <InputLabel
+        required={props.required}
+        error={props.error}
+        disabled={staticPreview}
+        htmlFor={props.id}
+        className={classes.label}
+      >
         {props.label}
       </InputLabel>
       <MaterialButton

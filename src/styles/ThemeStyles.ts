@@ -18,6 +18,9 @@ export const theme = createMuiTheme({
     error: {
       main: '#FF6142',
     },
+    success: {
+      main: '#64DD17',
+    },
     divider: '#E5E5E5',
     background: {
       default: '#F7F9FC',

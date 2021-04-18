@@ -210,7 +210,7 @@ function CustomerProfile(props: CustomerProps) {
             <Link
               to={{
                 pathname: `${match.url}/records`,
-                state: { invoices: meterReadings, payments: payments, defaultTab: '1' }
+                state: { invoices: meterReadings, payments: payments, defaultTab: "1" }
               }}
             >
               <Button label={'View All'} variant="text" />
@@ -224,7 +224,7 @@ function CustomerProfile(props: CustomerProps) {
             <Link
               to={{
                 pathname: `${match.url}/records`,
-                state: { invoices: meterReadings, payments: payments, defaultTab: '0' }
+                state: { invoices: meterReadings, payments: payments, defaultTab: "0" }
               }}
             >
               <Button label={'View All'} variant="text" />

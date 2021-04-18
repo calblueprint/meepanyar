@@ -1,9 +1,11 @@
 import { createStyles, TextField as MaterialTextField } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import { Autocomplete, createFilterOptions } from '@material-ui/lab';
+import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
+import * as yup from 'yup';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
@@ -29,6 +31,21 @@ const styles = () =>
     },
   });
 
+const NEW_PRODUCT_LABEL = '+ New Inventory Item';
+
+const validationSchema = yup.object({
+  selectedProductId: yup.string().required('Must select a product'),
+  startingAmount: yup.number().min(0, 'Please enter a valid amount').required('Must enter an amount'),
+  newProductName: yup.string().when('selectedProductId', {
+    is: NEW_PRODUCT_LABEL,
+    then: yup.string().required('Must enter new product name'),
+  }),
+  unit: yup.string().when('selectedProductId', {
+    is: NEW_PRODUCT_LABEL,
+    then: yup.string().required('Must enter unit name'),
+  }),
+});
+
 interface AddInventoryProps extends RouteComponentProps {
   classes: { newProductContainer: string };
 }
@@ -49,17 +66,23 @@ function AddInventory(props: AddInventoryProps) {
     .filter(([id, _]) => !currentSiteProductIds.includes(id))
     .map((item) => item[0]);
 
-  const [selectedProductId, setSelectedProductId] = useState('');
-  const [startingAmount, setStartingAmount] = useState('');
-  const [unit, setUnit] = useState('');
-  const [newProductName, setNewProductName] = useState('');
   const [loading, setLoading] = useState(false);
-  const NEW_PRODUCT_LABEL = `+ ${intl(words.new_inventory_item)}`;
 
-  // TODO: Add form input validation and error messaging
-  const handleSubmit = async (event: React.MouseEvent) => {
-    // Prevent page refresh on submit
-    event.preventDefault();
+  const formik = useFormik({
+    initialValues: {
+      selectedProductId: '',
+      startingAmount: '',
+      newProductName: '',
+      unit: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values);
+    },
+  });
+
+  const handleSubmit = async (values: any) => {
+    const { selectedProductId, startingAmount, newProductName, unit } = values;
     setLoading(true);
     let productId = selectedProductId; // needed because setSelectedProductId is not immediate
 
@@ -90,32 +113,15 @@ function AddInventory(props: AddInventoryProps) {
     history.replace(`item`);
   };
 
-  const handleSelectItem = (event: React.ChangeEvent<{}>, value: string | null) => {
-    setSelectedProductId(value || '');
-  };
-
-  const handleStartingAmountInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setStartingAmount((event.target.value as string) || '');
-  };
-
-  const handleNewProductName = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setNewProductName((event.target.value as string) || '');
-  };
-
-  const handleUnitInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setUnit((event.target.value as string) || '');
-  };
-
   const filter = createFilterOptions<string>();
+  // `+ ${intl(words.new_inventory_item)}`
 
   return (
     <BaseScreen title={intl(words.new_inventory_item)} leftIcon="backNav">
-      <form>
+      <form onSubmit={formik.handleSubmit} noValidate>
         <Autocomplete
           aria-required
-          value={selectedProductId}
           style={{ marginBottom: 8 }}
-          onChange={handleSelectItem}
           filterOptions={(options, params) => {
             const filtered = filter(options, params);
             filtered.push(NEW_PRODUCT_LABEL);
@@ -123,41 +129,63 @@ function AddInventory(props: AddInventoryProps) {
           }}
           selectOnFocus
           clearOnBlur
-          id="select-item"
+          id="selectedProductId"
           options={productOptionIds}
           getOptionLabel={(option) =>
             products[option] ? `${products[option]?.name} (${products[option]?.unit})` : option
           }
-          renderInput={(params) => <MaterialTextField {...params} label={intl(words.item)} variant="outlined" />}
+          renderInput={(params) => (
+            <MaterialTextField
+              {...params}
+              error={formik.touched.selectedProductId && Boolean(formik.errors.selectedProductId)}
+              helperText={formik.touched.selectedProductId && formik.errors.selectedProductId}
+              label={intl(words.item)}
+              variant="outlined"
+            />
+          )}
+          value={formik.values.selectedProductId}
+          onChange={(_, value) => formik.setFieldValue('selectedProductId', value)}
         />
         {/* If the user selected the New Inventory Item option, display extra fields */}
-        {selectedProductId === NEW_PRODUCT_LABEL && (
+        {formik.values.selectedProductId === NEW_PRODUCT_LABEL && (
           <div className={classes.newProductContainer}>
             <div style={{ marginRight: 8, flex: 2 }}>
               <TextField
                 required
                 label={intl(words.unit_name)}
-                id={'new-item-name'}
-                value={newProductName}
-                onChange={handleNewProductName}
+                id={'newProductName'}
+                value={formik.values.newProductName}
+                onChange={formik.handleChange}
+                error={formik.touched.newProductName && Boolean(formik.errors.newProductName)}
+                helperText={formik.touched.newProductName && formik.errors.newProductName}
               />
             </div>
             <div style={{ flex: 1 }}>
-              <TextField required label={intl(words.unit)} id={'unit'} value={unit} onChange={handleUnitInput} />
+              <TextField
+                required
+                label={intl(words.unit)}
+                id={'unit'}
+                value={formik.values.unit}
+                onChange={formik.handleChange}
+                error={formik.touched.unit && Boolean(formik.errors.unit)}
+                helperText={formik.touched.unit && formik.errors.unit}
+              />
             </div>
           </div>
         )}
         <TextField
           required
           placeholder={intl(words.eg_x, "5")}
-          unit={unit}
+          unit={formik.values.unit}
           type="number"
           label={intl(words.starting_amount)}
-          id={'starting-amount'}
-          value={startingAmount}
-          onChange={handleStartingAmountInput}
+          id={'startingAmount'}
+          value={formik.values.startingAmount}
+          onChange={formik.handleChange}
+          error={formik.touched.startingAmount && Boolean(formik.errors.startingAmount)}
+          helperText={formik.touched.startingAmount && formik.errors.startingAmount}
         />
-        <Button fullWidth loading={loading} label={intl(words.add)} onClick={handleSubmit} />
+        <Button fullWidth loading={loading} label={intl(words.add)} />
       </form>
     </BaseScreen>
   );
