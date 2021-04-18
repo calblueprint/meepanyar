@@ -1,4 +1,4 @@
-import { Card, CardActions, IconButton, Typography } from '@material-ui/core';
+import { Card, CardActions, CardContent, IconButton, Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import React from 'react';
@@ -8,41 +8,46 @@ import { RootState } from '../../../lib/redux/store';
 
 const styles = (theme: Theme) =>
   createStyles({
-    arrow: {
-      color: theme.palette.text.primary,
-    },
     cardContent: {
       flex: 1,
-      padding: 16,
+      display: 'flex',
+      alignItems: 'center',
+      paddingRight: theme.spacing(1),
+    },
+    leftContent: {
+      flex: 1,
+      marginRight: theme.spacing(1),
     },
     cardContainer: {
-      border: `1px solid ${theme.palette.divider}`,
-      boxShadow: 'none',
-      borderRadius: 10,
+      borderRadius: 6,
       display: 'flex',
-      marginBottom: 10
+      marginBottom: theme.spacing(1),
     },
   });
   
 interface InventoryCardProps {
-  classes: { arrow: string; cardContent: string; cardContainer: string; };
+  classes: { leftContent: string; cardContent: string; cardContainer: string; };
   lastUpdated: string,
   productId: string,
+  currentQuantity: number,
 }
 
 function InventoryCard(props: InventoryCardProps) {
-  const { classes, lastUpdated, productId } = props;
+  const { classes, lastUpdated, productId, currentQuantity } = props;
   const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
   return (
-    <Card className={classes.cardContainer}>
-      <div className={classes.cardContent}>
-        <Typography variant="body1">{product.name}</Typography>
-        <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated}`} </Typography>
-      </div>
+    <Card variant="outlined" className={classes.cardContainer}>
+      <CardContent className={classes.cardContent}>
+        <div className={classes.leftContent}>
+          <Typography  variant="h2">{product.name}</Typography>
+          <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated}`} </Typography>
+        </div>
+        <Typography variant="h2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
+      </CardContent>
       <CardActions>
-        <IconButton size="small">
-          <ArrowForwardIosIcon className={classes.arrow} fontSize="small"/>
+        <IconButton edge="end" size="small">
+          <ArrowForwardIosIcon fontSize="small"/>
         </IconButton>
       </CardActions>
     </Card>

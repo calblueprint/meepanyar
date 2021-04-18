@@ -54,6 +54,13 @@ interface customerDataSliceState {
     currentCustomerId: string;
 }
 
+export enum MeterType {
+  ANALOG_METER = 'Analog Meter',
+  SMART_METER = 'Smart Meter',
+  NO_METER = 'No Meter',
+  INACTIVE = 'Inactive'
+}
+
 export const EMPTY_CUSTOMER: CustomerRecord = {
     id: '',
     name: '',
@@ -61,14 +68,17 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     tariffPlanId: '',
     isactive: false,
     hasmeter: false,
-    outstandingBalance: '',
+    outstandingBalance: 0,
     meterReadingIds: [],
     paymentIds: [],
     customerUpdateIds: [],
     customerUpdates: [],
     totalAmountBilledfromInvoices: 0,
     totalAmountPaidfromPayments: 0,
+    meterType: MeterType.ANALOG_METER,
     startingMeterReading: 0,
+    customerNumber: 0,
+    startingMeterLastChanged: '',
 }
 
 export const EMPTY_PAYMENT: PaymentRecord = {
@@ -125,17 +135,29 @@ const customerDataSlice = createSlice({
 
             customersAdapter.addOne(state.sitesCustomers[siteId].customers, customer);
         },
-        editCustomer(state, action) {
+        addMeterReading(state, action) {
+            const { siteId, ...payload } = action.payload;
+            meterReadingsAdapter.addOne(state.sitesCustomers[siteId].meterReadings, payload);
+        },
+        removeMeterReading(state, action) {
+            const { siteId, id} = action.payload;
+            meterReadingsAdapter.removeOne(state.sitesCustomers[siteId].meterReadings, id);
+        },
+        updateCustomer(state, action) {
             const { siteId, id, ...changes } = action.payload;
             const update = {
                 id,
                 changes,
             };
             customersAdapter.updateOne(state.sitesCustomers[siteId].customers, update);
+        },
+        addPayment(state, action) {
+            const { siteId, ...payload } = action.payload;
+            paymentsAdapter.addOne(state.sitesCustomers[siteId].payments, payload);
         }
     },
     extraReducers: {
-        // When current site is changed, current customer id needs to be reset 
+        // When current site is changed, current customer id needs to be reset
         // because it's no longer valid in the new site context.
         [setCurrentSiteId.type]: (state, action) => {
             state.currentCustomerId = initialState.currentCustomerId;
@@ -143,5 +165,5 @@ const customerDataSlice = createSlice({
     }
 });
 
-export const { saveCustomerData, setCurrentCustomerId, addCustomer, editCustomer } = customerDataSlice.actions;
+export const { saveCustomerData, setCurrentCustomerId, addCustomer, updateCustomer, addPayment, addMeterReading, removeMeterReading } = customerDataSlice.actions;
 export default customerDataSlice.reducer;

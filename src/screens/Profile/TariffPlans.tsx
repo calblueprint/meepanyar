@@ -3,7 +3,6 @@ import TariffPlanCard from './components/TariffPlanCard';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import ListItemWrapper from '../../components/ListItemWrapper';
 import { useSelector } from 'react-redux';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { TariffPlanRecord } from '../../lib/airtable/interface';
@@ -28,7 +27,7 @@ function TariffPlans() {
         <ListItem disableGutters>
           <ListItemText primary='Used' primaryTypographyProps={{ color: 'inherit' }} className={classes.header} />
         </ListItem>
-        {tariffPlans.map((tariffPlan: TariffPlanRecord) => <TariffPlanCard key={tariffPlan.id} tariffPlan={tariffPlan} />)}
+        {tariffPlans.map((tariffPlan: TariffPlanRecord) => <TariffPlanCard key={tariffPlan.id} tariffPlan={tariffPlan} editOnClick />)}
         <ListItem disableGutters>
           <ListItemText primary='Unused' className={classes.header} />
         </ListItem>

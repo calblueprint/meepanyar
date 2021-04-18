@@ -1,11 +1,18 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord, SiteRecord } from '../airtable/interface';
+import {
+  InventoryRecord,
+  InventoryUpdateRecord,
+  ProductRecord,
+  PurchaseRequestRecord,
+  SiteRecord
+} from '../airtable/interface';
 import {
   addInventory,
   addInventoryUpdate,
   addProduct,
   addPurchaseRequest,
   EMPTY_INVENTORY,
+  PurchaseRequestStatus,
   saveInventoryData,
   selectAllCurrentSitePurchaseRequestsArray,
   selectAllInventoryUpdatesArray,
@@ -17,7 +24,6 @@ import {
 } from './inventoryDataSlice';
 import { selectCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
-
 
 const getInventoryId = (_: RootState, inventoryId: string) => inventoryId;
 
@@ -57,6 +63,11 @@ export const selectCurrentInventoryProduct = createSelector(
   selectCurrentInventoryId,
   store.getState,
   (inventoryId, state) => selectProductByInventoryId(state, inventoryId),
+);
+
+export const selectPendingPurchaseRequestCount = createSelector(
+  selectAllCurrentSitePurchaseRequestsArray,
+  (purchaseRequests) => purchaseRequests.filter((pr) => pr.status === PurchaseRequestStatus.PENDING).length,
 );
 
 export const refreshInventoryData = (site: SiteRecord): void => {

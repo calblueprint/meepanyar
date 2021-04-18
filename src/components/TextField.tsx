@@ -3,8 +3,7 @@ import { createStyles, Theme } from '@material-ui/core/styles';
 import ErrorIcon from '@material-ui/icons/Error';
 import React, { useState } from 'react';
 
-
-  // TODO: @wangannie: make onChange not optional
+// TODO: @wangannie: make onChange not optional
 interface TextFieldProps {
   label: string;
   id: string;
@@ -13,10 +12,11 @@ interface TextFieldProps {
   disabled?: boolean;
   placeholder?: string;
   error?: boolean;
-  helperText?: string;
+  helperText?: string | false;
   required? : boolean;
   type?: string;
   unit?: string;
+  currency?: boolean;
   onChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
 }
 
@@ -61,7 +61,12 @@ function Field(props: TextFieldProps) {
         error={props.error}
         helperText={props.helperText}
         InputProps={{
-          endAdornment: props.unit? <InputAdornment position="end">{`${props.unit}(s)`}</InputAdornment> : props.error ? <ErrorIcon color="error" /> : undefined,
+          endAdornment:
+          props.unit || props.currency ? (
+            <InputAdornment position="end">{props.currency ? 'Ks' : `${props.unit}(s)`}</InputAdornment>
+          ) : props.error ? (
+            <ErrorIcon color="error" />
+          ) : undefined,
         }}
       />
     </div>

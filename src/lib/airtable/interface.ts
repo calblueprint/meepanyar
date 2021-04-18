@@ -1,4 +1,5 @@
 import { PurchaseRequestStatus } from "../redux/inventoryDataSlice";
+import { MeterType } from "../redux/customerDataSlice";
 
 export type TableValues = string | boolean | number | Array<unknown> | Airtable.Attachment;
 
@@ -25,6 +26,7 @@ export interface UserRecord {
   username: string;
   admin: boolean;
   name: string;
+  inactive: boolean;
   email?: string;
   siteIds?: string[];
   photo?: Airtable.Attachment[];
@@ -37,6 +39,7 @@ export interface SiteRecord {
   name: string;
   customerIds: string[];
   financialSummaryIds: string[];
+  gracePeriod: number;
   // These are extracted to other slices or entities and deleted from SiteRecord
   financialSummaries?: FinancialSummaryRecord[];
   tariffPlans?: TariffPlanRecord[];
@@ -57,6 +60,8 @@ export interface TariffPlanRecord {
   fixedTariff: number;
   tariffByUnit: number;
   freeUnits: number;
+  numberOfCustomers: number;
+  meterTypes: string[];
 }
 
 export interface CustomerRecord {
@@ -66,14 +71,17 @@ export interface CustomerRecord {
   tariffPlanId: string;
   isactive: boolean;
   hasmeter: boolean;
-  outstandingBalance: string;
+  outstandingBalance: number;
   meterReadingIds: string[];
   paymentIds: string[];
   customerUpdateIds: string[];
   customerUpdates: CustomerUpdateRecord[];
   totalAmountBilledfromInvoices: number;
   totalAmountPaidfromPayments: number;
+  meterType: MeterType;
   startingMeterReading: number;
+  startingMeterLastChanged: string;
+  customerNumber: number;
 }
 
 export interface CustomerUpdateRecord {
@@ -131,6 +139,7 @@ export interface PurchaseRequestRecord {
   amountSpent: number;
   receipt?: Airtable.Attachment[];
   inventoryId: string;
+  updatedQuantity: number;
 }
 
 

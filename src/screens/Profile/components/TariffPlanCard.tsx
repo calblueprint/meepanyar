@@ -17,6 +17,7 @@ const styles = makeStyles((theme: Theme) =>
 
 interface TariffPlanProps {
   tariffPlan: TariffPlanRecord;
+  editOnClick?: boolean;
 }
 
 function TariffPlanCard(props: TariffPlanProps) {
@@ -30,8 +31,7 @@ function TariffPlanCard(props: TariffPlanProps) {
   const getTariffPlanDescription = (tariffPlan: TariffPlanRecord) => (
     <div className={classes.description}>
       <Typography variant='body2'>
-        {/* Right now just hardcoding. We need to add a lookup field to Tariff Plans for this */}
-        Customers: --
+        Customers: {tariffPlan.numberOfCustomers}
       </Typography>
       <Typography variant='body2'>
         Fixed Payment: {tariffPlan.fixedTariff} Ks
@@ -44,20 +44,27 @@ function TariffPlanCard(props: TariffPlanProps) {
       </Typography>
     </div>)
 
+  const getTariffPlanButton = () => (
+    <ListItemSecondaryAction>
+      <IconButton edge="end" className={classes.iconStyles}>
+        <ArrowForwardIosIcon fontSize='small' />
+      </IconButton>
+    </ListItemSecondaryAction>
+  );
 
   return (
-    <ListItem disableGutters button onClick={handleTariffPlanClick(tariffPlan)} alignItems='flex-start' dense>
+    <ListItem disableGutters button onClick={props.editOnClick ? handleTariffPlanClick(tariffPlan) : undefined} alignItems='flex-start' dense>
       <ListItemText
         primary={tariffPlan.name}
         secondary={getTariffPlanDescription(tariffPlan)}
       />
-      <ListItemSecondaryAction>
-        <IconButton edge="end" className={classes.iconStyles}>
-          <ArrowForwardIosIcon fontSize='small' />
-        </IconButton>
-      </ListItemSecondaryAction>
+      {props.editOnClick && getTariffPlanButton()}
     </ListItem>
   );
 }
 
+<<<<<<< HEAD
 export default TariffPlanCard;
+=======
+export default TariffPlanCard;
+>>>>>>> 9b737503b3ce761b28ffe1b31029526be41ce1a2
