@@ -22,7 +22,7 @@ function EditCustomer() {
       <List>
         <ListItemWrapper linkTo={`${history.location.pathname}/information`} leftText='Customer Information' divider />
         <ListItemWrapper linkTo={`${history.location.pathname}/tariff-plans`} leftText='Tariff Plan' rightText={tariffPlan?.name} divider />
-        <ListItemWrapper linkTo='/profile/site/user-information' leftText='Meter' divider />
+        <ListItemWrapper linkTo={`${history.location.pathname}/meter`} leftText='Meter' divider />
       </List>
     </BaseScreen>
   );

@@ -68,7 +68,7 @@ function AddPayment(props: AddPaymentProps) {
             <div className={classes.amountOwedContainer}>
                 <OutlinedCardList info={cardInfo} />
             </div>
-            <TextField label={'Amount Paid (Ks)'} id={'amount-paid'} onChange={handleSetPaymentAmountInput} />
+            <TextField label={'Amount Paid (Ks)'} id={'amount-paid'} onChange={handleSetPaymentAmountInput} value={paymentAmount} />
             <Button label={'+ ADD PAYMENT'} onClick={handleSubmit} loading={loading} />
         </BaseScreen>
     );

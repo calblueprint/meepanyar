@@ -17,6 +17,7 @@ import AddPayment from './screens/Customers/AddPayment';
 import CustomerMain from './screens/Customers/CustomerMain';
 import EditCustomerInformation from './screens/Customers/EditCustomerInformation';
 import EditCustomerTariffPlans from './screens/Customers/EditCustomerTariffPlans';
+import EditCustomerMeter from './screens/Customers/EditCustomerMeter';
 import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
 import EditCustomer from './screens/Customers/EditCustomer';
@@ -66,6 +67,7 @@ function App() {
       <AuthenticatedRoute path={'/customers/customer/edit'} component={EditCustomer} exact />
       <AuthenticatedRoute path={'/customers/customer/edit/information'} component={EditCustomerInformation} exact />
       <AuthenticatedRoute path={'/customers/customer/edit/tariff-plans'} component={EditCustomerTariffPlans} exact />
+      <AuthenticatedRoute path={'/customers/customer/edit/meter'} component={EditCustomerMeter} exact />
       <AuthenticatedRoute path="/customers/customer/meter-readings/create" component={AddMeterReading} exact />
       <AuthenticatedRoute path="/customers/customer/payments/create" component={AddPayment} exact />
       <AuthenticatedRoute path={'/customers/customer/starting-meter-reading/edit'} component={EditStartingMeter} exact />
