@@ -10,11 +10,7 @@ import words from '../../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
-    tabs: {
-      background: 'white',
-    },
     tab: {
-      color: `${theme.palette.divider}`,
       fontSize: '12px',
       '&:focus': {
         outline: 'none',
@@ -26,25 +22,25 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface TabProps {
-  classes: { tabs: string; tab: string; tabPanel: string };
-  defaultTab: string;
+interface RecordsTabMenuProps {
+  classes: { tab: string; tabPanel: string };
   invoices: MeterReadingRecord[];
   payments: PaymentRecord[];
+  defaultTab?: string;
 }
 
-function TabMenu(props: TabProps) {
+function RecordsTabMenu(props: RecordsTabMenuProps) {
   const intl = useInternationalization(); 
   const { classes, invoices, payments, defaultTab } = props;
-  const [value, setValue] = React.useState(defaultTab);
+  const [value, setValue] = React.useState(defaultTab ? defaultTab : "0");
   const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
     setValue(newValue);
   };
 
   return (
     <TabContext value={value}>
-      <Tabs className={classes.tabs} textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
-        <Tab className={classes.tab} label={intl(words.invoices)} value="0" />
+      <Tabs textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
+        <Tab className={classes.tab} label={intl(words.invoices)}value="0" />
         <Tab className={classes.tab} label={intl(words.payment)} value="1" />
       </Tabs>
       <BaseScrollView>
@@ -66,4 +62,4 @@ function TabMenu(props: TabProps) {
     </TabContext>
   );
 }
-export default withStyles(styles)(TabMenu);
+export default withStyles(styles)(RecordsTabMenu);

@@ -1,55 +1,33 @@
-import { createStyles, Fab, FormControl, FormHelperText, ListSubheader, MenuItem, Select, Theme, withStyles } from '@material-ui/core';
+import { Typography, createStyles, Fab, Theme, makeStyles, Tabs, Tab } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import CustomerCard from '../../components/CustomerCard';
-import SearchBar from '../../components/SearchBar';
 import { CustomerRecord } from '../../lib/airtable/interface';
-import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
-import { getLatestReadingDate } from '../../lib/utils/customerUtils';
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import TrieTree from '../../lib/utils/TrieTree';
+import { selectCustomersToMeter, selectCustomersToCollect, selectCustomersDone, CustomerStatus } from '../../lib/redux/customerData';
+import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import { TabContext, TabPanel } from '@material-ui/lab';
+import CustomerCard from './components/CustomerCard';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import FlashOnIcon from '@material-ui/icons/FlashOn';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 
 
-const styles = (theme: Theme) =>
+const styles = makeStyles((theme: Theme) =>
   createStyles({
-    title: {
-      fontFamily: 'Helvetica Neue',
-      fontStyle: 'normal',
-      fontWeight: theme.typography.h1.fontWeight,
-      fontSize: theme.typography.h1.fontSize,
-      lineHeight: '115%',
-      color: '#828282',
-      flexGrow: 1,
-      paddingRight: '20px',
-    },
-    headerWrapper: {
-      display: 'flex',
-      flexDirection: 'row',
-      width: '100%',
-    },
-    selectionHeader: {
-      display: 'flex',
-      flexDirection: 'column',
-      flexGrow: 1,
-    },
-    rightAlign: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'flex-end'
-    },
     fab: {
       position: 'absolute',
       bottom: theme.spacing(1),
       right: theme.spacing(2),
       color: 'white',
     },
+<<<<<<< HEAD
   });
 
 interface CustomerMainProps extends RouteComponentProps {
@@ -86,104 +64,184 @@ function CustomerMain(props: CustomerMainProps) {
   const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.ACTIVE_STATUS);
   const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
   const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]);
-  const [searchValue, setSearchValue] = useState<string>("");
-  const fullCustomers: CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
+=======
+    tab: {
+      fontSize: '12px',
+      '&:focus': {
+        outline: 'none',
+      },
+    },
+    indicator: {
+      fontSize: '10px',
+      color: theme.palette.success.main,
+      marginRight: '5px',
+    },
+    indicatorContainer: {
+      padding: '10px 5px',
+      display: 'inline-flex',
+      alignItems: 'center',
+    },
+    tabIcon: {
+      fontSize: '15px',
+    },
+    tabLabel: {
+      display: 'inline-flex',
+    },
+    tabContent: {
+      marginBottom: '50px',
+    },
+    blankDiv: {
+      padding: '10px 0px',
+    },
+  }));
 
+interface CustomerMenu {
+  all: CustomerRecord[];
+  toMeter: CustomerRecord[];
+  toCollect: CustomerRecord[];
+  done: CustomerRecord[];
+}
+
+interface CustomerMainProps extends RouteComponentProps {
+  customers: CustomerRecord[];
+  match: any;
+}
+
+function CustomerMain(props: CustomerMainProps) {
+  const classes = styles(props);
+  const { match } = props;
+>>>>>>> 9b737503b3ce761b28ffe1b31029526be41ce1a2
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [tabValue, setTabValue] = useState<CustomerStatus>(CustomerStatus.ALL);
+  const changeTab = (event: React.ChangeEvent<{}>, newValue: CustomerStatus) => {
+    setTabValue(newValue);
+  };
+
+  // Default customer arrays
+  const allCustomers = useSelector(selectAllCustomersArray) || [];
+  const toMeterCustomers = useSelector(selectCustomersToMeter) || [];
+  const toCollectCustomers = useSelector(selectCustomersToCollect) || [];
+  const customersDone = useSelector(selectCustomersDone) || [];
+  const defaultCustomers: CustomerMenu = {
+    all: allCustomers,
+    toMeter: toMeterCustomers,
+    toCollect: toCollectCustomers,
+    done: customersDone,
+  }
+
+  // Customer states
+  const [customers, setCustomers] = useState<CustomerMenu>(defaultCustomers);
+  const allCustomerNamesTrie: TrieTree<CustomerRecord> = new TrieTree('name');
+  const allCustomerNumbersTrie: TrieTree<CustomerRecord> = new TrieTree('customerNumber');
+  allCustomerNamesTrie.addAll(allCustomers);
+  allCustomerNumbersTrie.addAll(allCustomers);
+
+  // Default customer sets
+  const toMeterCustomersSet: Set<string> = new Set<string>(toMeterCustomers.map((customer: CustomerRecord) => customer.id));
+  const toCollectCustomersSet: Set<string> = new Set<string>(toCollectCustomers.map((customer: CustomerRecord) => customer.id));
+
+  // Updates after every character typed
   useEffect(() => {
     getCustomers();
-    setSortAndFilter([SortBy[sortBy], FilterBy[filterBy]]);
-  }, [sortBy, filterBy, searchValue]);
+  }, [searchValue]);
 
-  const getCustomers = () => {
-    let allCustomers = fullCustomers;
-
-    if (searchValue !== '') {
-      allCustomers = allCustomersTrie.get(searchValue);
-    }
-    allCustomers.sort(sortByFunction);
-    sortAndFilterCustomers(allCustomers);
-    const customersTrie: TrieTree<CustomerRecord> = new TrieTree('name');
-    customersTrie.addAll(allCustomers);
-    setAllCustomersTrie(customersTrie);
-  }
-
-  const sortAndFilterCustomers = (customers: CustomerRecord[]) => {
-    const groupA = customers.filter(filterByFunction);
-    const groupB = customers.filter((customer: CustomerRecord) => !filterByFunction(customer));
-    setFilteredCustomers(groupA);
-    setFilteredCustomersAlt(groupB);
-  }
-
-  /**
-   * Comparator function for sorting two customer records.
-   * It is conditioned by the current user selection for sorting.
-   */
-  const sortByFunction = (customerA: CustomerRecord, customerB: CustomerRecord): number => {
-    switch (sortBy) {
-      case (SortBy.METER): {
-        return customerA.meterNumber - customerB.meterNumber;
-      }
-      case (SortBy.NAME): {
-        return customerA.name.localeCompare(customerB.name)
-      }
-      default: {
-        return 0
-      }
-    }
-  }
-
-  /**
-   * Comparator function for filtering customer records.
-   * It is conditioned by the current user selection for filtering.
-   */
-  const filterByFunction = (customer: CustomerRecord): boolean => {
-    switch (filterBy) {
-      case (FilterBy.METER_STATUS): {
-        return customer.hasmeter
-      }
-      case (FilterBy.PAYMENT_STATUS): {
-        return customer.outstandingBalance > 0
-      }
-      case (FilterBy.ACTIVE_STATUS): {
-        return customer.isactive
-      }
-      default: {
-        return true;
-      }
-    }
-  }
-
-  const handleSearchChange = (e: any) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const searchVal = e.target.value.trim();
     setSearchValue(searchVal);
   }
 
-  /**
-   * onPressHandler for selecting sortBy and filterBy attributes.
-   *
-   * NOTE: For a multi-select, event.target.value returns an array, rather than a string.
-   * The first two lines in this function extract the new selected option, then sets the
-   * state variable accordingly. Source: https://material-ui.com/components/selects/#multiple-select
-   */
-  const handleMenuSelect = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const selectedOptions: string[] = event.target.value as string[];
-    const newlySelectedOption: string = selectedOptions[selectedOptions.length - 1];
+  const getCustomers = () => {
+    if (searchValue !== '') {
+      let searchedCustomersArray;
 
-    const sortByKeys: string[] = Object.keys(SortBy);
-    if (sortByKeys.includes(newlySelectedOption)) {
-      setSortBy(SortBy[newlySelectedOption as keyof typeof SortBy]);
-      return;
-    }
+      // Checks whether first character is number or letter
+      if (isNaN(parseInt(searchValue[0]))) {
+        searchedCustomersArray = allCustomerNamesTrie.get(searchValue);
+      } else {
+        searchedCustomersArray = allCustomerNumbersTrie.get(searchValue);
+      }
 
-    const filterByKeys: string[] = Object.keys(FilterBy);
-    if (filterByKeys.includes(newlySelectedOption)) {
-      setFilterBy(FilterBy[newlySelectedOption as keyof typeof FilterBy]);
-      setFilterLabels(labels[newlySelectedOption as keyof typeof FilterBy]);
-      return;
+      const searchedCustomers = new Set<string>(searchedCustomersArray.map((customer: CustomerRecord) => customer.id));
+
+      const newCustomers: CustomerMenu = {
+        all: searchedCustomersArray,
+        toMeter: customers.toMeter.filter((customer: CustomerRecord) => searchedCustomers.has(customer.id)),
+        toCollect: customers.toCollect.filter((customer: CustomerRecord) => searchedCustomers.has(customer.id)),
+        done: customers.done.filter((customer: CustomerRecord) => searchedCustomers.has(customer.id)),
+      }
+
+      setCustomers(newCustomers);
+    } else {
+      setCustomers(defaultCustomers);
     }
   }
 
+  const exitSearch = () => {
+    setSearchValue("");
+    setCustomers(defaultCustomers);
+  }
+
+  const getCustomerStatus = (customer: CustomerRecord) => {
+    if (toMeterCustomersSet.has(customer.id)) {
+      return CustomerStatus.METER;
+    } else if (toCollectCustomersSet.has(customer.id)) {
+      return CustomerStatus.PAYMENT;
+    }
+    return undefined;
+  }
+
+  const getTabContent = () => {
+      // TODO: useMemo could speed up tabbing
+      // https://github.com/calblueprint/meepanyar/pull/85#discussion_r614478966
+      let shownCustomers;
+
+      switch (tabValue) {
+        case CustomerStatus.METER:
+          shownCustomers = customers.toMeter;
+          break;
+        case CustomerStatus.PAYMENT:
+          shownCustomers = customers.toCollect;
+          break;
+        case CustomerStatus.DONE:
+          shownCustomers = customers.done;
+          break;
+        default:
+          shownCustomers = customers.all;
+          break;
+      }
+
+      return (
+        <div className={classes.tabContent}>
+          {shownCustomers.map((customer: CustomerRecord, index) => (
+              <div key={index}>
+                <CustomerCard
+                  customer={customer}
+                  match={match}
+                  status={getCustomerStatus(customer)}
+                />
+              </div>
+            ))}
+          <div className={classes.blankDiv}></div>
+        </div>
+      );
+    };
+
+  const getMeterTabLabel = () => (
+    <div>
+      <FlashOnIcon className={classes.tabIcon} />
+      <Typography className={classes.tabLabel}>Meter</Typography>
+    </div>
+  );
+
+  const getPaymentTabLabel = () => (
+    <div>
+      <AttachMoneyIcon className={classes.tabIcon} />
+      <Typography className={classes.tabLabel}>Payment</Typography>
+    </div>
+  );
+
   return (
+<<<<<<< HEAD
     <BaseScreen rightIcon="user">
       <div className={classes.headerWrapper}>
         <h1 className={classes.title}>{intl(words.customers)}</h1>
@@ -218,6 +276,27 @@ function CustomerMain(props: CustomerMainProps) {
           </Link>
         ))
         }
+=======
+    <BaseScreen rightIcon="user" title="Customers" searchAction={handleSearchChange} searchExit={exitSearch}>
+      <Tabs
+        textColor="primary"
+        indicatorColor="primary"
+        value={tabValue}
+        onChange={changeTab}
+        variant="scrollable"
+      >
+        <Tab className={classes.tab} label="All" value={CustomerStatus.ALL} />
+        <Tab className={classes.tab} label={getMeterTabLabel()} value={CustomerStatus.METER} />
+        <Tab className={classes.tab} label={getPaymentTabLabel()} value={CustomerStatus.PAYMENT} />
+        <Tab className={classes.tab} label="Done" value={CustomerStatus.DONE} />
+      </Tabs>
+      <div className={classes.indicatorContainer}>
+        <FiberManualRecordIcon className={classes.indicator}/>
+        <Typography>Status: Active</Typography>
+      </div>
+      <BaseScrollView>
+        {getTabContent()}
+>>>>>>> 9b737503b3ce761b28ffe1b31029526be41ce1a2
       </BaseScrollView>
       <Link to={'/customers/create'}>
         <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>
@@ -226,7 +305,6 @@ function CustomerMain(props: CustomerMainProps) {
       </Link>
     </BaseScreen>
   );
-
 }
 
-export default withStyles(styles)(CustomerMain);
+export default React.memo(CustomerMain);

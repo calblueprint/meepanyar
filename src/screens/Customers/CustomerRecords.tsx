@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import TabMenu from './components/TabMenu';
+import RecordsTabMenu from './components/RecordsTabMenu';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
 import { PaymentRecord, MeterReadingRecord } from '../../lib/airtable/interface';
@@ -26,7 +26,6 @@ interface CustomerRecordsProps extends RouteComponentProps {
 function CustomerRecords(props: CustomerRecordsProps) {
   const intl = useInternationalization(); 
   const { classes } = props;
-  const defaultTab: string = props.location.state.defaultTab ? props.location.state.defaultTab : '0';
   const payments: PaymentRecord[] = props.location.state.payments;
   const invoices: MeterReadingRecord[] = props.location.state.invoices;
 
@@ -34,7 +33,7 @@ function CustomerRecords(props: CustomerRecordsProps) {
     <BaseScreen leftIcon="backNav">
       <div className={classes.content}>
         <Typography variant="h1">{intl(words.records)}</Typography>
-        <TabMenu defaultTab={defaultTab} invoices={invoices} payments={payments} />
+        <RecordsTabMenu invoices={invoices} payments={payments} />
       </div>
     </BaseScreen>
   );
