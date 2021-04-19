@@ -81,7 +81,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   };
 
   return (
-    <BaseScreen title={intl(words.inventory_purchase)} leftIcon="backNav">
+    <BaseScreen title={intl(words.inventory_receipt)} leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.headerContainer}>
           <InventoryInfo productId={product.id} lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)} />

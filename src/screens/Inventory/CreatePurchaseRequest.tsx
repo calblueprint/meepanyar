@@ -120,7 +120,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             required
             type="number"
             currency
-            label={intl(words.amount_spent_paid)}
+            label={intl(words.amount_spent)}
             id={'amountSpent'}
             placeholder={intl(words.eg_x, "5")}
             value={formik.values.amountSpent}

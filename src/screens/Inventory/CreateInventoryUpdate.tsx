@@ -64,7 +64,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   };
 
   return (
-    <BaseScreen title={intl(words.updated_x, words.item)} leftIcon="backNav">
+    <BaseScreen title={intl(words.update_x, words.item)} leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.headerContainer}>
           <InventoryInfo

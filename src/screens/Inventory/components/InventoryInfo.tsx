@@ -69,8 +69,7 @@ function InventoryInfo(props: InventoryInfoProps) {
           <Typography variant="h2" color="textPrimary">
             {product.name}
           </Typography>
-          <Typography variant="caption">{intl(words.last_updated_date)}</Typography>
-          <Typography variant="caption">{lastUpdated}</Typography>
+          <Typography variant="caption">{intl(words.last_updated_date, lastUpdated)}</Typography>
         </div>
         {props.currentQuantity !== undefined && (
           <Typography align="right" variant="body2">{`${currentQuantity} ${product.unit}(${intl(words.s)})`}</Typography>

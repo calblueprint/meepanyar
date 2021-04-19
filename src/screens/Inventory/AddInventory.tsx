@@ -114,7 +114,6 @@ function AddInventory(props: AddInventoryProps) {
   };
 
   const filter = createFilterOptions<string>();
-  // `+ ${intl(words.new_inventory_item)}`
 
   return (
     <BaseScreen title={intl(words.new_inventory_item)} leftIcon="backNav">
@@ -152,7 +151,7 @@ function AddInventory(props: AddInventoryProps) {
             <div style={{ marginRight: 8, flex: 2 }}>
               <TextField
                 required
-                label={intl(words.unit_name)}
+                label={intl(words.new_item_name)}
                 id={'newProductName'}
                 value={formik.values.newProductName}
                 onChange={formik.handleChange}
