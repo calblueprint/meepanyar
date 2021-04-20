@@ -625,7 +625,7 @@ export const updateCustomer = async (id, recordUpdates, customerUpdate) => {
   updateCustomerInRedux({ ...recordUpdates, id });
 
   // If a customer update was logged, persist it to Airtable
-  if (Object.keys(customerUpdate).length !== 0) {
+  if (customerUpdate && Object.keys(customerUpdate).length !== 0) {
     try {
       delete customerUpdate.id;
       await createCustomerUpdate(customerUpdate);

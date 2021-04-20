@@ -8,11 +8,15 @@ import { MeterType } from '../../lib/redux/customerDataSlice';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import Button from '../../components/Button';
 
+export interface EditCustomerMeterState {
+    meterType: string | undefined;
+    meterNumber: string | undefined;
+}
 
 function EditCustomerMeter() {
     const currentCustomer = useSelector(selectCurrentCustomer);
-    const [meterType, setMeterType] = useState(currentCustomer?.meterType);
-    const [meterNumber, setMeterNumber] = useState(currentCustomer?.meterNumber.toString());
+    const [meterType, setMeterType] = useState<EditCustomerMeterState["meterType"]>(currentCustomer?.meterType);
+    const [meterNumber, setMeterNumber] = useState<EditCustomerMeterState["meterNumber"]>(currentCustomer?.meterNumber.toString());
     const history = useHistory();
 
     if (!currentCustomer) {
@@ -32,9 +36,11 @@ function EditCustomerMeter() {
         setMeterNumber(event.target.value as string);
     }
 
-    const handleClick = (event: React.MouseEvent) => {
-        console.log("Meter Number: ", meterNumber);
-        console.log("Meter Type: ", meterType);
+    const handleSubmit = (event: React.MouseEvent) => {
+        event.preventDefault();
+
+        // TODO: Make sure you can't submit if no meter number and the meter type isn't NO_METER
+        history.push('tariff-plans', { meterNumber, meterType })
     }
 
     return (
@@ -63,7 +69,7 @@ function EditCustomerMeter() {
                 onChange={handleMeterNumberInput}
             />
 
-            <Button label='Next' onClick={handleClick} />
+            <Button label='Next' onClick={handleSubmit} />
         </BaseScreen>
     );
 }
