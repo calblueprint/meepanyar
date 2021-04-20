@@ -46,7 +46,7 @@ function EditCustomerMeter() {
 
     const handleSubmit = (values: any) => {
         const { meterNumber, meterType } = values;
-        history.push('tariff-plans', { meterNumber, meterType })
+        history.push('tariff-plans', { meterNumber, meterType, goBack: -2 })
     }
 
     return (

@@ -7,14 +7,15 @@ import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { TariffPlanRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer } from '../../lib/redux/customerData';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router';
-import { EditCustomerMeterState } from './EditCustomerMeter';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import CheckIcon from '@material-ui/icons/Check';
 import Button from '../../components/Button';
 import { updateCustomer } from '../../lib/airtable/request';
 
 
-type EditCustomerTariffPlansProps = RouteComponentProps<{}, {}, EditCustomerMeterState>;
+interface EditCustomerTariffPlansProps extends RouteComponentProps {
+  location: any;
+}
 
 // The User can navigate to this screen directly from EditCustomer, or from EditCustomerMeter.
 // If the user comes from EditCustomerMeter, they pass the meterType and meterNumber selected from the previous screen.
@@ -25,6 +26,7 @@ function EditCustomerTariffPlans(props: EditCustomerTariffPlansProps) {
   const [tariffPlanId, setTariffPlanId] = useState(customer?.tariffPlanId);
   const [loading, setLoading] = useState(false);
   const tariffPlans: TariffPlanRecord[] = useSelector(selectAllTariffPlansArray) || [];
+  const goBack = props.location.state?.goBack || -1;
 
   if (!customer) {
     return <Redirect to='/customers' />
@@ -57,10 +59,10 @@ function EditCustomerTariffPlans(props: EditCustomerTariffPlansProps) {
     const customerUpdate = {
       tariffPlanId,
       meterType,
-      meterNumber: !isNaN(parseInt(meterNumber)) ? parseInt(meterNumber) : null
+      meterNumber: meterNumber ? parseInt(meterNumber) : null
     }
 
-    updateCustomer(customer.id, customerUpdate, {}).then(history.goBack);
+    updateCustomer(customer.id, customerUpdate, {}).then(() => history.go(goBack));
   }
 
   return (
@@ -76,7 +78,7 @@ function EditCustomerTariffPlans(props: EditCustomerTariffPlansProps) {
               divider
             />)}
         </List>
-        <Button onClick={handleSubmit} label='Save' />
+        <Button onClick={handleSubmit} label='Save' loading={loading} />
       </BaseScrollView>
     </BaseScreen>
   );
