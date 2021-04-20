@@ -624,12 +624,15 @@ export const updateCustomer = async (id, recordUpdates, customerUpdate) => {
   }
   updateCustomerInRedux({ ...recordUpdates, id });
 
-  try {
-    delete customerUpdate.id;
-    await createCustomerUpdate(customerUpdate);
-    console.log("Created Customer update!");
-  } catch (error) {
-    console.log("An error occurred while creating a customer update: ", error)
+  // If a customer update was logged, persist it to Airtable
+  if (Object.keys(customerUpdate).length !== 0) {
+    try {
+      delete customerUpdate.id;
+      await createCustomerUpdate(customerUpdate);
+      console.log("Created Customer update!");
+    } catch (error) {
+      console.log("An error occurred while creating a customer update: ", error)
+    }
   }
 }
 
