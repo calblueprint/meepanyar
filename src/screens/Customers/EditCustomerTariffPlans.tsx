@@ -31,7 +31,13 @@ function EditCustomerTariffPlans(props: EditCustomerTariffPlansProps) {
   }
 
   const meterType = props.location.state?.meterType || customer?.meterType;
-  const meterNumber = props.location.state?.meterNumber || customer?.meterNumber.toString();
+
+  let meterNumber: string | null;
+  if (props.location.state?.meterNumber !== undefined) {
+    meterNumber = props.location.state?.meterNumber;
+  } else {
+    meterNumber = customer?.meterNumber ? customer?.meterNumber.toString() : null;
+  }
 
   const availableTariffPlans = tariffPlans.filter((plan) => plan.meterTypes && plan.meterTypes.includes(meterType));
   availableTariffPlans.sort(function (a, b) {
@@ -51,7 +57,7 @@ function EditCustomerTariffPlans(props: EditCustomerTariffPlansProps) {
     const customerUpdate = {
       tariffPlanId,
       meterType,
-      meterNumber: parseInt(meterNumber)
+      meterNumber: !isNaN(parseInt(meterNumber)) ? parseInt(meterNumber) : null
     }
 
     updateCustomer(customer.id, customerUpdate, {}).then(history.goBack);

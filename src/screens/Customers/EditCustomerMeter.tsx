@@ -31,7 +31,7 @@ function EditCustomerMeter() {
     const formik = useFormik({
         initialValues: {
             meterType: currentCustomer?.meterType,
-            meterNumber: currentCustomer?.meterNumber.toString()
+            meterNumber: currentCustomer?.meterNumber ? currentCustomer.meterNumber.toString() : ''
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
