@@ -1,24 +1,24 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
-import { withStyles, createStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom';
-import { SiteRecord } from '../../lib/airtable/interface';
-import HomeMenuItem from './components/HomeMenuItem';
-import SiteMenu from './components/SiteMenu';
-
+import { createStyles, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import WifiIcon from '@material-ui/icons/Wifi';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
+import Button from '../../components/Button';
+import OfflineDialog from '../../components/OfflineDialog';
+import Snackbar from '../../components/Snackbar';
+import { SiteRecord } from '../../lib/airtable/interface';
+import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
+import { selectCustomersToCollect, selectCustomersToMeter } from '../../lib/redux/customerData';
 import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
-import Button from '../../components/Button';
 import { store } from '../../lib/redux/store';
+import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
 import { setIsOnline } from '../../lib/redux/userDataSlice';
-import Snackbar from '../../components/Snackbar';
+import HomeMenuItem from './components/HomeMenuItem';
+import SiteMenu from './components/SiteMenu';
 
 const styles = () =>
   createStyles({
@@ -44,7 +44,7 @@ function Home(props: HomeProps) {
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
   const allSites: SiteRecord[] = useSelector(selectAllSitesInformation) || [];
   const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation) || EMPTY_SITE;
-  const isOnline = useSelector(selectIsOnline);
+  const isOnline = useSelector(selectIsOnline) || false;
   const lastUpdated = formatDateStringToLocal(useSelector(selectLastUpdated));
 
   return (
@@ -71,11 +71,7 @@ function Home(props: HomeProps) {
         />
       </Link>
       {/* TODO @wangannie remove before merging */}
-      <Button
-        label="Go offline"
-        fullWidth
-        onClick={() => store.dispatch(setIsOnline(!isOnline))}
-      />
+      <Button label="Go offline" fullWidth onClick={() => store.dispatch(setIsOnline(!isOnline))} />
       <Link to={'/financial-summary'}>
         <HomeMenuItem label="Unpaid Reports" amount={0} />
       </Link>
@@ -84,6 +80,11 @@ function Home(props: HomeProps) {
         <HomeMenuItem label="Financial Summary" noBadge={true} />
       </Link>
       <Snackbar message="You are currently disconnected. Payments will be uploaded after you reconnect." />
+      <OfflineDialog
+        open={true}
+        headingText="New Inventory Data Offline"
+        bodyText="Inventory cannot be edited until information has been uploaded. Connect to a network to add data."
+      />
     </BaseScreen>
   );
 }
