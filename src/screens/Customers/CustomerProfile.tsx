@@ -15,6 +15,7 @@ import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer, isReadingFromLatestPeriod } from '../../lib/utils/customerUtils';
 import Button from '../../components/Button';
+import Snackbar from '../../components/Snackbar';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -233,6 +234,8 @@ function CustomerProfile(props: CustomerProps) {
           {getReadingInfo()}
         </div>
       </BaseScrollView>
+      {/* TODO: different messages based on payment/meter reading */}
+      <Snackbar message="You are currently disconnected. Meter readings and/or payments will be recorded after you reconnect." />
     </BaseScreen>
   );
 }

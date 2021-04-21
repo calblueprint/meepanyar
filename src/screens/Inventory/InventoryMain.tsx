@@ -6,6 +6,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
+import Snackbar from '../../components/Snackbar';
 import { InventoryRecord } from '../../lib/airtable/interface';
 import {
   selectPendingPurchaseRequestCount,
@@ -115,6 +116,7 @@ function InventoryMain(props: InventoryProps) {
           <AddIcon fontSize="large" />
         </Fab>
       </Link>
+      <Snackbar withFab message="You are not connected to a network. Some logs may not be fully up to date." />
     </BaseScreen>
   );
 }

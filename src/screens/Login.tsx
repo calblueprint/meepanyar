@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import Button from '../components/Button';
+import Snackbar from '../components/Snackbar';
 import TextField from '../components/TextField';
 import { loginUser, signupUser } from '../lib/airlock/airlock';
 
@@ -110,6 +111,7 @@ function Login() {
           {/* <Button label="Forgot password?" fullWidth variant="text" /> */}
         </form>
       </div>
+      <Snackbar noBottomMargin message="You are not connected to a network. Please reconnect to sign in." />
     </Container>
   );
 }

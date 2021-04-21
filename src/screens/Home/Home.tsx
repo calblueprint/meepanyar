@@ -15,6 +15,10 @@ import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redu
 import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
+import Button from '../../components/Button';
+import { store } from '../../lib/redux/store';
+import { setIsOnline } from '../../lib/redux/userDataSlice';
+import Snackbar from '../../components/Snackbar';
 
 const styles = () =>
   createStyles({
@@ -66,6 +70,12 @@ function Home(props: HomeProps) {
           ]}
         />
       </Link>
+      {/* TODO @wangannie remove before merging */}
+      <Button
+        label="Go offline"
+        fullWidth
+        onClick={() => store.dispatch(setIsOnline(!isOnline))}
+      />
       <Link to={'/financial-summary'}>
         <HomeMenuItem label="Unpaid Reports" amount={0} />
       </Link>
@@ -73,6 +83,7 @@ function Home(props: HomeProps) {
       <Link to={'/financial-summary'}>
         <HomeMenuItem label="Financial Summary" noBadge={true} />
       </Link>
+      <Snackbar message="You are currently disconnected. Payments will be uploaded after you reconnect." />
     </BaseScreen>
   );
 }

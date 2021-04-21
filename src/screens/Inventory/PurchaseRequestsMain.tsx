@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import Snackbar from '../../components/Snackbar';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { selectPendingPurchaseRequestCount, selectProductByInventoryId } from '../../lib/redux/inventoryData';
 import {
@@ -104,6 +105,7 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
         {/* Tab 0: All, Tab 1: Pending */}
         {tabValue === 0 ? getPurchaseRequests() : getPurchaseRequests(PurchaseRequestStatus.PENDING)}
       </BaseScrollView>
+      <Snackbar message="You are not connected to a network. Some logs may not be fully up to date." />
     </BaseScreen>
   );
 }
