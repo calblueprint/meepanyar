@@ -52,7 +52,7 @@ function Field(props: TextFieldProps) {
         required={props.required}
         className={classes.textField}
         InputLabelProps={{ shrink: true }}
-        value={props.value || undefined}
+        value={props.value}
         onChange={props.onChange}
         disabled={props.disabled}
         placeholder={props.placeholder || props.label || ''}
