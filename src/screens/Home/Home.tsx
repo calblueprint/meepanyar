@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
-import OfflineDialog from '../../components/OfflineDialog';
 import Snackbar from '../../components/Snackbar';
 import { SiteRecord } from '../../lib/airtable/interface';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
@@ -80,11 +79,6 @@ function Home(props: HomeProps) {
         <HomeMenuItem label="Financial Summary" noBadge={true} />
       </Link>
       <Snackbar message="You are currently disconnected. Payments will be uploaded after you reconnect." />
-      <OfflineDialog
-        open={true}
-        headingText="New Inventory Data Offline"
-        bodyText="Inventory cannot be edited until information has been uploaded. Connect to a network to add data."
-      />
     </BaseScreen>
   );
 }

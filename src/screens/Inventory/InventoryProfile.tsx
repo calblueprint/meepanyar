@@ -9,11 +9,13 @@ import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import OfflineDialog from '../../components/OfflineDialog';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
 import { getInventoryHistory, getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
+import { isOfflineId } from '../../lib/utils/offlineUtils';
 import InventoryInfo from './components/InventoryInfo';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
 
@@ -110,6 +112,12 @@ function InventoryProfile(props: InventoryProps) {
           </List>
         </div>
       </BaseScrollView>
+      <OfflineDialog
+        open={isOfflineId(inventory.id)}
+        closeAction={history.goBack}
+        headingText="New Inventory Data Offline"
+        bodyText="Inventory cannot be edited until information has been uploaded. Connect to a network to add data."
+      />
     </BaseScreen>
   );
 }

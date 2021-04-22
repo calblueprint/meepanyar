@@ -1,11 +1,11 @@
 import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Theme,
-    Typography
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Theme,
+  Typography
 } from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
@@ -30,15 +30,19 @@ interface OfflineDialogProps {
   open: boolean;
   headingText?: string;
   bodyText?: string;
+  closeAction?: () => void;
 }
 
 export default function OfflineDialog(props: OfflineDialogProps): JSX.Element {
   const classes = useStyles();
-  const { headingText, bodyText } = props;
+  const { headingText, bodyText, closeAction } = props;
   const [open, setOpen] = useState(props.open);
 
   const handleClose = () => {
     setOpen(false);
+    if (closeAction) {
+      closeAction();
+    }
   };
 
   return (

@@ -111,7 +111,7 @@ function Login() {
           {/* <Button label="Forgot password?" fullWidth variant="text" /> */}
         </form>
       </div>
-      <Snackbar noBottomMargin message="You are not connected to a network. Please reconnect to sign in." />
+      <Snackbar noBottomMargin message="You are currently disconnected. Please reconnect to sign in." />
     </Container>
   );
 }
