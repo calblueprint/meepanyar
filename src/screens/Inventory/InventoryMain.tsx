@@ -103,8 +103,9 @@ function InventoryMain(props: InventoryProps) {
         {siteInventory.map((inventory: InventoryRecord) => (
           <Link key={inventory.id} to={'/inventory/item'} onClick={() => setCurrentInventoryIdInRedux(inventory.id)}>
             <InventoryCard
-              currentQuantity={inventory.currentQuantity}
               key={inventory.id}
+              inventoryId={inventory.id}
+              currentQuantity={inventory.currentQuantity}
               productId={inventory.productId}
               lastUpdated={getInventoryLastUpdated(inventory.id)}
             />

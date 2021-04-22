@@ -92,7 +92,11 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
     <BaseScreen title="Inventory Receipt" leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.headerContainer}>
-          <InventoryInfo productId={product.id} lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)} />
+          <InventoryInfo
+            inventoryId={purchaseRequest.inventoryId}
+            productId={product.id}
+            lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)}
+          />
           <div className={classes.reviewButtonsContainer}>
             {userIsAdmin && purchaseRequest.status === PurchaseRequestStatus.PENDING
               ? getPurchaseRequestReviewButtons(

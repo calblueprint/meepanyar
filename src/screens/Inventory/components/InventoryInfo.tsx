@@ -1,17 +1,20 @@
 import { Card, CardActions, CardContent, makeStyles, Typography } from '@material-ui/core';
 import { createStyles, Theme } from '@material-ui/core/styles';
+import SyncIcon from '@material-ui/icons/Sync';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Button from '../../../components/Button';
 import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
+import { isOfflineId } from '../../../lib/utils/offlineUtils';
 
 interface InventoryInfoProps {
   productId: string;
   lastUpdated: string;
   currentQuantity?: number;
   withActions?: boolean;
+  inventoryId: string;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -37,6 +40,12 @@ const useStyles = makeStyles((theme: Theme) =>
     cardActions: {
       justifyContent: 'space-around',
     },
+    headingRowContainer: {
+      display: 'inline-flex',
+    },
+    syncIcon: {
+      marginLeft: theme.spacing(1),
+    },
   }),
 );
 
@@ -54,16 +63,17 @@ const getUpdateButton = () => (
 
 function InventoryInfo(props: InventoryInfoProps) {
   const classes = useStyles(props);
-  const { productId, lastUpdated, currentQuantity, withActions } = props;
+  const { productId, lastUpdated, currentQuantity, withActions, inventoryId } = props;
   const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
   return (
     <Card variant="outlined" className={classes.cardContainer}>
       <CardContent className={classes.cardContent}>
         <div className={classes.leftContentColumnContainer}>
-          <Typography variant="h2" color="textPrimary">
-            {product.name}
-          </Typography>
+          <div className={classes.headingRowContainer}>
+            <Typography variant="h2">{product.name}</Typography>
+            { isOfflineId(inventoryId) && <SyncIcon fontSize="small" className={classes.syncIcon} /> }
+          </div>
           <Typography variant="caption">Last Updated</Typography>
           <Typography variant="caption">{lastUpdated}</Typography>
         </div>

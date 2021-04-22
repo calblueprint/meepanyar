@@ -55,6 +55,7 @@ function InventoryProfile(props: InventoryProps) {
     <BaseScreen leftIcon="backNav">
       <BaseScrollView>
         <InventoryInfo
+          inventoryId={inventory.id}
           productId={inventory.productId}
           lastUpdated={getInventoryLastUpdated(inventory.id)}
           currentQuantity={inventory.currentQuantity}
@@ -81,7 +82,7 @@ function InventoryProfile(props: InventoryProps) {
                     )}
                   </ListItemIcon>
                   <ListItemText
-                    primaryTypographyProps={{variant: 'body2'}}
+                    primaryTypographyProps={{ variant: 'body2' }}
                     className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                     primary={formatDateStringToLocal(historyRecord.createdAt)}
                   />
@@ -95,9 +96,7 @@ function InventoryProfile(props: InventoryProps) {
                   <ListItemText
                     className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                     primaryTypographyProps={{ variant: 'body2', align: 'right' }}
-                    primary={`${historyRecord.updatedQuantity || 0} ${
-                      product.unit
-                    }(s)`}
+                    primary={`${historyRecord.updatedQuantity || 0} ${product.unit}(s)`}
                   />
                   <ListItemSecondaryAction>
                     {historyRecord.status && (
