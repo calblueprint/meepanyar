@@ -2,12 +2,14 @@ import { Typography } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import { useFormik } from 'formik';
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import * as yup from 'yup';
 import Button from '../components/Button';
 import Snackbar from '../components/Snackbar';
 import TextField from '../components/TextField';
 import { loginUser, signupUser } from '../lib/airlock/airlock';
+import { selectIsOnline } from '../lib/redux/userData';
 
 const validationSchema = yup.object({
   username: yup.string().required('Must enter a username'),
@@ -25,6 +27,7 @@ function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   // Indicates which button (login or create) should be loading
   const [loadingButton, setLoadingButton] = useState('');
+  const isOnline = useSelector(selectIsOnline);
   const history = useHistory();
 
   const formik = useFormik({
@@ -111,7 +114,11 @@ function Login() {
           {/* <Button label="Forgot password?" fullWidth variant="text" /> */}
         </form>
       </div>
-      <Snackbar noBottomMargin message="You are currently disconnected. Please reconnect to sign in." />
+      <Snackbar
+        open={!isOnline}
+        noBottomMargin
+        message="You are not connected to a network. Please reconnect to log in."
+      />
     </Container>
   );
 }

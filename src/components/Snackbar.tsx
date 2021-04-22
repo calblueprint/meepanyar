@@ -1,31 +1,29 @@
 import { makeStyles, Snackbar as MaterialSnackbar, Theme } from '@material-ui/core';
 import { createStyles } from '@material-ui/core/styles';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { selectIsOnline } from '../lib/redux/userData';
 
 interface SnackbarProps {
   message: string;
   withFab?: boolean;
   noBottomMargin?: boolean;
+  open?: boolean;
 }
 
 const styles = makeStyles((theme: Theme) =>
   createStyles({
     snackbar: (props: SnackbarProps) => ({
-      bottom: theme.spacing(props.noBottomMargin ? 1 : props.withFab ? 18: 8),
+      bottom: theme.spacing(props.noBottomMargin ? 1 : props.withFab ? 18 : 8),
     }),
   }),
 );
 
 function Snackbar(props: SnackbarProps) {
   const classes = styles(props);
-  const isOffline = !useSelector(selectIsOnline);
-  const [showSnackbar, setShowSnackbar] = useState(isOffline);
+  const [showSnackbar, setShowSnackbar] = useState(props.open);
 
   useEffect(() => {
-    setShowSnackbar(isOffline);
-  }, [isOffline]);
+    setShowSnackbar(props.open);
+  }, [props.open]);
 
   return (
     <MaterialSnackbar

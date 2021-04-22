@@ -15,7 +15,7 @@ import {
   selectProductById
 } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
-import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../../lib/redux/userData';
+import { selectCurrentUserId, selectCurrentUserIsAdmin, selectIsOnline } from '../../../lib/redux/userData';
 import { reviewPurchaseRequest } from '../../../lib/utils/inventoryUtils';
 import { getPurchaseRequestReviewButtons } from '../PurchaseRequest';
 
@@ -48,6 +48,7 @@ const styles = (theme: Theme) =>
 interface PurchaseRequestCardProps {
   classes: { cardContent: string; cardContainer: string; leftContent: string; cardActions: string };
   purchaseRequest: PurchaseRequestRecord;
+  showSnackbarCallback: () => void;
 }
 
 export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size?: 'small' | 'large') => {
@@ -62,7 +63,7 @@ export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size
 };
 
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
-  const { classes, purchaseRequest } = props;
+  const { classes, purchaseRequest, showSnackbarCallback } = props;
   const [status, setStatus] = useState(purchaseRequest.status);
   const product =
     useSelector((state: RootState) =>
@@ -70,12 +71,17 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
     ) || EMPTY_PRODUCT;
   const userId = useSelector(selectCurrentUserId);
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+  const isOnline = useSelector(selectIsOnline);
 
   const handleSubmitReview = (approved: boolean) => {
-    const newStatus = approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED;
-    setStatus(newStatus);
-    purchaseRequest.status = newStatus;
-    reviewPurchaseRequest(purchaseRequest, approved, userId);
+    if (!isOnline) {
+      showSnackbarCallback();
+    } else {
+      const newStatus = approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED;
+      setStatus(newStatus);
+      purchaseRequest.status = newStatus;
+      reviewPurchaseRequest(purchaseRequest, approved, userId);
+    }
   };
 
   return (
@@ -90,8 +96,13 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
             <Typography color="textPrimary" variant="h2">
               {product.name}
             </Typography>
-            <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(purchaseRequest.createdAt)}`}</Typography>
-            <Typography variant="body1" color="textSecondary">{`${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
+            <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(
+              purchaseRequest.createdAt,
+            )}`}</Typography>
+            <Typography
+              variant="body1"
+              color="textSecondary"
+            >{`${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
           </div>
           <Typography color="textPrimary" variant="h2">{`${purchaseRequest.amountSpent} Ks`}</Typography>
         </CardContent>

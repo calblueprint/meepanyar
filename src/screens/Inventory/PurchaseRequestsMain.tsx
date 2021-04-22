@@ -38,6 +38,7 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
   const [purchaseRequests, setPurchaseRequests] = useState(defaultPurchaseRequests);
   const pendingCount = useSelector(selectPendingPurchaseRequestCount);
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+  const [showSnackbar, setShowSnackbar] = useState(false);
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabValue(newValue);
@@ -61,26 +62,48 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
     if (searchValue !== '') {
       // Search by product name
       const filteredPurchaseRequests = defaultPurchaseRequests.filter((purchaseRequest) =>
-        selectProductByInventoryId(store.getState(), purchaseRequest.inventoryId)?.name.toLowerCase().includes(searchValue.toLowerCase()),
+        selectProductByInventoryId(store.getState(), purchaseRequest.inventoryId)
+          ?.name.toLowerCase()
+          .includes(searchValue.toLowerCase()),
       );
       setPurchaseRequests(filteredPurchaseRequests);
     } else {
       setPurchaseRequests(defaultPurchaseRequests);
     }
   };
-  
+
+  // Callback function to show the offline snackbar if an admin user attempts
+  // to approve/deny a request from the PurchaseRequestCard while offline.
+  const showSnackbarCallback = () => {
+    setShowSnackbar(true);
+    // 5 second delay to reset back so it can be shown again.
+    setTimeout(function () {
+      setShowSnackbar(false);
+    }, 5000);
+  };
+
   const getPurchaseRequests = (status?: PurchaseRequestStatus) => (
     <div>
       {purchaseRequests
         .filter((pr) => (status ? pr.status === status : true))
         .map((purchaseRequest: PurchaseRequestRecord) => (
-          <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest} />
+          <PurchaseRequestCard
+            key={purchaseRequest.id}
+            purchaseRequest={purchaseRequest}
+            showSnackbarCallback={showSnackbarCallback}
+          />
         ))}
     </div>
   );
 
   return (
-    <BaseScreen title="All Purchases" leftIcon="backNav" searchAction={handleSearchChange} searchPlaceholder={"Search by inventory name"} searchExit={exitSearch}>
+    <BaseScreen
+      title="All Purchases"
+      leftIcon="backNav"
+      searchAction={handleSearchChange}
+      searchPlaceholder={'Search by inventory name'}
+      searchExit={exitSearch}
+    >
       {userIsAdmin && (
         <Tabs
           className={classes.tabs}
@@ -105,7 +128,10 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
         {/* Tab 0: All, Tab 1: Pending */}
         {tabValue === 0 ? getPurchaseRequests() : getPurchaseRequests(PurchaseRequestStatus.PENDING)}
       </BaseScrollView>
-      <Snackbar message="You are not connected to a network. Some logs may not be fully up to date." />
+      <Snackbar
+        open={showSnackbar}
+        message="You are not connected to a network. Some logs may not be fully up to date."
+      />
     </BaseScreen>
   );
 }
