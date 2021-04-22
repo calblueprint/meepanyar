@@ -86,9 +86,10 @@ function AddPayment(props: AddPaymentProps) {
                     value={formik.values.amountPaid}
                     error={formik.touched.amountPaid && Boolean(formik.errors.amountPaid)}
                     type='number'
+                    required
                     helperText={formik.touched.amountPaid && formik.errors.amountPaid}
                 />
-                <Button label={'+ ADD PAYMENT'} loading={loading} />
+                <Button label={'+ Add Payment'} loading={loading} fullWidth />
             </form>
         </BaseScreen>
     );

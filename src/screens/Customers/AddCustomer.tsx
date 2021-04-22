@@ -100,7 +100,6 @@ function AddCustomer(props: AddCustomerProps) {
     return <Redirect to={'/customers'} />
   }
 
-  // TODO: Add form input validation and error messaging
   const handleSubmit = (values: any) => {
     const { customerName, customerNumber, selectedMeterType, meterNumber, selectedTariffPlanId } = values;
     setLoading(true);
@@ -110,7 +109,7 @@ function AddCustomer(props: AddCustomerProps) {
     customer.name = customerName;
     customer.customerNumber = parseInt(customerNumber);
     customer.meterType = selectedMeterType;
-    customer.meterNumber = isNaN(parseInt(meterNumber)) ? parseInt(meterNumber) : null;
+    customer.meterNumber = isNaN(parseInt(meterNumber)) ? null : parseInt(meterNumber);
     customer.tariffPlanId = selectedTariffPlanId;
     customer.startingMeterReading = 0;
     customer.startingMeterLastChanged = moment().toISOString();
@@ -206,7 +205,7 @@ function AddCustomer(props: AddCustomerProps) {
             <TextField
               label={'Meter Number'}
               id={'meterNumber'}
-              placeholder={'Input'}
+              placeholder={'e.g. 15'}
               type="number"
               value={formik.values.meterNumber}
               onChange={formik.handleChange}

@@ -111,7 +111,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
           error={formik.touched.meterReadingAmount && Boolean(formik.errors.meterReadingAmount)}
           helperText={formik.touched.meterReadingAmount && formik.errors.meterReadingAmount}
         />
-        <Button label={'Add'} loading={loading} />
+        <Button label={'Add'} loading={loading} fullWidth />
       </form>
     </BaseScreen>
   );

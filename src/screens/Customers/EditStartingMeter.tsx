@@ -26,19 +26,20 @@ interface EditStartingMeterProps extends RouteComponentProps {
     classes: { amountOwedContainer: string; };
 }
 
-const validationSchema = yup.object({
-    startingMeterAmount: yup.number()
-        .min(0, 'Please enter a positive number or 0')
-        .required('Please enter a new starting meter number'),
-    explanation: yup.string().required('Please provide a reason for the change')
-});
-
 function EditStartingMeter(props: EditStartingMeterProps) {
     const { classes } = props;
     const history = useHistory();
     const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
     const userId = useSelector(selectCurrentUserId);
     const [loading, setLoading] = useState(false);
+
+    const validationSchema = yup.object({
+        startingMeterAmount: yup.number()
+            .min(0, 'Please enter a positive number or 0')
+            .not([currentCustomer?.startingMeterReading], 'Starting Meter is currently that value')
+            .required('Please enter a new starting meter number'),
+        explanation: yup.string().required('Please provide a reason for the change')
+    });
 
     const formik = useFormik({
         initialValues: {
@@ -112,7 +113,7 @@ function EditStartingMeter(props: EditStartingMeterProps) {
                     helperText={formik.touched.explanation && formik.errors.explanation}
                     onChange={formik.handleChange}
                 />
-                <Button label={'Update'} loading={loading} />
+                <Button label={'Update'} loading={loading} fullWidth />
             </form>
         </BaseScreen>
     );
