@@ -14,7 +14,10 @@ import * as yup from 'yup';
 
 function EditCustomerInformation() {
   const currentCustomer = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
-  const allCustomerNumbers = useSelector(selectAllCustomersArray).map(customer => customer.customerNumber);
+  const allCustomerNumbers =
+    useSelector(selectAllCustomersArray)
+      .map(customer => customer.customerNumber)
+      .filter(customerNumber => currentCustomer.customerNumber !== customerNumber);
   const history = useHistory();
   const [loading, setLoading] = useState(false);
 
@@ -89,7 +92,7 @@ function EditCustomerInformation() {
             color='primary'
           />
         </div>
-        <Button label={'Save'} loading={loading} />
+        <Button label={'Save'} loading={loading} fullWidth />
       </form>
     </BaseScreen>
   );

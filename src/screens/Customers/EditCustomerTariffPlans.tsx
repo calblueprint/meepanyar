@@ -78,7 +78,7 @@ function EditCustomerTariffPlans(props: EditCustomerTariffPlansProps) {
               divider
             />)}
         </List>
-        <Button onClick={handleSubmit} label='Save' loading={loading} />
+        <Button onClick={handleSubmit} label='Save' loading={loading} fullWidth/>
       </BaseScrollView>
     </BaseScreen>
   );

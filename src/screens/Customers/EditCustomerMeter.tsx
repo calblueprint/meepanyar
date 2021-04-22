@@ -74,7 +74,6 @@ function EditCustomerMeter() {
                         required
                         value={formik.values.meterType}
                     >
-                        <MenuItem hidden value={MeterType.INACTIVE}>Inactive</MenuItem>
                         <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
                         <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
                         <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
@@ -86,14 +85,14 @@ function EditCustomerMeter() {
                     id={'meterNumber'}
                     placeholder='Input'
                     value={formik.values.meterNumber}
-                    disabled={formik.values.meterType === MeterType.INACTIVE || formik.values.meterType === MeterType.NO_METER}
-                    required={formik.values.meterType !== MeterType.INACTIVE && formik.values.meterType !== MeterType.NO_METER}
+                    disabled={formik.values.meterType === MeterType.NO_METER}
+                    required={formik.values.meterType !== MeterType.NO_METER}
                     error={formik.touched.meterNumber && Boolean(formik.errors.meterNumber)}
                     helperText={formik.touched.meterNumber && formik.errors.meterNumber}
                     onChange={formik.handleChange}
                 />
 
-                <Button label='Next' />
+                <Button label='Next' fullWidth />
             </form>
         </BaseScreen>
     );
