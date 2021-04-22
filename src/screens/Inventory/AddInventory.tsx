@@ -33,19 +33,6 @@ const styles = () =>
 
 const NEW_PRODUCT_LABEL = '+ New Inventory Item';
 
-const validationSchema = yup.object({
-  selectedProductId: yup.string().required('Must select a product'),
-  startingAmount: yup.number().min(0, 'Please enter a valid amount').required('Must enter an amount'),
-  newProductName: yup.string().when('selectedProductId', {
-    is: NEW_PRODUCT_LABEL,
-    then: yup.string().required('Must enter new product name'),
-  }),
-  unit: yup.string().when('selectedProductId', {
-    is: NEW_PRODUCT_LABEL,
-    then: yup.string().required('Must enter unit name'),
-  }),
-});
-
 interface AddInventoryProps extends RouteComponentProps {
   classes: { newProductContainer: string };
 }
@@ -68,6 +55,18 @@ function AddInventory(props: AddInventoryProps) {
 
   const [loading, setLoading] = useState(false);
 
+  const validationSchema = yup.object({
+    selectedProductId: yup.string().required(intl(words.must_select_a_product)),
+    startingAmount: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.must_enter_an_amount)),
+    newProductName: yup.string().when('selectedProductId', {
+      is: NEW_PRODUCT_LABEL,
+      then: yup.string().required(intl(words.must_enter_new_product_name)),
+    }),
+    unit: yup.string().when('selectedProductId', {
+      is: NEW_PRODUCT_LABEL,
+      then: yup.string().required(intl(words.must_enter_unit_name)),
+    }),
+  });
   const formik = useFormik({
     initialValues: {
       selectedProductId: '',
@@ -116,7 +115,7 @@ function AddInventory(props: AddInventoryProps) {
   const filter = createFilterOptions<string>();
 
   return (
-    <BaseScreen title={intl(words.new_inventory_item)} leftIcon="backNav">
+    <BaseScreen title={intl(words.new_inventory)} leftIcon="backNav">
       <form onSubmit={formik.handleSubmit} noValidate>
         <Autocomplete
           aria-required

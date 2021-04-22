@@ -101,7 +101,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           id={'amount-purchased'}
           value={purchaseRequest.amountPurchased}
         />
-        <TextField label={intl(words.amount_spent_paid)} currency disabled id={'amount-spent'} value={purchaseRequest.amountSpent} />
+        <TextField label={intl(words.amount_spent_paid, ' ')} currency disabled id={'amount-spent'} value={purchaseRequest.amountSpent} />
         <TextField label={intl(words.notes)} disabled id={'notes'} value={purchaseRequest.notes || intl(words.none)} />
         <TextField
           label={intl(words.submitted_by_person)}

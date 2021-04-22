@@ -23,9 +23,6 @@ const styles = (theme: Theme) =>
     },
   });
 
-const validationSchema = yup.object({
-  updatedAmount: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
-});
 
 interface CreateInventoryUpdateProps extends RouteComponentProps {
   classes: { headerContainer: string };
@@ -40,6 +37,9 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const product = useSelector(selectCurrentInventoryProduct);
   const [loading, setLoading] = useState(false);
 
+  const validationSchema = yup.object({
+    updatedAmount: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.please_enter_an_amount)),
+  });
   const formik = useFormik({
     initialValues: {
       updatedAmount: '',
@@ -79,7 +79,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
             required
             type="number"
             unit={product.unit}
-            label={intl(words.last_updated_amount)}
+            label={intl(words.updated_amount)}
             id={'updatedAmount'}
             value={formik.values.updatedAmount}
             onChange={formik.handleChange}
