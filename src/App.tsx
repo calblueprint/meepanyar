@@ -69,8 +69,8 @@ function App() {
       <AuthenticatedRoute path={'/customers/customer/starting-meter-reading/edit'} component={EditStartingMeter} exact />
       <AuthenticatedRoute path={'/customers/customer/records'} component={CustomerRecords} exact />
       <AuthenticatedRoute path="/financial-summaries" component={FinancialSummariesMain} />
-      <AuthenticatedRoute path="/reports" component={ReportsMain} />
-      <AuthenticatedRoute path="/reports/report" component={Report} />
+      <AuthenticatedRoute path="/reports" component={ReportsMain} exact />
+      <AuthenticatedRoute path="/reports/report" component={Report} exact />
       {
         //TODO: change path to ~"/financial-summaries/financial-summary/payment/create" once other screens are built out
       }
