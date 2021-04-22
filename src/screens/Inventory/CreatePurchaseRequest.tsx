@@ -1,8 +1,10 @@
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { useFormik } from 'formik';
 import moment from 'moment';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
+import * as yup from 'yup';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
@@ -26,6 +28,13 @@ const styles = (theme: Theme) =>
     },
   });
 
+const validationSchema = yup.object({
+  amountPurchased: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
+  amountSpent: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
+  notes: yup.string(),
+  receipt: yup.string().required('Please upload a receipt image'),
+});
+
 interface CreatePurchaseRequestProps extends RouteComponentProps {
   classes: { headerContainer: string };
   location: any;
@@ -38,35 +47,31 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const inventory = useSelector(selectCurrentInventory);
   const product = useSelector(selectCurrentInventoryProduct);
 
-  const [amountPurchased, setAmountPurchased] = useState(props.location.state?.amountPurchased || '');
-  const [amountSpent, setAmountSpent] = useState(props.location.state?.amountSpent || '');
-  const [notes, setNotes] = useState(props.location.state?.notes || '');
   const [submitIsLoading, setSubmitIsLoading] = useState(false);
   const goBack = props.location.state?.goBack || -1;
 
   const photoUri = props.location.state?.photo;
+
+  const formik = useFormik({
+    initialValues: {
+      amountPurchased: (props.location.state?.amountPurchased as string) || '',
+      amountSpent: (props.location.state?.amountSpent as string) || '',
+      notes: (props.location.state?.notes as string) || '',
+      receipt: (props.location.state?.photo as string) || '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values);
+    },
+  });
 
   // Redirect to InventoryMain if undefined
   if (!userId || !inventory || !product) {
     return <Redirect to={'/inventory'} />;
   }
 
-  // TODO @wangannie: add better edge case handling
-  const handleAmountPurchasedInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAmountPurchased((event.target.value as string) || '');
-  };
-
-  const handleAmountSpentInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setAmountSpent((event.target.value as string) || '');
-  };
-
-  const handleNotesInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setNotes(event.target.value as string);
-  };
-
-  const handleSubmit = (event: React.MouseEvent) => {
-    // Prevent page refresh on submit
-    event.preventDefault();
+  const handleSubmit = (values: any) => {
+    const { amountPurchased, amountSpent, notes } = values;
     setSubmitIsLoading(true);
     // Make a deep copy of an empty purchase request record
     const purchaseRequest = JSON.parse(JSON.stringify(EMPTY_PURCHASE_REQUEST));
@@ -95,42 +100,51 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             currentQuantity={inventory.currentQuantity}
           />
         </div>
-        <form>
+        <form onSubmit={formik.handleSubmit} noValidate>
           <TextField
             required
             type="number"
-            value={amountPurchased}
             label={`Amount Purchased`}
-            id={'amount-purchased'}
+            id={'amountPurchased'}
             placeholder="e.g. 5"
             unit={product.unit}
-            onChange={handleAmountPurchasedInput}
+            value={formik.values.amountPurchased}
+            onChange={formik.handleChange}
+            error={formik.touched.amountPurchased && Boolean(formik.errors.amountPurchased)}
+            helperText={formik.touched.amountPurchased && formik.errors.amountPurchased}
           />
           <TextField
             required
             type="number"
             currency
-            value={amountSpent}
             label={'Amount Spent'}
-            id={'amount-spent'}
+            id={'amountSpent'}
             placeholder="e.g. 5"
-            onChange={handleAmountSpentInput}
+            value={formik.values.amountSpent}
+            onChange={formik.handleChange}
+            error={formik.touched.amountSpent && Boolean(formik.errors.amountSpent)}
+            helperText={formik.touched.amountSpent && formik.errors.amountSpent}
           />
           <TextField
             placeholder="Enter Notes..."
-            value={notes}
             label={'Notes'}
             id={'notes'}
-            onChange={handleNotesInput}
+            value={formik.values.notes}
+            onChange={formik.handleChange}
+            error={formik.touched.notes && Boolean(formik.errors.notes)}
+            helperText={formik.touched.notes && formik.errors.notes}
           />
           <CameraButton
-            preservedState={{ amountPurchased, amountSpent, notes }}
+            preservedState={formik.values}
             goBack={goBack + 1}
-            id="upload-receipt"
+            id="receipt"
             label="Receipt"
             photoUri={photoUri}
+            required
+            error={formik.touched.receipt && Boolean(formik.errors.receipt)}
+            helperText={formik.touched.receipt && formik.errors.receipt}
           />
-          <Button fullWidth loading={submitIsLoading} label="Submit" onClick={handleSubmit} />
+          <Button fullWidth loading={submitIsLoading} label="Submit" />
         </form>
       </BaseScrollView>
     </BaseScreen>
