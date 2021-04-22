@@ -4,6 +4,8 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import { TariffPlanRecord } from '../../../lib/airtable/interface';
 import { useHistory } from 'react-router';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 
 const styles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,6 +23,7 @@ interface TariffPlanProps {
 }
 
 function TariffPlanCard(props: TariffPlanProps) {
+  const intl = useInternationalization(); 
   const classes = styles(props);
   const history = useHistory();
   const { tariffPlan } = props;
@@ -32,16 +35,16 @@ function TariffPlanCard(props: TariffPlanProps) {
     <div className={classes.description}>
       <Typography variant='body2'>
         {/* Right now just hardcoding. We need to add a lookup field to Tariff Plans for this */}
-        Customers: {tariffPlan.numberOfCustomers}
+        {intl(words.customers)}: {tariffPlan.numberOfCustomers}
       </Typography>
       <Typography variant='body2'>
-        Fixed Payment: {tariffPlan.fixedTariff} Ks
+        {intl(words.fixed_payment)}: {tariffPlan.fixedTariff} Ks
       </Typography>
       <Typography variant='body2'>
-        Per Unit Payment: {tariffPlan.tariffByUnit} Ks
+        {intl(words.per_unit_payment)}: {tariffPlan.tariffByUnit} Ks
       </Typography>
       <Typography variant='body2'>
-        Free Units:  {tariffPlan.freeUnits} Kwh
+        {intl(words.free_units)}:  {tariffPlan.freeUnits} Kwh
       </Typography>
     </div>)
 

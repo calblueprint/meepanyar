@@ -7,6 +7,8 @@ import ListItemWrapper from '../../components/ListItemWrapper';
 import { useSelector } from 'react-redux';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { TariffPlanRecord } from '../../lib/airtable/interface';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = makeStyles((theme: Theme) =>
   createStyles({
@@ -17,20 +19,21 @@ const styles = makeStyles((theme: Theme) =>
   }));
 
 function TariffPlans() {
+  const intl = useInternationalization(); 
   const classes = styles();
 
   // TODO: Add customer looking for tariff plans and render tariff plans without customers separately
   const tariffPlans: TariffPlanRecord[] = useSelector(selectAllTariffPlansArray) || [];
 
   return (
-    <BaseScreen title="Tariff Plans" leftIcon="backNav">
+    <BaseScreen title={intl(words.tariff_plan)} leftIcon="backNav">
       <List style={{ padding: 0 }}>
         <ListItem disableGutters>
-          <ListItemText primary='Used' primaryTypographyProps={{ color: 'inherit' }} className={classes.header} />
+          <ListItemText primary={intl(words.used)} primaryTypographyProps={{ color: 'inherit' }} className={classes.header} />
         </ListItem>
         {tariffPlans.map((tariffPlan: TariffPlanRecord) => <TariffPlanCard key={tariffPlan.id} tariffPlan={tariffPlan} editOnClick />)}
         <ListItem disableGutters>
-          <ListItemText primary='Unused' className={classes.header} />
+          <ListItemText primary={intl(words.unused)} className={classes.header} />
         </ListItem>
       </List>
     </BaseScreen>
