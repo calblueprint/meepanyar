@@ -120,6 +120,8 @@ export interface FinancialSummaryRecord {
   totalAmountCollected: number;
   totalAmountSpent: number;
   totalProfit: number;
+  inventoryAmountApproved: number;
+  inventoryAmountDenied: number;
   period: string;
   bankSlip?: Airtable.Attachment[];
   isapproved: boolean;
