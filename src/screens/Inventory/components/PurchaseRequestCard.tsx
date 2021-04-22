@@ -3,6 +3,7 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
+import SyncIcon from '@material-ui/icons/Sync';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -17,6 +18,7 @@ import {
 import { RootState } from '../../../lib/redux/store';
 import { selectCurrentUserId, selectCurrentUserIsAdmin, selectIsOnline } from '../../../lib/redux/userData';
 import { reviewPurchaseRequest } from '../../../lib/utils/inventoryUtils';
+import { isOfflineId } from '../../../lib/utils/offlineUtils';
 import { getPurchaseRequestReviewButtons } from '../PurchaseRequest';
 
 const styles = (theme: Theme) =>
@@ -43,10 +45,24 @@ const styles = (theme: Theme) =>
       minWidth: 70,
       justifyContent: 'flex-end',
     },
+    headingRowContainer: {
+      display: 'inline-flex',
+    },
+    syncIcon: {
+      marginLeft: theme.spacing(1),
+      color: theme.palette.text.primary,
+    },
   });
 
 interface PurchaseRequestCardProps {
-  classes: { cardContent: string; cardContainer: string; leftContent: string; cardActions: string };
+  classes: {
+    cardContent: string;
+    cardContainer: string;
+    leftContent: string;
+    cardActions: string;
+    headingRowContainer: string;
+    syncIcon: string;
+  };
   purchaseRequest: PurchaseRequestRecord;
   showSnackbarCallback: () => void;
 }
@@ -93,9 +109,12 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
       >
         <CardContent className={classes.cardContent}>
           <div className={classes.leftContent}>
-            <Typography color="textPrimary" variant="h2">
-              {product.name}
-            </Typography>
+            <div className={classes.headingRowContainer}>
+              <Typography color="textPrimary" variant="h2">
+                {product.name}
+              </Typography>
+              {isOfflineId(purchaseRequest.id) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
+            </div>
             <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(
               purchaseRequest.createdAt,
             )}`}</Typography>
