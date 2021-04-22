@@ -20,6 +20,8 @@ import { EMPTY_PURCHASE_REQUEST } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,22 +30,13 @@ const styles = (theme: Theme) =>
     },
   });
 
-const validationSchema = yup.object({
-  amountPurchased: yup
-    .number()
-    .positive('Please enter a valid amount greater than 0')
-    .required('Please enter an amount'),
-  amountSpent: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
-  notes: yup.string(),
-  receipt: yup.string().required('Please upload a receipt image'),
-});
-
 interface CreatePurchaseRequestProps extends RouteComponentProps {
   classes: { headerContainer: string };
   location: any;
 }
 
 function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const history = useHistory();
   const userId = useSelector(selectCurrentUserId);
@@ -55,6 +48,12 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
 
   const photoUri = props.location.state?.photo;
 
+  const validationSchema = yup.object({
+    amountPurchased: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.please_enter_an_amount)),
+    amountSpent: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.please_enter_an_amount)),
+    notes: yup.string(),
+    receipt: yup.string().required(intl(words.please_upload_a_receipt_image)),
+  });
   const formik = useFormik({
     initialValues: {
       amountPurchased: String(props.location.state?.amountPurchased) || '',
@@ -94,7 +93,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   };
 
   return (
-    <BaseScreen title="Inventory Purchase" leftIcon="backNav">
+    <BaseScreen title={intl(words.inventory_purchase)} leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.headerContainer}>
           <InventoryInfo
@@ -107,9 +106,9 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
           <TextField
             required
             type="number"
-            label={`Amount Purchased`}
+            label={intl(words.amount_purchased)}
             id={'amountPurchased'}
-            placeholder="e.g. 5"
+            placeholder={intl(words.eg_x, "5")}
             unit={product.unit}
             value={formik.values.amountPurchased}
             onChange={formik.handleChange}
@@ -120,17 +119,17 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             required
             type="number"
             currency
-            label={'Amount Spent'}
+            label={intl(words.amount_spent)}
             id={'amountSpent'}
-            placeholder="e.g. 5"
+            placeholder={intl(words.eg_x, "5")}
             value={formik.values.amountSpent}
             onChange={formik.handleChange}
             error={formik.touched.amountSpent && Boolean(formik.errors.amountSpent)}
             helperText={formik.touched.amountSpent && formik.errors.amountSpent}
           />
           <TextField
-            placeholder="Enter notes..."
-            label={'Notes'}
+            placeholder={intl(words.enter_notes)}
+            label={intl(words.notes)}
             id={'notes'}
             value={formik.values.notes}
             onChange={formik.handleChange}
@@ -141,13 +140,13 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             preservedState={formik.values}
             goBack={goBack + 1}
             id="receipt"
-            label="Receipt"
+            label={intl(words.receipt)}
             photoUri={photoUri}
             required
             error={formik.touched.receipt && Boolean(formik.errors.receipt)}
             helperText={formik.touched.receipt && formik.errors.receipt}
           />
-          <Button fullWidth loading={submitIsLoading} label="Submit" />
+          <Button fullWidth loading={submitIsLoading} label={intl(words.submit)} />
         </form>
       </BaseScrollView>
     </BaseScreen>

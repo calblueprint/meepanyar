@@ -5,6 +5,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -33,6 +35,7 @@ interface InventoryCardProps {
 }
 
 function InventoryCard(props: InventoryCardProps) {
+  const intl = useInternationalization(); 
   const { classes, lastUpdated, productId, currentQuantity } = props;
   const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
@@ -41,9 +44,9 @@ function InventoryCard(props: InventoryCardProps) {
       <CardContent className={classes.cardContent}>
         <div className={classes.leftContent}>
           <Typography  variant="h2">{product.name}</Typography>
-          <Typography variant="body1" color="textSecondary">{`Last Updated: ${lastUpdated}`} </Typography>
+          <Typography variant="body1" color="textSecondary">{`${intl(words.last_updated_date, ' ')}: ${lastUpdated}`} </Typography>
         </div>
-        <Typography variant="h2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
+        <Typography variant="h2">{`${currentQuantity} ${product.unit}(${intl(words.s)})`}</Typography>
       </CardContent>
       <CardActions>
         <IconButton edge="end" size="small">

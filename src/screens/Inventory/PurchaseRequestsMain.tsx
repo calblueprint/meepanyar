@@ -14,6 +14,8 @@ import {
 import { store } from '../../lib/redux/store';
 import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import PurchaseRequestCard from './components/PurchaseRequestCard';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -29,6 +31,7 @@ interface PurchaseRequestsProps extends RouteComponentProps {
 
 // TODO @wangannie: address empty state
 function PurchaseRequests(props: PurchaseRequestsProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const [tabValue, setTabValue] = React.useState(0);
 
@@ -79,7 +82,7 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
   );
 
   return (
-    <BaseScreen title="All Purchases" leftIcon="backNav" searchAction={handleSearchChange} searchPlaceholder={"Search by inventory name"} searchExit={exitSearch}>
+    <BaseScreen title={words.all_purchases} leftIcon="backNav" searchAction={handleSearchChange} searchPlaceholder={intl(words.search_by_inventory_name)} searchExit={exitSearch}>
       {userIsAdmin && (
         <Tabs
           className={classes.tabs}
@@ -88,12 +91,12 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
           onChange={handleTabChange}
           aria-label="filter purchase requests"
         >
-          <Tab label="All" id="tab-all" />
+          <Tab label={intl(words.view_all)} id="tab-all" />
           <Tab
             style={{ overflow: 'visible' }}
             label={
               <Badge color="error" badgeContent={pendingCount}>
-                Pending
+                {intl(words.pending)}
               </Badge>
             }
             id="tab-pending"
