@@ -1,13 +1,12 @@
 import { createStyles, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import WifiIcon from '@material-ui/icons/Wifi';
-import WifiOffIcon from '@material-ui/icons/WifiOff';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
+import CloudQueueIcon from '@material-ui/icons/CloudQueue';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
-import Snackbar from '../../components/Snackbar';
 import { SiteRecord } from '../../lib/airtable/interface';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { selectCustomersToCollect, selectCustomersToMeter } from '../../lib/redux/customerData';
@@ -51,7 +50,7 @@ function Home(props: HomeProps) {
       <div className={classes.header}>
         <SiteMenu currentSite={currentSite} sites={allSites} />
         <div className={classes.network}>
-          {isOnline ? <WifiIcon color="primary" /> : <WifiOffIcon color="secondary" />}
+          {isOnline ? <CloudQueueIcon color="primary" /> : <CloudOffIcon color="secondary" />}
           <Typography className={classes.network} variant="body1">
             Last Connected to Network <br />
             {lastUpdated}
@@ -78,7 +77,6 @@ function Home(props: HomeProps) {
       <Link to={'/financial-summary'}>
         <HomeMenuItem label="Financial Summary" noBadge={true} />
       </Link>
-      <Snackbar message="You are currently disconnected. Payments will be uploaded after you reconnect." />
     </BaseScreen>
   );
 }
