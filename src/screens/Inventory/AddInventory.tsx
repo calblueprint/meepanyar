@@ -31,8 +31,6 @@ const styles = () =>
     },
   });
 
-const NEW_PRODUCT_LABEL = '+ New Inventory Item';
-
 interface AddInventoryProps extends RouteComponentProps {
   classes: { newProductContainer: string };
 }
@@ -45,6 +43,7 @@ function AddInventory(props: AddInventoryProps) {
   const userId = useSelector(selectCurrentUserId);
   const siteId = useSelector(selectCurrentSiteId);
   const history = useHistory();
+  const NEW_PRODUCT_LABEL = `+ ${intl(words.new_inventory_item)}`;
 
   // Product IDs for items that the site already has inventory for
   const currentSiteProductIds = siteInventory.map((inventory: InventoryRecord) => inventory.productId);

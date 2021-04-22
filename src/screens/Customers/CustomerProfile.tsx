@@ -76,7 +76,7 @@ function CustomerProfile(props: CustomerProps) {
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
-  const startingReading : number = customer.startingMeterReading;
+  const startingReading: number = customer.startingMeterReading;
   const periodUsage: number = currReading ? getPeriodUsage(currReading, startingReading) : 0;
   const amountBilled: number = currReading ? getAmountBilled(currReading) : 0;
 
@@ -89,7 +89,7 @@ function CustomerProfile(props: CustomerProps) {
     { number: amountBilled.toString(), label: 'Amount Billed', unit: 'kS' },
   ];
   let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
-  let readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.reading.toString() : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
+  let readingInfo: CardPropsInfo[] = [{ number: currReading ? currReading.reading.toString() : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
 
   const getAddButton = (path: string) => {
     //TODO: separate into base component @wangannie
@@ -109,7 +109,7 @@ function CustomerProfile(props: CustomerProps) {
   };
 
   const getPaymentInfo = () => {
-    if (customer.meterType === MeterType.INACTIVE) {
+    if (!customer.isactive) {
       balanceInfo = [{ number: UNDEFINED_AMOUNT, label: 'Remaining Balance', unit: '' }];
       return (
         <OutlinedCardList info={balanceInfo} readOnly />
@@ -136,7 +136,7 @@ function CustomerProfile(props: CustomerProps) {
         { number: UNDEFINED_AMOUNT, label: 'Ending Meter', unit: '' },
         { number: UNDEFINED_AMOUNT, label: 'Amount Billed', unit: '' },
       ];
-    } else if (customer.meterType === MeterType.INACTIVE) {
+    } else if (!customer.isactive) {
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
@@ -156,25 +156,25 @@ function CustomerProfile(props: CustomerProps) {
         />
         <div className={classes.meterInfoGrid}>
           <div className={classes.meterInfoCol}>
-            { /* Top Left */ }
+            { /* Top Left */}
             <OutlinedCardList
               info={[meterInfo[0]]}
               readOnly={topLeftReadOnly}
               editPath={topLeftReadOnly ? undefined : `${match.url}/starting-meter-reading/edit`}
             />
-            { /* Bottom Left */ }
+            { /* Bottom Left */}
             <OutlinedCardList
               info={[meterInfo[1]]}
               readOnly
             />
           </div>
           <div className={classes.meterInfoCol}>
-            { /* Top Right */ }
+            { /* Top Right */}
             <OutlinedCardList
               info={[meterInfo[2]]}
               readOnly
             />
-            { /* Bottom Right */ }
+            { /* Bottom Right */}
             <OutlinedCardList
               info={[meterInfo[3]]}
               readOnly
@@ -187,7 +187,7 @@ function CustomerProfile(props: CustomerProps) {
 
   const getTariffInfo = () => {
     let tariffReadOnly;
-    if (customer.meterType === MeterType.INACTIVE) {
+    if (!customer.isactive) {
       tariffInfo = [
         { number: UNDEFINED_AMOUNT, label: 'Fixed\nTariff', unit: '' },
         { number: UNDEFINED_AMOUNT, label: 'Unit\nTariff', unit: '' },

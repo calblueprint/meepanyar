@@ -58,7 +58,6 @@ export enum MeterType {
   ANALOG_METER = 'Analog Meter',
   SMART_METER = 'Smart Meter',
   NO_METER = 'No Meter',
-  INACTIVE = 'Inactive'
 }
 
 export const EMPTY_CUSTOMER: CustomerRecord = {

@@ -56,8 +56,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   });
   const formik = useFormik({
     initialValues: {
-      amountPurchased: (props.location.state?.amountPurchased as string) || '',
-      amountSpent: (props.location.state?.amountSpent as string) || '',
+      amountPurchased: String(props.location.state?.amountPurchased) || '',
+      amountSpent: String(props.location.state?.amountSpent) || '',
       notes: (props.location.state?.notes as string) || '',
       receipt: (props.location.state?.photo as string) || '',
     },

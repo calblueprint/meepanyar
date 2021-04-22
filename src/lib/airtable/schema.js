@@ -131,6 +131,8 @@ export const Columns = {
 		lastUpdated: {name:`Last Updated`, type:`date`},
 		issubmitted: {name:`isSubmitted`, type:`checkbox`},
 		id: {name:`ID`, type:`formula`},
+		inventoryAmountApproved: {name:`Inventory Amount Approved`, type:`number`},
+		inventoryAmountDenied: {name:`Inventory Amount Denied`, type:`number`},
 	},
 	"Products": {
 		primaryKey: {name:`Primary Key`, type:`formula`},

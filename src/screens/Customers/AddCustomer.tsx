@@ -1,4 +1,4 @@
-import { createStyles, FormControl, InputLabel, MenuItem, Select, Theme } from '@material-ui/core';
+import { createStyles, FormControl, InputLabel, MenuItem, Select, Theme, FormHelperText } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -6,16 +6,18 @@ import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
-import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
 import { SiteRecord } from '../../lib/airtable/interface';
 import { createCustomer } from '../../lib/airtable/request';
 import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
-import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
+import { EMPTY_CUSTOMER, MeterType, selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import TariffPlanCard from '../Profile/components/TariffPlanCard';
 import moment from 'moment';
+import * as yup from 'yup';
+import { useFormik } from 'formik';
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -56,17 +58,41 @@ interface AddCustomerProps extends RouteComponentProps {
 function AddCustomer(props: AddCustomerProps) {
   const { classes } = props;
   const history = useHistory();
+  const allCustomerNumbers = useSelector(selectAllCustomersArray).map(customer => customer.customerNumber);
 
-  const [customerName, setCustomerName] = useState("");
-  const [customerNumber, setCustomerNumber] = useState("");
-  const [selectedMeterType, setSelectedMeterType] = useState(MeterType.INACTIVE);
-  const [meterNumber, setMeterNumber] = useState(""); // TODO: @julianrkung Look into constraints on meter number input.
-  const [selectedTariffPlanId, setSelectedTariffPlanId] = useState("");
+  const validationSchema = yup.object({
+    customerName: yup.string().required('Name can not be blank'),
+    selectedMeterType:
+      yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], 'Meter Type must be one of Smart, Analog, or No Meter'),
+    selectedTariffPlanId: yup.string().required('Must select a tariff plan'),
+    meterNumber: yup.mixed().when('selectedMeterType', {
+      is: (MeterType.SMART_METER || MeterType.ANALOG_METER),
+      then: yup.mixed().required('Please enter a meter number')
+    }),
+    customerNumber: yup.number()
+      .min(0, 'Please enter a positive number')
+      .notOneOf(allCustomerNumbers, 'That customer number is used by another customer')
+      .required('Customer number is required')
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      customerName: '',
+      customerNumber: '',
+      selectedMeterType: MeterType.NO_METER,
+      meterNumber: '',
+      selectedTariffPlanId: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values);
+    }
+  })
+
   const [loading, setLoading] = useState(false);
-
   const currentSite = useSelector(selectCurrentSiteInformation);
   const tariffPlans = useSelector(selectAllTariffPlansArray);
-  tariffPlans.sort(function(a, b) {
+  tariffPlans.sort(function (a, b) {
     return b.numberOfCustomers - a.numberOfCustomers;
   });
 
@@ -74,34 +100,19 @@ function AddCustomer(props: AddCustomerProps) {
     return <Redirect to={'/customers'} />
   }
 
-  const handleSelectTariffPlan = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSelectedTariffPlanId(event.target.value as string);
-  }
-
-  const handleSelectMeterType = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setSelectedMeterType(event.target.value as MeterType);
-  }
-
-  // TODO: Add form input validation and error messaging
-  const handleSubmit = (event: React.MouseEvent) => {
-
-    // Set button as loading
-    // TODO: error handling
+  const handleSubmit = (values: any) => {
+    const { customerName, customerNumber, selectedMeterType, meterNumber, selectedTariffPlanId } = values;
     setLoading(true);
-
-    // Prevent page refresh on submit
-    event.preventDefault();
 
     // Make a deep copy of an empty customer record
     const customer = JSON.parse(JSON.stringify(EMPTY_CUSTOMER));
     customer.name = customerName;
     customer.customerNumber = parseInt(customerNumber);
     customer.meterType = selectedMeterType;
-    customer.meterNumber = parseInt(meterNumber);
+    customer.meterNumber = isNaN(parseInt(meterNumber)) ? null : parseInt(meterNumber);
     customer.tariffPlanId = selectedTariffPlanId;
     customer.startingMeterReading = 0;
     customer.startingMeterLastChanged = moment().toISOString();
-    customer.meterType = MeterType.ANALOG_METER; // TODO: Change so you pick meter
 
     // Add other info necessary to create the Airtable record
     createCustomer({
@@ -113,23 +124,16 @@ function AddCustomer(props: AddCustomerProps) {
     });
   }
 
-  const handleNameInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setCustomerName(event.target.value as string);
-  }
-
-  const handleMeterNumberInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setMeterNumber(event.target.value as string);
-  }
-
-  const handleCustomerNumberInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setCustomerNumber(event.target.value as string);
-  }
-
   const getTariffPlans = () => {
     let availableTariffPlans = tariffPlans;
-    availableTariffPlans = availableTariffPlans.filter((plan) => plan.meterTypes && plan.meterTypes.includes(selectedMeterType));
+    availableTariffPlans = availableTariffPlans.filter((plan) => plan.meterTypes && plan.meterTypes.includes(formik.values.selectedMeterType));
     return (
-      <Select onChange={handleSelectTariffPlan} label={'Tariff Plan'} value={selectedTariffPlanId}>
+      <Select
+        id='selectedTariffPlanId'
+        onChange={(event) => formik.setFieldValue('selectedTariffPlanId', event.target.value)} label={'Tariff Plan'}
+        value={formik.values.selectedTariffPlanId}
+        error={formik.touched.selectedTariffPlanId && Boolean(formik.errors.selectedTariffPlanId)}
+      >
         {availableTariffPlans.map((plan) =>
           <MenuItem key={plan.id} value={plan.id}>
             <TariffPlanCard tariffPlan={plan} />
@@ -142,26 +146,30 @@ function AddCustomer(props: AddCustomerProps) {
   return (
     <BaseScreen title="Add New Customer" leftIcon="backNav">
       <BaseScrollView>
-        <form noValidate onSubmit={() => false}>
+        <form noValidate onSubmit={formik.handleSubmit}>
           <div className={classes.twoColumnContainer}>
             <div style={{ marginRight: 10, flex: 2 }}>
               <TextField
                 label={'Name'}
-                id={'name'}
+                id={'customerName'}
                 placeholder={'e.g. Tom'}
-                onChange={handleNameInput}
-                value={customerName}
+                onChange={formik.handleChange}
+                value={formik.values.customerName}
+                error={formik.touched.customerName && Boolean(formik.errors.customerName)}
+                helperText={formik.touched.customerName && formik.errors.customerName}
                 required
               />
             </div>
             <div style={{ flex: 1 }}>
               <TextField
                 label={'Number'}
-                id={'number'}
+                id={'customerNumber'}
                 placeholder={'e.g. 12'}
                 type="number"
-                onChange={handleCustomerNumberInput}
-                value={customerNumber}
+                onChange={formik.handleChange}
+                value={formik.values.customerNumber}
+                error={formik.touched.customerNumber && Boolean(formik.errors.customerNumber)}
+                helperText={formik.touched.customerNumber && formik.errors.customerNumber}
                 required
               />
             </div>
@@ -173,8 +181,20 @@ function AddCustomer(props: AddCustomerProps) {
               className={classes.formControl}
             >
               <InputLabel>Meter Type</InputLabel>
-              <Select onChange={handleSelectMeterType} label={'Meter Type'} value={selectedMeterType}>
-                <MenuItem hidden value={MeterType.INACTIVE}>Inactive</MenuItem>
+              <Select
+                onChange={(event) => {
+                  const meterType = event.target.value as string;
+                  formik.setFieldValue('selectedMeterType', meterType)
+
+                  // Clear the meterNumber if NO_METER is selected
+                  if (meterType === MeterType.NO_METER) {
+                    formik.setFieldValue('meterNumber', '')
+                  }
+                }}
+                label={'Meter Type'}
+                id='selectedMeterType'
+                value={formik.values.selectedMeterType}
+              >
                 <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
                 <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
                 <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
@@ -184,31 +204,32 @@ function AddCustomer(props: AddCustomerProps) {
           <div className={classes.textContainer}>
             <TextField
               label={'Meter Number'}
-              id={'meter-number'}
-              placeholder={'Input'}
+              id={'meterNumber'}
+              placeholder={'e.g. 15'}
               type="number"
-              value={meterNumber}
-              onChange={handleMeterNumberInput}
-              disabled={selectedMeterType === MeterType.INACTIVE || selectedMeterType === MeterType.NO_METER}
-              required={selectedMeterType !== MeterType.INACTIVE && selectedMeterType !== MeterType.NO_METER}
+              value={formik.values.meterNumber}
+              onChange={formik.handleChange}
+              error={formik.touched.meterNumber && Boolean(formik.errors.meterNumber)}
+              helperText={formik.touched.meterNumber && formik.errors.meterNumber}
+              disabled={formik.values.selectedMeterType === MeterType.NO_METER}
+              required={formik.values.selectedMeterType !== MeterType.NO_METER}
             />
           </div>
           <div className={classes.selectContainer}>
             <FormControl
               variant="outlined"
-              disabled={selectedMeterType === MeterType.INACTIVE}
-              required={selectedMeterType !== MeterType.INACTIVE}
-              className={ selectedMeterType === MeterType.INACTIVE ? classes.disabledFormControl : classes.formControl}
+              required
+              className={classes.formControl}
             >
               <InputLabel>Tariff Plan</InputLabel>
               {getTariffPlans()}
+              <FormHelperText error>{formik.touched.selectedTariffPlanId && formik.errors.selectedTariffPlanId}</FormHelperText>
             </FormControl>
           </div>
           <div className={classes.buttonContainer}>
             <div className={classes.button}>
               <Button
                 label={'Add'}
-                onClick={handleSubmit}
                 fullWidth
                 loading={loading}
               />
