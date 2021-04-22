@@ -44,7 +44,7 @@ function InventoryCard(props: InventoryCardProps) {
       <CardContent className={classes.cardContent}>
         <div className={classes.leftContent}>
           <Typography  variant="h2">{product.name}</Typography>
-          <Typography variant="body1" color="textSecondary">{`${intl(words.last_updated_date)}: ${lastUpdated}`} </Typography>
+          <Typography variant="body1" color="textSecondary">{`${intl(words.last_updated_date, ' ')}: ${lastUpdated}`} </Typography>
         </div>
         <Typography variant="h2">{`${currentQuantity} ${product.unit}(${intl(words.s)})`}</Typography>
       </CardContent>
