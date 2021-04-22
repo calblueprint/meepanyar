@@ -16,6 +16,7 @@ import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../lib/air
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
+import { selectIsOnline } from '../../lib/redux/userData';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getTariffPlanByCustomer, isReadingFromLatestPeriod } from '../../lib/utils/customerUtils';
 import { isOfflineId } from '../../lib/utils/offlineUtils';
 const styles = (theme: Theme) =>
@@ -58,6 +59,7 @@ function CustomerProfile(props: CustomerProps) {
   const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
   const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
   const history = useHistory();
+  const isOnline = useSelector(selectIsOnline);
 
   if (customer === EMPTY_CUSTOMER) {
     return <Redirect to={'/customers'} />;
@@ -236,7 +238,11 @@ function CustomerProfile(props: CustomerProps) {
           {getReadingInfo()}
         </div>
       </BaseScrollView>
-      <Snackbar message="You are currently disconnected. Customer updates will be recorded after you reconnect." />
+      {/* Show the snackbar whenever the user is offline, regardless of what actions they took, if any */}
+      <Snackbar
+        open={!isOnline}
+        message="You are not connected to a network. Customer updates will be recorded after you reconnect."
+      />
       <OfflineDialog
         open={isOfflineId(customer.id)}
         closeAction={history.goBack}
