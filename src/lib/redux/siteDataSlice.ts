@@ -66,6 +66,8 @@ export const EMPTY_FINANCIAL_SUMMARY: FinancialSummaryRecord = {
   totalAmountCollected: 0,
   totalAmountSpent: 0,
   totalProfit: 0,
+  inventoryAmountApproved: 0,
+  inventoryAmountDenied: 0,
   period: '',
   isapproved: true,
   lastUpdated: '',
@@ -125,7 +127,7 @@ const siteDataSlice = createSlice({
     },
     updateSite(state, action) {
       const { id } = action.payload;
-      const newSiteInformation = {...state.sites[id].siteInformation, ...action.payload};
+      const newSiteInformation = { ...state.sites[id].siteInformation, ...action.payload };
       state.sites[id].siteInformation = newSiteInformation;
     }
   },
