@@ -10,10 +10,12 @@ import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OfflineDialog from '../../components/OfflineDialog';
+import Snackbar from '../../components/Snackbar';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
+import { selectIsOnline } from '../../lib/redux/userData';
 import { getInventoryHistory, getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import { isOfflineId } from '../../lib/utils/offlineUtils';
 import InventoryInfo from './components/InventoryInfo';
@@ -39,6 +41,7 @@ function InventoryProfile(props: InventoryProps) {
   const product = useSelector(selectCurrentInventoryProduct);
   const inventoryHistory = getInventoryHistory(inventory.id);
   const history = useHistory();
+  const isOnline = useSelector(selectIsOnline);
 
   // Redirect to InventoryMain if either are undefined
   if (inventory === EMPTY_INVENTORY || !product) {
@@ -111,6 +114,11 @@ function InventoryProfile(props: InventoryProps) {
           </List>
         </div>
       </BaseScrollView>
+      {/* Show the snackbar whenever the user is offline, regardless of what actions they took, if any */}
+      <Snackbar
+        open={!isOnline}
+        message="You are not connected to a network. Inventory updates will be recorded after you reconnect."
+      />
       <OfflineDialog
         open={isOfflineId(inventory.id)}
         closeAction={history.goBack}
