@@ -29,7 +29,10 @@ const styles = (theme: Theme) =>
   });
 
 const validationSchema = yup.object({
-  amountPurchased: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
+  amountPurchased: yup
+    .number()
+    .positive('Please enter a valid amount greater than 0')
+    .required('Please enter an amount'),
   amountSpent: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
   notes: yup.string(),
   receipt: yup.string().required('Please upload a receipt image'),
@@ -54,8 +57,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
 
   const formik = useFormik({
     initialValues: {
-      amountPurchased: (props.location.state?.amountPurchased as string) || '',
-      amountSpent: (props.location.state?.amountSpent as string) || '',
+      amountPurchased: String(props.location.state?.amountPurchased) || '',
+      amountSpent: String(props.location.state?.amountSpent) || '',
       notes: (props.location.state?.notes as string) || '',
       receipt: (props.location.state?.photo as string) || '',
     },
@@ -126,7 +129,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
             helperText={formik.touched.amountSpent && formik.errors.amountSpent}
           />
           <TextField
-            placeholder="Enter Notes..."
+            placeholder="Enter notes..."
             label={'Notes'}
             id={'notes'}
             value={formik.values.notes}
