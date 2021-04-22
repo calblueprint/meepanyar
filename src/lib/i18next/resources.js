@@ -48,6 +48,7 @@ module.exports = {
       "My Information": "My Information",
       "Name (A - Z)": "Name (A - Z)",
       "New Inventory": "New Inventory",
+      "New Inventory Item": "New Inventory Item",
       "New Item Name": "New Item Name",
       "Next deadline": "တင်သွင်းရန်နောက်ဆုံးရက် ",
       "No": "No",

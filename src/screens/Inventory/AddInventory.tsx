@@ -20,6 +20,8 @@ import {
 } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentSiteId } from '../../lib/redux/siteData';
 import { selectCurrentUserId } from '../../lib/redux/userData';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = () =>
   createStyles({
@@ -29,32 +31,19 @@ const styles = () =>
     },
   });
 
-const NEW_PRODUCT_LABEL = '+ New Inventory Item';
-
-const validationSchema = yup.object({
-  selectedProductId: yup.string().required('Must select a product'),
-  startingAmount: yup.number().min(0, 'Please enter a valid amount').required('Must enter an amount'),
-  newProductName: yup.string().when('selectedProductId', {
-    is: NEW_PRODUCT_LABEL,
-    then: yup.string().required('Must enter new product name'),
-  }),
-  unit: yup.string().when('selectedProductId', {
-    is: NEW_PRODUCT_LABEL,
-    then: yup.string().required('Must enter unit name'),
-  }),
-});
-
 interface AddInventoryProps extends RouteComponentProps {
   classes: { newProductContainer: string };
 }
 
 function AddInventory(props: AddInventoryProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const products = useSelector(selectAllProducts);
   const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
   const userId = useSelector(selectCurrentUserId);
   const siteId = useSelector(selectCurrentSiteId);
   const history = useHistory();
+  const NEW_PRODUCT_LABEL = `+ ${intl(words.new_inventory_item)}`;
 
   // Product IDs for items that the site already has inventory for
   const currentSiteProductIds = siteInventory.map((inventory: InventoryRecord) => inventory.productId);
@@ -65,6 +54,18 @@ function AddInventory(props: AddInventoryProps) {
 
   const [loading, setLoading] = useState(false);
 
+  const validationSchema = yup.object({
+    selectedProductId: yup.string().required(intl(words.must_select_a_product)),
+    startingAmount: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.must_enter_an_amount)),
+    newProductName: yup.string().when('selectedProductId', {
+      is: NEW_PRODUCT_LABEL,
+      then: yup.string().required(intl(words.must_enter_new_product_name)),
+    }),
+    unit: yup.string().when('selectedProductId', {
+      is: NEW_PRODUCT_LABEL,
+      then: yup.string().required(intl(words.must_enter_unit_name)),
+    }),
+  });
   const formik = useFormik({
     initialValues: {
       selectedProductId: '',
@@ -113,7 +114,7 @@ function AddInventory(props: AddInventoryProps) {
   const filter = createFilterOptions<string>();
 
   return (
-    <BaseScreen title="New Inventory" leftIcon="backNav">
+    <BaseScreen title={intl(words.new_inventory)} leftIcon="backNav">
       <form onSubmit={formik.handleSubmit} noValidate>
         <Autocomplete
           aria-required
@@ -135,7 +136,7 @@ function AddInventory(props: AddInventoryProps) {
               {...params}
               error={formik.touched.selectedProductId && Boolean(formik.errors.selectedProductId)}
               helperText={formik.touched.selectedProductId && formik.errors.selectedProductId}
-              label="Item"
+              label={intl(words.item)}
               variant="outlined"
             />
           )}
@@ -148,7 +149,7 @@ function AddInventory(props: AddInventoryProps) {
             <div style={{ marginRight: 8, flex: 2 }}>
               <TextField
                 required
-                label={'New Item Name'}
+                label={intl(words.new_item_name)}
                 id={'newProductName'}
                 value={formik.values.newProductName}
                 onChange={formik.handleChange}
@@ -159,7 +160,7 @@ function AddInventory(props: AddInventoryProps) {
             <div style={{ flex: 1 }}>
               <TextField
                 required
-                label={'Unit'}
+                label={intl(words.unit)}
                 id={'unit'}
                 value={formik.values.unit}
                 onChange={formik.handleChange}
@@ -171,17 +172,17 @@ function AddInventory(props: AddInventoryProps) {
         )}
         <TextField
           required
-          placeholder="e.g. 5"
+          placeholder={intl(words.eg_x, "5")}
           unit={formik.values.unit}
           type="number"
-          label={'Starting Amount'}
+          label={intl(words.starting_amount)}
           id={'startingAmount'}
           value={formik.values.startingAmount}
           onChange={formik.handleChange}
           error={formik.touched.startingAmount && Boolean(formik.errors.startingAmount)}
           helperText={formik.touched.startingAmount && formik.errors.startingAmount}
         />
-        <Button fullWidth loading={loading} label={'Add'} />
+        <Button fullWidth loading={loading} label={intl(words.add)} />
       </form>
     </BaseScreen>
   );

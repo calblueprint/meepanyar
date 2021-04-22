@@ -46,6 +46,7 @@ export default {
   "my_information": "My Information",
   "name_a__z": "Name (A - Z)",
   "new_inventory": "New Inventory",
+  "new_inventory_item": "New Inventory Item",
   "new_item_name": "New Item Name",
   "next_deadline": "Next deadline",
   "no": "No",

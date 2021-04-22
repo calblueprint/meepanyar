@@ -15,6 +15,8 @@ import { getTariffPlanByCustomer, calculateAmountBilled } from '../../lib/utils/
 import { createMeterReadingAndUpdateCustomerBalance } from '../../lib/airtable/request';
 import OutlinedCardList from '../../components/OutlinedCardList';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 
 
 const styles = (theme: Theme) =>
@@ -33,9 +35,24 @@ function AddMeterReading(props: AddMeterReadingProps) {
   const history = useHistory();
   const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
   const userId = useSelector(selectCurrentUserId);
-  const [meterReadingAmount, setMeterReadingAmount] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+
+  const validationSchema = yup.object({
+    meterReadingAmount:
+      yup.number()
+        .min(currentCustomer?.startingMeterReading || 0, 'New reading must be larger than previous reading')
+        .required('Please enter a number')
+  });
+
+  const formik = useFormik({
+    initialValues: {
+      meterReadingAmount: ''
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values);
+    }
+  })
 
   if (!currentCustomer || !userId) {
     return <Redirect to={'/customers'} />
@@ -50,22 +67,11 @@ function AddMeterReading(props: AddMeterReadingProps) {
   const startingMeterAmount = currentCustomer.startingMeterReading;
   const startingMeterLastRecorded = currentCustomer.startingMeterLastChanged;
 
-
-  const handleSetMeterReadingAmount = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setMeterReadingAmount(event.target.value as string);
-  }
-
-  const handleSubmit = (event: React.MouseEvent) => {
-    // Prevent page refresh on submit
-    event.preventDefault();
+  const handleSubmit = (values: any) => {
+    const { meterReadingAmount } = values
+    setLoading(true);
 
     const currentReadingAmount = parseFloat(meterReadingAmount);
-    if (isNaN(currentReadingAmount)) {
-      setErrorMessage('Meter Reading Amount must be a number');
-      return;
-    } else {
-      setLoading(true);
-    }
 
     // WARNING: Client-side Amount Billed is treated as a source of truth in order to 
     // accomodate for offline functionality when a user adjusts a Customer's startingMeterAmount when offline
@@ -82,7 +88,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
 
   const cardInfo = [{
     number: startingMeterAmount.toString(),
-    label: 'Current Reading',
+    label: 'Starting Reading',
     unit: 'kWh',
     secondaryLabel: formatDateStringToLocal(startingMeterLastRecorded)
   }]
@@ -92,17 +98,21 @@ function AddMeterReading(props: AddMeterReadingProps) {
       <div className={classes.amountOwedContainer}>
         <OutlinedCardList info={cardInfo} />
       </div>
-      <TextField
-        label='New Meter Reading (kWh)'
-        unit='kWh'
-        id={'amount-metered'}
-        placeholder='e.g. 100'
-        type='number'
-        onChange={handleSetMeterReadingAmount}
-        required
-        value={meterReadingAmount}
-      />
-      <Button label={'Add'} onClick={handleSubmit} loading={loading} errorMessage={errorMessage} />
+      <form noValidate onSubmit={formik.handleSubmit}>
+        <TextField
+          label='New Meter Reading (kWh)'
+          unit='kWh'
+          id={'meterReadingAmount'}
+          placeholder='e.g. 100'
+          type='number'
+          onChange={formik.handleChange}
+          required
+          value={formik.values.meterReadingAmount}
+          error={formik.touched.meterReadingAmount && Boolean(formik.errors.meterReadingAmount)}
+          helperText={formik.touched.meterReadingAmount && formik.errors.meterReadingAmount}
+        />
+        <Button label={'Add'} loading={loading} fullWidth />
+      </form>
     </BaseScreen>
   );
 }
