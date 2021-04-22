@@ -1,57 +1,81 @@
-import { Button as MaterialButton, InputLabel, Theme, Typography, withStyles } from '@material-ui/core';
+import { Button as MaterialButton, FormHelperText, InputLabel, makeStyles, Theme, Typography } from '@material-ui/core';
 import { createStyles } from '@material-ui/core/styles';
-import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import React from 'react';
 import { navigateToCamera } from '../lib/utils/cameraUtils';
 
-const styles = (theme: Theme) =>
-  createStyles({
-    buttonContainer: {
-      backgroundColor: '#F7F9FC',
-      minHeight: 130,
-      border: `3.5px dashed ${theme.palette.divider}`,
-      radius: '6px',
-      padding: 0,
-      width: '100%',
-    },
-  });
-
 interface CameraButtonProps {
-  classes: { buttonContainer: string };
   id: string;
-  goBack: number;
+  goBack?: number;
   label?: string;
   photoUri?: string;
-  preservedState?: {},
+  preservedState?: {};
+  error?: boolean;
+  helperText?: string | false;
+  staticPreview?: boolean;
+  required?: boolean;
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    margin: {
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+    },
+    label: {
+      marginLeft: 12,
+    },
+    buttonContainer: (props: CameraButtonProps) => ({
+      backgroundColor: theme.palette.background.default,
+      minHeight: 96,
+      border: `1px dashed ${
+        props.staticPreview
+          ? theme.palette.divider
+          : props.error
+          ? theme.palette.error.main
+          : theme.palette.primary.light
+      }`,
+      borderRadius: 6,
+      padding: 0,
+      overflow: 'hidden',
+    }),
+  }),
+);
+
 function CameraButton(props: CameraButtonProps) {
-  const { classes, photoUri, preservedState, goBack } = props;
+  const classes = useStyles(props);
+  const { photoUri, preservedState, goBack, staticPreview } = props;
+
   return (
-    <div>
-      <InputLabel htmlFor={props.id}>{props.label}</InputLabel>
+    <div className={classes.margin}>
+      <InputLabel
+        required={props.required}
+        error={props.error}
+        disabled={staticPreview}
+        htmlFor={props.id}
+        className={classes.label}
+      >
+        {props.label}
+      </InputLabel>
       <MaterialButton
-        onClick={() => navigateToCamera({preservedState} || {}, goBack)}
+        disabled={staticPreview}
+        onClick={() => navigateToCamera({ preservedState } || {}, goBack)}
         className={classes.buttonContainer}
         variant="contained"
-        color="primary"
-        disableElevation={true}
+        disableElevation
+        fullWidth
+        id={props.id}
       >
         {photoUri ? (
-          <img style={{ width: '100%' }} src={photoUri} />
+          <img width="100%" src={photoUri} alt="user-uploaded image" />
         ) : (
-          <div>
-            <Typography color="primary">
-              <PhotoLibraryIcon />
-            </Typography>
-            <Typography variant="h2" color="primary">
-              Add Photo
-            </Typography>
-          </div>
+          <Typography variant="button" color={props.error ? 'error' : 'primary'}>
+            + Add Photo
+          </Typography>
         )}
       </MaterialButton>
+      {props.helperText && <FormHelperText error={props.error}>{props.helperText}</FormHelperText>}
     </div>
   );
 }
 
-export default withStyles(styles)(CameraButton);
+export default CameraButton;

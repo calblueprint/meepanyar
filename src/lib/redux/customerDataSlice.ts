@@ -2,7 +2,7 @@
 /* eslint-disable no-param-reassign */
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteId } from '../airtable/interface';
-import { setCurrSite } from './siteDataSlice';
+import { setCurrentSiteId } from './siteDataSlice';
 import { RootState } from './store';
 import moment from 'moment';
 
@@ -23,7 +23,7 @@ export const {
     selectById: selectCustomerById,
     selectIds: selectCustomerIds
 } = customersAdapter.getSelectors(
-    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].customers);
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSiteId].customers);
 
 export const {
     selectEntities: selectAllPayments,
@@ -31,7 +31,7 @@ export const {
     selectById: selectPaymentById,
     selectIds: selectPaymentIds
 } = paymentsAdapter.getSelectors(
-    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].payments);
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSiteId].payments);
 
 export const {
     selectEntities: selectAllMeterReadings,
@@ -39,7 +39,7 @@ export const {
     selectById: selectMeterReadingById,
     selectIds: selectMeterReadingIds
 } = meterReadingsAdapter.getSelectors(
-    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSite.id].meterReadings);
+    (state: RootState) => state.customerData.sitesCustomers[state.siteData.currentSiteId].meterReadings);
 
 interface SiteCustomerData {
     customers: EntityState<CustomerRecord>;
@@ -54,6 +54,13 @@ interface customerDataSliceState {
     currentCustomerId: string;
 }
 
+export enum MeterType {
+  ANALOG_METER = 'Analog Meter',
+  SMART_METER = 'Smart Meter',
+  NO_METER = 'No Meter',
+  INACTIVE = 'Inactive'
+}
+
 export const EMPTY_CUSTOMER: CustomerRecord = {
     id: '',
     name: '',
@@ -61,14 +68,17 @@ export const EMPTY_CUSTOMER: CustomerRecord = {
     tariffPlanId: '',
     isactive: false,
     hasmeter: false,
-    outstandingBalance: '',
+    outstandingBalance: 0,
     meterReadingIds: [],
     paymentIds: [],
     customerUpdateIds: [],
     customerUpdates: [],
     totalAmountBilledfromInvoices: 0,
     totalAmountPaidfromPayments: 0,
+    meterType: MeterType.ANALOG_METER,
     startingMeterReading: 0,
+    customerNumber: 0,
+    startingMeterLastChanged: '',
 }
 
 export const EMPTY_PAYMENT: PaymentRecord = {
@@ -125,23 +135,35 @@ const customerDataSlice = createSlice({
 
             customersAdapter.addOne(state.sitesCustomers[siteId].customers, customer);
         },
-        editCustomer(state, action) {
+        addMeterReading(state, action) {
+            const { siteId, ...payload } = action.payload;
+            meterReadingsAdapter.addOne(state.sitesCustomers[siteId].meterReadings, payload);
+        },
+        removeMeterReading(state, action) {
+            const { siteId, id} = action.payload;
+            meterReadingsAdapter.removeOne(state.sitesCustomers[siteId].meterReadings, id);
+        },
+        updateCustomer(state, action) {
             const { siteId, id, ...changes } = action.payload;
             const update = {
                 id,
                 changes,
             };
             customersAdapter.updateOne(state.sitesCustomers[siteId].customers, update);
+        },
+        addPayment(state, action) {
+            const { siteId, ...payload } = action.payload;
+            paymentsAdapter.addOne(state.sitesCustomers[siteId].payments, payload);
         }
     },
     extraReducers: {
-        // When current site is changed, current customer id needs to be reset 
+        // When current site is changed, current customer id needs to be reset
         // because it's no longer valid in the new site context.
-        [setCurrSite.type]: (state, action) => {
+        [setCurrentSiteId.type]: (state, action) => {
             state.currentCustomerId = initialState.currentCustomerId;
         }
     }
 });
 
-export const { saveCustomerData, setCurrentCustomerId, addCustomer, editCustomer } = customerDataSlice.actions;
+export const { saveCustomerData, setCurrentCustomerId, addCustomer, updateCustomer, addPayment, addMeterReading, removeMeterReading } = customerDataSlice.actions;
 export default customerDataSlice.reducer;

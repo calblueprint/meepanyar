@@ -1,7 +1,9 @@
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
+import { useFormik } from 'formik';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
+import * as yup from 'yup';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
@@ -14,15 +16,17 @@ import InventoryInfo from './components/InventoryInfo';
 
 const styles = (theme: Theme) =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-      display: 'flex',
-      flexDirection: 'column',
+    headerContainer: {
+      marginBottom: theme.spacing(2),
     },
   });
 
+const validationSchema = yup.object({
+  updatedAmount: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
+});
+
 interface CreateInventoryUpdateProps extends RouteComponentProps {
-  classes: { content: string };
+  classes: { headerContainer: string };
 }
 
 function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
@@ -31,45 +35,56 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const userId = useSelector(selectCurrentUserId);
   const inventory = useSelector(selectCurrentInventory);
   const product = useSelector(selectCurrentInventoryProduct);
-
   const [loading, setLoading] = useState(false);
-  const [updatedAmount, setUpdatedAmount] = useState(0.0);
+
+  const formik = useFormik({
+    initialValues: {
+      updatedAmount: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values);
+    },
+  });
 
   // Redirect to InventoryMain if undefined
   if (!userId || !inventory || !product) {
     return <Redirect to={'/inventory'} />;
   }
 
-  // TODO @wangannie: add better edge case handling
-  const handleUpdatedAmount = (event: React.ChangeEvent<{ value: unknown }>) => {
-    setUpdatedAmount(parseFloat(event.target.value as string) || 0);
-  };
-
-  const handleSubmit = (event: React.MouseEvent) => {
-    // Prevent page refresh on submit
-    event.preventDefault();
+  const handleSubmit = (values: any) => {
+    const { updatedAmount } = values;
     setLoading(true);
-    createInventoryUpdateAndUpdateInventory(userId, inventory, updatedAmount).then(() => history.goBack());
+    createInventoryUpdateAndUpdateInventory(userId, inventory, parseFloat(updatedAmount) || 0).then(() =>
+      history.goBack(),
+    );
   };
 
   return (
     <BaseScreen title="Update Item" leftIcon="backNav">
       <BaseScrollView>
-        <div className={classes.content}>
+        <div className={classes.headerContainer}>
           <InventoryInfo
             productId={inventory.productId}
-            lastUpdated={getInventoryLastUpdated(inventory)}
+            lastUpdated={getInventoryLastUpdated(inventory.id)}
             currentQuantity={inventory.currentQuantity}
           />
-          {/* TODO fix requred/optional fields */}
-          <TextField
-            label={`Updated amount in ${product.unit}(s)`}
-            id={'updated-amount'}
-            primary={true}
-            onChange={handleUpdatedAmount}
-          />
-          <Button loading={loading} label="Update" onClick={handleSubmit} />
         </div>
+        <form onSubmit={formik.handleSubmit} noValidate>
+          <TextField
+            placeholder={'e.g. 5'}
+            required
+            type="number"
+            unit={product.unit}
+            label={`Updated Amount`}
+            id={'updatedAmount'}
+            value={formik.values.updatedAmount}
+            onChange={formik.handleChange}
+            error={formik.touched.updatedAmount && Boolean(formik.errors.updatedAmount)}
+            helperText={formik.touched.updatedAmount && formik.errors.updatedAmount}
+          />
+          <Button fullWidth loading={loading} label="Update" />
+        </form>
       </BaseScrollView>
     </BaseScreen>
   );

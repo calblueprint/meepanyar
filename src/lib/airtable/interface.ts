@@ -1,4 +1,5 @@
 import { PurchaseRequestStatus } from "../redux/inventoryDataSlice";
+import { MeterType } from "../redux/customerDataSlice";
 
 export type TableValues = string | boolean | number | Array<unknown> | Airtable.Attachment;
 
@@ -23,12 +24,14 @@ export type Row = {
 export interface UserRecord {
   id: string;
   username: string;
-  email: string;
-  photo?: Airtable.Attachment[];
-  siteIds: string[];
-  sites: SiteRecord[];
-  password: string;
+  admin: boolean;
   name: string;
+  inactive: boolean;
+  email?: string;
+  siteIds?: string[];
+  photo?: Airtable.Attachment[];
+  // TODO: scrub password out
+  password?: string;
 }
 
 export interface SiteRecord {
@@ -36,9 +39,10 @@ export interface SiteRecord {
   name: string;
   customerIds: string[];
   financialSummaryIds: string[];
-  financialSummaries: FinancialSummaryRecord[];
-  tariffPlans: TariffPlanRecord[];
-  // These are extracted to other slices and deleted from SiteRecord
+  gracePeriod: number;
+  // These are extracted to other slices or entities and deleted from SiteRecord
+  financialSummaries?: FinancialSummaryRecord[];
+  tariffPlans?: TariffPlanRecord[];
   inventoryIds?: string[];
   products?: ProductRecord[];
   inventory?: InventoryRecord[];
@@ -47,6 +51,7 @@ export interface SiteRecord {
   customers?: CustomerRecord[];
   payments?: PaymentRecord[];
   meterReadings?: MeterReadingRecord[];
+  users?: UserRecord[];
 }
 
 export interface TariffPlanRecord {
@@ -55,6 +60,8 @@ export interface TariffPlanRecord {
   fixedTariff: number;
   tariffByUnit: number;
   freeUnits: number;
+  numberOfCustomers: number;
+  meterTypes: string[];
 }
 
 export interface CustomerRecord {
@@ -64,14 +71,17 @@ export interface CustomerRecord {
   tariffPlanId: string;
   isactive: boolean;
   hasmeter: boolean;
-  outstandingBalance: string;
+  outstandingBalance: number;
   meterReadingIds: string[];
   paymentIds: string[];
   customerUpdateIds: string[];
   customerUpdates: CustomerUpdateRecord[];
   totalAmountBilledfromInvoices: number;
   totalAmountPaidfromPayments: number;
+  meterType: MeterType;
   startingMeterReading: number;
+  startingMeterLastChanged: string;
+  customerNumber: number;
 }
 
 export interface CustomerUpdateRecord {
@@ -110,6 +120,8 @@ export interface FinancialSummaryRecord {
   totalAmountCollected: number;
   totalAmountSpent: number;
   totalProfit: number;
+  inventoryAmountApproved: number;
+  inventoryAmountDenied: number;
   period: string;
   bankSlip?: Airtable.Attachment[];
   isapproved: boolean;
@@ -129,6 +141,7 @@ export interface PurchaseRequestRecord {
   amountSpent: number;
   receipt?: Airtable.Attachment[];
   inventoryId: string;
+  updatedQuantity: number;
 }
 
 

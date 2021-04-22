@@ -1,19 +1,19 @@
 diff --git a/src/lib/airtable/request.js b/src/lib/airtable/request.js
-index ae23270..a3cc45f 100644
+index ae23270..c23c42c 100644
 --- a/src/lib/airtable/request.js
 +++ b/src/lib/airtable/request.js
 @@ -24,6 +24,18 @@ import {
    deleteRecord,
  } from './airtable';
  
-+import { editCustomerInRedux, addCustomerToRedux } from '../../lib/redux/customerData';
-+import { addToOfflineCustomer, generateOfflineId } from '../utils/offlineUtils';
++import { updateCustomerInRedux, addCustomerToRedux, addPaymentToRedux, addMeterReadingToRedux, removeMeterReadingFromRedux } from '../../lib/redux/customerData';
++import { getCurrentReading, isReadingFromLatestPeriod } from '../utils/customerUtils';
++import { generateOfflineId } from '../utils/offlineUtils';
 +import {
 +  addInventoryToRedux,
 +  addProductToRedux,
 +  addInventoryUpdateToRedux,
 +  addPurchaseRequestToRedux,
-+  getInventoryCurrentQuantity,
 +  updateInventoryQuantityInRedux,
 +} from '../redux/inventoryData';
 +import moment from 'moment';
@@ -64,7 +64,7 @@ index ae23270..a3cc45f 100644
  
  export const createCustomerUpdate = async (record) => {
    return createRecord(Tables.CustomerUpdates, record);
-@@ -103,37 +124,57 @@ export const createManyCustomerUpdates = async (records) => {
+@@ -103,37 +124,77 @@ export const createManyCustomerUpdates = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -80,35 +80,26 @@ index ae23270..a3cc45f 100644
 -    if (subset.length > 0)
 -      createPromises.push(createRecords(Tables.MeterReadingsandInvoices, subset));
 +// NONGENERATED: Create a meter reading for a customer
-+export const createMeterReadingandInvoice = async (meterReading, customer) => {
-+  // If customer does not exist, we want to search the requests objectStore
-+  // to add the current meter reading to the customer request being POST'ed
-+  if (!customer.rid) {
-+    addToOfflineCustomer(customer, 'meterReadings', meterReading)
-+  } else {
-+    // Customer has an rid so it is in the airtable.
-+    // Make a standard request to create a meter reading / invoice.
-+    try {
-+      meterReading.customerId = customer.rid;
-+      const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/meter-readings-and-invoices/create`, {
-+        method: 'POST',
-+        headers: {
-+          'Content-Type': 'application/json'
-+        },
-+        body: JSON.stringify(meterReading)
-+      })
-+      console.log('Response for meter reading: ', resp);
-+    } catch (err) {
-+      console.log('Error with create meter reading request: ', err);
-+    }
++export const createMeterReadingAndUpdateCustomerBalance = async (meterReading, customer) => {
++  let meterReadingId = '';
++  delete meterReading.id;
++  try {
++    // Backend checks that a previous meter reading if a previous meter reading has been
++    // created for this period. If one has, the previous meter reading is deleted to keep 1 reading per period
++    meterReadingId = await createRecord(Tables.MeterReadingsandInvoices, meterReading);
++  } catch (error) {
++    console.log('(Meter Reading) Error occurred when creating meter reading: ', error);
++    meterReadingId = generateOfflineId();
    }
 -  return Promise.all(createPromises);
 -};
--
+ 
 -export const createPayment = async (record) => {
 -  return createRecord(Tables.Payments, record);
 -};
--
++  const latestMeterReading = getCurrentReading(customer);
++  let balanceToAdd = meterReading.amountBilled;
+ 
 -export const createManyPayments = async (records) => {
 -  const createPromises = [];
 -  const numCalls = Math.ceil(records.length / 10);
@@ -116,41 +107,68 @@ index ae23270..a3cc45f 100644
 -    const subset = records.slice(i * 10, (i + 1) * 10);
 -    if (subset.length > 0)
 -      createPromises.push(createRecords(Tables.Payments, subset));
++  // If a meter reading was made in the same period, we delete the existing 
++  // reading and replace it with the new one creating a new one because only 1 reading can be made per period.
++  // This same logic occurs on the backend to ensure only 1 reading is made per period after the grace period.
++  if (latestMeterReading && isReadingFromLatestPeriod(latestMeterReading)) {
++    removeMeterReadingFromRedux(latestMeterReading.id)
++    balanceToAdd = meterReading.amountBilled - latestMeterReading.amountBilled;
++  }
++
++  meterReading.id = meterReadingId;
++  addMeterReadingToRedux(meterReading);
++
++  // Customer's outstanding balance is automatically updated on Airtable but needs to
++  // be manually updated clientside to account for offline situations. The "Outstanding Balance" 
++  // persisted to Airtable is based off backend calculations for security reasons
++  updateCustomerInRedux({
++    id: customer.id,
++    outstandingBalance: customer.outstandingBalance + balanceToAdd,
++    totalAmountBilledfromInvoices: customer.totalAmountBilledfromInvoices + balanceToAdd
++  })
++
++  return meterReadingId;
 +}
 +
 +// NONGENERATED: Create a payment for a customer
-+export const createPayment = async (payment, customer) => {
-+  // If customer does not exist, we want to search the requests objectStore
-+  // to add the current meter reading to the customer request being POST'ed
-+  if (!customer.rid) {
-+    addToOfflineCustomer(customer, 'payments', payment);
-+  } else {
-+    // Customer has an rid so it is in the airtable.
-+    // Make a standard request to create a payment.
-+    try {
-+      payment.customerId = customer.rid;
-+      const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/payments/create`, {
-+        method: 'POST',
-+        headers: {
-+          'Content-Type': 'application/json'
-+        },
-+        body: JSON.stringify(payment)
-+      })
-+      console.log('Response for payment: ', resp);
-+    } catch (err) {
-+      console.log('Error with create payment request: ', err)
-+    }
++export const createPaymentAndUpdateCustomerBalance = async (payment, customer) => {
++  const customerId = payment.billedToId;
++  let paymentId = '';
++
++  // Customer has an id so it is in the airtable.
++  // Make a standard request to create a payment.
++  delete payment.id
++  try {
++    paymentId = await createRecord(Tables.Payments, payment);
++  } catch (error) {
++    paymentId = generateOfflineId();
++    console.log('(createPayment) Error: ', error);
    }
 -  return Promise.all(createPromises);
 -};
-+}
  
 -export const createFinancialSummarie = async (record) => {
++  payment.id = paymentId;
++  addPaymentToRedux(payment);
++
++  // Customer's outstanding balance is automatically updated on Airtable but needs to
++  // be manually updated clientside to account for offline situations
++  updateCustomerInRedux(
++    {
++      id: customerId,
++      outstandingBalance: customer.outstandingBalance - payment.amount,
++      totalAmountPaidfromPayments: customer.totalAmountPaidfromPayments + payment.amount,
++    }
++  );
++
++  return paymentId;
++}
++
 +export const createFinancialSummary = async (record) => {
    return createRecord(Tables.FinancialSummaries, record);
  };
  
-@@ -148,9 +189,20 @@ export const createManyFinancialSummaries = async (records) => {
+@@ -148,9 +209,20 @@ export const createManyFinancialSummaries = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -174,7 +192,7 @@ index ae23270..a3cc45f 100644
  
  export const createManyProducts = async (records) => {
    const createPromises = [];
-@@ -163,9 +215,29 @@ export const createManyProducts = async (records) => {
+@@ -163,9 +235,29 @@ export const createManyProducts = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -207,7 +225,7 @@ index ae23270..a3cc45f 100644
  
  export const createManyInventorys = async (records) => {
    const createPromises = [];
-@@ -178,6 +250,26 @@ export const createManyInventorys = async (records) => {
+@@ -178,6 +270,25 @@ export const createManyInventorys = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -216,32 +234,31 @@ index ae23270..a3cc45f 100644
 +// that was created offline (no Airtable id).
 +export const createPurchaseRequestAndUpdateInventory = async (purchaseRequest) => {
 +  let purchaseRequestId = "";
-+  const newQuantity = getInventoryCurrentQuantity(purchaseRequest.inventoryId) + purchaseRequest.amountPurchased;
 +  try {
 +    delete purchaseRequest.id; // Remove the id field to add to Airtable
 +    purchaseRequestId = await createPurchaseRequest(purchaseRequest);
-+    updateInventory(purchaseRequest.inventoryId, {currentQuantity: newQuantity});
++    updateInventory(purchaseRequest.inventoryId, { currentQuantity: purchaseRequest.updatedQuantity });
 +  } catch (err) {
 +    purchaseRequestId = generateOfflineId();
 +    console.log('(createPurchaseRequestAndUpdateInventory) Error: ', err);
 +  }
 +  purchaseRequest.id = purchaseRequestId;
 +  addPurchaseRequestToRedux(purchaseRequest);
-+  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, newQuantity);
++  updateInventoryQuantityInRedux(purchaseRequest.inventoryId, purchaseRequest.updatedQuantity);
 +  return purchaseRequest;
 +};
 +
  export const createPurchaseRequest = async (record) => {
    return createRecord(Tables.PurchaseRequests, record);
  };
-@@ -197,6 +289,32 @@ export const createInventoryUpdate = async (record) => {
+@@ -197,6 +308,32 @@ export const createInventoryUpdate = async (record) => {
    return createRecord(Tables.InventoryUpdates, record);
  };
  
 +// NONGENERATED: Create an Inventory Update and update the inventory's current qty
 +// TODO: handle offline workflow of creating inventory updates for inventory
 +// that was created offline (no Airtable id).
-+export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount ) => {
++export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount) => {
 +  const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE));
 +  inventoryUpdate.userId = userId;
 +  inventoryUpdate.previousQuantity = inventory.currentQuantity;
@@ -253,7 +270,7 @@ index ae23270..a3cc45f 100644
 +  try {
 +    delete inventoryUpdate.id; // Remove the id field to add to Airtable
 +    inventoryUpdateId = await createInventoryUpdate(inventoryUpdate);
-+    updateInventory(inventoryUpdate.inventoryId, {currentQuantity: inventoryUpdate.updatedQuantity });
++    updateInventory(inventoryUpdate.inventoryId, { currentQuantity: inventoryUpdate.updatedQuantity });
 +  } catch (err) {
 +    inventoryUpdateId = generateOfflineId();
 +    console.log('(createInventoryUpdateAndUpdateInventory) Error: ', err);
@@ -267,7 +284,7 @@ index ae23270..a3cc45f 100644
  export const createManyInventoryUpdates = async (records) => {
    const createPromises = [];
    const numCalls = Math.ceil(records.length / 10);
-@@ -216,7 +334,7 @@ export const getUserById = async (id) => {
+@@ -216,7 +353,7 @@ export const getUserById = async (id) => {
    return getRecordById(Tables.Users, id);
  };
  
@@ -276,7 +293,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -234,7 +352,7 @@ export const getSiteById = async (id) => {
+@@ -234,7 +371,7 @@ export const getSiteById = async (id) => {
    return getRecordById(Tables.Sites, id);
  };
  
@@ -285,7 +302,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -252,7 +370,7 @@ export const getTariffPlanById = async (id) => {
+@@ -252,7 +389,7 @@ export const getTariffPlanById = async (id) => {
    return getRecordById(Tables.TariffPlans, id);
  };
  
@@ -294,7 +311,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -270,7 +388,7 @@ export const getCustomerById = async (id) => {
+@@ -270,7 +407,7 @@ export const getCustomerById = async (id) => {
    return getRecordById(Tables.Customers, id);
  };
  
@@ -303,7 +320,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -288,7 +406,7 @@ export const getCustomerUpdateById = async (id) => {
+@@ -288,7 +425,7 @@ export const getCustomerUpdateById = async (id) => {
    return getRecordById(Tables.CustomerUpdates, id);
  };
  
@@ -312,7 +329,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -302,11 +420,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
+@@ -302,11 +439,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
    return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
  };
  
@@ -326,7 +343,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -324,7 +442,7 @@ export const getPaymentById = async (id) => {
+@@ -324,7 +461,7 @@ export const getPaymentById = async (id) => {
    return getRecordById(Tables.Payments, id);
  };
  
@@ -335,7 +352,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -338,11 +456,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
+@@ -338,11 +475,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
    return getAllRecords(Tables.Payments, filterByFormula, sort);
  };
  
@@ -349,7 +366,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -360,7 +478,7 @@ export const getProductById = async (id) => {
+@@ -360,7 +497,7 @@ export const getProductById = async (id) => {
    return getRecordById(Tables.Products, id);
  };
  
@@ -358,7 +375,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -378,7 +496,7 @@ export const getInventoryById = async (id) => {
+@@ -378,7 +515,7 @@ export const getInventoryById = async (id) => {
    return getRecordById(Tables.Inventory, id);
  };
  
@@ -367,7 +384,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -396,7 +514,7 @@ export const getPurchaseRequestById = async (id) => {
+@@ -396,7 +533,7 @@ export const getPurchaseRequestById = async (id) => {
    return getRecordById(Tables.PurchaseRequests, id);
  };
  
@@ -376,7 +393,7 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -414,7 +532,7 @@ export const getInventoryUpdateById = async (id) => {
+@@ -414,7 +551,7 @@ export const getInventoryUpdateById = async (id) => {
    return getRecordById(Tables.InventoryUpdates, id);
  };
  
@@ -385,47 +402,34 @@ index ae23270..a3cc45f 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -481,6 +599,40 @@ export const updateCustomer = async (id, recordUpdates) => {
-   return updateRecord(Tables.Customers, id, recordUpdates);
+@@ -477,9 +614,24 @@ export const updateManyTariffPlans = async (recordUpdates) => {
+   return Promise.all(updatePromises);
  };
  
-+// NONGENERATED: Edit customer
-+export const editCustomer = async (customer, customerUpdate) => {
-+  if (!customer.id) {
-+    addToOfflineCustomer(customer, 'edits', customerUpdate);
-+  } else {
-+    try {
-+      const { name, meterNumber, tariffPlanId, siteId, isactive, hasmeter } = customer;
-+      const { dateUpdated, customerId, explanation, userId } = customerUpdate;
-+      await updateCustomer(customer.id, {
-+        name,
-+        meterNumber,
-+        tariffPlanId,
-+        siteId,
-+        isactive,
-+        hasmeter,
-+      });
-+      console.log("Customer edited!");
+-export const updateCustomer = async (id, recordUpdates) => {
+-  return updateRecord(Tables.Customers, id, recordUpdates);
+-};
++// NONGENERATED: Update the customer record, create a customer update, and update the record in redux
++export const updateCustomer = async (id, recordUpdates, customerUpdate) => {
++  try {
++    await updateRecord(Tables.Customers, id, recordUpdates);
++    console.log("Customer edited!");
++  } catch (error) {
++    console.log("An error occurred while updating the customer: ", error);
++  }
++  updateCustomerInRedux({ ...recordUpdates, id });
 +
-+      const updateId = await createCustomerUpdate({
-+        dateUpdated,
-+        customerId,
-+        explanation,
-+        userId
-+      });
-+      console.log("Update id: ", updateId);
-+      console.log("Created updates!");
-+
-+      editCustomerInRedux(customer);
-+    } catch (err) {
-+      console.log(err);
-+    }
++  try {
++    delete customerUpdate.id;
++    await createCustomerUpdate(customerUpdate);
++    console.log("Created Customer update!");
++  } catch (error) {
++    console.log("An error occurred while creating a customer update: ", error)
 +  }
 +}
-+
+ 
  export const updateManyCustomers = async (recordUpdates) => {
    const updatePromises = [];
-   const numCalls = Math.ceil(recordUpdates.length / 10);
 @@ -507,7 +659,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };

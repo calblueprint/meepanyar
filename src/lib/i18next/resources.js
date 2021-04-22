@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   "my": {
     "translation": {
       "Cancel": "ဖျက်သိမ်းမည်",

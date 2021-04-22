@@ -53,7 +53,7 @@ const styles = (theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: '50%',
-      backgroundColor: theme.palette.info.main,
+      backgroundColor: theme.palette.error.main,
     },
     checked: {
       backgroundColor: theme.palette.primary.main,

@@ -1,18 +1,17 @@
 import { createStyles, FormControl, InputLabel, Theme, MenuItem, Select } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import React, { useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RouteComponentProps, useHistory, Redirect } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import Checkbox from '../../components/Checkbox';
 import TextField from '../../components/TextField';
-import { editCustomer } from '../../lib/airtable/request';
-import { RootState } from '../../lib/redux/store';
-import { CustomerRecord, SiteRecord, CustomerUpdateRecord } from '../../lib/airtable/interface';
+import { updateCustomer } from '../../lib/airtable/request';
+import { CustomerRecord, CustomerUpdateRecord } from '../../lib/airtable/interface';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { EMPTY_CUSTOMER, setCurrentCustomerId } from '../../lib/redux/customerDataSlice';
-import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { selectCurrentCustomer } from '../../lib/redux/customerData';
 
@@ -33,14 +32,14 @@ const styles = (theme: Theme) =>
 interface EditCustomerProps extends RouteComponentProps {
   classes: { header: string; content: string; formControl: string; };
   location: any;
-  currentSite: SiteRecord;
 }
 
 function EditCustomer(props: EditCustomerProps) {
-  const { classes, currentSite } = props;
+  const { classes } = props;
   const history = useHistory();
 
   const currentCustomer = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
+  const tariffPlans = useSelector(selectAllTariffPlansArray);
   const userId = useSelector(selectCurrentUserId);
 
   const [selectedTariffPlanId, setSelectedTariffPlanId] = useState(currentCustomer.tariffPlanId);
@@ -73,18 +72,18 @@ function EditCustomer(props: EditCustomerProps) {
       userId: userId,
     };
 
-    // Make a deep copy of an empty customer record
-    const customer: CustomerRecord = JSON.parse(JSON.stringify(currentCustomer));
-    customer.name = customerName;
-    customer.hasmeter = hasMeter;
-    customer.isactive = !customerInactive;
-    customer.tariffPlanId = selectedTariffPlanId;
+    const recordUpdates = {
+      name: customerName,
+      isactive: !customerInactive,
+      tariffPlanId: selectedTariffPlanId,
+      hasmeter: hasMeter
+    }
 
     // TODO: add error handling
     // We goBack instead of replace so there aren't 2 
     // "/customers/customer" routes in the history stack
-    editCustomer(customer, customerUpdate).then(() => {
-      setCurrentCustomerId(customer.id);
+    updateCustomer(currentCustomer.id, recordUpdates, customerUpdate).then(() => {
+      setCurrentCustomerId(currentCustomer.id);
       history.goBack();
     });
   }
@@ -100,8 +99,6 @@ function EditCustomer(props: EditCustomerProps) {
   const handleMeterInput = (event: React.ChangeEvent<{ value: unknown }>) => {
     setMeterNumber(event.target.value as number);
   }
-
-  const tariffPlans = currentSite.tariffPlans;
 
   return (
     <BaseScreen title="Edit Customer" leftIcon="backNav">
@@ -124,8 +121,4 @@ function EditCustomer(props: EditCustomerProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  currentSite: state.siteData.currentSite || EMPTY_SITE,
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(EditCustomer));
+export default withStyles(styles)(EditCustomer);

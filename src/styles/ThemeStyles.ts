@@ -3,24 +3,30 @@ import { createMuiTheme } from '@material-ui/core/styles';
 export const theme = createMuiTheme({
   palette: {
     primary: {
+      dark: '#C66300',
       main: '#FF922E',
+      light: '#FFC96F',
     },
     secondary: {
-      main: '#FFC96F',
-    },
-    info: {
-      main: '#FF6142',
+      main: '#757575',
     },
     text: {
-      primary: '#828282',
-      secondary: '#C4C4C4',
+      primary: '#424242',
+      secondary: '#757575',
+      disabled: '#BDBDBD',
     },
-    divider: '#E5E5E5',
     error: {
       light: '#BDBDBD',
-      main: '#757575',
+      main: '#FF6142',
       dark: '#424242'
     },
+    success: {
+      main: '#64DD17',
+    },
+    divider: '#E5E5E5',
+    background: {
+      default: '#F7F9FC',
+    }
   },
   typography: {
     fontFamily: 'Helvetica Neue',
@@ -41,11 +47,11 @@ export const theme = createMuiTheme({
     },
     //caption
     body1: {
-      fontSize: '12px',
+      fontSize: '14px',
       fontWeight: 500,
     },
     body2: {
-      fontSize: '14px',
+      fontSize: '12px',
       fontWeight: 500,
     },
     caption: {

@@ -1,61 +1,84 @@
-
-import { Typography, withStyles } from '@material-ui/core';
+import { Card, CardActions, CardContent, makeStyles, Typography } from '@material-ui/core';
 import { createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import Button from '../../../components/Button';
 import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 
-const styles = (theme: Theme) =>
-  createStyles({
-    content: {
-      backgroundColor: theme.palette.secondary.main,
-      borderRadius: '6px',
-      padding: '20px',
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 20,
-    },
-    leftColumnContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between',
-    },
-    rightColumnContainer: {
-      textAlign: 'right',
-    },
-  });
-
 interface InventoryInfoProps {
-  classes: { content: string; leftColumnContainer: string; rightColumnContainer: string; };
-  productId: string,
-  lastUpdated: string,
-  currentQuantity: number,
+  productId: string;
+  lastUpdated: string;
+  currentQuantity?: number;
+  withActions?: boolean;
 }
 
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    cardContainer: {
+      borderColor: theme.palette.primary.light,
+      borderRadius: 6,
+      flex: 2,
+    },
+    cardContent: {
+      display: 'flex',
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      '&:last-child': {
+        paddingBottom: theme.spacing(2),
+      },
+    },
+    leftContentColumnContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    cardActions: {
+      justifyContent: 'space-around',
+    },
+  }),
+);
+
+const getPurchaseRequestButton = () => (
+  <Link to={'purchase-requests/create'}>
+    <Button label="Purchase" />
+  </Link>
+);
+
+const getUpdateButton = () => (
+  <Link to={'updates/create'}>
+    <Button variant="outlined" label={'Update'} />
+  </Link>
+);
+
 function InventoryInfo(props: InventoryInfoProps) {
-  const { classes, productId, lastUpdated, currentQuantity} = props;
+  const classes = useStyles(props);
+  const { productId, lastUpdated, currentQuantity, withActions } = props;
   const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
   return (
-    <div className={classes.content}>
-      <div className={classes.leftColumnContainer}>
-        <Typography variant="h2" color="textPrimary">
-          {product.name}
-        </Typography>
-        <Typography variant="caption">
-          Last Updated
-        </Typography>
-        <Typography variant="caption">
-          {lastUpdated}
-        </Typography>
-      </div>
-      <div className={classes.rightColumnContainer}>
-        <Typography variant="body2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
-      </div>
-    </div>
+    <Card variant="outlined" className={classes.cardContainer}>
+      <CardContent className={classes.cardContent}>
+        <div className={classes.leftContentColumnContainer}>
+          <Typography variant="h2" color="textPrimary">
+            {product.name}
+          </Typography>
+          <Typography variant="caption">Last Updated</Typography>
+          <Typography variant="caption">{lastUpdated}</Typography>
+        </div>
+        {props.currentQuantity !== undefined && (
+          <Typography align="right" variant="body2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
+        )}
+      </CardContent>
+      {withActions && (
+        <CardActions className={classes.cardActions}>
+          {getUpdateButton()}
+          {getPurchaseRequestButton()}
+        </CardActions>
+      )}
+    </Card>
   );
 }
 
-export default withStyles(styles)(InventoryInfo);
+export default InventoryInfo;

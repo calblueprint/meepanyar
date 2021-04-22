@@ -1,18 +1,35 @@
 import $ from 'jquery';
+import { createSelector } from 'reselect';
+import { fromAirtableFormat } from '../airtable/airtable';
+import { SiteRecord, UserRecord } from '../airtable/interface';
+import { Tables } from '../airtable/schema';
 import refreshData from './refreshData';
+import { selectSiteDataIsLoading } from './siteData';
 import { RootState, store } from './store';
-import { deauthenticateAndClearUserData, saveUserData, setIsOnline, setLoadingForUserData } from './userDataSlice';
-
+import {
+  deauthenticateAndClearUserData,
+  saveCurrentUserData,
+  saveUserData,
+  selectSiteUserById,
+  setCurrentUserId,
+  setIsOnline,
+  setLoadingForUserData,
+  selectAllUsersArray,
+  updateUser
+} from './userDataSlice';
+import { selectCurrentSiteId } from './siteData';
 
 // TODO: Change from any when typing introduced
-const refreshUserData = async (user: any): Promise<void> => {
+export const refreshUserData = async (user: any): Promise<void> => {
   if (!user) {
     return;
   }
+  const formattedUser: UserRecord = fromAirtableFormat(user.fields, Tables.Users) as UserRecord;
 
-  // Log in the user
   store.dispatch(setLoadingForUserData());
-  store.dispatch(saveUserData(user));
+  // Log in the user
+  store.dispatch(setCurrentUserId(formattedUser.id));
+  store.dispatch(saveCurrentUserData(formattedUser));
 
   try {
     refreshData(false);
@@ -21,10 +38,14 @@ const refreshUserData = async (user: any): Promise<void> => {
   }
 };
 
-//Function is called at a set interval and repulls data from backend 
-const refreshDataBackground = async (): Promise<void> => {
+export const refreshSiteUsersData = (site: SiteRecord): void => {
+  store.dispatch(saveUserData(site.users));
+};
+
+//Function is called at a set interval and repulls data from backend
+export const refreshDataBackground = async (): Promise<void> => {
   const state = store.getState();
-  if (!state.userData.user) {
+  if (!state.userData.currentUserId) {
     return;
   }
   try {
@@ -34,11 +55,15 @@ const refreshDataBackground = async (): Promise<void> => {
   } catch (err) {
     console.log('Error occurred pulling data', err);
   }
+};
+
+export const updateUserInRedux = (userChanges: Partial<UserRecord>) => {
+  store.dispatch(updateUser(userChanges));
 }
 
 // Function is called at a set interval and updates redux's
 // isOnline value depending on if it gets a response from airlock
-const checkOnline = (): void => {
+export const checkOnline = (): void => {
   $.ajax({
     url: process.env.REACT_APP_AIRTABLE_ENDPOINT_URL,
     type: 'GET',
@@ -49,29 +74,40 @@ const checkOnline = (): void => {
         //refresh data code here
         refreshDataBackground();
       }
-      store.dispatch(setIsOnline({ isOnline: true }))
-
-    }
-    ,
+      store.dispatch(setIsOnline({ isOnline: true }));
+    },
     error: () => store.dispatch(setIsOnline({ isOnline: false })),
   });
 };
 
-const getUserId = (): string => {
-  const state = store.getState();
-  let userId = '';
+export const selectCurrentUserId = (state: RootState): string => state.userData.currentUserId;
 
-  if (state.userData && state.userData.user) {
-    userId = state.userData.user.id;
-  }
+export const selectCurrentUserIsSignedIn = createSelector(selectCurrentUserId, (currentUserId) => currentUserId !== '');
 
-  return userId;
-};
+export const selectCurrentUser = createSelector(selectCurrentUserId, store.getState, (currentUserId, state) =>
+  selectSiteUserById(state, currentUserId),
+);
 
-export const selectCurrentUserId = (state: RootState): string => state.userData.user?.id || "";
+export const selectCurrentUserIsAdmin = createSelector(selectCurrentUser, (currentUser) => currentUser?.admin || false);
+
+export const selectLastUpdated = (state: RootState): string => state.userData.lastUpdated;
+
+export const selectUserDataIsLoading = (state: RootState): boolean => state.userData.isLoading;
+
+export const selectIsOnline = (state: RootState): boolean => state.userData.isOnline;
 
 export const clearUserData = (): void => {
   store.dispatch(deauthenticateAndClearUserData());
 };
 
-export { refreshUserData, checkOnline, getUserId, refreshDataBackground };
+// Return true if either userData or siteData are loading
+export const selectIsLoading = createSelector(
+  selectUserDataIsLoading,
+  selectSiteDataIsLoading,
+  (userLoading, siteLoading) => userLoading || siteLoading,
+);
+
+export const selectAllSiteUsersArray = createSelector(
+  selectAllUsersArray,
+  selectCurrentSiteId,
+  (allUsers, siteId) => allUsers.filter((user: UserRecord) => user.siteIds?.includes(siteId)))

@@ -1,13 +1,13 @@
 import React from 'react';
-import { TextField, Typography, Button } from '@material-ui/core';
+import { Typography, Button } from '@material-ui/core';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import { RouteComponentProps } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { RootState } from '../../lib/redux/store';
+import {  useSelector } from 'react-redux';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { FinancialSummaryRecord } from '../../lib/airtable/interface';
+import { selectAllFinancialSummariesArray } from '../../lib/redux/siteDataSlice';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -42,9 +42,10 @@ interface FinancialSummariesMainProps extends RouteComponentProps {
 }
 
 function FinancialSummariesMain(props: FinancialSummariesMainProps) {
-  const { classes, financialSummaries } = props;
+  const { classes } = props;
   let paidFinancialSummaries: CardPropsInfo[] = [];
   let unpaidFinancialSummaries: CardPropsInfo[] = [];
+  const financialSummaries = useSelector(selectAllFinancialSummariesArray);
 
   const formatFinancialSummaries = (summaries: FinancialSummaryRecord[]) => {
       summaries.forEach(summary => {
@@ -79,22 +80,18 @@ function FinancialSummariesMain(props: FinancialSummariesMainProps) {
         </Typography>
         {/* Report is put into an array for styling, to make a new card for each given report. */}
         {unpaidFinancialSummaries.map((report: any, index: number) => (
-          <OutlinedCardList key={index} info={[report]} primary={false} rightIcon={getPaymentButton()} />
+          <OutlinedCardList key={index} info={[report]} rightIcon={getPaymentButton()} />
         ))}
         <Typography className={classes.title} variant="body1">
           Paid Reports
         </Typography>
         {/* Report is put into an array for styling, to make a new card for each given report. */}
         {paidFinancialSummaries.map((report: any, index: number) => (
-          <OutlinedCardList key={index} info={[report]} primary={false} rightIcon={getViewButton()} />
+          <OutlinedCardList key={index} info={[report]} rightIcon={getViewButton()} />
         ))}
       </BaseScrollView>
     </BaseScreen>
   );
 }
 
-const mapStateToProps = (state: RootState) => ({
-  financialSummaries: state.siteData.currentSite.financialSummaries || [],
-});
-
-export default connect(mapStateToProps)(withStyles(styles)(FinancialSummariesMain));
+export default withStyles(styles)(FinancialSummariesMain);

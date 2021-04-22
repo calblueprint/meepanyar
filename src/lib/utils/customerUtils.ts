@@ -1,7 +1,9 @@
 
 import { CustomerRecord, MeterReadingRecord, SiteRecord, TariffPlanRecord } from '../../lib/airtable/interface';
-import { isBeforeCurrentPeriod } from '../../lib/moment/momentUtils';
+import { isBeforeCurrentPeriod, getCurrentMonthGracePeriodDeadline } from '../../lib/moment/momentUtils';
+import moment from 'moment';
 import { selectMeterReadingsByCustomerId } from '../../lib/redux/customerData';
+import { selectTariffPlanById } from '../../lib/redux/siteDataSlice';
 import { store } from '../redux/store';
 
 // Returns the last reading in the period or undefined if no reading has been made in the current period
@@ -26,9 +28,8 @@ export const getStartingReading = (customer: CustomerRecord): MeterReadingRecord
   }
 };
 
-export const getPeriodUsage = (currReading: MeterReadingRecord, startingMeter: MeterReadingRecord | undefined) => {
-  const periodUsage = currReading.reading - (startingMeter ? startingMeter.reading : 0);
-  return periodUsage;
+export const getPeriodUsage = (currReading: MeterReadingRecord, startingMeterReading : number) => {
+  return currReading.reading - startingMeterReading;
 }
 
 export const getAmountBilled = (currReading: MeterReadingRecord) => {
@@ -36,9 +37,18 @@ export const getAmountBilled = (currReading: MeterReadingRecord) => {
 };
 
 // TODO: add better error handling
-export const getTariffPlan = (customer: CustomerRecord, currentSite: SiteRecord): TariffPlanRecord | undefined => {
-  const tariffPlanId = customer.tariffPlanId;
-  return currentSite.tariffPlans.find((plan: TariffPlanRecord) => plan.id === tariffPlanId);
+export const getTariffPlanByCustomer = (customer: CustomerRecord): TariffPlanRecord | undefined => {
+  return selectTariffPlanById(store.getState(), customer.tariffPlanId);
+}
+
+export const calculateAmountBilled = (reading: number, tariffPlan: TariffPlanRecord): number => {
+  let amountCharged = tariffPlan.fixedTariff;
+
+  if (reading >= tariffPlan.freeUnits) {
+    amountCharged += tariffPlan.tariffByUnit * reading
+  }
+
+  return amountCharged
 }
 
 export const getLatestReadingDate = (customer: CustomerRecord): string => {
@@ -49,4 +59,14 @@ export const getLatestReadingDate = (customer: CustomerRecord): string => {
   } else {
     return 'No Readings'
   }
+}
+
+// We don't naively check if they were in the same month to avoid conflicts with meter readings made on the 1st of the month.
+export const isReadingFromLatestPeriod = (meterReading: MeterReadingRecord | undefined): boolean => {
+  if (!meterReading) {
+    return false
+  }
+  
+  const latestMeterReadingDate = moment(meterReading.date);
+  return latestMeterReadingDate && latestMeterReadingDate.isSameOrAfter(getCurrentMonthGracePeriodDeadline())
 }

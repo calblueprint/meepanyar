@@ -1,10 +1,9 @@
 import React from 'react';
-import { connect, useSelector } from 'react-redux';
-import { RootState } from '../../lib/redux/store';
 import { formatDateStringToLocal, getCurrentPeriod, getNextPeriod } from '../../lib/moment/momentUtils';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { CustomerRecord, SiteRecord } from '../../lib/airtable/interface';
+import { SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
 import ReportButton from './components/ReportButton';
@@ -17,8 +16,10 @@ import CloudOffIcon from '@material-ui/icons/CloudOff';
 import CloudIcon from '@material-ui/icons/Cloud';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
-import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
+import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -49,25 +50,24 @@ const styles = (theme: Theme) =>
   });
 
 interface HomeProps {
-  classes: { header: string; network: string, periodDescription: string, categoryText: string, financialSums: string };
-  lastUpdated: string;
-  isOnline: boolean;
-  currentSite: SiteRecord;
+  classes: { header: string; network: string, periodDescription: string, categoryText: string, financialSums: string; };
 }
 
 function Home(props: HomeProps) {
-  const { classes, lastUpdated, isOnline, currentSite } = props;
-  const customers: CustomerRecord[] = useSelector(selectAllCustomersArray) || [];
-
+  const { classes } = props;
   const numCustomersToMeter = useSelector(selectCustomersToMeter)?.length || 0;
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
+  const allSites: SiteRecord[] = useSelector(selectAllSitesInformation) || [];
+  const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation) || EMPTY_SITE;
+  const isOnline = useSelector(selectIsOnline);
+  const lastUpdated = formatDateStringToLocal(useSelector(selectLastUpdated));
 
   return (
     <BaseScreen rightIcon="user">
       <BaseScrollView>
         <div className={classes.header}>
           <div>
-            <SiteMenu currentSite={currentSite} />
+            <SiteMenu currentSite={currentSite} sites={allSites} />
             <Typography className={classes.periodDescription} >
               Current Period: {getCurrentPeriod()}
             </Typography>
@@ -126,16 +126,5 @@ function Home(props: HomeProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => {
-  let lastUpdated = '';
 
-  if (state.userData.lastUpdated) {
-    lastUpdated = formatDateStringToLocal(state.userData.lastUpdated);
-  }
-  const isOnline = state.userData.isOnline;
-  const currentSite = state.siteData.currentSite;
-
-  return { lastUpdated, isOnline, currentSite };
-};
-
-export default connect(mapStateToProps)(withStyles(styles)(Home));
+export default withStyles(styles)(Home);

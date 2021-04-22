@@ -32,6 +32,7 @@
     "airtable": "^0.9.0",
     "bootstrap": "^4.5.2",
     "connected-react-router": "^6.8.0",
+    "formik": "^2.2.6",
     "history": "^4.10.1",
     "i18next": "^19.9.2",
     "idb": "^5.0.7",
@@ -42,7 +43,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-html5-camera-photo": "^1.5.4",
-    "react-i18next": "^11.8.10",
+    "react-i18next": "^11.8.12",
     "react-icons": "^3.11.0",
     "react-material-navbar": "^1.2.1",
     "react-native": "^0.63.3",
@@ -57,7 +58,8 @@
     "stack-utils": "^2.0.2",
     "styled-components": "^5.2.0",
     "trie-search": "^1.3.4",
-    "typescript": "^3.7.5"
+    "typescript": "^3.9.9",
+    "yup": "^0.32.9"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -66,7 +68,7 @@
     "build-sw": "node ./src/custom-sw/sw-env.js && node ./src/custom-sw/sw-build.js",
     "translation-sync": "node ./src/lib/i18next/getResources.js",
     "clean-cra-sw": "rm -f build/precache-manifest.*.js && rm -f build/service-worker.js",
-    "build": "npm run translation-sync && react-scripts build && npm run build-sw && npm run clean-cra-sw",
+    "build": "react-scripts build && npm run build-sw && npm run clean-cra-sw",
     "generate-schema": "generate-airtable-schema",
     "apply-schema-patches": "git apply --reject --whitespace=fix src/lib/airtable/patches/*.patch",
     "prettier-format": "prettier --config .prettierrc \"src/**/*.{ts,tsx,css}\" --write",

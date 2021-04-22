@@ -1,35 +1,52 @@
-import { Button, CircularProgress } from '@material-ui/core';
-import { createStyles, withStyles } from '@material-ui/core/styles';
+import { Button, CircularProgress, makeStyles, Theme, Typography } from '@material-ui/core';
+import { createStyles } from '@material-ui/core/styles';
 import React from 'react';
 
-const styles = () =>
-  createStyles({
-    button: {
-      color: 'white',
-      display: 'flex',
-      borderRadius: '20px',
-      width: '187px',
-      height: '48px',
-      marginTop: '10%',
-      margin: '0 auto',
-    },
-  });
-
-  // TODO: @wangannie figure out how onclick would work in relation to linking to avoid confusion
 interface MainButtonProps {
-  classes: { button: string };
   label: string;
   onClick?: (event: React.MouseEvent) => void;
   loading?: boolean;
+  disabled?: boolean;
+  textButton?: boolean;
+  variant?: 'text' | 'outlined' | 'contained';
+  fullWidth?: boolean;
+  startIcon?: React.ReactNode;
+  errorMessage?: string;
 }
+
+const styles = makeStyles((theme: Theme) =>
+  createStyles({
+    button: (props: MainButtonProps) => ({
+      color: props.variant && props.variant !== 'contained' ? undefined : 'white',
+      borderWidth: 2,
+      display: 'flex',
+      borderRadius: 6,
+      minHeight: 36,
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+      margin: '0 auto',
+    }),
+  }),
+);
 
 function MainButton(props: MainButtonProps) {
-  const { classes } = props;
-  return (
-    <Button disabled={props.loading} className={classes.button} type="submit" variant="contained" color="primary" disableElevation={true} onClick={props.onClick}>
-      {props.loading? <CircularProgress size={24} /> : props.label}
+  const classes = styles(props);
+  return <>
+    <Button
+      startIcon={props.startIcon}
+      fullWidth={props.fullWidth}
+      disabled={props.disabled || props.loading}
+      className={classes.button}
+      type="submit"
+      variant={props.variant || 'contained'}
+      color="primary"
+      disableElevation={true}
+      onClick={props.onClick}
+    >
+      {props.loading ? <CircularProgress size={24} /> : props.label}
     </Button>
-  );
+    {props.errorMessage && <Typography color='error' align='center'> {props.errorMessage} </Typography>}
+  </>
 }
 
-export default withStyles(styles)(MainButton);
+export default MainButton;

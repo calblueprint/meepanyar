@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { RootState } from '../../../lib/redux/store';
 
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
@@ -76,9 +75,4 @@ function SiteMenu(props: SiteMenuProps) {
   );
 }
 
-const mapStateToProps = (state: RootState) => {
-  const sites = state.siteData.sites;
-  return { sites };
-};
-
-export default connect(mapStateToProps)(withStyles(styles)(SiteMenu));
+export default withStyles(styles)(SiteMenu);

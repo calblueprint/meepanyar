@@ -1,111 +1,117 @@
-import React from 'react';
-import * as Styles from '../styles/LoginStyles';
-import Container from '@material-ui/core/Container';
 import { Typography } from '@material-ui/core';
-import { signupUser, loginUser } from '../lib/airlock/airlock';
-import { RouteComponentProps } from 'react-router-dom';
+import Container from '@material-ui/core/Container';
+import { useFormik } from 'formik';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router';
+import * as yup from 'yup';
+import Button from '../components/Button';
+import TextField from '../components/TextField';
+import { loginUser, signupUser } from '../lib/airlock/airlock';
 
-interface LoginState {
-  username: string;
-  password: string;
-  errorMessage: string;
+const validationSchema = yup.object({
+  username: yup.string().required('Must enter a username'),
+  // TODO: set more reasonable minimum number of characters + other constraints
+  password: yup.string().min(4, 'Password should be of minimum 4 characters length').required('Must enter a password'),
+  submitAction: yup.string(),
+});
+
+enum LoginAction {
+  LOGIN = 'login',
+  CREATE = 'create',
 }
 
-class Login extends React.Component<RouteComponentProps, LoginState> {
-  state = {
-    username: '',
-    password: '',
-    errorMessage: '',
-  };
+function Login() {
+  const [errorMessage, setErrorMessage] = useState('');
+  // Indicates which button (login or create) should be loading
+  const [loadingButton, setLoadingButton] = useState('');
+  const history = useHistory();
 
-  onUsernameChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ username: event.target.value });
-  };
+  const formik = useFormik({
+    initialValues: {
+      username: '',
+      password: '',
+      submitAction: '',
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      handleSubmit(values);
+    },
+  });
 
-  onPasswordChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    this.setState({ password: event.target.value });
-  };
-
-  onLoginClicked = async (event: React.MouseEvent) => {
-    event.preventDefault();
-    const { username, password } = this.state;
-    const { history } = this.props;
+  const handleSubmit = async (values: any) => {
+    const { username, password, submitAction } = values;
+    if (submitAction === LoginAction.CREATE) {
+      setLoadingButton(LoginAction.CREATE);
+      const { success, message } = await signupUser(username, password);
+      if (!success) {
+        setErrorMessage('Register unsuccessful.' + message);
+        console.error(message);
+        setLoadingButton('');
+        return;
+      }
+    } else {
+      setLoadingButton(LoginAction.LOGIN);
+    }
     const loginSuccessful = await loginUser(username, password);
-
     // Navigate to new screen
     if (loginSuccessful) {
       history.push('/home');
     } else {
-      this.setState({ errorMessage: 'Login unsuccessful. Incorrect username or password.' });
+      setLoadingButton('');
+      setErrorMessage('Login unsuccessful. Incorrect username or password.');
     }
   };
 
-  onCreateAccountClicked = async (event: React.MouseEvent) => {
-    event.preventDefault();
-    const { username, password } = this.state;
-    const { success, message } = await signupUser(username, password);
-
-    if (success) {
-      this.onLoginClicked(event);
-    } else {
-      this.setState({ errorMessage: `Register unsuccessful. ${message}` });
-    }
-  };
-
-  renderErrorMessage = () => {
-    return (
-      <Typography color="error" display="block" gutterBottom>
-        {this.state.errorMessage}
-      </Typography>
-    );
-  };
-
-  render() {
-    return (
-      <Container component="main" maxWidth="xs">
-        <Styles.MainDiv>
-          <form noValidate>
-            <Styles.FieldDiv>
-              <Styles.Label>Username</Styles.Label>
-              <Styles.Field
-                id="username"
-                InputProps={{ disableUnderline: true }}
-                InputLabelProps={{ shrink: true }}
-                onChange={this.onUsernameChange}
-                color="primary"
-                autoComplete="username"
-              />
-            </Styles.FieldDiv>
-            <Styles.FieldDiv>
-              <Styles.Label>Password</Styles.Label>
-              <Styles.Field
-                id="password"
-                InputProps={{ disableUnderline: true }}
-                InputLabelProps={{ shrink: true }}
-                onChange={this.onPasswordChange}
-                color="primary"
-                type="password"
-                autoComplete="off"
-              />
-            </Styles.FieldDiv>
-            {this.state.errorMessage ? this.renderErrorMessage() : ''}
-            <Styles.LoginButton type="submit" variant="contained" color="primary" onClick={this.onLoginClicked}>
-              Login
-            </Styles.LoginButton>
-            <Styles.LoginButton
-              type="submit"
-              variant="contained"
-              color="secondary"
-              onClick={this.onCreateAccountClicked}
-            >
-              Create Account
-            </Styles.LoginButton>
-            <Styles.SignUpLink href="#">Forgot Password ?</Styles.SignUpLink>
-          </form>
-        </Styles.MainDiv>
-      </Container>
-    );
-  }
+  return (
+    // TODO replace inline styling
+    <Container component="main" maxWidth="xs">
+      <div style={{ marginTop: 80 }}>
+        <form onSubmit={formik.handleSubmit} noValidate>
+          <div style={{ marginBottom: 24 }}>
+            <TextField
+              id="username"
+              label="Username"
+              value={formik.values.username}
+              onChange={formik.handleChange}
+              error={formik.touched.username && Boolean(formik.errors.username)}
+              helperText={formik.touched.username && formik.errors.username}
+              required
+            />
+            <TextField
+              id="password"
+              label="Password"
+              required
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              type="password"
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+            />
+          </div>
+          <Typography color="error">{errorMessage}</Typography>
+          <Button
+            loading={loadingButton === LoginAction.LOGIN}
+            label="Login"
+            fullWidth
+            onClick={() => {
+              formik.setFieldValue('submitAction', LoginAction.LOGIN);
+            }}
+          />
+          <Button
+            loading={loadingButton === LoginAction.CREATE}
+            label="Create Account"
+            onClick={() => {
+              formik.setFieldValue('submitAction', LoginAction.CREATE);
+            }}
+            fullWidth
+            variant="outlined"
+          />
+          {/* TODO: add Forgot Password functionality */}
+          {/* <Button label="Forgot password?" fullWidth variant="text" /> */}
+        </form>
+      </div>
+    </Container>
+  );
 }
 
 export default Login;

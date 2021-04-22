@@ -1,11 +1,13 @@
 import moment from 'moment';
+import { selectCurrentSiteGracePeriod } from '../redux/siteData';
+import { store } from '../redux/store';
 
 // Returns a string of the local date & time in a language- and timezone-sensitive format
 // given a DateTime string.
 export const formatDateStringToLocal = (dateString: string): string => {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
-    month: 'long',
+    month: 'numeric',
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
@@ -65,4 +67,11 @@ export const getDiffinPeriods = (x: string, y: string) => {
   const dateY: Date = new Date(y);
   const diff: number = Math.abs(dateY.getTime() - dateX.getTime());
   return diff;
+}
+
+// Returns the grace period applied to the current month.
+// All meter readings logged after this date are for the current month's period
+export const getCurrentMonthGracePeriodDeadline = () => {
+  const gracePeriodDays : number = selectCurrentSiteGracePeriod(store.getState()) || 0;
+  return moment().startOf('month').add(gracePeriodDays, 'days');
 }

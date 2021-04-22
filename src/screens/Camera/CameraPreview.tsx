@@ -39,6 +39,7 @@ function CameraPreview(props: CameraPreviewProps) {
         <BaseScreen title="Preview" leftIcon="backNav">
             <img src={props.location.state.photoUri} className={props.classes.photo} />
             <Button
+                fullWidth
                 label={'Next'}
                 onClick={handleConfirm}
             />

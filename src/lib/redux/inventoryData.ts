@@ -1,11 +1,18 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord, SiteRecord } from '../airtable/interface';
+import {
+  InventoryRecord,
+  InventoryUpdateRecord,
+  ProductRecord,
+  PurchaseRequestRecord,
+  SiteRecord
+} from '../airtable/interface';
 import {
   addInventory,
   addInventoryUpdate,
   addProduct,
   addPurchaseRequest,
   EMPTY_INVENTORY,
+  PurchaseRequestStatus,
   saveInventoryData,
   selectAllCurrentSitePurchaseRequestsArray,
   selectAllInventoryUpdatesArray,
@@ -15,9 +22,8 @@ import {
   updateInventoryQuantity,
   updatePurchaseRequest
 } from './inventoryDataSlice';
-import { getCurrentSiteId } from './siteData';
+import { selectCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
-
 
 const getInventoryId = (_: RootState, inventoryId: string) => inventoryId;
 
@@ -59,6 +65,11 @@ export const selectCurrentInventoryProduct = createSelector(
   (inventoryId, state) => selectProductByInventoryId(state, inventoryId),
 );
 
+export const selectPendingPurchaseRequestCount = createSelector(
+  selectAllCurrentSitePurchaseRequestsArray,
+  (purchaseRequests) => purchaseRequests.filter((pr) => pr.status === PurchaseRequestStatus.PENDING).length,
+);
+
 export const refreshInventoryData = (site: SiteRecord): void => {
   if (site) {
     // TODO @wangannie what to do if site null
@@ -82,7 +93,7 @@ export const addInventoryToRedux = (inventory: InventoryRecord): void => {
 export const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord): void => {
   const purchaseRequestData = {
     ...purchaseRequest,
-    siteId: getCurrentSiteId(),
+    siteId: selectCurrentSiteId(store.getState()),
   };
   store.dispatch(addPurchaseRequest(purchaseRequestData));
 };
@@ -90,7 +101,7 @@ export const addPurchaseRequestToRedux = (purchaseRequest: PurchaseRequestRecord
 export const updatePurchaseRequestInRedux = (purchaseRequest: Partial<PurchaseRequestRecord>): void => {
   const purchaseRequestUpdates = {
     ...purchaseRequest,
-    siteId: getCurrentSiteId(),
+    siteId: selectCurrentSiteId(store.getState()),
   };
   store.dispatch(updatePurchaseRequest(purchaseRequestUpdates));
 };
@@ -98,7 +109,7 @@ export const updatePurchaseRequestInRedux = (purchaseRequest: Partial<PurchaseRe
 export const addInventoryUpdateToRedux = (inventoryUpdate: InventoryUpdateRecord): void => {
   const inventoryUpdateData = {
     ...inventoryUpdate,
-    siteId: getCurrentSiteId(),
+    siteId: selectCurrentSiteId(store.getState()),
   };
   store.dispatch(addInventoryUpdate(inventoryUpdateData));
 };
@@ -107,7 +118,7 @@ export const updateInventoryQuantityInRedux = (inventoryId: string, newQuantity:
   const updateData = {
     inventoryId,
     newQuantity,
-    siteId: getCurrentSiteId(),
+    siteId: selectCurrentSiteId(store.getState()),
   };
   store.dispatch(updateInventoryQuantity(updateData));
 };

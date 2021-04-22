@@ -25,7 +25,7 @@ const styles = (theme: Theme) =>
         },
         paymentText: {
             fontSize: theme.typography.h2.fontSize,
-            color: theme.palette.info.main,
+            color: theme.palette.error.main,
         }, content: {
             display: 'flex',
             width: 'inherit',

@@ -1,50 +1,71 @@
+import { IconButton } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import moment from 'moment';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import Button from '../../components/Button';
+import CameraButton from '../../components/CameraButton';
+import TextField from '../../components/TextField';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
-import { updatePurchaseRequest } from '../../lib/airtable/request';
-import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
-import { selectProductByInventoryId, updatePurchaseRequestInRedux } from '../../lib/redux/inventoryData';
-import {
-  EMPTY_PRODUCT,
-  EMPTY_PURCHASE_REQUEST,
-  PurchaseRequestStatus
-} from '../../lib/redux/inventoryDataSlice';
+import { selectProductByInventoryId } from '../../lib/redux/inventoryData';
+import { EMPTY_PRODUCT, EMPTY_PURCHASE_REQUEST, PurchaseRequestStatus } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getUserId } from '../../lib/redux/userData';
+import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { selectSiteUserById } from '../../lib/redux/userDataSlice';
+import { getInventoryLastUpdated, reviewPurchaseRequest } from '../../lib/utils/inventoryUtils';
+import InventoryInfo from './components/InventoryInfo';
+import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
 
 const styles = (theme: Theme) =>
   createStyles({
-    content: {
-      color: theme.palette.text.primary,
-    },
-    section: {
-      marginTop: '30px',
-    },
     imageContainer: {
       border: `3.5px solid ${theme.palette.divider}`,
-      radius: '6px',
+      radius: 6,
       padding: 0,
       width: '100%',
+    },
+    headerContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginBottom: theme.spacing(3),
+    },
+    reviewButtonsContainer: {
+      flex: 1,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   });
 
 interface PurchaseRequestsProps extends RouteComponentProps {
-  classes: { content: string; section: string, imageContainer: string };
+  classes: { imageContainer: string; headerContainer: string; reviewButtonsContainer: string };
   location: any;
 }
+
+export const getPurchaseRequestReviewButtons = (handleApprove: () => void, handleDeny: () => void) => {
+  return (
+    <div>
+      <IconButton edge="end" size="small" onClick={handleDeny}>
+        {getPurchaseRequestStatusIcon(PurchaseRequestStatus.DENIED)}
+      </IconButton>
+      <IconButton edge="end" size="small" onClick={handleApprove}>
+        {getPurchaseRequestStatusIcon(PurchaseRequestStatus.APPROVED)}
+      </IconButton>
+    </div>
+  );
+};
 
 function PurchaseRequest(props: PurchaseRequestsProps) {
   const { classes } = props;
   const history = useHistory();
   const purchaseRequest: PurchaseRequestRecord = props.location.state?.purchaseRequest || EMPTY_PURCHASE_REQUEST;
-  const product = useSelector((state: RootState) => selectProductByInventoryId(state, purchaseRequest.inventoryId)) || EMPTY_PRODUCT;
+  const product =
+    useSelector((state: RootState) => selectProductByInventoryId(state, purchaseRequest.inventoryId)) || EMPTY_PRODUCT;
+  const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+  const currentUserId = useSelector(selectCurrentUserId);
+
+  const requester = useSelector((state: RootState) => selectSiteUserById(state, purchaseRequest.requesterId));
 
   // If no purchase request was passed in (i.e. reaching this URL directly), redirect to InventoryMain
   if (!props.location.state?.purchaseRequest || !product) {
@@ -52,35 +73,42 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   }
 
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
-    const reviewData = {
-      reviewerId: getUserId(),
-      reviewedAt: moment().toISOString(),
-      status: approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED,
-    };
-    updatePurchaseRequest(purchaseRequest.id, reviewData);
-    updatePurchaseRequestInRedux({ id: purchaseRequest.id, ...reviewData });
+    reviewPurchaseRequest(purchaseRequest, approved, currentUserId);
     history.goBack();
   };
 
   return (
     <BaseScreen title="Inventory Receipt" leftIcon="backNav">
       <BaseScrollView>
-        <div className={classes.content}>
-          <Typography variant="h3">{`Purchase Request for ${product.name}`}</Typography>
-          <Typography variant="body1">{`Request status: ${purchaseRequest.status}`}</Typography>
-          <Typography variant="body1">{`Amount purchased ${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
-          <Typography variant="body1">{`Amount spent ${purchaseRequest.amountSpent} ks`}</Typography>
-          <Typography variant="body1">{`Created at ${formatDateStringToLocal(purchaseRequest.createdAt)}`}</Typography>
-          <Typography variant="body1">{`Submitted by ${purchaseRequest.requesterId}`}</Typography>
-          {purchaseRequest.notes && <Typography variant="body1">{`Notes: ${purchaseRequest.notes}`}</Typography>}
-          {purchaseRequest.receipt && <img className={classes.imageContainer} src={purchaseRequest.receipt[0].url} alt="receipt"/> }
-          {purchaseRequest.status == PurchaseRequestStatus.PENDING && (
-            <div>
-              <Button onClick={() => handleSubmit(purchaseRequest, true)} label={'Approve'} />
-              <Button onClick={() => handleSubmit(purchaseRequest, false)} label={'Deny'} />
-            </div>
-          )}
+        <div className={classes.headerContainer}>
+          <InventoryInfo productId={product.id} lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)} />
+          <div className={classes.reviewButtonsContainer}>
+            {userIsAdmin && purchaseRequest.status === PurchaseRequestStatus.PENDING
+              ? getPurchaseRequestReviewButtons(
+                  () => handleSubmit(purchaseRequest, true),
+                  () => handleSubmit(purchaseRequest, false),
+                )
+              : getPurchaseRequestStatusIcon(purchaseRequest.status)}
+          </div>
         </div>
+        <TextField
+          label={'Amount Purchased'}
+          unit={product.unit}
+          disabled
+          id={'amount-purchased'}
+          value={purchaseRequest.amountPurchased}
+        />
+        <TextField label={'Amount Spent'} currency disabled id={'amount-spent'} value={purchaseRequest.amountSpent} />
+        <TextField label={'Notes'} disabled id={'notes'} value={purchaseRequest.notes || 'None'} />
+        <TextField
+          label={'Submitted By'}
+          disabled
+          id={'submitted-by'}
+          value={requester?.name || purchaseRequest.requesterId}
+        />
+        {purchaseRequest.receipt && (
+          <CameraButton staticPreview label="Receipt" photoUri={purchaseRequest.receipt[0].url} id="receipt" />
+        )}
       </BaseScrollView>
     </BaseScreen>
   );
