@@ -238,9 +238,10 @@ function CustomerProfile(props: CustomerProps) {
           {getReadingInfo()}
         </div>
       </BaseScrollView>
-      {/* Show the snackbar whenever the user is offline, regardless of what actions they took, if any */}
+      {/* Show the snackbar whenever the user is offline regardless of what actions they took, if any. */}
+      {/* Exception: don't show the snackbar if showing OfflineDialog */}
       <Snackbar
-        open={!isOnline}
+        open={!isOfflineId(customer.id) && !isOnline}
         message="You are not connected to a network. Customer updates will be recorded after you reconnect."
       />
       <OfflineDialog
