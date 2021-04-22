@@ -8,6 +8,8 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 import BottomNavigation from '@material-ui/core/BottomNavigation';
 import { withStyles, createStyles } from '@material-ui/core/styles';
+import { store } from '../../lib/redux/store';
+import { setIsOnline } from '../../lib/redux/userDataSlice';
 
 const styles = () =>
   createStyles({
@@ -64,12 +66,14 @@ function BaseNavigation(props: BaseNavigationProps) {
         component={Link}
         to="/maintenance"
       />
+      {/* TODO: REVERT BACK */}
       <BottomNavigationAction
         className={classes.action}
-        value="/incidents"
+        // value="/incidents"
+        onClick={() => store.dispatch(setIsOnline(false))} 
         icon={<ReportProblemIcon />}
-        component={Link}
-        to="/incidents"
+        // component={Link}
+        // to="/incidents"
       />
     </BottomNavigation>
   );

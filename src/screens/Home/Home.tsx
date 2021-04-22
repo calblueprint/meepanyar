@@ -6,15 +6,12 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import Button from '../../components/Button';
 import { SiteRecord } from '../../lib/airtable/interface';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { selectCustomersToCollect, selectCustomersToMeter } from '../../lib/redux/customerData';
 import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { store } from '../../lib/redux/store';
 import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
-import { setIsOnline } from '../../lib/redux/userDataSlice';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
 
@@ -68,8 +65,6 @@ function Home(props: HomeProps) {
           ]}
         />
       </Link>
-      {/* TODO @wangannie remove before merging */}
-      <Button label="Go offline" fullWidth onClick={() => store.dispatch(setIsOnline(!isOnline))} />
       <Link to={'/financial-summary'}>
         <HomeMenuItem label="Unpaid Reports" amount={0} />
       </Link>
