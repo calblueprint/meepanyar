@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
-
 import Typography from '@material-ui/core/Typography';
 import WifiIcon from '@material-ui/icons/Wifi';
 import WifiOffIcon from '@material-ui/icons/WifiOff';
@@ -66,7 +65,7 @@ function Home(props: HomeProps) {
           ]}
         />
       </Link>
-      <Link to={'/financial-summary'}>
+      <Link to={'/reports'}>
         <HomeMenuItem label="Unpaid Reports" amount={0} />
       </Link>
       <HomeMenuItem label="Unresolved Incidents" amount={0} />

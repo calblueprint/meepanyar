@@ -21,6 +21,8 @@ import EditCustomer from './screens/Customers/EditCustomer';
 import FinancialSummariesMain from './screens/FinancialSummary/FinancialSummariesMain';
 import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummaryPayment';
+import ReportsMain from './screens/Reports/ReportsMain';
+import Report from './screens/Reports/Report';
 import Home from './screens/Home/Home';
 import Incidents from './screens/Incidents';
 import ProfileMain from './screens/Profile/ProfileMain';
@@ -67,7 +69,8 @@ function App() {
       <AuthenticatedRoute path={'/customers/customer/starting-meter-reading/edit'} component={EditStartingMeter} exact />
       <AuthenticatedRoute path={'/customers/customer/records'} component={CustomerRecords} exact />
       <AuthenticatedRoute path="/financial-summaries" component={FinancialSummariesMain} />
-
+      <AuthenticatedRoute path="/reports" component={ReportsMain} />
+      <AuthenticatedRoute path="/reports/report" component={Report} />
       {
         //TODO: change path to ~"/financial-summaries/financial-summary/payment/create" once other screens are built out
       }
@@ -75,11 +78,11 @@ function App() {
 
       <AuthenticatedRoute path="/inventory" component={InventoryMain} exact/>
       <AuthenticatedRoute path="/inventory/create" component={AddInventory} />
-      <AuthenticatedRoute path="/inventory/item" component={InventoryProfile} /> 
-      <AuthenticatedRoute path="/inventory/purchase-requests" component={PurchaseRequestsMain} exact/> 
-      <AuthenticatedRoute path="/inventory/purchase-requests/create" component={CreatePurchaseRequest} /> 
-      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} /> 
-      <AuthenticatedRoute path="/inventory/updates/create" component={CreateInventoryUpdate} /> 
+      <AuthenticatedRoute path="/inventory/item" component={InventoryProfile} />
+      <AuthenticatedRoute path="/inventory/purchase-requests" component={PurchaseRequestsMain} exact/>
+      <AuthenticatedRoute path="/inventory/purchase-requests/create" component={CreatePurchaseRequest} />
+      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} />
+      <AuthenticatedRoute path="/inventory/updates/create" component={CreateInventoryUpdate} />
 
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
