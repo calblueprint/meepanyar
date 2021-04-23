@@ -62,8 +62,8 @@ export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size
 };
 
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
-  const { classes, purchaseRequest } = props;
-  const [status, setStatus] = useState(purchaseRequest.status);
+  const { classes } = props;
+  const [purchaseRequest, setPurchaseRequest] = useState(props.purchaseRequest);
   const product =
     useSelector((state: RootState) =>
       selectProductById(state, selectCurrentSiteInventoryById(state, purchaseRequest.inventoryId)?.productId || ''),
@@ -73,8 +73,7 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
 
   const handleSubmitReview = (approved: boolean) => {
     const newStatus = approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED;
-    setStatus(newStatus);
-    purchaseRequest.status = newStatus;
+    setPurchaseRequest({...purchaseRequest, status: newStatus });
     reviewPurchaseRequest(purchaseRequest, approved, userId);
   };
 
@@ -97,12 +96,12 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
         </CardContent>
       </Link>
       <CardActions className={classes.cardActions}>
-        {status === PurchaseRequestStatus.PENDING && userIsAdmin
+        {purchaseRequest.status === PurchaseRequestStatus.PENDING && userIsAdmin
           ? getPurchaseRequestReviewButtons(
               () => handleSubmitReview(true),
               () => handleSubmitReview(false),
             )
-          : getPurchaseRequestStatusIcon(status)}
+          : getPurchaseRequestStatusIcon(purchaseRequest.status)}
       </CardActions>
     </Card>
   );
