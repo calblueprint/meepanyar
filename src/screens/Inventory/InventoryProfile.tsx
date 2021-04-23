@@ -12,6 +12,8 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OfflineDialog from '../../components/OfflineDialog';
 import Snackbar from '../../components/Snackbar';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
@@ -36,6 +38,7 @@ interface InventoryProps extends RouteComponentProps {
 }
 
 function InventoryProfile(props: InventoryProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   const inventory = useSelector(selectCurrentInventory) || EMPTY_INVENTORY;
   const product = useSelector(selectCurrentInventoryProduct);
@@ -65,7 +68,7 @@ function InventoryProfile(props: InventoryProps) {
           withActions
         />
         <div className={classes.section}>
-          <Typography variant="body2">Recent Updates</Typography>
+          <Typography variant="body2">{intl(words.latest_updates)}</Typography>
           <List>
             {inventoryHistory.map((historyRecord: any) => {
               const isPurchaseRequest = 'amountPurchased' in historyRecord;
@@ -93,13 +96,13 @@ function InventoryProfile(props: InventoryProps) {
                     <ListItemText
                       className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                       primaryTypographyProps={{ variant: 'body2', align: 'right' }}
-                      primary={`${historyRecord.amountSpent || 0} kS`}
+                      primary={`${historyRecord.amountSpent || 0} ${intl(words.ks)}`}
                     />
                   )}
                   <ListItemText
                     className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                     primaryTypographyProps={{ variant: 'body2', align: 'right' }}
-                    primary={`${historyRecord.updatedQuantity || 0} ${product.unit}(s)`}
+                    primary={`${historyRecord.updatedQuantity || 0} ${product.unit}(${intl(words.s)})`}
                   />
                   <ListItemSecondaryAction>
                     {historyRecord.status && (

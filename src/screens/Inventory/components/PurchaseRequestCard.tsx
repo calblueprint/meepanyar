@@ -8,6 +8,8 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { PurchaseRequestRecord } from '../../../lib/airtable/interface';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
 import {
   EMPTY_PRODUCT,
@@ -79,6 +81,7 @@ export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size
 };
 
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
+  const intl = useInternationalization(); 
   const { classes, purchaseRequest, showSnackbarCallback } = props;
   const [status, setStatus] = useState(purchaseRequest.status);
   const product =
@@ -118,12 +121,9 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
             <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(
               purchaseRequest.createdAt,
             )}`}</Typography>
-            <Typography
-              variant="body1"
-              color="textSecondary"
-            >{`${purchaseRequest.amountPurchased} ${product.unit}(s)`}</Typography>
+            <Typography variant="body1" color="textSecondary">{`${purchaseRequest.amountPurchased} ${product.unit}(${intl(words.s)})`}</Typography>
           </div>
-          <Typography color="textPrimary" variant="h2">{`${purchaseRequest.amountSpent} Ks`}</Typography>
+          <Typography color="textPrimary" variant="h2">{`${purchaseRequest.amountSpent} ${intl(words.ks)}`}</Typography>
         </CardContent>
       </Link>
       <CardActions className={classes.cardActions}>

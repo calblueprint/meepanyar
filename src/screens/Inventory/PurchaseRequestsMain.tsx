@@ -6,6 +6,8 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Snackbar from '../../components/Snackbar';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import { selectPendingPurchaseRequestCount, selectProductByInventoryId } from '../../lib/redux/inventoryData';
 import {
   PurchaseRequestStatus,
@@ -30,6 +32,7 @@ interface PurchaseRequestsProps extends RouteComponentProps {
 
 // TODO @wangannie: address empty state
 function PurchaseRequests(props: PurchaseRequestsProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   const [tabValue, setTabValue] = React.useState(0);
 
@@ -98,10 +101,10 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
 
   return (
     <BaseScreen
-      title="All Purchases"
+      title={words.all_purchases}
       leftIcon="backNav"
       searchAction={handleSearchChange}
-      searchPlaceholder={'Search by inventory name'}
+      searchPlaceholder={intl(words.search_by_inventory_name)}
       searchExit={exitSearch}
     >
       {userIsAdmin && (
@@ -112,12 +115,12 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
           onChange={handleTabChange}
           aria-label="filter purchase requests"
         >
-          <Tab label="All" id="tab-all" />
+          <Tab label={intl(words.view_all)} id="tab-all" />
           <Tab
             style={{ overflow: 'visible' }}
             label={
               <Badge color="error" badgeContent={pendingCount}>
-                Pending
+                {intl(words.pending)}
               </Badge>
             }
             id="tab-pending"

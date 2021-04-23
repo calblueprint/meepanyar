@@ -4,6 +4,8 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import SyncIcon from '@material-ui/icons/Sync';
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
@@ -48,6 +50,7 @@ interface InventoryCardProps {
 }
 
 function InventoryCard(props: InventoryCardProps) {
+  const intl = useInternationalization();
   const { classes, lastUpdated, productId, currentQuantity, inventoryId } = props;
   const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
@@ -60,10 +63,10 @@ function InventoryCard(props: InventoryCardProps) {
             {isOfflineId(inventoryId) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
           </div>
           <Typography variant="body1" color="textSecondary">
-            {`Last Updated: ${lastUpdated}`}
+            {`${intl(words.last_updated_date, ' ')}: ${lastUpdated}`}{' '}
           </Typography>
         </div>
-        <Typography variant="h2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
+        <Typography variant="h2">{`${currentQuantity} ${product.unit}(${intl(words.s)})`}</Typography>
       </CardContent>
       <CardActions>
         <IconButton edge="end" size="small">

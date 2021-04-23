@@ -13,6 +13,8 @@ import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryInfo from './components/InventoryInfo';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -21,15 +23,13 @@ const styles = (theme: Theme) =>
     },
   });
 
-const validationSchema = yup.object({
-  updatedAmount: yup.number().min(0, 'Please enter a valid amount').required('Please enter an amount'),
-});
 
 interface CreateInventoryUpdateProps extends RouteComponentProps {
   classes: { headerContainer: string };
 }
 
 function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const history = useHistory();
   const userId = useSelector(selectCurrentUserId);
@@ -37,6 +37,9 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const product = useSelector(selectCurrentInventoryProduct);
   const [loading, setLoading] = useState(false);
 
+  const validationSchema = yup.object({
+    updatedAmount: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.please_enter_an_amount)),
+  });
   const formik = useFormik({
     initialValues: {
       updatedAmount: '',
@@ -61,7 +64,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   };
 
   return (
-    <BaseScreen title="Update Item" leftIcon="backNav">
+    <BaseScreen title={intl(words.update_x, words.item)} leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.headerContainer}>
           <InventoryInfo
@@ -73,18 +76,18 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
         </div>
         <form onSubmit={formik.handleSubmit} noValidate>
           <TextField
-            placeholder={'e.g. 5'}
+            placeholder={intl(words.eg_x, "5")}
             required
             type="number"
             unit={product.unit}
-            label={`Updated Amount`}
+            label={intl(words.updated_amount)}
             id={'updatedAmount'}
             value={formik.values.updatedAmount}
             onChange={formik.handleChange}
             error={formik.touched.updatedAmount && Boolean(formik.errors.updatedAmount)}
             helperText={formik.touched.updatedAmount && formik.errors.updatedAmount}
           />
-          <Button fullWidth loading={loading} label="Update" />
+          <Button fullWidth loading={loading} label={intl(words.update)} />
         </form>
       </BaseScrollView>
     </BaseScreen>

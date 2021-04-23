@@ -5,6 +5,8 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Button from '../../../components/Button';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
@@ -49,19 +51,26 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const getPurchaseRequestButton = () => (
-  <Link to={'purchase-requests/create'}>
-    <Button label="Purchase" />
-  </Link>
-);
+function PurchaseRequestButton() {
+  const intl = useInternationalization();
+  return (
+    <Link to={'purchase-requests/create'}>
+      <Button label={intl(words.purchase)} />
+    </Link>
+  );
+}
 
-const getUpdateButton = () => (
-  <Link to={'updates/create'}>
-    <Button variant="outlined" label={'Update'} />
-  </Link>
-);
+function UpdateButton() {
+  const intl = useInternationalization();
+  return (
+    <Link to={'updates/create'}>
+      <Button variant="outlined" label={intl(words.update)} />
+    </Link>
+  );
+}
 
 function InventoryInfo(props: InventoryInfoProps) {
+  const intl = useInternationalization();
   const classes = useStyles(props);
   const { productId, lastUpdated, currentQuantity, withActions, inventoryId } = props;
   const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
@@ -72,19 +81,21 @@ function InventoryInfo(props: InventoryInfoProps) {
         <div className={classes.leftContentColumnContainer}>
           <div className={classes.headingRowContainer}>
             <Typography variant="h2">{product.name}</Typography>
-            { isOfflineId(inventoryId) && <SyncIcon fontSize="small" className={classes.syncIcon} /> }
+            {isOfflineId(inventoryId) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
           </div>
-          <Typography variant="caption">Last Updated</Typography>
+          <Typography variant="caption">{intl(words.last_updated_date, ' ')}</Typography>
           <Typography variant="caption">{lastUpdated}</Typography>
         </div>
         {props.currentQuantity !== undefined && (
-          <Typography align="right" variant="body2">{`${currentQuantity} ${product.unit}(s)`}</Typography>
+          <Typography align="right" variant="body2">{`${currentQuantity} ${product.unit}(${intl(
+            words.s,
+          )})`}</Typography>
         )}
       </CardContent>
       {withActions && (
         <CardActions className={classes.cardActions}>
-          {getUpdateButton()}
-          {getPurchaseRequestButton()}
+          {UpdateButton()}
+          {PurchaseRequestButton()}
         </CardActions>
       )}
     </Card>
