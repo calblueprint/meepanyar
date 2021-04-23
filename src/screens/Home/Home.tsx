@@ -1,20 +1,19 @@
+import { createStyles, withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
+import CloudQueueIcon from '@material-ui/icons/CloudQueue';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
-import { withStyles, createStyles } from '@material-ui/core/styles';
 import { Link } from 'react-router-dom';
-import { SiteRecord } from '../../lib/airtable/interface';
-import HomeMenuItem from './components/HomeMenuItem';
-import SiteMenu from './components/SiteMenu';
-
-import Typography from '@material-ui/core/Typography';
-import WifiIcon from '@material-ui/icons/Wifi';
-import WifiOffIcon from '@material-ui/icons/WifiOff';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
+import { SiteRecord } from '../../lib/airtable/interface';
+import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
+import { selectCustomersToCollect, selectCustomersToMeter } from '../../lib/redux/customerData';
 import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
+import HomeMenuItem from './components/HomeMenuItem';
+import SiteMenu from './components/SiteMenu';
 
 const styles = () =>
   createStyles({
@@ -40,7 +39,7 @@ function Home(props: HomeProps) {
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
   const allSites: SiteRecord[] = useSelector(selectAllSitesInformation) || [];
   const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation) || EMPTY_SITE;
-  const isOnline = useSelector(selectIsOnline);
+  const isOnline = useSelector(selectIsOnline) || false;
   const lastUpdated = formatDateStringToLocal(useSelector(selectLastUpdated));
 
   return (
@@ -48,7 +47,7 @@ function Home(props: HomeProps) {
       <div className={classes.header}>
         <SiteMenu currentSite={currentSite} sites={allSites} />
         <div className={classes.network}>
-          {isOnline ? <WifiIcon color="primary" /> : <WifiOffIcon color="secondary" />}
+          {isOnline ? <CloudQueueIcon color="primary" /> : <CloudOffIcon color="secondary" />}
           <Typography className={classes.network} variant="body1">
             Last Connected to Network <br />
             {lastUpdated}

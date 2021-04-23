@@ -1,21 +1,24 @@
-import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Link, Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import Button from '../../components/Button';
+import OfflineDialog from '../../components/OfflineDialog';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
+import Snackbar from '../../components/Snackbar';
 import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer, isReadingFromLatestPeriod } from '../../lib/utils/customerUtils';
-import Button from '../../components/Button';
-
+import { selectIsOnline } from '../../lib/redux/userData';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getTariffPlanByCustomer, isReadingFromLatestPeriod } from '../../lib/utils/customerUtils';
+import { isOfflineId } from '../../lib/utils/offlineUtils';
 const styles = (theme: Theme) =>
   createStyles({
     content: {
@@ -55,6 +58,8 @@ function CustomerProfile(props: CustomerProps) {
   const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
   const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
   const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
+  const history = useHistory();
+  const isOnline = useSelector(selectIsOnline);
 
   if (customer === EMPTY_CUSTOMER) {
     return <Redirect to={'/customers'} />;
@@ -233,6 +238,18 @@ function CustomerProfile(props: CustomerProps) {
           {getReadingInfo()}
         </div>
       </BaseScrollView>
+      {/* Show the snackbar whenever the user is offline regardless of what actions they took, if any. */}
+      {/* Exception: don't show the snackbar if showing OfflineDialog */}
+      <Snackbar
+        open={!isOfflineId(customer.id) && !isOnline}
+        message="You are not connected to a network. Customer updates will be recorded after you reconnect."
+      />
+      <OfflineDialog
+        open={isOfflineId(customer.id)}
+        closeAction={history.goBack}
+        headingText="New Customer Data Offline"
+        bodyText="Customer information cannot be edited until information has been uploaded. Connect to a network to add data."
+      />
     </BaseScreen>
   );
 }
