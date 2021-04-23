@@ -7,7 +7,13 @@ import {
   selectPurchaseRequestsArrayByInventoryId,
   updatePurchaseRequestInRedux
 } from '../redux/inventoryData';
-import { PurchaseRequestStatus } from '../redux/inventoryDataSlice';
+import {
+  EMPTY_INVENTORY,
+  EMPTY_INVENTORY_UPDATE,
+  EMPTY_PRODUCT,
+  PurchaseRequestStatus,
+  selectCurrentSiteInventoryById
+} from '../redux/inventoryDataSlice';
 import { store } from '../redux/store';
 
 // Calculate when an inventory record was last updated
@@ -61,4 +67,39 @@ export const reviewPurchaseRequest = (purchaseRequest: PurchaseRequestRecord, ap
   // Additional authentication against Airtable is done on the backend
   updatePurchaseRequest(purchaseRequest.id, reviewData);
   updatePurchaseRequestInRedux({ id: purchaseRequest.id, ...reviewData });
-}
+};
+
+export const generateInventoryUpdate = (
+  inventoryId: string,
+  updatedAmount: number,
+  userId: string,
+  id?: string,
+): any => {
+  const inventory = selectCurrentSiteInventoryById(store.getState(), inventoryId);
+  const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE)); // Make a deep copy of an empty record
+  inventoryUpdate.userId = userId;
+  inventoryUpdate.previousQuantity = inventory?.currentQuantity || 0;
+  inventoryUpdate.updatedQuantity = updatedAmount;
+  inventoryUpdate.inventoryId = inventoryId;
+  inventoryUpdate.createdAt = moment().toISOString();
+  inventoryUpdate.id = id || '';
+  return inventoryUpdate;
+};
+
+export const generateInventory = (siteId: string, currentQuantity: number, productId: string, id?: string): any => {
+  const inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY)); // Make a deep copy of an empty record
+  inventory.siteId = siteId;
+  inventory.currentQuantity = currentQuantity;
+  inventory.periodStartQuantity = currentQuantity;
+  inventory.productId = productId;
+  inventory.id = id || '';
+  return inventory;
+};
+
+export const generateProduct = (name: string, unit: string, id?: string): any => {
+  const product = JSON.parse(JSON.stringify(EMPTY_PRODUCT)); // Make a deep copy of an empty record
+  product.name = name;
+  product.unit = unit;
+  product.id = id || '';
+  return product;
+};

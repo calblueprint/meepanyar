@@ -10,18 +10,20 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import TextField from '../../components/TextField';
 import { InventoryRecord } from '../../lib/airtable/interface';
-import { createInventory, createInventoryUpdateAndUpdateInventory, createProduct } from '../../lib/airtable/request';
-import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { createInventoryAndUpdate, createProductInventoryAndUpdate } from '../../lib/airtable/request';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import {
-  EMPTY_INVENTORY,
-  EMPTY_PRODUCT,
+  setCurrentInventoryIdInRedux
+} from '../../lib/redux/inventoryData';
+import {
+
   selectAllCurrentSiteInventoryArray,
   selectAllProducts
 } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentSiteId } from '../../lib/redux/siteData';
 import { selectCurrentUserId } from '../../lib/redux/userData';
-import { useInternationalization } from '../../lib/i18next/translator';
-import words from '../../lib/i18next/words';
+import { generateInventory, generateProduct } from '../../lib/utils/inventoryUtils';
 
 const styles = () =>
   createStyles({
@@ -36,7 +38,7 @@ interface AddInventoryProps extends RouteComponentProps {
 }
 
 function AddInventory(props: AddInventoryProps) {
-  const intl = useInternationalization(); 
+  const intl = useInternationalization();
   const { classes } = props;
   const products = useSelector(selectAllProducts);
   const siteInventory = useSelector(selectAllCurrentSiteInventoryArray);
@@ -56,7 +58,10 @@ function AddInventory(props: AddInventoryProps) {
 
   const validationSchema = yup.object({
     selectedProductId: yup.string().required(intl(words.must_select_a_product)),
-    startingAmount: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.must_enter_an_amount)),
+    startingAmount: yup
+      .number()
+      .min(0, intl(words.please_enter_a_valid_amount))
+      .required(intl(words.must_enter_an_amount)),
     newProductName: yup.string().when('selectedProductId', {
       is: NEW_PRODUCT_LABEL,
       then: yup.string().required(intl(words.must_enter_new_product_name)),
@@ -82,32 +87,21 @@ function AddInventory(props: AddInventoryProps) {
   const handleSubmit = async (values: any) => {
     const { selectedProductId, startingAmount, newProductName, unit } = values;
     setLoading(true);
-    let productId = selectedProductId; // needed because setSelectedProductId is not immediate
-
+    
+    const productId = selectedProductId;
+    let inventoryId = '';
+    
     if (selectedProductId === NEW_PRODUCT_LABEL) {
       // Create the new product in Airtable and add to Redux
-      const product = JSON.parse(JSON.stringify(EMPTY_PRODUCT));
-      product.unit = unit;
-      product.name = newProductName;
-      delete product.id; // delete id field to add to Airtable
-      productId = await createProduct(product);
+      const product = generateProduct(newProductName, unit);
+      ({ inventoryId } = await createProductInventoryAndUpdate(product, startingAmount, siteId, userId));
+    } else {
+      const inventory = generateInventory(siteId, parseFloat(startingAmount) || 0, productId);
+      ({ inventoryId } = await createInventoryAndUpdate(inventory, userId));
     }
 
-    // Make a deep copy of an empty inventory record
-    let inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY));
-    inventory.productId = productId;
-    inventory.siteId = siteId;
-    inventory.currentQuantity = parseFloat(startingAmount) || 0;
-    inventory.periodStartQuantity = parseFloat(startingAmount) || 0;
-
-    // createInventory returns the inventory item with an id
-    inventory = await createInventory(inventory);
-
-    // Once the inventory record is created, trigger an inventory update.
-    await createInventoryUpdateAndUpdateInventory(userId, inventory, inventory.currentQuantity);
-
     // Navigate to new inventory item's profile page
-    setCurrentInventoryIdInRedux(inventory.id);
+    setCurrentInventoryIdInRedux(inventoryId);
     history.replace(`item`);
   };
 
