@@ -7,6 +7,7 @@ interface SnackbarProps {
   withFab?: boolean;
   noBottomMargin?: boolean;
   open?: boolean;
+  disableAutoHide?: boolean;
 }
 
 const styles = makeStyles((theme: Theme) =>
@@ -27,7 +28,7 @@ function Snackbar(props: SnackbarProps) {
 
   return (
     <MaterialSnackbar
-      autoHideDuration={5000} // 5 seconds
+      autoHideDuration={!props.disableAutoHide ? 5000 : undefined} // 5 seconds
       className={classes.snackbar}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       open={showSnackbar}

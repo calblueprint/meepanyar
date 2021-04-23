@@ -116,6 +116,7 @@ function Login() {
       </div>
       <Snackbar
         open={!isOnline}
+        disableAutoHide
         noBottomMargin
         message="You are not connected to a network. Please reconnect to log in."
       />
