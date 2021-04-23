@@ -7,12 +7,14 @@ import { useHistory } from 'react-router';
 import { selectCurrentSiteInformation, updateSiteInRedux } from '../../lib/redux/siteData';
 import Button from '../../components/Button';
 import { updateSite } from '../../lib/airtable/request';
+import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 
 
 function EditSiteInformation() {
     const history = useHistory();
 
     const currentSite = useSelector(selectCurrentSiteInformation);
+    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
     const currentSiteName = currentSite ? currentSite.name : 'No Site';
 
     const [newSiteName, setNewSiteName] = useState(currentSiteName);
@@ -57,15 +59,15 @@ function EditSiteInformation() {
                 <ListItemWrapper
                     leftText='Site Name'
                     rightText={currentSiteName}
-                    editable
                     dense
                     editValue={newSiteName}
+                    editable={currentUserIsAdmin}
                     onEditChange={handleSiteNameInput}
                     editInputId={'edit-site-name'}
                     editPlaceholder={'Input Site Name'}
                 />
             </List>
-            <Button fullWidth label={'SAVE'} onClick={handleSubmit} loading={loading} />
+            {currentUserIsAdmin && <Button fullWidth label={'Save'} onClick={handleSubmit} loading={loading} />}
             {errorMessage ? <Typography color='error' align='center'> {errorMessage} </Typography> : null}
         </BaseScreen>
     );

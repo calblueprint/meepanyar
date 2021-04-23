@@ -7,6 +7,8 @@ import { TariffPlanRecord } from '../../lib/airtable/interface';
 import Button from '../../components/Button';
 import { updateTariffPlan } from '../../lib/airtable/request';
 import { updateTariffPlanInRedux } from '../../lib/redux/siteData';
+import { useSelector } from 'react-redux';
+import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 
 
 type EditTarifPlanInformationProps = RouteComponentProps<{}, {}, { tariffPlan: TariffPlanRecord }>;
@@ -15,6 +17,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
     const { tariffPlan } = props.location.state;
     const history = useHistory();
 
+    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
     const [newFixedTariff, setNewFixedTariff] = useState(tariffPlan.fixedTariff.toString() || '');
     const [newTariffByUnit, setNewTariffByUnit] = useState(tariffPlan.tariffByUnit.toString() || '');
     const [newFreeUnits, setNewFreeUnits] = useState(tariffPlan.freeUnits.toString() || '');
@@ -34,7 +37,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
     }
 
     const handleSubmit = async (event: React.MouseEvent) => {
-        
+
         const fixedTariff = parseFloat(newFixedTariff);
         const tariffByUnit = parseFloat(newTariffByUnit);
         const freeUnits = parseFloat(newFreeUnits);
@@ -61,7 +64,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
         } finally {
             // We naively update the tariff plan in redux and do proper authentication on the backend
             // to make sure only admins can successfully change tariff plans
-            updateTariffPlanInRedux({id: tariffPlan.id, ...newTariffPlanProperties});
+            updateTariffPlanInRedux({ id: tariffPlan.id, ...newTariffPlanProperties });
             history.goBack()
         }
     }
@@ -72,7 +75,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                 <ListItemWrapper
                     leftText='Fixed Payment'
                     rightText={newFixedTariff}
-                    editable
+                    editable={currentUserIsAdmin}
                     dense
                     editValue={newFixedTariff}
                     onEditChange={handleNewFixedTariffInput}
@@ -85,7 +88,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                 <ListItemWrapper
                     leftText='Per Unit Payment'
                     rightText={newTariffByUnit}
-                    editable
+                    editable={currentUserIsAdmin}
                     dense
                     editValue={newTariffByUnit}
                     onEditChange={handleNewTariffByUnitInput}
@@ -98,7 +101,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                 <ListItemWrapper
                     leftText='Free Units'
                     rightText={newFreeUnits}
-                    editable
+                    editable={currentUserIsAdmin}
                     dense
                     editValue={newFreeUnits}
                     onEditChange={handleNewFreeUnitsInput}
@@ -109,7 +112,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                     editPlaceholder={'e.g. 5'}
                 />
             </List>
-            <Button fullWidth label={'SAVE'} onClick={handleSubmit} loading={loading} />
+            {currentUserIsAdmin && <Button fullWidth label={'Save'} onClick={handleSubmit} loading={loading} />}
             {errorMessage ? <Typography color='error' align='center'> {errorMessage} </Typography> : null}
         </BaseScreen>
     );
