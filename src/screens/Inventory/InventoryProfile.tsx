@@ -121,7 +121,7 @@ function InventoryProfile(props: InventoryProps) {
       {/* Exception: don't show the snackbar if showing OfflineDialog */}
       <Snackbar
         open={!isOfflineId(inventory.id) && !isOnline}
-        message="You are not connected to a network. Inventory updates will be recorded after you reconnect."
+        message="You are not connected to a network. Inventory updates and purchases will be recorded after you reconnect."
       />
       <OfflineDialog
         open={isOfflineId(inventory.id)}
