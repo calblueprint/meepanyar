@@ -130,7 +130,7 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
       </BaseScrollView>
       <Snackbar
         open={showSnackbar}
-        message="You are not connected to a network. Some logs may not be fully up to date."
+        message="You are not connected to a network. Please reconnect to approve/deny this purchase request."
       />
     </BaseScreen>
   );

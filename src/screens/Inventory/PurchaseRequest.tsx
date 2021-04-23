@@ -12,9 +12,10 @@ import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { selectProductByInventoryId } from '../../lib/redux/inventoryData';
 import { EMPTY_PRODUCT, EMPTY_PURCHASE_REQUEST, PurchaseRequestStatus } from '../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { selectCurrentUserId, selectCurrentUserIsAdmin, selectIsOnline } from '../../lib/redux/userData';
+import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { selectSiteUserById } from '../../lib/redux/userDataSlice';
 import { getInventoryLastUpdated, reviewPurchaseRequest } from '../../lib/utils/inventoryUtils';
+import { isOfflineId } from '../../lib/utils/offlineUtils';
 import InventoryInfo from './components/InventoryInfo';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
 
@@ -65,7 +66,6 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
     useSelector((state: RootState) => selectProductByInventoryId(state, purchaseRequest.inventoryId)) || EMPTY_PRODUCT;
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
   const currentUserId = useSelector(selectCurrentUserId);
-  const isOnline = useSelector(selectIsOnline);
   const [showSnackbar, setShowSnackbar] = useState(false);
 
   const requester = useSelector((state: RootState) => selectSiteUserById(state, purchaseRequest.requesterId));
@@ -76,7 +76,8 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   }
 
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
-    if (!isOnline) {
+    // Only block users from reviewing requests that were created offline and not yet updated with Airtable IDs
+    if (isOfflineId(purchaseRequest.id)) {
       setShowSnackbar(true);
       // 5 second delay to reset back so it can be shown again.
       setTimeout(function () {
@@ -127,7 +128,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
       </BaseScrollView>
       <Snackbar
         open={showSnackbar}
-        message="You are not connected to a network. Please reconnect to approve/deny a purchase request."
+        message="You are not connected to a network. Please reconnect to approve/deny this purchase request."
       />
     </BaseScreen>
   );

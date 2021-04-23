@@ -16,7 +16,7 @@ import {
   selectProductById
 } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
-import { selectCurrentUserId, selectCurrentUserIsAdmin, selectIsOnline } from '../../../lib/redux/userData';
+import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../../lib/redux/userData';
 import { reviewPurchaseRequest } from '../../../lib/utils/inventoryUtils';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
 import { getPurchaseRequestReviewButtons } from '../PurchaseRequest';
@@ -87,10 +87,10 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
     ) || EMPTY_PRODUCT;
   const userId = useSelector(selectCurrentUserId);
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
-  const isOnline = useSelector(selectIsOnline);
 
   const handleSubmitReview = (approved: boolean) => {
-    if (!isOnline) {
+    // Only block users from reviewing requests that were created offline and not yet updated with Airtable IDs
+    if (isOfflineId(purchaseRequest.id)) {
       showSnackbarCallback();
     } else {
       const newStatus = approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED;
