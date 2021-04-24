@@ -17,8 +17,10 @@ import {
   selectAllCurrentSitePurchaseRequestsArray,
   selectAllInventoryUpdatesArray,
   selectCurrentSiteInventoryById,
+  selectCurrentSitePurchaseRequestById,
   selectProductById,
   setCurrInventoryId,
+  setCurrPurchaseRequestId,
   updateInventoryQuantity,
   updatePurchaseRequest
 } from './inventoryDataSlice';
@@ -52,6 +54,8 @@ export const selectProductByInventoryId = createSelector(getInventoryId, store.g
 
 // Custom selectors for current inventory and product
 export const selectCurrentInventoryId = (state: RootState): string => state.inventoryData.currentInventoryId;
+export const selectCurrentPurchaseRequestId = (state: RootState): string =>
+  state.inventoryData.currentPurchaseRequestId;
 
 export const selectCurrentInventory = createSelector(
   selectCurrentInventoryId,
@@ -63,6 +67,12 @@ export const selectCurrentInventoryProduct = createSelector(
   selectCurrentInventoryId,
   store.getState,
   (inventoryId, state) => selectProductByInventoryId(state, inventoryId),
+);
+
+export const selectCurrentPurchaseRequest = createSelector(
+  selectCurrentPurchaseRequestId,
+  store.getState,
+  (currentPurchaseRequestId, state) => selectCurrentSitePurchaseRequestById(state, currentPurchaseRequestId),
 );
 
 export const selectPendingPurchaseRequestCount = createSelector(
@@ -131,6 +141,10 @@ export const getInventoryCurrentQuantity = (inventoryId: string): number => {
 
 export const setCurrentInventoryIdInRedux = (inventoryId: string): void => {
   store.dispatch(setCurrInventoryId(inventoryId));
+};
+
+export const setCurrentPurchaseRequestIdInRedux = (purchaseRequestId: string): void => {
+  store.dispatch(setCurrPurchaseRequestId(purchaseRequestId));
 };
 
 export const addProductToRedux = (product: ProductRecord): void => {
