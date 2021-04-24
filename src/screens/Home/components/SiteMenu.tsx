@@ -1,5 +1,4 @@
 import React from 'react';
-import { RootState } from '../../../lib/redux/store';
 
 import { withStyles, Theme, createStyles } from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,10 +13,9 @@ import { setCurrentSite } from '../../../lib/redux/siteData';
 const styles = (theme: Theme) =>
   createStyles({
     root: {
-      color: '#424242',
+      color: theme.palette.text.primary,
       display: 'flex',
       alignItems: 'flex-end',
-      width: '150px',
     },
     icon: {
       border: '1px solid',

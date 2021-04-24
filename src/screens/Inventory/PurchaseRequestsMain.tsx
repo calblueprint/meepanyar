@@ -4,7 +4,10 @@ import { useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import Snackbar from '../../components/Snackbar';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import { selectPendingPurchaseRequestCount, selectProductByInventoryId } from '../../lib/redux/inventoryData';
 import {
   PurchaseRequestStatus,
@@ -29,6 +32,7 @@ interface PurchaseRequestsProps extends RouteComponentProps {
 
 // TODO @wangannie: address empty state
 function PurchaseRequests(props: PurchaseRequestsProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   const [tabValue, setTabValue] = React.useState(0);
 
@@ -37,6 +41,7 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
   const [purchaseRequests, setPurchaseRequests] = useState(defaultPurchaseRequests);
   const pendingCount = useSelector(selectPendingPurchaseRequestCount);
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
+  const [showSnackbar, setShowSnackbar] = useState(false);
 
   const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
     setTabValue(newValue);
@@ -60,26 +65,48 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
     if (searchValue !== '') {
       // Search by product name
       const filteredPurchaseRequests = defaultPurchaseRequests.filter((purchaseRequest) =>
-        selectProductByInventoryId(store.getState(), purchaseRequest.inventoryId)?.name.toLowerCase().includes(searchValue.toLowerCase()),
+        selectProductByInventoryId(store.getState(), purchaseRequest.inventoryId)
+          ?.name.toLowerCase()
+          .includes(searchValue.toLowerCase()),
       );
       setPurchaseRequests(filteredPurchaseRequests);
     } else {
       setPurchaseRequests(defaultPurchaseRequests);
     }
   };
-  
+
+  // Callback function to show the offline snackbar if an admin user attempts
+  // to approve/deny a request from the PurchaseRequestCard while offline.
+  const showSnackbarCallback = () => {
+    setShowSnackbar(true);
+    // 5 second delay to reset back so it can be shown again.
+    setTimeout(function () {
+      setShowSnackbar(false);
+    }, 5000);
+  };
+
   const getPurchaseRequests = (status?: PurchaseRequestStatus) => (
     <div>
       {purchaseRequests
         .filter((pr) => (status ? pr.status === status : true))
         .map((purchaseRequest: PurchaseRequestRecord) => (
-          <PurchaseRequestCard key={purchaseRequest.id} purchaseRequest={purchaseRequest} />
+          <PurchaseRequestCard
+            key={purchaseRequest.id}
+            purchaseRequest={purchaseRequest}
+            showSnackbarCallback={showSnackbarCallback}
+          />
         ))}
     </div>
   );
 
   return (
-    <BaseScreen title="All Purchases" leftIcon="backNav" searchAction={handleSearchChange} searchPlaceholder={"Search by inventory name"} searchExit={exitSearch}>
+    <BaseScreen
+      title={words.all_purchases}
+      leftIcon="backNav"
+      searchAction={handleSearchChange}
+      searchPlaceholder={intl(words.search_by_inventory_name)}
+      searchExit={exitSearch}
+    >
       {userIsAdmin && (
         <Tabs
           className={classes.tabs}
@@ -88,12 +115,12 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
           onChange={handleTabChange}
           aria-label="filter purchase requests"
         >
-          <Tab label="All" id="tab-all" />
+          <Tab label={intl(words.view_all)} id="tab-all" />
           <Tab
             style={{ overflow: 'visible' }}
             label={
               <Badge color="error" badgeContent={pendingCount}>
-                Pending
+                {intl(words.pending)}
               </Badge>
             }
             id="tab-pending"
@@ -104,6 +131,10 @@ function PurchaseRequests(props: PurchaseRequestsProps) {
         {/* Tab 0: All, Tab 1: Pending */}
         {tabValue === 0 ? getPurchaseRequests() : getPurchaseRequests(PurchaseRequestStatus.PENDING)}
       </BaseScrollView>
+      <Snackbar
+        open={showSnackbar}
+        message="You are not connected to a network. Please reconnect to approve/deny this purchase request."
+      />
     </BaseScreen>
   );
 }

@@ -4,20 +4,27 @@ import { store } from '../redux/store';
 
 // Returns a string of the local date & time in a language- and timezone-sensitive format
 // given a DateTime string.
-export const formatDateStringToLocal = (dateString: string): string => {
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  };
-  const timeOfDay = moment(dateString).local().format('LT');
-  const standardDate = moment(dateString).local().format('L');
-  const revisedDate = standardDate.replace('/', '.').substring(0, standardDate.length - 5);
-  const combinedString = timeOfDay + ' ' + revisedDate;
-  //return moment(dateString).local().toDate().toLocaleString(undefined, options);
-  return combinedString;
+export const formatDateStringToLocal = (dateString: string, excludeTime?: boolean): string => {
+
+  let options: Intl.DateTimeFormatOptions;
+
+  if (excludeTime) {
+    options = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    };
+  } else {
+    options = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+  }
+
+  return moment(dateString).local().toDate().toLocaleString(undefined, options);
 };
 
 export const isBeforeCurrentPeriod = (dateString: string): boolean => {
@@ -72,6 +79,6 @@ export const getDiffinPeriods = (x: string, y: string) => {
 // Returns the grace period applied to the current month.
 // All meter readings logged after this date are for the current month's period
 export const getCurrentMonthGracePeriodDeadline = () => {
-  const gracePeriodDays : number = selectCurrentSiteGracePeriod(store.getState()) || 0;
+  const gracePeriodDays: number = selectCurrentSiteGracePeriod(store.getState()) || 0;
   return moment().startOf('month').add(gracePeriodDays, 'days');
 }

@@ -1,11 +1,12 @@
 import { IconButton } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import CameraButton from '../../components/CameraButton';
+import Snackbar from '../../components/Snackbar';
 import TextField from '../../components/TextField';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { selectProductByInventoryId } from '../../lib/redux/inventoryData';
@@ -14,8 +15,11 @@ import { RootState } from '../../lib/redux/store';
 import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { selectSiteUserById } from '../../lib/redux/userDataSlice';
 import { getInventoryLastUpdated, reviewPurchaseRequest } from '../../lib/utils/inventoryUtils';
+import { isOfflineId } from '../../lib/utils/offlineUtils';
 import InventoryInfo from './components/InventoryInfo';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -57,6 +61,7 @@ export const getPurchaseRequestReviewButtons = (handleApprove: () => void, handl
 };
 
 function PurchaseRequest(props: PurchaseRequestsProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const history = useHistory();
   const purchaseRequest: PurchaseRequestRecord = props.location.state?.purchaseRequest || EMPTY_PURCHASE_REQUEST;
@@ -64,6 +69,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
     useSelector((state: RootState) => selectProductByInventoryId(state, purchaseRequest.inventoryId)) || EMPTY_PRODUCT;
   const userIsAdmin = useSelector(selectCurrentUserIsAdmin);
   const currentUserId = useSelector(selectCurrentUserId);
+  const [showSnackbar, setShowSnackbar] = useState(false);
 
   const requester = useSelector((state: RootState) => selectSiteUserById(state, purchaseRequest.requesterId));
 
@@ -73,15 +79,28 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   }
 
   const handleSubmit = (purchaseRequest: PurchaseRequestRecord, approved: boolean) => {
-    reviewPurchaseRequest(purchaseRequest, approved, currentUserId);
-    history.goBack();
+    // Only block users from reviewing requests that were created offline and not yet updated with Airtable IDs
+    if (isOfflineId(purchaseRequest.id)) {
+      setShowSnackbar(true);
+      // 5 second delay to reset back so it can be shown again.
+      setTimeout(function () {
+        setShowSnackbar(false);
+      }, 5000);
+    } else {
+      reviewPurchaseRequest(purchaseRequest, approved, currentUserId);
+      history.goBack();
+    }
   };
 
   return (
-    <BaseScreen title="Inventory Receipt" leftIcon="backNav">
+    <BaseScreen title={intl(words.inventory_receipt)} leftIcon="backNav">
       <BaseScrollView>
         <div className={classes.headerContainer}>
-          <InventoryInfo productId={product.id} lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)} />
+          <InventoryInfo
+            inventoryId={purchaseRequest.inventoryId}
+            productId={product.id}
+            lastUpdated={getInventoryLastUpdated(purchaseRequest.inventoryId)}
+          />
           <div className={classes.reviewButtonsContainer}>
             {userIsAdmin && purchaseRequest.status === PurchaseRequestStatus.PENDING
               ? getPurchaseRequestReviewButtons(
@@ -92,24 +111,28 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           </div>
         </div>
         <TextField
-          label={'Amount Purchased'}
+          label={intl(words.amount_purchased)}
           unit={product.unit}
           disabled
           id={'amount-purchased'}
           value={purchaseRequest.amountPurchased}
         />
-        <TextField label={'Amount Spent'} currency disabled id={'amount-spent'} value={purchaseRequest.amountSpent} />
-        <TextField label={'Notes'} disabled id={'notes'} value={purchaseRequest.notes || 'None'} />
+        <TextField label={intl(words.amount_spent_paid, ' ')} currency disabled id={'amount-spent'} value={purchaseRequest.amountSpent} />
+        <TextField label={intl(words.notes)} disabled id={'notes'} value={purchaseRequest.notes || intl(words.none)} />
         <TextField
-          label={'Submitted By'}
+          label={intl(words.submitted_by_person, ' ')}
           disabled
           id={'submitted-by'}
           value={requester?.name || purchaseRequest.requesterId}
         />
         {purchaseRequest.receipt && (
-          <CameraButton staticPreview label="Receipt" photoUri={purchaseRequest.receipt[0].url} id="receipt" />
+          <CameraButton staticPreview label={intl(words.receipt)} photoUri={purchaseRequest.receipt[0].url} id="receipt" />
         )}
       </BaseScrollView>
+      <Snackbar
+        open={showSnackbar}
+        message="You are not connected to a network. Please reconnect to approve/deny this purchase request."
+      />
     </BaseScreen>
   );
 }

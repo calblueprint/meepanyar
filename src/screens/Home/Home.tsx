@@ -1,5 +1,12 @@
+import Typography from '@material-ui/core/Typography';
+import CloudIcon from '@material-ui/icons/Cloud';
+import CloudOffIcon from '@material-ui/icons/CloudOff';
+import AddIcon from '@material-ui/icons/Add';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import { IconButton } from '@material-ui/core';
 import React from 'react';
 import { formatDateStringToLocal, getCurrentPeriod, getNextPeriod } from '../../lib/moment/momentUtils';
+import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -8,12 +15,6 @@ import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
 import ReportButton from './components/ReportButton';
 import PastReportButton from './components/PastReportsButton';
-import PaymentButton from './components/PaymentButton';
-
-
-import Typography from '@material-ui/core/Typography';
-import CloudOffIcon from '@material-ui/icons/CloudOff';
-import CloudIcon from '@material-ui/icons/Cloud';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
@@ -26,31 +27,30 @@ const styles = (theme: Theme) =>
     header: {
       display: 'flex',
       justifyContent: 'space-between',
-      marginBottom: '35px',
+      marginBottom: '20px',
     },
     network: {
-      color: theme.palette.error.light,
       textAlign: 'right',
-      width: '100px',
-      fontSize: theme.typography.caption.fontSize,
-    },
-    periodDescription: {
-      fontSize: theme.typography.body2.fontSize,
-      color: theme.palette.error.main,
-    },
-    categoryText: {
-      fontSize: theme.typography.body2.fontSize,
-      color: theme.palette.error.dark,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-end',
+      flex: 1
     },
     financialSums: {
       display: 'flex',
       justifyContent: 'space-between',
     },
+    buttonPrimary: {
+      borderRadius: '12px',
+      color: 'white',
+      marginRight: '5px',
+      backgroundColor: theme.palette.primary.main,
+    }
 
   });
 
 interface HomeProps {
-  classes: { header: string; network: string, periodDescription: string, categoryText: string, financialSums: string; };
+  classes: { header: string; network: string, financialSums: string; buttonPrimary: string; };
 }
 
 function Home(props: HomeProps) {
@@ -59,35 +59,66 @@ function Home(props: HomeProps) {
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
   const allSites: SiteRecord[] = useSelector(selectAllSitesInformation) || [];
   const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation) || EMPTY_SITE;
-  const isOnline = useSelector(selectIsOnline);
+  const isOnline = useSelector(selectIsOnline) || false;
   const lastUpdated = formatDateStringToLocal(useSelector(selectLastUpdated));
+
+  const amountOwed = isOnline ? 6000 : 0;
+
+  const getAmountOwedCard = () => {
+    const amountOwedCardInfo: CardPropsInfo[] = [{
+      number: amountOwed.toString(),
+      label: 'Owed to MP',
+      unit: 'Ks'
+    }]
+
+    const addButton = <IconButton
+      component={Link}
+      to='/home'
+      size="small"
+      className={classes.buttonPrimary}
+    >
+      <AddIcon />
+    </IconButton>
+
+    return <OutlinedCardList
+      highlighted={amountOwed !== 0}
+      info={amountOwedCardInfo}
+      rightIcon={amountOwed === 0 ? <CheckCircleOutlineIcon /> : addButton}
+    />
+  }
 
   return (
     <BaseScreen rightIcon="user">
       <BaseScrollView>
         <div className={classes.header}>
-          <div>
+          <div style={{ flex: 2 }}>
             <SiteMenu currentSite={currentSite} sites={allSites} />
-            <Typography className={classes.periodDescription} >
-              Current Period: {getCurrentPeriod()}
+            <Typography color='secondary'>
+              Current Period: {formatDateStringToLocal(getCurrentPeriod(), true)}
             </Typography>
-            <Typography className={classes.periodDescription} >
-              Deadline: {getNextPeriod()}
+            <Typography color='secondary'>
+              Deadline: {formatDateStringToLocal(getNextPeriod(), true)}
             </Typography>
           </div>
           <div className={classes.network}>
             {isOnline ? <CloudIcon color="primary" /> : <CloudOffIcon color="disabled" />}
-            <Typography className={classes.network} variant="body1">
-              Last Connected to Network <br />
+            <Typography variant="caption" color='secondary'>
+              Last Connected to Network
+            </Typography>
+            <Typography variant="caption" color='secondary'>
               {lastUpdated}
             </Typography>
           </div>
         </div>
 
-        <PaymentButton />
-        <Typography className={classes.categoryText}>
+        {/* Same margin bottom that Typography applies as gutterBottom */}
+        <div style={{ marginBottom: '.35em' }}>
+          {getAmountOwedCard()}
+        </div>
+
+        <Typography variant='h2' gutterBottom>
           Tasks
-      </Typography>
+        </Typography>
         <Link to={'/customers'}>
           <HomeMenuItem
             label="To Meter"
@@ -110,9 +141,9 @@ function Home(props: HomeProps) {
           />
         </Link>
         <HomeMenuItem label="Incidents" amount={0} iconType="incident" />
-        <Typography className={classes.categoryText}>
+        <Typography variant='h2' gutterBottom>
           Financial Reports
-      </Typography>
+        </Typography>
         <div className={classes.financialSums}>
           <Link to={'/financial-summary'}>
             <ReportButton />
