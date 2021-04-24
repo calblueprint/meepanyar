@@ -9,7 +9,6 @@ import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import TrieTree from '../../lib/utils/TrieTree';
 import { selectCustomersToMeter, selectCustomersToCollect, selectCustomersDone, CustomerStatus } from '../../lib/redux/customerData';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import { TabContext, TabPanel } from '@material-ui/lab';
 import CustomerCard from './components/CustomerCard';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
@@ -47,9 +46,6 @@ const styles = makeStyles((theme: Theme) =>
     },
     tabContent: {
       marginBottom: '50px',
-    },
-    blankDiv: {
-      padding: '10px 0px',
     },
   }));
 
@@ -178,7 +174,6 @@ function CustomerMain(props: CustomerMainProps) {
                 />
               </div>
             ))}
-          <div className={classes.blankDiv}></div>
         </div>
       );
     };
