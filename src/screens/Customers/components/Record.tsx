@@ -1,6 +1,7 @@
 import React from 'react';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -26,7 +27,7 @@ function Record(props: RecordProps) {
   return (
     <div className={classes.root}>
       <Typography variant="h2" className={classes.unbolded}>
-        {props.date}
+        {formatDateStringToLocal(props.date)}
       </Typography>
       <Typography variant="h1">
         {props.used ? props.used + ' kWh |' : null} {props.amount} Ks
