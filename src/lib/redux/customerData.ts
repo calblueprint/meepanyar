@@ -171,6 +171,30 @@ export const selectCustomersToCollect = createSelector(
     }
 )
 
+export const selectTotalAmountBilled = createSelector(
+    selectAllCustomersArray,
+    store.getState,
+    (customers, state) => {
+        let totalAmountBilled: number = 0;
+        customers.forEach((customer: CustomerRecord) => {
+          totalAmountBilled += selectAmountOwedInCurrentPeriodByCustomerId(state, customer.id) || 0;
+        });
+        return totalAmountBilled;
+    }
+)
+
+export const selectTotalAmountCollected = createSelector(
+    selectAllCustomersArray,
+    store.getState,
+    (customers, state) => {
+        let totalAmountCollected: number = 0;
+        customers.forEach((customer: CustomerRecord) => {
+          totalAmountCollected += selectAmountPaidInCurrentPeriodByCustomerId(state, customer.id) || 0;
+        });
+        return totalAmountCollected;
+    }
+)
+
 // TODO: Could break this into smaller pieces
 export const selectCustomersDone = createSelector(
     selectCustomersToMeter,

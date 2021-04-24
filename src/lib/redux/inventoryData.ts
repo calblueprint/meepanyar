@@ -27,6 +27,8 @@ import { RootState, store } from './store';
 
 const getInventoryId = (_: RootState, inventoryId: string) => inventoryId;
 
+const getPurchaseRequestId = (_: RootState, purchaseRequestId: string) => purchaseRequestId;
+
 export const selectPurchaseRequestsArrayByInventoryId = createSelector(
   selectAllCurrentSitePurchaseRequestsArray,
   getInventoryId,
@@ -136,3 +138,29 @@ export const setCurrentInventoryIdInRedux = (inventoryId: string): void => {
 export const addProductToRedux = (product: ProductRecord): void => {
   store.dispatch(addProduct(product));
 };
+
+export const selectAmountPurchaseRequestedApproved = createSelector(
+    selectAllCurrentSitePurchaseRequestsArray,
+    (purchaseRequests) => {
+      let amount = 0;
+      purchaseRequests.forEach((pr: PurchaseRequestRecord) => {
+        if (pr.status === PurchaseRequestStatus.APPROVED) {
+          amount += pr.amountSpent;
+        }
+      });
+      return amount;
+    }
+)
+
+export const selectAmountPurchaseRequestedDenied = createSelector(
+  selectAllCurrentSitePurchaseRequestsArray,
+  (purchaseRequests) => {
+    let amount = 0;
+    purchaseRequests.forEach((pr: PurchaseRequestRecord) => {
+      if (pr.status === PurchaseRequestStatus.DENIED) {
+        amount += pr.amountSpent;
+      }
+    });
+    return amount;
+  }
+)
