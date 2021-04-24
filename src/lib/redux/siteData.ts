@@ -39,6 +39,7 @@ export const updateSiteInRedux = (siteUpdates : Partial<SiteRecord>) => {
   store.dispatch(updateSite(siteUpdates))
 }
 
+// Can't use "createSelector" because selectors aren't initialized before file is read
 export const selectCurrentSiteProfit = (state: RootState) => {
   return selectCurrentPeriodTotalAmountCollected(state) - selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent(state);
 }

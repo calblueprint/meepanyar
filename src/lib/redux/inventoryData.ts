@@ -23,6 +23,7 @@ import {
   updatePurchaseRequest
 } from './inventoryDataSlice';
 import { selectCurrentSiteId } from './siteData';
+import { isBeforeCurrentPeriod } from '../moment/momentUtils';
 import { RootState, store } from './store';
 
 const getInventoryId = (_: RootState, inventoryId: string) => inventoryId;
@@ -144,7 +145,7 @@ export const selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent = creat
     (purchaseRequests) => {
       let amount = 0;
       purchaseRequests.forEach((pr: PurchaseRequestRecord) => {
-        if (pr.status === PurchaseRequestStatus.APPROVED) {
+        if (!isBeforeCurrentPeriod(pr.createdAt) && pr.status === PurchaseRequestStatus.APPROVED) {
           amount += pr.amountSpent;
         }
       });
@@ -157,7 +158,7 @@ export const selectCurrentPeriodPurchaseRequestsDeniedTotalAmountSpent = createS
   (purchaseRequests) => {
     let amount = 0;
     purchaseRequests.forEach((pr: PurchaseRequestRecord) => {
-      if (pr.status === PurchaseRequestStatus.DENIED) {
+      if (!isBeforeCurrentPeriod(pr.createdAt) && pr.status === PurchaseRequestStatus.DENIED) {
         amount += pr.amountSpent;
       }
     });
