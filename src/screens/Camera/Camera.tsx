@@ -68,7 +68,7 @@ function CameraScreen(props: CameraProps) {
             idealFacingMode={FACING_MODES.ENVIRONMENT}
             isDisplayStartCameraError={true}
             imageType={IMAGE_TYPES.JPG}
-            isImageMirror
+            isImageMirror={false}
         />
     }
 
