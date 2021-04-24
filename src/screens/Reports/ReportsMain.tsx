@@ -8,7 +8,7 @@ import { Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import { selectCurrentSiteInformation, selectCurrentFinancialSummary } from '../../lib/redux/siteData';
 import { selectAllFinancialSummariesArray } from '../../lib/redux/siteDataSlice';
-import { getCurrentMonthGracePeriodDeadline, formatDateStringToLocal, getDeadline } from '../../lib/moment/momentUtils';
+import { getCurrentMonthGracePeriodDeadline, formatDateStringToLocal, getGracePeriodDeadline } from '../../lib/moment/momentUtils';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 
@@ -46,15 +46,19 @@ function ReportsMain(props: ReportsMainProps) {
         </div>
         <div className={classes.section}>
           <Typography variant="h1">All Reports</Typography>
-          {reports.map((report: FinancialSummaryRecord, index) => (
-            <div key={index}>
-              <ReportCard
-                report={report}
-                deadline={getDeadline(report, currentSite)}
-                match={match}
-              />
-            </div>
-          ))}
+          {reports.map((report: FinancialSummaryRecord, index) => {
+            if (report.period !== currentReport.period) {
+              return (
+                <div key={index}>
+                  <ReportCard
+                    report={report}
+                    deadline={getGracePeriodDeadline(report, currentSite)}
+                    match={match}
+                  />
+                </div>
+              )
+            }
+          })}
         </div>
       </BaseScrollView>
     </BaseScreen>

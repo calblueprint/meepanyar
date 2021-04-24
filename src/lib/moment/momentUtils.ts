@@ -63,7 +63,7 @@ export const getCurrentMonthGracePeriodDeadline = () => {
 
 // Returns end of period plus number of days in grace period
 // Formats & converts to string
-export const getDeadline = (report: FinancialSummaryRecord, site: SiteRecord) => {
+export const getGracePeriodDeadline = (report: FinancialSummaryRecord, site: SiteRecord) => {
   const m = moment(new Date(report.period)).endOf('month');
   const d = moment.duration({'days' : site.gracePeriod});
   m.add(d);
