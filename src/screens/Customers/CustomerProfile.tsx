@@ -41,14 +41,20 @@ const styles = (theme: Theme) =>
     meterInfoGrid: {
       display: 'flex',
     },
-    meterInfoCol: {
+    leftMeterInfoCol: {
       width: '50%',
       padding: '5px',
+      paddingLeft: '0px',
+    },
+    rightMeterInfoCol: {
+      width: '50%',
+      padding: '5px',
+      paddingRight: '0px',
     },
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; headerWrapper: string; buttonPrimary: string; meterInfoGrid: string; meterInfoCol: string; };
+  classes: { content: string; headerWrapper: string; buttonPrimary: string; meterInfoGrid: string; leftMeterInfoCol: string; rightMeterInfoCol: string; };
   customer: CustomerRecord;
   location: any;
 }
@@ -160,33 +166,29 @@ function CustomerProfile(props: CustomerProps) {
           editPath={!meterReadOnly && customerMeteredForPeriod ? `${match.url}/meter-readings/create` : undefined}
         />
         <div className={classes.meterInfoGrid}>
-          <div className={classes.meterInfoCol}>
+          <div className={classes.leftMeterInfoCol}>
             { /* Top Left */}
             <OutlinedCardList
               info={[meterInfo[0]]}
               readOnly={topLeftReadOnly}
               editPath={topLeftReadOnly ? undefined : `${match.url}/starting-meter-reading/edit`}
-              left
             />
             { /* Bottom Left */}
             <OutlinedCardList
               info={[meterInfo[1]]}
               readOnly
-              left
             />
           </div>
-          <div className={classes.meterInfoCol}>
+          <div className={classes.rightMeterInfoCol}>
             { /* Top Right */}
             <OutlinedCardList
               info={[meterInfo[2]]}
               readOnly
-              right
             />
             { /* Bottom Right */}
             <OutlinedCardList
               info={[meterInfo[3]]}
               readOnly
-              right
             />
           </div>
         </div>
