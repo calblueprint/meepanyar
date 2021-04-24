@@ -15,7 +15,7 @@ import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
-import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
+import { selectCurrentInventory, selectCurrentInventoryProduct, setCurrentPurchaseRequestIdInRedux } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
 import { selectIsOnline } from '../../lib/redux/userData';
 import { getInventoryHistory, getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
@@ -52,9 +52,8 @@ function InventoryProfile(props: InventoryProps) {
   }
 
   const navigateToPurchaseRequest = (purchaseRequest: PurchaseRequestRecord) => {
-    history.push('/inventory/purchase-requests/purchase-request', {
-      purchaseRequest,
-    });
+    setCurrentPurchaseRequestIdInRedux(purchaseRequest.id);
+    history.push('/inventory/purchase-requests/purchase-request');
   };
 
   return (

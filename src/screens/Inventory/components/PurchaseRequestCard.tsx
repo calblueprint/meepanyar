@@ -99,7 +99,6 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
     } else {
       const newStatus = approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED;
       setStatus(newStatus);
-      purchaseRequest.status = newStatus;
       reviewPurchaseRequest(purchaseRequest, approved, userId);
     }
   };
