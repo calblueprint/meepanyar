@@ -216,6 +216,7 @@ export const createProductInventoryAndUpdate = async (product, startingAmount, s
   let inventoryUpdateId = '';
   try {
     delete product.id; // Remove the id field to add to Airtable
+    // Product, inventory, and inventoryUpdate creation is done on this single endpoint to account for offline functionality
     const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/products/create`, {
       method: 'POST',
       headers: {
@@ -263,6 +264,7 @@ export const createInventoryAndUpdate = async (inventory, userId ) => {
   
   try {
     delete inventory.id; // Remove the id field to add to Airtable
+    // Inventory and inventoryUpdate creation is done on this single endpoint to account for offline functionalitys
     const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
       method: 'POST',
       headers: {
