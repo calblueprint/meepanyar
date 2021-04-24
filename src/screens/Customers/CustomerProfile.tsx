@@ -43,13 +43,11 @@ const styles = (theme: Theme) =>
     },
     leftMeterInfoCol: {
       width: '50%',
-      padding: '5px',
-      paddingLeft: '0px',
+      padding: '5px 5px 5px 0px',
     },
     rightMeterInfoCol: {
       width: '50%',
-      padding: '5px',
-      paddingRight: '0px',
+      padding: '5px 0px 5px 5px',
     },
   });
 
