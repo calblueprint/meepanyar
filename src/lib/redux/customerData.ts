@@ -171,7 +171,7 @@ export const selectCustomersToCollect = createSelector(
     }
 )
 
-export const selectTotalAmountBilled = createSelector(
+export const selectCurrentPeriodTotalAmountBilled = createSelector(
     selectAllCustomersArray,
     store.getState,
     (customers, state) => {
@@ -183,7 +183,7 @@ export const selectTotalAmountBilled = createSelector(
     }
 )
 
-export const selectTotalAmountCollected = createSelector(
+export const selectCurrentPeriodTotalAmountCollected = createSelector(
     selectAllCustomersArray,
     store.getState,
     (customers, state) => {

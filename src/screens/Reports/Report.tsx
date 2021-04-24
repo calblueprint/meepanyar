@@ -58,7 +58,7 @@ function Report(props: ReportProps) {
   const collected = `${round(report.totalAmountCollected)} Ks`;
   const billed = `${round(report.totalAmountBilled)} Ks`;
   const outstanding = `${round(report.totalAmountBilled - report.totalAmountCollected)} Ks`;
-  const paymentRate = report.totalCustomersBilled ? `${round(report.totalCustomersPaid / report.totalCustomersBilled * 100)} %` : '--';
+  const paymentRate = report.totalCustomersBilled ? `${round(report.totalCustomersPaid / report.totalCustomersBilled * 100)}%` : '--';
 
   // Inventory
   const approved = `${report.inventoryAmountApproved.toString()} Ks`;

@@ -74,7 +74,7 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
   const getRightText = () =>
   (<ListItemText
     className={classes.rightTextStyles}
-    primaryTypographyProps={{ align: 'right', variant: 'h4' }}
+    primaryTypographyProps={{ align: 'right', variant: props.rightTextBlack ? "h4" : "body1" }}
     primary={editable ?
       <InputBase
         id={editInputId}

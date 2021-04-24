@@ -28,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: (props: CardProps) => ({
       marginTop: '10px',
       border: '1px solid',
-      borderColor: props.highlightedBorder ? theme.palette.primary.main : props.readOnly ? theme.palette.background.default : theme.palette.text.disabled,
+      borderColor: props.highlightedBorder ? theme.palette.primary.main : (props.readOnly ? theme.palette.background.default : theme.palette.text.disabled),
       borderRadius: '6px',
       backgroundColor: props.readOnly ? theme.palette.background.default : 'white'
     }),

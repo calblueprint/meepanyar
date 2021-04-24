@@ -1,8 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { SiteRecord, TariffPlanRecord } from '../airtable/interface';
+import { SiteRecord, TariffPlanRecord, FinancialSummaryRecord } from '../airtable/interface';
 import { setCurrentSiteId, updateTariffPlan, updateSite } from './siteDataSlice';
-import { selectAmountPurchaseRequestedApproved } from './inventoryData';
-import { selectTotalAmountCollected } from './customerData';
+import { selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent, selectCurrentPeriodPurchaseRequestsDeniedTotalAmountSpent } from './inventoryData';
+import { selectCustomersToCollect, selectCustomersDone, selectCurrentPeriodTotalAmountBilled, selectCurrentPeriodTotalAmountCollected } from './customerData';
+import { getCurrentPeriod } from '../moment/momentUtils';
+import { selectAllCustomersArray } from './customerDataSlice';
 import { RootState, store } from './store';
 
 export const setCurrentSite = (newSite: any): void => {
@@ -37,6 +39,39 @@ export const updateSiteInRedux = (siteUpdates : Partial<SiteRecord>) => {
   store.dispatch(updateSite(siteUpdates))
 }
 
-export const selectCurrentSiteProfit = () => {
-  return selectTotalAmountCollected(store.getState()) - selectAmountPurchaseRequestedApproved(store.getState());
+export const selectCurrentSiteProfit = (state: RootState) => {
+  return selectCurrentPeriodTotalAmountCollected(state) - selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent(state);
+}
+
+export const selectCurrentFinancialSummary = () => {
+  const state = store.getState();
+  const customers = selectAllCustomersArray(state);
+  const customersBilled = selectCustomersToCollect(state);
+  const customersPaid = selectCustomersDone(state);
+  const totalAmountBilled = selectCurrentPeriodTotalAmountBilled(state);
+  const totalAmountCollected =  selectCurrentPeriodTotalAmountCollected(state);
+  const totalProfit = selectCurrentSiteProfit(state);
+  const inventoryAmountApproved = selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent(state);
+  const inventoryAmountDenied = selectCurrentPeriodPurchaseRequestsDeniedTotalAmountSpent(state);
+
+  const currentReport: FinancialSummaryRecord = {
+    id: '',
+    name: '',
+    totalCustomers: customers.length,
+    totalCustomersBilled: customersBilled.length,
+    totalCustomersPaid: customersPaid.length,
+    totalUsage: 0,
+    totalAmountBilled,
+    totalAmountCollected,
+    totalAmountSpent: 0,
+    totalProfit,
+    inventoryAmountApproved,
+    inventoryAmountDenied,
+    period: getCurrentPeriod(),
+    isapproved: false,
+    lastUpdated: '0',
+    issubmitted: false,
+  }
+
+  return currentReport;
 }

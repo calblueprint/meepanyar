@@ -139,7 +139,7 @@ export const addProductToRedux = (product: ProductRecord): void => {
   store.dispatch(addProduct(product));
 };
 
-export const selectAmountPurchaseRequestedApproved = createSelector(
+export const selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent = createSelector(
     selectAllCurrentSitePurchaseRequestsArray,
     (purchaseRequests) => {
       let amount = 0;
@@ -152,7 +152,7 @@ export const selectAmountPurchaseRequestedApproved = createSelector(
     }
 )
 
-export const selectAmountPurchaseRequestedDenied = createSelector(
+export const selectCurrentPeriodPurchaseRequestsDeniedTotalAmountSpent = createSelector(
   selectAllCurrentSitePurchaseRequestsArray,
   (purchaseRequests) => {
     let amount = 0;
