@@ -34,7 +34,6 @@ function EditUserInformation(props: EditTarifPlanInformationProps) {
         }
     })
 
-    // TODO: Need to create this "Active" column for Users
     const handleSubmit = async (values: any) => {
         const { isAdmin, isActive } = values;
         setLoading(true);

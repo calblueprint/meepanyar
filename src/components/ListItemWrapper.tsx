@@ -81,7 +81,7 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
           error={error}
           placeholder={editPlaceholder}
         />
-        <FormHelperText error> {error && helperText} </FormHelperText>
+        <FormHelperText error style={{ textAlign: 'right' }}> {error && helperText} </FormHelperText>
       </div>
       : rightText}
   />)
