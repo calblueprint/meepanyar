@@ -23,7 +23,7 @@ import {
 } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentSiteId } from '../../lib/redux/siteData';
 import { selectCurrentUserId } from '../../lib/redux/userData';
-import { generateInventory, generateProduct } from '../../lib/utils/inventoryUtils';
+import { generateInventoryRecord, generateProductRecord } from '../../lib/utils/inventoryUtils';
 
 const styles = () =>
   createStyles({
@@ -93,10 +93,10 @@ function AddInventory(props: AddInventoryProps) {
     
     if (selectedProductId === NEW_PRODUCT_LABEL) {
       // Create the new product in Airtable and add to Redux
-      const product = generateProduct(newProductName, unit);
+      const product = generateProductRecord(newProductName, unit);
       ({ inventoryId } = await createProductInventoryAndUpdate(product, startingAmount, siteId, userId));
     } else {
-      const inventory = generateInventory(siteId, parseFloat(startingAmount) || 0, productId);
+      const inventory = generateInventoryRecord(siteId, parseFloat(startingAmount) || 0, productId);
       ({ inventoryId } = await createInventoryAndUpdate(inventory, userId));
     }
 

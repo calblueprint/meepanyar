@@ -34,7 +34,7 @@ import {
   addPurchaseRequestToRedux,
   updateInventoryQuantityInRedux,
 } from '../redux/inventoryData';
-import { generateInventory, generateInventoryUpdate } from '../utils/inventoryUtils';
+import { generateInventoryRecord, generateInventoryUpdateRecord } from '../utils/inventoryUtils';
 /*
  ******* CREATE RECORDS *******
  */
@@ -235,8 +235,10 @@ export const createProductInventoryAndUpdate = async (product, startingAmount, s
   product.id = productId;
   addProductToRedux(product);
 
-  const inventory = generateInventory(siteId, startingAmount, productId, inventoryId);
-  const inventoryUpdate = generateInventoryUpdate(inventoryId, startingAmount, userId, inventoryUpdateId);
+  const inventory = generateInventoryRecord(siteId, startingAmount, productId);
+  inventory.id = inventoryId;
+  const inventoryUpdate = generateInventoryUpdateRecord(inventoryId, startingAmount, userId);
+  inventoryUpdate.id = inventoryUpdateId;
   addInventoryToRedux(inventory);
   addInventoryUpdateToRedux(inventoryUpdate);
 
@@ -281,7 +283,8 @@ export const createInventoryAndUpdate = async (inventory, userId ) => {
   }
   inventory.id = inventoryId;
   addInventoryToRedux(inventory);
-  const inventoryUpdate = generateInventoryUpdate(inventoryId, inventory.currentQuantity, userId, inventoryUpdateId);
+  const inventoryUpdate = generateInventoryUpdateRecord(inventoryId, inventory.currentQuantity, userId);
+  inventoryUpdate.id = inventoryUpdateId;
   addInventoryUpdateToRedux(inventoryUpdate);
   return {inventoryId, inventoryUpdateId};
 }
@@ -339,7 +342,7 @@ export const createInventoryUpdate = async (record) => {
 // TODO: handle offline workflow of creating inventory updates for inventory
 // that was created offline (no Airtable id).
 export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount) => {
-  const inventoryUpdate = generateInventoryUpdate(inventory.id, updatedAmount, userId);
+  const inventoryUpdate = generateInventoryUpdateRecord(inventory.id, updatedAmount, userId);
   let inventoryUpdateId = "";
   try {
     delete inventoryUpdate.id; // Remove the id field to add to Airtable

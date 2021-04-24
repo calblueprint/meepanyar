@@ -69,11 +69,14 @@ export const reviewPurchaseRequest = (purchaseRequest: PurchaseRequestRecord, ap
   updatePurchaseRequestInRedux({ id: purchaseRequest.id, ...reviewData });
 };
 
-export const generateInventoryUpdate = (
+// Generate an InventoryUpdate record by making a copy of the EMPTY_INVENTORY_UPDATE record and filling in 
+// an inventoryId, updatedAmount, and userId.
+// NOTE: this function does not set/generate an id, so the object returned will have an empty ID that 
+// must be filled in before using this object or adding it to the Redux store.
+export const generateInventoryUpdateRecord = (
   inventoryId: string,
   updatedAmount: number,
   userId: string,
-  id?: string,
 ): any => {
   const inventory = selectCurrentSiteInventoryById(store.getState(), inventoryId);
   const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE)); // Make a deep copy of an empty record
@@ -82,24 +85,29 @@ export const generateInventoryUpdate = (
   inventoryUpdate.updatedQuantity = updatedAmount;
   inventoryUpdate.inventoryId = inventoryId;
   inventoryUpdate.createdAt = moment().toISOString();
-  inventoryUpdate.id = id || '';
   return inventoryUpdate;
 };
 
-export const generateInventory = (siteId: string, currentQuantity: number, productId: string, id?: string): any => {
+// Generate an Inventory record by making a copy of the EMPTY_INVENTORY record and filling in 
+// a siteId, currentQuantity, and productId.
+// NOTE: this function does not set/generate an id, so the object returned will have an empty ID that 
+// must be filled in before using this object or adding it to the Redux store.
+export const generateInventoryRecord = (siteId: string, currentQuantity: number, productId: string): any => {
   const inventory = JSON.parse(JSON.stringify(EMPTY_INVENTORY)); // Make a deep copy of an empty record
   inventory.siteId = siteId;
   inventory.currentQuantity = currentQuantity;
   inventory.periodStartQuantity = currentQuantity;
   inventory.productId = productId;
-  inventory.id = id || '';
   return inventory;
 };
 
-export const generateProduct = (name: string, unit: string, id?: string): any => {
+// Generate an Product record by making a copy of the EMPTY_PRODUCT record and filling in 
+// a name and unit.
+// NOTE: this function does not set/generate an id, so the object returned will have an empty ID that 
+// must be filled in before using this object or adding it to the Redux store.
+export const generateProductRecord = (name: string, unit: string): any => {
   const product = JSON.parse(JSON.stringify(EMPTY_PRODUCT)); // Make a deep copy of an empty record
   product.name = name;
   product.unit = unit;
-  product.id = id || '';
   return product;
 };
