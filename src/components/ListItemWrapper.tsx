@@ -1,7 +1,7 @@
 import { useHistory } from 'react-router-dom'
 import { createStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
-import { ListItem, ListItemText, ListItemSecondaryAction, IconButton, makeStyles, InputBase, InputAdornment } from '@material-ui/core';
+import { ListItem, ListItemText, ListItemSecondaryAction, IconButton, makeStyles, InputBase, InputAdornment, FormHelperText } from '@material-ui/core';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 interface ListItemWrapperProps {
@@ -12,10 +12,11 @@ interface ListItemWrapperProps {
   onEditChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
   editUnit?: string;
   editType?: string;
-  editError?: boolean;
   editInputId?: string;
   editValue?: string;
   editPlaceholder?: string;
+  error?: boolean;
+  helperText?: string | false;
   dense?: boolean;
   divider?: boolean;
 }
@@ -35,17 +36,18 @@ const styles = makeStyles((theme: Theme) =>
   }));
 
 const ListItemWrapper = (props: ListItemWrapperProps) => {
-  const { 
-    linkTo, 
-    leftText, 
-    rightText, 
-    editable, 
-    editValue, 
-    onEditChange, 
-    editInputId, 
-    editUnit, 
-    editType, 
-    editError, 
+  const {
+    linkTo,
+    leftText,
+    rightText,
+    editable,
+    editValue,
+    onEditChange,
+    editInputId,
+    editUnit,
+    editType,
+    error,
+    helperText,
     editPlaceholder,
     ...listItemProps } = props;
   const classes = styles(props);
@@ -68,16 +70,19 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
     className={classes.rightTextStyles}
     primaryTypographyProps={{ align: 'right' }}
     primary={editable ?
-      <InputBase
-        id={editInputId}
-        value={editValue}
-        onChange={onEditChange}
-        classes={{ input: classes.inputStyles }}
-        endAdornment={editUnit ? <InputAdornment position="end">{`${editUnit}`}</InputAdornment> : null }
-        type={editType ? editType : 'text'}
-        error={editError}
-        placeholder={editPlaceholder}
-      />
+      <div>
+        <InputBase
+          id={editInputId}
+          value={editValue}
+          onChange={onEditChange}
+          classes={{ input: classes.inputStyles }}
+          endAdornment={editUnit ? <InputAdornment position="end">{`${editUnit}`}</InputAdornment> : null}
+          type={editType ? editType : 'text'}
+          error={error}
+          placeholder={editPlaceholder}
+        />
+        <FormHelperText error> {error && helperText} </FormHelperText>
+      </div>
       : rightText}
   />)
 

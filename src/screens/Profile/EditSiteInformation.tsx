@@ -1,4 +1,4 @@
-import { List, Typography } from '@material-ui/core';
+import { List } from '@material-ui/core';
 import React, { useState } from 'react';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import ListItemWrapper from '../../components/ListItemWrapper';
@@ -7,6 +7,8 @@ import { useHistory } from 'react-router';
 import { selectCurrentSiteInformation, updateSiteInRedux } from '../../lib/redux/siteData';
 import Button from '../../components/Button';
 import { updateSite } from '../../lib/airtable/request';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
 
 
 function EditSiteInformation() {
@@ -14,27 +16,28 @@ function EditSiteInformation() {
 
     const currentSite = useSelector(selectCurrentSiteInformation);
     const currentSiteName = currentSite ? currentSite.name : 'No Site';
-
-    const [newSiteName, setNewSiteName] = useState(currentSiteName);
     const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
 
-    const handleSiteNameInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setNewSiteName(event.target.value as string);
-    }
+    const validationSchema = yup.object({
+        siteName: yup.string().required('Site name can not be empty')
+    });
 
-    const handleSubmit = async (event: React.MouseEvent) => {
-        event.preventDefault();
-
-        if (newSiteName === '') {
-            setErrorMessage('All fields must be filled with numbers');
-            return
-        } else {
-            setLoading(true);
+    const formik = useFormik({
+        initialValues: {
+            siteName: currentSiteName
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            handleSubmit(values)
         }
+    })
+
+    const handleSubmit = async (values: any) => {
+        const { siteName } = values;
+        setLoading(true);
 
         const newSiteInformation = {
-            name: newSiteName
+            name: siteName
         }
 
         try {
@@ -53,20 +56,22 @@ function EditSiteInformation() {
 
     return (
         <BaseScreen title="Edit Site Information" leftIcon="backNav">
-            <List>
-                <ListItemWrapper
-                    leftText='Site Name'
-                    rightText={currentSiteName}
-                    editable
-                    dense
-                    editValue={newSiteName}
-                    onEditChange={handleSiteNameInput}
-                    editInputId={'edit-site-name'}
-                    editPlaceholder={'Input Site Name'}
-                />
-            </List>
-            <Button fullWidth label={'SAVE'} onClick={handleSubmit} loading={loading} />
-            {errorMessage ? <Typography color='error' align='center'> {errorMessage} </Typography> : null}
+            <form noValidate onSubmit={formik.handleSubmit}>
+                <List>
+                    <ListItemWrapper
+                        leftText='Site Name'
+                        editable
+                        dense
+                        editValue={formik.values.siteName}
+                        error={formik.touched.siteName && Boolean(formik.errors.siteName)}
+                        helperText={formik.touched.siteName && formik.errors.siteName}
+                        onEditChange={formik.handleChange}
+                        editInputId={'siteName'}
+                        editPlaceholder={'Input Site Name'}
+                    />
+                </List>
+                <Button fullWidth label={'Save'} loading={loading} />
+            </form>
         </BaseScreen>
     );
 }

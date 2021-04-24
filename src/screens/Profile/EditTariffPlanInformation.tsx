@@ -34,7 +34,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
     }
 
     const handleSubmit = async (event: React.MouseEvent) => {
-        
+
         const fixedTariff = parseFloat(newFixedTariff);
         const tariffByUnit = parseFloat(newTariffByUnit);
         const freeUnits = parseFloat(newFreeUnits);
@@ -61,7 +61,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
         } finally {
             // We naively update the tariff plan in redux and do proper authentication on the backend
             // to make sure only admins can successfully change tariff plans
-            updateTariffPlanInRedux({id: tariffPlan.id, ...newTariffPlanProperties});
+            updateTariffPlanInRedux({ id: tariffPlan.id, ...newTariffPlanProperties });
             history.goBack()
         }
     }
@@ -79,7 +79,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                     editInputId={'edit-fixed-tariff'}
                     editUnit={'Ks'}
                     editType='number'
-                    editError={newFreeUnits !== ''}
+                    error={newFreeUnits !== ''}
                     editPlaceholder={'e.g. 5'}
                 />
                 <ListItemWrapper
@@ -92,7 +92,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                     editInputId={'edit-tariff-by-unit'}
                     editUnit={'Ks/kWh'}
                     editType='number'
-                    editError={newFreeUnits !== ''}
+                    error={newFreeUnits !== ''}
                     editPlaceholder={'e.g. 5'}
                 />
                 <ListItemWrapper
@@ -105,7 +105,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                     editInputId={'edit-free-units'}
                     editUnit={'kWh'}
                     editType='number'
-                    editError={newFreeUnits !== ''}
+                    error={newFreeUnits !== ''}
                     editPlaceholder={'e.g. 5'}
                 />
             </List>
