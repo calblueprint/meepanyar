@@ -75,3 +75,9 @@ export const selectCurrentFinancialSummary = () => {
 
   return currentReport;
 }
+
+// Rounds number to at most 2 decimal points
+// And converts to string
+export const round = (number: number) => {
+  return (Math.round(number * 100) / 100).toString();
+}

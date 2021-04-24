@@ -6,7 +6,7 @@ import OutlinedCardList from '../../components/OutlinedCardList';
 import { Typography, List, ListItem, ListItemText } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
-import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { selectCurrentSiteInformation, round } from '../../lib/redux/siteData';
 import { Person as PersonIcon, ShoppingCart as ShoppingCartIcon, Build as BuildIcon, Warning as WarningIcon } from '@material-ui/icons';
 import ListItemWrapper from '../../components/ListItemWrapper';
 import { useSelector } from 'react-redux';
@@ -45,14 +45,6 @@ function Report(props: ReportProps) {
   const report = props.location.state.report;
   const deadline = props.location.state.deadline;
   const currentSite = useSelector(selectCurrentSiteInformation);
-
-  console.log(report);
-
-  // Rounds number to at most 2 decimal points
-  // And converts to string
-  const round = (number: number) => {
-    return (Math.round(number * 100) / 100).toString();
-  }
 
   // Customers
   const collected = `${round(report.totalAmountCollected)} Ks`;
