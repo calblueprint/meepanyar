@@ -7,6 +7,7 @@ import FlashOnIcon from '@material-ui/icons/FlashOn';
 import { Link } from 'react-router-dom';
 import { CustomerRecord } from '../../../lib/airtable/interface';
 import { setCurrentCustomerIdInRedux, CustomerStatus } from '../../../lib/redux/customerData';
+import { round } from '../../../lib/redux/siteData';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import SyncIcon from '@material-ui/icons/Sync';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
@@ -102,7 +103,7 @@ export default function CustomerCard(props: CustomerCardProps): JSX.Element {
               <Typography variant="h2">{customer.customerNumber}, {customer.name}</Typography>
               {isOfflineId(customer.id) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
             </div>
-            <Typography color="textSecondary">Total owed <span className={classes.numberText}>{customer.outstandingBalance} Ks</span></Typography>
+            <Typography color="textSecondary">Total owed <span className={classes.numberText}>{round(customer.outstandingBalance)} Ks</span></Typography>
           </div>
         </Link>
         <CardActions>
