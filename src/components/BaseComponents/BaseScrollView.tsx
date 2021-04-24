@@ -7,7 +7,7 @@ const styles = () =>
       overflow: 'scroll',
       height: '100%',
       width: '100%',
-      paddingBottom: 56,
+      paddingBottom: 56, // height of bottom nav bar
     },
   });
 
