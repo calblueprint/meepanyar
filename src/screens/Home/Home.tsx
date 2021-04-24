@@ -1,7 +1,8 @@
 import Typography from '@material-ui/core/Typography';
-import CloudIcon from '@material-ui/icons/Cloud';
+import CloudOutlinedIcon from '@material-ui/icons/CloudOutlined';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import AddIcon from '@material-ui/icons/Add';
+import DescriptionIcon from '@material-ui/icons/Description';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { IconButton } from '@material-ui/core';
 import React from 'react';
@@ -13,14 +14,13 @@ import { Link } from 'react-router-dom';
 import { SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
-import ReportButton from './components/ReportButton';
-import PastReportButton from './components/PastReportsButton';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import Button from '../../components/Button';
 import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
+import { selectCurrentUser, selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -59,9 +59,12 @@ function Home(props: HomeProps) {
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
   const allSites: SiteRecord[] = useSelector(selectAllSitesInformation) || [];
   const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation) || EMPTY_SITE;
+  const user = useSelector(selectCurrentUser);
   const isOnline = useSelector(selectIsOnline) || false;
   const lastUpdated = formatDateStringToLocal(useSelector(selectLastUpdated));
 
+  // This'll eventually be calculated via a selector that sums the profit of Mee Panyar over all periods
+  // Tiffany will have the profit calculation done on her Financial Summary PR, so we can add it after that
   const amountOwed = isOnline ? 6000 : 0;
 
   const getAmountOwedCard = () => {
@@ -80,11 +83,15 @@ function Home(props: HomeProps) {
       <AddIcon />
     </IconButton>
 
-    return <OutlinedCardList
-      highlighted={amountOwed !== 0}
-      info={amountOwedCardInfo}
-      rightIcon={amountOwed === 0 ? <CheckCircleOutlineIcon /> : addButton}
-    />
+    return (
+      // Same margin bottom that Typography applies as gutterBottom
+      <div style={{ marginBottom: '.35em' }}>
+        <OutlinedCardList
+          highlighted={amountOwed !== 0}
+          info={amountOwedCardInfo}
+          rightIcon={amountOwed === 0 ? <CheckCircleOutlineIcon /> : addButton}
+        />
+      </div>)
   }
 
   return (
@@ -101,7 +108,7 @@ function Home(props: HomeProps) {
             </Typography>
           </div>
           <div className={classes.network}>
-            {isOnline ? <CloudIcon color="primary" /> : <CloudOffIcon color="disabled" />}
+            {isOnline ? <CloudOutlinedIcon /> : <CloudOffIcon color="disabled" />}
             <Typography variant="caption" color='secondary'>
               Last Connected to Network
             </Typography>
@@ -111,10 +118,7 @@ function Home(props: HomeProps) {
           </div>
         </div>
 
-        {/* Same margin bottom that Typography applies as gutterBottom */}
-        <div style={{ marginBottom: '.35em' }}>
-          {getAmountOwedCard()}
-        </div>
+        {user?.organization === 'Meepanyar' && getAmountOwedCard()}
 
         <Typography variant='h2' gutterBottom>
           Tasks
@@ -140,16 +144,25 @@ function Home(props: HomeProps) {
             iconType="maintenance"
           />
         </Link>
-        <HomeMenuItem label="Incidents" amount={0} iconType="incident" />
+        <Link to={'/incidents'}>
+          <HomeMenuItem
+            label="Incidents"
+            amount={0}
+            iconType="incident"
+          />
+        </Link>
         <Typography variant='h2' gutterBottom>
           Financial Reports
         </Typography>
+        {/* TODO: These buttons should lead to the appropriate places */}
         <div className={classes.financialSums}>
+          <div style={{ paddingRight: 10 }}>
+            <Link to={'/financial-summary'}>
+              <Button label='Current Period' startIcon={<DescriptionIcon />} />
+            </Link>
+          </div>
           <Link to={'/financial-summary'}>
-            <ReportButton />
-          </Link>
-          <Link to={'/financial-summary'}>
-            <PastReportButton />
+            <Button label='Past Reports' variant='outlined' />
           </Link>
         </div>
       </BaseScrollView>
