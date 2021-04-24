@@ -11,6 +11,7 @@ import { PurchaseRequestRecord } from '../../../lib/airtable/interface';
 import { useInternationalization } from '../../../lib/i18next/translator';
 import words from '../../../lib/i18next/words';
 import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
+import { setCurrentPurchaseRequestIdInRedux } from '../../../lib/redux/inventoryData';
 import {
   EMPTY_PRODUCT,
   PurchaseRequestStatus,
@@ -69,12 +70,12 @@ interface PurchaseRequestCardProps {
   showSnackbarCallback: () => void;
 }
 
-export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size?: 'small' | 'large') => {
+export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size?: 'small' | 'large', grey?: boolean ) => {
   switch (status) {
     case PurchaseRequestStatus.APPROVED:
-      return <CheckCircleOutlineIcon color={'primary'} fontSize={size || 'default'} />;
+      return <CheckCircleOutlineIcon color={grey ? 'secondary': 'primary'} fontSize={size || 'default'} />;
     case PurchaseRequestStatus.DENIED:
-      return <CancelOutlinedIcon color={'error'} fontSize={size || 'default'} />;
+      return <CancelOutlinedIcon color={grey ? 'secondary': 'error'} fontSize={size || 'default'} />;
     default:
       return <HourglassEmptyIcon fontSize={size || 'default'} />;
   }
@@ -107,8 +108,9 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
     <Card variant="outlined" className={classes.cardContainer}>
       <Link
         key={purchaseRequest.id}
-        to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest } }}
+        to={{ pathname: `/inventory/purchase-requests/purchase-request` }}
         style={{ flex: 1 }}
+        onClick={() => setCurrentPurchaseRequestIdInRedux(purchaseRequest.id)}
       >
         <CardContent className={classes.cardContent}>
           <div className={classes.leftContent}>
