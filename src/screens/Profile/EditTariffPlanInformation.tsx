@@ -7,7 +7,7 @@ import { TariffPlanRecord } from '../../lib/airtable/interface';
 import Button from '../../components/Button';
 import { updateTariffPlan } from '../../lib/airtable/request';
 import { updateTariffPlanInRedux } from '../../lib/redux/siteData';
-
+import { round } from '../../lib/redux/siteData';
 
 type EditTarifPlanInformationProps = RouteComponentProps<{}, {}, { tariffPlan: TariffPlanRecord }>;
 
@@ -15,9 +15,9 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
     const { tariffPlan } = props.location.state;
     const history = useHistory();
 
-    const [newFixedTariff, setNewFixedTariff] = useState(tariffPlan.fixedTariff.toString() || '');
-    const [newTariffByUnit, setNewTariffByUnit] = useState(tariffPlan.tariffByUnit.toString() || '');
-    const [newFreeUnits, setNewFreeUnits] = useState(tariffPlan.freeUnits.toString() || '');
+    const [newFixedTariff, setNewFixedTariff] = useState(round(tariffPlan.fixedTariff) || '');
+    const [newTariffByUnit, setNewTariffByUnit] = useState(round(tariffPlan.tariffByUnit) || '');
+    const [newFreeUnits, setNewFreeUnits] = useState(round(tariffPlan.freeUnits) || '');
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -34,7 +34,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
     }
 
     const handleSubmit = async (event: React.MouseEvent) => {
-        
+
         const fixedTariff = parseFloat(newFixedTariff);
         const tariffByUnit = parseFloat(newTariffByUnit);
         const freeUnits = parseFloat(newFreeUnits);

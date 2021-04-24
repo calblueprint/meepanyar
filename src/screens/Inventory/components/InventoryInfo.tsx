@@ -10,6 +10,7 @@ import words from '../../../lib/i18next/words';
 import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
+import { round } from '../../../lib/redux/siteData';
 
 interface InventoryInfoProps {
   productId: string;
@@ -72,7 +73,7 @@ function UpdateButton() {
 function InventoryInfo(props: InventoryInfoProps) {
   const intl = useInternationalization();
   const classes = useStyles(props);
-  const { productId, lastUpdated, currentQuantity, withActions, inventoryId } = props;
+  const { productId, lastUpdated, withActions, inventoryId } = props;
   const product = useSelector((state: RootState) => selectProductById(state, productId)) || EMPTY_PRODUCT;
 
   return (
@@ -87,7 +88,7 @@ function InventoryInfo(props: InventoryInfoProps) {
           <Typography variant="caption">{lastUpdated}</Typography>
         </div>
         {props.currentQuantity !== undefined && (
-          <Typography align="right" variant="body2">{`${currentQuantity} ${product.unit}(${intl(
+          <Typography align="right" variant="body2">{`${round(props.currentQuantity)} ${product.unit}(${intl(
             words.s,
           )})`}</Typography>
         )}

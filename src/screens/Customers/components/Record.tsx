@@ -28,7 +28,7 @@ function Record(props: RecordProps) {
         {formatDateStringToLocal(props.date)}
       </Typography>
       <Typography variant="h1">
-        {props.used ? props.used + ' kWh |' : null} {round(props.amount)} Ks
+        {props.used ? round(props.used) + ' kWh |' : null} {round(props.amount)} Ks
       </Typography>
     </div>
   );
