@@ -26,7 +26,7 @@ function CameraScreen(props: CameraProps) {
     const history = useHistory();
     const [errorMessage, setErrorMessage] = useState('');
 
-    // If the user enters the camera screen without a returnLink, 
+    // If the user enters the camera screen without a returnLink,
     // we assume something went wrong and reset them to the home screen
     if (!props.location.state || !props.location.state.returnLink) {
         history.replace('home');
@@ -68,6 +68,7 @@ function CameraScreen(props: CameraProps) {
             idealFacingMode={FACING_MODES.ENVIRONMENT}
             isDisplayStartCameraError={true}
             imageType={IMAGE_TYPES.JPG}
+            isImageMirror
         />
     }
 
