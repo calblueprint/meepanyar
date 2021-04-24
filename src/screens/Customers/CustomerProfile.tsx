@@ -14,6 +14,7 @@ import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardLi
 import Snackbar from '../../components/Snackbar';
 import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
+import { round } from '../../lib/redux/siteData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { selectIsOnline } from '../../lib/redux/userData';
@@ -93,7 +94,7 @@ function CustomerProfile(props: CustomerProps) {
     { number: currReading ? currReading.reading.toString() : '0', label: 'Ending Meter', unit: 'kWh' },
     { number: amountBilled.toString(), label: 'Amount Billed', unit: 'kS' },
   ];
-  let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
+  let balanceInfo: CardPropsInfo[] = [{ number: round(customer.outstandingBalance), label: 'Remaining Balance', unit: 'kS' }];
   let readingInfo: CardPropsInfo[] = [{ number: currReading ? currReading.reading.toString() : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
 
   const getAddButton = (path: string) => {
