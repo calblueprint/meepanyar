@@ -10,13 +10,10 @@ const styles = (theme: Theme) =>
       marginBottom: '15px',
       borderBottom: `1px solid ${theme.palette.text.secondary}`,
     },
-    unbolded: {
-      fontWeight: 500,
-    },
   });
 
 interface RecordProps {
-  classes: { root: string; unbolded: string };
+  classes: { root: string; };
   date: string;
   used?: number | null;
   amount: number;
@@ -26,7 +23,7 @@ function Record(props: RecordProps) {
   const { classes } = props;
   return (
     <div className={classes.root}>
-      <Typography variant="h2" className={classes.unbolded}>
+      <Typography variant="body2">
         {formatDateStringToLocal(props.date)}
       </Typography>
       <Typography variant="h1">
