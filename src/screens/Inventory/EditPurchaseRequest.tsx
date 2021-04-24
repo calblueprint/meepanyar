@@ -14,6 +14,8 @@ import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import { selectCurrentPurchaseRequest } from '../../lib/redux/inventoryData';
 import { EMPTY_PURCHASE_REQUEST, PurchaseRequestStatus } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
@@ -34,6 +36,7 @@ interface EditPurchaseRequestProps extends RouteComponentProps {
 
 function EditPurchaseRequest(props: EditPurchaseRequestProps) {
   const { classes } = props;
+  const intl = useInternationalization(); 
   const history = useHistory();
   const purchaseRequest: PurchaseRequestRecord = useSelector(selectCurrentPurchaseRequest) || EMPTY_PURCHASE_REQUEST;
   const userId = useSelector(selectCurrentUserId);
@@ -51,6 +54,7 @@ function EditPurchaseRequest(props: EditPurchaseRequestProps) {
   };
 
   return (
+    // TODO: translations
     <BaseScreen title={'Inventory Receipt'} leftIcon="backNav">
       <List className={classes.listContainer}>
         <ListItem disableGutters>
@@ -73,7 +77,7 @@ function EditPurchaseRequest(props: EditPurchaseRequestProps) {
           </ListItemSecondaryAction>
         </ListItem>
       </List>
-      <Button fullWidth label="Save Changes" onClick={handleSubmit} />
+      <Button fullWidth label={intl(words.save)}onClick={handleSubmit} />
     </BaseScreen>
   );
 }
