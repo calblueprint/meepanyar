@@ -20,12 +20,16 @@ interface CardProps {
   readOnly?: boolean;
   editPath?: string;
   reverse?: boolean;
+  left?: boolean;
+  right?: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: (props: CardProps) => ({
       marginTop: '10px',
+      marginLeft: props.left ? '-5px' : undefined,
+      marginRight: props.right ? '-5px' : undefined,
       border: '1px solid',
       borderColor: props.readOnly ? theme.palette.background.default : theme.palette.text.disabled,
       borderRadius: '6px',

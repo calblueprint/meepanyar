@@ -166,11 +166,13 @@ function CustomerProfile(props: CustomerProps) {
               info={[meterInfo[0]]}
               readOnly={topLeftReadOnly}
               editPath={topLeftReadOnly ? undefined : `${match.url}/starting-meter-reading/edit`}
+              left
             />
             { /* Bottom Left */}
             <OutlinedCardList
               info={[meterInfo[1]]}
               readOnly
+              left
             />
           </div>
           <div className={classes.meterInfoCol}>
@@ -178,11 +180,13 @@ function CustomerProfile(props: CustomerProps) {
             <OutlinedCardList
               info={[meterInfo[2]]}
               readOnly
+              right
             />
             { /* Bottom Right */}
             <OutlinedCardList
               info={[meterInfo[3]]}
               readOnly
+              right
             />
           </div>
         </div>
