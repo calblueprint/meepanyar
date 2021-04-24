@@ -1,5 +1,5 @@
+import { createStyles, withStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { withStyles, createStyles } from '@material-ui/core/styles';
 
 const styles = () =>
   createStyles({
@@ -7,7 +7,7 @@ const styles = () =>
       overflow: 'scroll',
       height: '100%',
       width: '100%',
-      paddingBottom: 48,
+      paddingBottom: 56,
     },
   });
 
