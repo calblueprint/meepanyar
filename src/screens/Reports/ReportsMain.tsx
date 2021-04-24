@@ -9,7 +9,7 @@ import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import { selectCustomersToCollect, selectCustomersDone, selectTotalAmountBilled, selectTotalAmountCollected } from '../../lib/redux/customerData';
 import { selectAmountPurchaseRequestedApproved, selectAmountPurchaseRequestedDenied } from '../../lib/redux/inventoryData';
 import { selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
-import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { selectCurrentSiteInformation, selectCurrentSiteProfit } from '../../lib/redux/siteData';
 import { selectAllFinancialSummariesArray } from '../../lib/redux/siteDataSlice';
 import { getCurrentPeriod, getCurrentMonthGracePeriodDeadline, formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import { useSelector } from 'react-redux';
@@ -37,6 +37,7 @@ function ReportsMain(props: ReportsMainProps) {
   const customersPaid = useSelector(selectCustomersDone);
   const totalAmountBilled = useSelector(selectTotalAmountBilled);
   const totalAmountCollected =  useSelector(selectTotalAmountCollected);
+  const totalProfit = useSelector(selectCurrentSiteProfit);
   const inventoryAmountApproved = useSelector(selectAmountPurchaseRequestedApproved);
   const inventoryAmountDenied = useSelector(selectAmountPurchaseRequestedDenied);
 
@@ -50,7 +51,7 @@ function ReportsMain(props: ReportsMainProps) {
     totalAmountBilled,
     totalAmountCollected,
     totalAmountSpent: 0,
-    totalProfit: totalAmountCollected - inventoryAmountApproved,
+    totalProfit,
     inventoryAmountApproved,
     inventoryAmountDenied,
     period: getCurrentPeriod(),
