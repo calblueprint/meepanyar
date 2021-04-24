@@ -1,12 +1,12 @@
 import {
-    createStyles,
-    IconButton,
-    List,
-    ListItem,
-    ListItemSecondaryAction,
-    ListItemText,
-    Theme,
-    withStyles
+  createStyles,
+  IconButton,
+  List,
+  ListItem,
+  ListItemSecondaryAction,
+  ListItemText,
+  Theme,
+  withStyles
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -18,6 +18,7 @@ import { selectCurrentPurchaseRequest } from '../../lib/redux/inventoryData';
 import { EMPTY_PURCHASE_REQUEST, PurchaseRequestStatus } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { reviewPurchaseRequest } from '../../lib/utils/inventoryUtils';
+import { isOfflineId } from '../../lib/utils/offlineUtils';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
 
 const styles = (theme: Theme) =>
@@ -40,8 +41,8 @@ function EditPurchaseRequest(props: EditPurchaseRequestProps) {
   const [status, setStatus] = useState(purchaseRequest.status);
 
   // Redirect to InventoryMain if a current purchase request is not found or if the user is not an admin
-  if (purchaseRequest === EMPTY_PURCHASE_REQUEST || !userIsAdmin) {
-    return <Redirect to={'/inventory'} />;
+  if (purchaseRequest === EMPTY_PURCHASE_REQUEST || !userIsAdmin || isOfflineId(purchaseRequest.id)) {
+    return <Redirect to={'/inventory/purchase-requests'} />;
   }
 
   const handleSubmit = () => {

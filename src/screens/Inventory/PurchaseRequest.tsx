@@ -92,7 +92,13 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
   };
 
   return (
-    <BaseScreen title={intl(words.inventory_receipt)} leftIcon="backNav" rightIcon={userIsAdmin ? "edit" : undefined} match={match}>
+    // Edit functionality is only enabled for admins and for purchase requests without offline IDs
+    <BaseScreen
+      title={intl(words.inventory_receipt)}
+      leftIcon="backNav"
+      rightIcon={userIsAdmin && !isOfflineId(purchaseRequest.id) ? 'edit' : undefined}
+      match={match}
+    >
       <BaseScrollView>
         <div className={classes.headerContainer}>
           <InventoryInfo
