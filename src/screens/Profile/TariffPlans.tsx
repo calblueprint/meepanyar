@@ -3,10 +3,11 @@ import TariffPlanCard from './components/TariffPlanCard';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import React from 'react';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import ListItemWrapper from '../../components/ListItemWrapper';
 import { useSelector } from 'react-redux';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { TariffPlanRecord } from '../../lib/airtable/interface';
+import { useHistory } from 'react-router';
+import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 
 const styles = makeStyles((theme: Theme) =>
   createStyles({
@@ -18,6 +19,7 @@ const styles = makeStyles((theme: Theme) =>
 
 function TariffPlans() {
   const classes = styles();
+  const history = useHistory();
 
   // TODO: Add customer looking for tariff plans and render tariff plans without customers separately
   const tariffPlans: TariffPlanRecord[] = useSelector(selectAllTariffPlansArray) || [];
@@ -28,7 +30,14 @@ function TariffPlans() {
         <ListItem disableGutters>
           <ListItemText primary='Used' primaryTypographyProps={{ color: 'inherit' }} className={classes.header} />
         </ListItem>
-        {tariffPlans.map((tariffPlan: TariffPlanRecord) => <TariffPlanCard key={tariffPlan.id} tariffPlan={tariffPlan} editOnClick />)}
+        {tariffPlans.map((tariffPlan: TariffPlanRecord) =>
+          <TariffPlanCard
+            key={tariffPlan.id}
+            tariffPlan={tariffPlan}
+            handleTariffPlanClick={() => history.push(`${history.location.pathname}/tariff-plan`, { tariffPlan })}
+            rightIcon={<ArrowForwardIosIcon fontSize='small' />}
+          />)
+        }
         <ListItem disableGutters>
           <ListItemText primary='Unused' className={classes.header} />
         </ListItem>
