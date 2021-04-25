@@ -37,6 +37,7 @@ import EditTariffPlanInformation from './screens/Profile/EditTariffPlanInformati
 import AddInventory from './screens/Inventory/AddInventory';
 import CreateInventoryUpdate from './screens/Inventory/CreateInventoryUpdate';
 import CreatePurchaseRequest from './screens/Inventory/CreatePurchaseRequest';
+import EditPurchaseRequest from './screens/Inventory/EditPurchaseRequest';
 import InventoryMain from './screens/Inventory/InventoryMain';
 import InventoryProfile from './screens/Inventory/InventoryProfile';
 import PurchaseRequest from './screens/Inventory/PurchaseRequest';
@@ -84,7 +85,8 @@ function App() {
       <AuthenticatedRoute path="/inventory/item" component={InventoryProfile} /> 
       <AuthenticatedRoute path="/inventory/purchase-requests" component={PurchaseRequestsMain} exact/> 
       <AuthenticatedRoute path="/inventory/purchase-requests/create" component={CreatePurchaseRequest} /> 
-      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} /> 
+      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} exact /> 
+      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request/edit" component={EditPurchaseRequest} /> 
       <AuthenticatedRoute path="/inventory/updates/create" component={CreateInventoryUpdate} /> 
 
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
