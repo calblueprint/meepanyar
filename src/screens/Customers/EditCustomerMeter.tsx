@@ -7,6 +7,8 @@ import TextField from '../../components/TextField';
 import { MeterType } from '../../lib/redux/customerDataSlice';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import Button from '../../components/Button';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
@@ -15,19 +17,18 @@ export interface EditCustomerMeterState {
     meterNumber: string | undefined;
 }
 
-const validationSchema = yup.object({
-    meterType: yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], 'Meter Type must be one of Smart, Analog, or No Meter'),
-    meterNumber: yup.mixed() // Can be number or empty string
-        .when('meterType', {
-            is: (MeterType.ANALOG_METER || MeterType.SMART_METER),
-            then: yup.mixed().required('Please enter a meter number'),
-        })
-});
-
 function EditCustomerMeter() {
-
+    const intl = useInternationalization(); 
     const currentCustomer = useSelector(selectCurrentCustomer);
 
+    const validationSchema = yup.object({
+        meterType: yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], intl(words.meter_type_must_be_one_of_smart_analog_or_no_meter)),
+        meterNumber: yup.mixed() // Can be number or empty string
+            .when('meterType', {
+                is: (MeterType.ANALOG_METER || MeterType.SMART_METER),
+                then: yup.mixed().required(intl(words.please_enter_a_meter_number)),
+            })
+    });
     const formik = useFormik({
         initialValues: {
             meterType: currentCustomer?.meterType,
@@ -50,7 +51,7 @@ function EditCustomerMeter() {
     }
 
     return (
-        <BaseScreen title="Edit Customer" leftIcon="backNav">
+        <BaseScreen title={intl(words.edit_customer)} leftIcon="backNav">
             <form noValidate onSubmit={formik.handleSubmit}>
 
                 <FormControl
@@ -58,7 +59,7 @@ function EditCustomerMeter() {
                     variant="outlined"
                     style={{ width: '100%' }}
                 >
-                    <InputLabel>Meter Type</InputLabel>
+                    <InputLabel>{intl(words.x_type, words.meter)}</InputLabel>
                     <Select
                         onChange={(event) => {
                             const meterType = event.target.value as string;
@@ -69,19 +70,19 @@ function EditCustomerMeter() {
                                 formik.setFieldValue('meterNumber', '')
                             }
                         }}
-                        label={'Meter Type'}
+                        label={intl(words.x_type, words.meter)}
                         id='meterType'
                         required
                         value={formik.values.meterType}
                     >
-                        <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
-                        <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
-                        <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
+                        <MenuItem value={MeterType.ANALOG_METER}>{intl(words.analog_meter)}</MenuItem>
+                        <MenuItem value={MeterType.SMART_METER}>{intl(words.smart_meter)}</MenuItem>
+                        <MenuItem value={MeterType.NO_METER}>{intl(words.no_meter)}</MenuItem>
                     </Select>
                 </FormControl>
 
                 <TextField
-                    label='Meter Number'
+                    label={intl(words.meter_number)}
                     id={'meterNumber'}
                     placeholder='Input'
                     value={formik.values.meterNumber}
@@ -92,7 +93,7 @@ function EditCustomerMeter() {
                     onChange={formik.handleChange}
                 />
 
-                <Button label='Next' fullWidth />
+                <Button label={intl(words.next)} fullWidth />
             </form>
         </BaseScreen>
     );

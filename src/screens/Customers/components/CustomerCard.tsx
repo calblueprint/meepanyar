@@ -10,6 +10,8 @@ import { setCurrentCustomerIdInRedux, CustomerStatus } from '../../../lib/redux/
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import SyncIcon from '@material-ui/icons/Sync';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -68,6 +70,7 @@ interface CustomerCardProps {
 }
 
 export default function CustomerCard(props: CustomerCardProps): JSX.Element {
+  const intl = useInternationalization(); 
   const classes = useStyles(props);
   const { customer } = props;
 
@@ -102,7 +105,7 @@ export default function CustomerCard(props: CustomerCardProps): JSX.Element {
               <Typography variant="h2">{customer.customerNumber}, {customer.name}</Typography>
               {isOfflineId(customer.id) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
             </div>
-            <Typography color="textSecondary">Total owed <span className={classes.numberText}>{customer.outstandingBalance} Ks</span></Typography>
+            <Typography color="textSecondary">{intl(words.total_owed)} <span className={classes.numberText}>{customer.outstandingBalance} {intl(words.ks)}</span></Typography>
           </div>
         </Link>
         <CardActions>

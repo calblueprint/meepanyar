@@ -83,9 +83,9 @@ function CustomerProfile(props: CustomerProps) {
   const freeUnits = customerTariff ? customerTariff?.freeUnits : UNDEFINED_AMOUNT;
 
   let tariffInfo: CardPropsInfo[] = [
-    { number: fixedTariff.toString(), label: words.fixed_tariff, unit: words.ks },
-    { number: unitTariff.toString(), label: words.per_unit_tariff, unit: words.ks },
-    { number: freeUnits.toString(), label: words.free_units, unit: words.kwh },
+    { number: fixedTariff.toString(), label: intl(words.fixed_tariff), unit: intl(words.ks) },
+    { number: unitTariff.toString(), label: intl(words.per_unit_tariff), unit: intl(words.ks) },
+    { number: freeUnits.toString(), label: intl(words.kwh), unit: intl(words.kwh) },
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
@@ -96,13 +96,13 @@ function CustomerProfile(props: CustomerProps) {
   const customerMeteredForPeriod = isReadingFromLatestPeriod(currReading);
 
   let meterInfo: CardPropsInfo[] = [
-    { number: startingReading.toString(), label: words.starting_meter, unit: words.kwh },
-    { number: periodUsage.toString(), label: words.period_usage, unit: words.kwh },
-    { number: currReading ? currReading.reading.toString() : '0', label: words.ending_meter, unit: words.kwh },
-    { number: amountBilled.toString(), label: words.amount_billed, unit: words.ks },
+    { number: startingReading.toString(), label: intl(words.starting_meter), unit: intl(words.kwh) },
+    { number: periodUsage.toString(), label: intl(words.period_usage), unit: intl(words.kwh) },
+    { number: currReading ? currReading.reading.toString() : '0', label: intl(words.ending_meter), unit: intl(words.kwh) },
+    { number: amountBilled.toString(), label: intl(words.amount_billed), unit: intl(words.ks) },
   ];
-  let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
-  let readingInfo: CardPropsInfo[] = [{ number: currReading ? currReading.reading.toString() : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
+  let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: intl(words.remaining_balance), unit: intl(words.ks) }];
+  let readingInfo: CardPropsInfo[] = [{ number: currReading ? currReading.reading.toString() : '0', label: intl(words.last_recorded_reading), unit: intl(words.kwh) }];
 
   const getAddButton = (path: string) => {
     //TODO: separate into base component @wangannie
@@ -145,7 +145,7 @@ function CustomerProfile(props: CustomerProps) {
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.last_recorded_reading), unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
-        { number: periodUsage.toString(), label: intl(words.period_usage), unit: words.kwh },
+        { number: periodUsage.toString(), label: intl(words.period_usage), unit: intl(words.kwh },
         { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
         { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
       ];
@@ -232,7 +232,7 @@ function CustomerProfile(props: CustomerProps) {
           {getPaymentInfo()}
           <div className={classes.headerWrapper}>
             <Typography variant="h2">
-              {intl(words.current_meter_reading_kwh)}
+              {`${intl(words.meter)} ${intl(words.reading)}`}
             </Typography>
             <Link
               to={{
@@ -250,13 +250,13 @@ function CustomerProfile(props: CustomerProps) {
       {/* Exception: don't show the snackbar if showing OfflineDialog */}
       <Snackbar
         open={!isOfflineId(customer.id) && !isOnline}
-        message="You are not connected to a network. Customer updates will be recorded after you reconnect."
+        message={intl(words.you_are_not_connected_to_a_network_customer_updates_will_be_recorded_after_you_reconnect)}
       />
       <OfflineDialog
         open={isOfflineId(customer.id)}
         closeAction={history.goBack}
-        headingText="New Customer Data Offline"
-        bodyText="Customer information cannot be edited until information has been uploaded. Connect to a network to add data."
+        headingText={intl(words.new_customer_data_offline)}
+        bodyText={intl(words.customer_information_cannot_be_edited_until_information_has_been_uploaded_connect_to_a_network_to_add_data)}
       />
     </BaseScreen>
   );

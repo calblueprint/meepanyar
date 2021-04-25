@@ -40,9 +40,9 @@ function AddPayment(props: AddPaymentProps) {
 
     const validationSchema = yup.object({
         amountPaid: yup.number()
-            .min(0, 'Please enter a positive number')
-            .max(currentCustomer?.outstandingBalance || 0, 'You may not pay greater than the remaining balance')
-            .required('Please enter a payment amount')
+            .min(0, intl(words.please_enter_a_positive_number))
+            .max(currentCustomer?.outstandingBalance || 0, intl(words.you_may_not_pay_greater_than_the_remaining_balance))
+            .required(intl(words.please_enter_a_valid_amount))
     });
 
     const formik = useFormik({
@@ -83,7 +83,7 @@ function AddPayment(props: AddPaymentProps) {
             </div>
             <form noValidate onSubmit={formik.handleSubmit}>
                 <TextField
-                    label={intl(words.amount_spent_paid) + ' (' + intl(words.ks) + ')'}
+                    label={`${intl(words.amount_spent)} (${intl(words.ks)})`}
                     id={'amountPaid'}
                     onChange={formik.handleChange}
                     value={formik.values.amountPaid}

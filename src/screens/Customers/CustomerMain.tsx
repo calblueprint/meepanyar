@@ -13,7 +13,6 @@ import CustomerCard from './components/CustomerCard';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
-
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 
@@ -26,44 +25,6 @@ const styles = makeStyles((theme: Theme) =>
       right: theme.spacing(2),
       color: 'white',
     },
-<<<<<<< HEAD
-  });
-
-interface CustomerMainProps extends RouteComponentProps {
-  classes: { title: string; headerWrapper: string; selectionHeader: string; rightAlign: string; fab: string; };
-  customers: CustomerRecord[]
-}
-
-enum SortBy {
-  NAME = words.name_a__z as any,
-  METER = words.meter_number as any
-}
-
-enum FilterBy {
-  PAYMENT_STATUS = words.payment_status as any,
-  METER_STATUS = words.meter_status as any,
-  ACTIVE_STATUS = words.active_status as any,
-}
-
-type FilterByLabel = Record<keyof typeof FilterBy, string[]>;
-
-const labels: FilterByLabel = {
-  'PAYMENT_STATUS': [words.unpaid, words.paid],
-  'METER_STATUS': [words.has_meter, words.no_meter],
-  'ACTIVE_STATUS': [words.active_user, words.inactive_user]
-}
-
-function CustomerMain(props: CustomerMainProps) {
-  const intl = useInternationalization(); 
-  const { classes } = props;
-  const [filteredCustomers, setFilteredCustomers] = useState<CustomerRecord[]>([]);
-  const [filteredCustomersAlt, setFilteredCustomersAlt] = useState<CustomerRecord[]>([]);
-  const [allCustomersTrie, setAllCustomersTrie] = useState<TrieTree<CustomerRecord>>(new TrieTree('name'));
-  const [sortBy, setSortBy] = useState<SortBy>(SortBy.NAME);
-  const [filterBy, setFilterBy] = useState<FilterBy>(FilterBy.ACTIVE_STATUS);
-  const [sortAndFilter, setSortAndFilter] = useState<string[]>([])
-  const [filterLabels, setFilterLabels] = useState<string[]>(labels["ACTIVE_STATUS"]);
-=======
     tab: {
       fontSize: '12px',
       '&:focus': {
@@ -104,9 +65,9 @@ interface CustomerMainProps extends RouteComponentProps {
 }
 
 function CustomerMain(props: CustomerMainProps) {
+  const intl = useInternationalization();
   const classes = styles(props);
   const { match } = props;
->>>>>>> 9b737503b3ce761b28ffe1b31029526be41ce1a2
   const [searchValue, setSearchValue] = useState<string>("");
   const [tabValue, setTabValue] = useState<CustomerStatus>(CustomerStatus.ALL);
   const changeTab = (event: React.ChangeEvent<{}>, newValue: CustomerStatus) => {
@@ -224,54 +185,18 @@ function CustomerMain(props: CustomerMainProps) {
   const getMeterTabLabel = () => (
     <div>
       <FlashOnIcon className={classes.tabIcon} />
-      <Typography className={classes.tabLabel}>Meter</Typography>
+      <Typography className={classes.tabLabel}>{intl(words.meter)}</Typography>
     </div>
   );
 
   const getPaymentTabLabel = () => (
     <div>
       <AttachMoneyIcon className={classes.tabIcon} />
-      <Typography className={classes.tabLabel}>Payment</Typography>
+      <Typography className={classes.tabLabel}>{intl(words.payment)}</Typography>
     </div>
   );
 
   return (
-<<<<<<< HEAD
-    <BaseScreen rightIcon="user">
-      <div className={classes.headerWrapper}>
-        <h1 className={classes.title}>{intl(words.customers)}</h1>
-      </div>
-      <div className={classes.selectionHeader}>
-        <SearchBar placeholder="Search for a customer" onSearchChange={handleSearchChange} />
-        <FormControl>
-          <Select onChange={handleMenuSelect} multiple value={sortAndFilter} inputProps={{ 'aria-label': 'Without label' }}>
-            <ListSubheader>{intl(words.sort_by)}</ListSubheader>
-            <MenuItem value="NAME">{intl(words.name_a__z)}</MenuItem>
-            <MenuItem value="METER">{intl(words.meter_number)}</MenuItem>
-            <ListSubheader>{intl(words.filter_by)}</ListSubheader>
-            <MenuItem value="PAYMENT_STATUS">{intl(words.payment_status)}</MenuItem>
-            <MenuItem value="METER_STATUS">{intl(words.meter_status)}</MenuItem>
-            <MenuItem value="ACTIVE_STATUS">{intl(words.active_status)}</MenuItem>
-          </Select>
-          <div className={classes.rightAlign}><FormHelperText>{intl(words.sort_and_filter)}</FormHelperText></div>
-        </FormControl>
-      </div>
-      <BaseScrollView>
-        <FormHelperText>{intl(filterLabels[0])}</FormHelperText>
-        {filteredCustomers.map((customer, index) => (
-          <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)} >
-            <CustomerCard name={customer.name} amount={customer.outstandingBalance.toString()} date={getLatestReadingDate(customer)} active={customer.isactive} />
-          </Link>
-        ))
-        }
-        <FormHelperText>{intl(filterLabels[1])}</FormHelperText>
-        {filteredCustomersAlt.map((customer, index) => (
-          <Link key={index} to={`${props.match.url}/customer`} onClick={() => setCurrentCustomerIdInRedux(customer.id)} >
-            <CustomerCard name={customer.name} amount={customer.outstandingBalance.toString()} date={getLatestReadingDate(customer)} active={customer.isactive} />
-          </Link>
-        ))
-        }
-=======
     <BaseScreen rightIcon="user" title="Customers" searchAction={handleSearchChange} searchExit={exitSearch}>
       <Tabs
         textColor="primary"
@@ -280,18 +205,17 @@ function CustomerMain(props: CustomerMainProps) {
         onChange={changeTab}
         variant="scrollable"
       >
-        <Tab className={classes.tab} label="All" value={CustomerStatus.ALL} />
+        <Tab className={classes.tab} label={intl(words.all)} value={CustomerStatus.ALL} />
         <Tab className={classes.tab} label={getMeterTabLabel()} value={CustomerStatus.METER} />
         <Tab className={classes.tab} label={getPaymentTabLabel()} value={CustomerStatus.PAYMENT} />
-        <Tab className={classes.tab} label="Done" value={CustomerStatus.DONE} />
+        <Tab className={classes.tab} label={intl(words.done)} value={CustomerStatus.DONE} />
       </Tabs>
       <div className={classes.indicatorContainer}>
         <FiberManualRecordIcon className={classes.indicator}/>
-        <Typography>Status: Active</Typography>
+        <Typography>{intl(words.active_user)}</Typography>
       </div>
       <BaseScrollView>
         {getTabContent()}
->>>>>>> 9b737503b3ce761b28ffe1b31029526be41ce1a2
       </BaseScrollView>
       <Link to={'/customers/create'}>
         <Fab color='primary' aria-label='add customer' className={classes.fab} size='medium'>

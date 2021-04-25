@@ -13,12 +13,9 @@ import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { EMPTY_CUSTOMER, MeterType, selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
-<<<<<<< HEAD
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
-=======
 import TariffPlanCard from '../Profile/components/TariffPlanCard';
->>>>>>> 9b737503b3ce761b28ffe1b31029526be41ce1a2
 import moment from 'moment';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
@@ -67,18 +64,18 @@ function AddCustomer(props: AddCustomerProps) {
   const allCustomerNumbers = useSelector(selectAllCustomersArray).map(customer => customer.customerNumber);
 
   const validationSchema = yup.object({
-    customerName: yup.string().required('Name can not be blank'),
+    customerName: yup.string().required(intl(words.name_can_not_be_blank)),
     selectedMeterType:
-      yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], 'Meter Type must be one of Smart, Analog, or No Meter'),
-    selectedTariffPlanId: yup.string().required('Must select a tariff plan'),
+      yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], intl(words.meter)),
+    selectedTariffPlanId: yup.string().required(intl(words.must_select_a_tariff_plan)),
     meterNumber: yup.mixed().when('selectedMeterType', {
       is: (MeterType.SMART_METER || MeterType.ANALOG_METER),
-      then: yup.mixed().required('Please enter a meter number')
+      then: yup.mixed().required(intl(words.please_enter_an_amount))
     }),
     customerNumber: yup.number()
-      .min(0, 'Please enter a positive number')
-      .notOneOf(allCustomerNumbers, 'That customer number is used by another customer')
-      .required('Customer number is required')
+      .min(0, intl(words.please_enter_a_positive_number))
+      .notOneOf(allCustomerNumbers, intl(words.that_customer_number_is_used_by_another_customer))
+      .required(intl(words.customer_number_is_required))
   });
 
   const formik = useFormik({
@@ -150,32 +147,15 @@ function AddCustomer(props: AddCustomerProps) {
   }
 
   return (
-<<<<<<< HEAD
     <BaseScreen title={intl(words.add_new_customer)} leftIcon="backNav">
-      <form noValidate className={classes.content} onSubmit={() => false}>
-        <TextField label={intl(words.name)} id={'name'} onChange={handleNameInput} />
-        <FormControl variant="outlined" className={classes.formControl}>
-          <InputLabel id="select-tariff-plan-label">{intl(words.select_tariff_plan)}</InputLabel>
-          <Select label={intl(words.select_tariff_plan)} id={'select-tariff-plan'} labelId="select-tariff-plan-label" onChange={handleSelectTariffPlan}>
-            {tariffPlans.map((plan) =>
-              <MenuItem key={plan.id} value={plan.id}>{plan.name}</MenuItem>
-            )}
-          </Select>
-        </FormControl>
-        <Checkbox label={`${intl(words.meter)}:`} textField={hasMeter} checkboxOnChange={() => setHasMeter(!hasMeter)} textFieldOnChange={handleMeterInput} />
-        <Checkbox label={`${intl(words.customer_is_inactive)}`} checkboxOnChange={() => setCustomerInactive(!customerInactive)} />
-        <Button label={intl(words.add_customer)} onClick={handleSubmit} />
-      </form>
-=======
-    <BaseScreen title="Add New Customer" leftIcon="backNav">
       <BaseScrollView>
         <form noValidate onSubmit={formik.handleSubmit}>
           <div className={classes.twoColumnContainer}>
             <div style={{ marginRight: 10, flex: 2 }}>
               <TextField
-                label={'Name'}
+                label={intl(words.name)}
                 id={'customerName'}
-                placeholder={'e.g. Tom'}
+                placeholder={intl(words.eg_x, 'Tom')}
                 onChange={formik.handleChange}
                 value={formik.values.customerName}
                 error={formik.touched.customerName && Boolean(formik.errors.customerName)}
@@ -185,9 +165,9 @@ function AddCustomer(props: AddCustomerProps) {
             </div>
             <div style={{ flex: 1 }}>
               <TextField
-                label={'Number'}
+                label={intl(words.number)}
                 id={'customerNumber'}
-                placeholder={'e.g. 12'}
+                placeholder={intl(words.eg_x, '12')}
                 type="number"
                 onChange={formik.handleChange}
                 value={formik.values.customerNumber}
@@ -203,7 +183,7 @@ function AddCustomer(props: AddCustomerProps) {
               variant="outlined"
               className={classes.formControl}
             >
-              <InputLabel>Meter Type</InputLabel>
+              <InputLabel>{intl(words.x_type, words.meter)}</InputLabel>
               <Select
                 onChange={(event) => {
                   const meterType = event.target.value as string;
@@ -214,21 +194,21 @@ function AddCustomer(props: AddCustomerProps) {
                     formik.setFieldValue('meterNumber', '')
                   }
                 }}
-                label={'Meter Type'}
+                label={intl(words.x_type, words.meter)}
                 id='selectedMeterType'
                 value={formik.values.selectedMeterType}
               >
-                <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
-                <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
-                <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
+                <MenuItem value={MeterType.ANALOG_METER}>{intl(words.analog_meter)}</MenuItem>
+                <MenuItem value={MeterType.SMART_METER}>{intl(words.smart_meter)}</MenuItem>
+                <MenuItem value={MeterType.NO_METER}>{intl(words.no_meter)}</MenuItem>
               </Select>
             </FormControl>
           </div>
           <div className={classes.textContainer}>
             <TextField
-              label={'Meter Number'}
+              label={intl(words.meter_number)}
               id={'meterNumber'}
-              placeholder={'e.g. 15'}
+              placeholder={intl(words.eg_x, '15')}
               type="number"
               value={formik.values.meterNumber}
               onChange={formik.handleChange}
@@ -244,7 +224,7 @@ function AddCustomer(props: AddCustomerProps) {
               required
               className={classes.formControl}
             >
-              <InputLabel>Tariff Plan</InputLabel>
+              <InputLabel>{intl(words.tariff_plan)}</InputLabel>
               {getTariffPlans()}
               <FormHelperText error>{formik.touched.selectedTariffPlanId && formik.errors.selectedTariffPlanId}</FormHelperText>
             </FormControl>
@@ -252,7 +232,7 @@ function AddCustomer(props: AddCustomerProps) {
           <div className={classes.buttonContainer}>
             <div className={classes.button}>
               <Button
-                label={'Add'}
+                label={intl(words.add)}
                 fullWidth
                 loading={loading}
               />
@@ -260,7 +240,6 @@ function AddCustomer(props: AddCustomerProps) {
           </div>
         </form>
       </BaseScrollView>
->>>>>>> 9b737503b3ce761b28ffe1b31029526be41ce1a2
     </BaseScreen>
   );
 }

@@ -5,7 +5,7 @@ dotenv.config();
 const BASE_ID = process.env.TRANSLATIONS_BASE_ID;
 const API_KEY = process.env.TRANSLATIONS_API_KEY;
 const ENDPOINT_URL = 'https://api.airtable.com';
-const VIEW = 'Grid view';
+const VIEW = 'New';
 
 Airtable.configure({
     endpointUrl: ENDPOINT_URL,

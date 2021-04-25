@@ -43,8 +43,8 @@ function AddMeterReading(props: AddMeterReadingProps) {
   const validationSchema = yup.object({
     meterReadingAmount:
       yup.number()
-        .min(currentCustomer?.startingMeterReading || 0, 'New reading must be larger than previous reading')
-        .required('Please enter a number')
+        .min(currentCustomer?.startingMeterReading || 0, intl(words.new_reading_must_be_larger_than_previous_reading))
+        .required(intl(words.please_enter_a_positive_number))
   });
 
   const formik = useFormik({
