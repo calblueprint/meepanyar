@@ -14,6 +14,8 @@ import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = () =>
   createStyles({
@@ -34,6 +36,7 @@ interface HomeProps {
 }
 
 function Home(props: HomeProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const numCustomersToMeter = useSelector(selectCustomersToMeter)?.length || 0;
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
@@ -49,7 +52,7 @@ function Home(props: HomeProps) {
         <div className={classes.network}>
           {isOnline ? <CloudQueueIcon color="primary" /> : <CloudOffIcon color="secondary" />}
           <Typography className={classes.network} variant="body1">
-            Last Connected to Network <br />
+            {intl(words.last_connected_to_network)} <br />
             {lastUpdated}
           </Typography>
         </div>
@@ -60,17 +63,17 @@ function Home(props: HomeProps) {
           label="Customer Alerts"
           amount={numCustomersToMeter + numCustomersToCollect}
           sublabels={[
-            { amount: numCustomersToMeter, label: 'Number of customers to meter' },
-            { amount: numCustomersToCollect, label: 'Number of customers to collect' },
+            { amount: numCustomersToMeter, label: intl(words.number_of_customers_to_meter) },
+            { amount: numCustomersToCollect, label: intl(words.number_of_customers_to_collect) },
           ]}
         />
       </Link>
       <Link to={'/financial-summary'}>
-        <HomeMenuItem label="Unpaid Reports" amount={0} />
+        <HomeMenuItem label={`${intl(words.unpaid)} ${intl(words.reports)}`} amount={0} />
       </Link>
-      <HomeMenuItem label="Unresolved Incidents" amount={0} />
+      <HomeMenuItem label={intl(words.unresolved_incidents)} amount={0} />
       <Link to={'/financial-summary'}>
-        <HomeMenuItem label="Financial Summary" noBadge={true} />
+        <HomeMenuItem label={intl(words.financial_summary)} noBadge={true} />
       </Link>
     </BaseScreen>
   );
