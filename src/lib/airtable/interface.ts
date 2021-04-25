@@ -67,7 +67,7 @@ export interface TariffPlanRecord {
 export interface CustomerRecord {
   id: string;
   name: string;
-  meterNumber: number;
+  meterNumber?: number | null;
   tariffPlanId: string;
   isactive: boolean;
   hasmeter: boolean;
@@ -120,6 +120,8 @@ export interface FinancialSummaryRecord {
   totalAmountCollected: number;
   totalAmountSpent: number;
   totalProfit: number;
+  inventoryAmountApproved: number;
+  inventoryAmountDenied: number;
   period: string;
   bankSlip?: Airtable.Attachment[];
   isapproved: boolean;

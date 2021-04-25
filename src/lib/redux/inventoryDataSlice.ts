@@ -75,12 +75,14 @@ interface inventoryDataSliceState {
   products: EntityState<ProductRecord>;
   sitesInventory: Record<SiteIdString, SiteInventoryData>;
   currentInventoryId: string;
+  currentPurchaseRequestId: string;
 }
 
 const initialState: inventoryDataSliceState = {
   products: productsAdapter.getInitialState(),
   sitesInventory: {},
   currentInventoryId: '',
+  currentPurchaseRequestId: '',
 };
 
 export const EMPTY_INVENTORY: InventoryRecord = {
@@ -182,6 +184,9 @@ const inventoryDataSlice = createSlice({
     setCurrInventoryId(state, action) {
       state.currentInventoryId = action.payload;
     },
+    setCurrPurchaseRequestId(state, action) {
+      state.currentPurchaseRequestId = action.payload;
+    },
     addProduct(state, action) {
       productsAdapter.addOne(state.products, action.payload);
     },
@@ -190,6 +195,7 @@ const inventoryDataSlice = createSlice({
     // If the site changes, reset currentInventoryId
     [setCurrentSiteId.type]: (state, action) => {
       state.currentInventoryId = initialState.currentInventoryId;
+      state.currentPurchaseRequestId = initialState.currentPurchaseRequestId;
     },
   },
 });
@@ -202,6 +208,7 @@ export const {
   addInventoryUpdate,
   updateInventoryQuantity,
   setCurrInventoryId,
+  setCurrPurchaseRequestId,
   addProduct,
 } = inventoryDataSlice.actions;
 export default inventoryDataSlice.reducer;

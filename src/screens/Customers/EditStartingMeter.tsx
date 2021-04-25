@@ -15,6 +15,8 @@ import { updateCustomer } from '../../lib/airtable/request';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 
+import * as yup from 'yup';
+import { useFormik } from 'formik';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -33,10 +35,26 @@ function EditStartingMeter(props: EditStartingMeterProps) {
     const history = useHistory();
     const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
     const userId = useSelector(selectCurrentUserId);
-    const [startingMeterAmount, setStartingMeterAmount] = useState('');
-    const [explanation, setExplanation] = useState('');
     const [loading, setLoading] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
+
+    const validationSchema = yup.object({
+        startingMeterAmount: yup.number()
+            .min(0, 'Please enter a positive number or 0')
+            .not([currentCustomer?.startingMeterReading], 'Starting Meter is currently that value')
+            .required('Please enter a new starting meter number'),
+        explanation: yup.string().required('Please provide a reason for the change')
+    });
+
+    const formik = useFormik({
+        initialValues: {
+            startingMeterAmount: '',
+            explanation: ''
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            handleSubmit(values);
+        }
+    })
 
     if (!currentCustomer || !userId) {
         return <Redirect to={'/customers'} />
@@ -44,23 +62,10 @@ function EditStartingMeter(props: EditStartingMeterProps) {
 
     const currentStartingMeterAmount = currentCustomer.startingMeterReading;
 
-    const handleSetStartingMeterAmount = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setStartingMeterAmount(event.target.value as string);
-    }
+    const handleSubmit = (values: any) => {
+        const { startingMeterAmount, explanation } = values;
 
-    const handleSetExplanation = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setExplanation(event.target.value as string);
-    }
-
-    const handleSubmit = (event: React.MouseEvent) => {
-        // Prevent page refresh on submit
-        event.preventDefault();
-
-        const newStartingMeterAmount = parseFloat(startingMeterAmount);
-        if (isNaN(newStartingMeterAmount) || !explanation) {
-            setErrorMessage(intl(words.updated_starting_meter_must_be_a_number_and_reason_for_change_must_be_filled_out));
-            return;
-        }
+        const newStartingMeterAmount = parseFloat(startingMeterAmount) || 0;
         setLoading(true);
 
         const customerRecordUpdates = {
@@ -89,25 +94,31 @@ function EditStartingMeter(props: EditStartingMeterProps) {
             <div className={classes.amountOwedContainer}>
                 <OutlinedCardList info={cardInfo} />
             </div>
-            <TextField
-                label={intl(words.updated_x, words.starting_meter)}
-                unit={intl(words.kwh)}
-                id={'amount-metered'}
-                placeholder={intl(words.eg_x, '100')}
-                type='number'
-                required
-                value={startingMeterAmount}
-                onChange={handleSetStartingMeterAmount}
-            />
-            <TextField
-                label={intl(words.reason_for_change)}
-                id={'reason-for-change'}
-                placeholder={intl(words.eg_x, words.reset_broken_meter)}
-                required
-                value={explanation}
-                onChange={handleSetExplanation}
-            />
-            <Button label={intl(words.update)} onClick={handleSubmit} loading={loading} errorMessage={errorMessage} />
+            <form noValidate onSubmit={formik.handleSubmit}>
+                <TextField
+                    label='Updated Starting Meter'
+                    unit='kWh'
+                    id={'startingMeterAmount'}
+                    placeholder='e.g. 100'
+                    type='number'
+                    required
+                    value={formik.values.startingMeterAmount}
+                    error={formik.touched.startingMeterAmount && Boolean(formik.errors.startingMeterAmount)}
+                    helperText={formik.touched.startingMeterAmount && formik.errors.startingMeterAmount}
+                    onChange={formik.handleChange}
+                />
+                <TextField
+                    label='Reason for change'
+                    id={'explanation'}
+                    placeholder='e.g. reset broken meter'
+                    required
+                    value={formik.values.explanation}
+                    error={formik.touched.explanation && Boolean(formik.errors.explanation)}
+                    helperText={formik.touched.explanation && formik.errors.explanation}
+                    onChange={formik.handleChange}
+                />
+                <Button label={'Update'} loading={loading} fullWidth />
+            </form>
         </BaseScreen>
     );
 }

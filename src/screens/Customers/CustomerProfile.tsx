@@ -1,20 +1,24 @@
-import React from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import AddIcon from '@material-ui/icons/Add';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link, Redirect, RouteComponentProps } from 'react-router-dom';
+import { Link, Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import Button from '../../components/Button';
+import OfflineDialog from '../../components/OfflineDialog';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
+import Snackbar from '../../components/Snackbar';
 import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
-import { getAmountBilled, getCurrentReading, getPeriodUsage, getStartingReading, getTariffPlanByCustomer, isReadingFromLatestPeriod } from '../../lib/utils/customerUtils';
-import Button from '../../components/Button';
+import { selectIsOnline } from '../../lib/redux/userData';
+import { getAmountBilled, getCurrentReading, getPeriodUsage, getTariffPlanByCustomer, isReadingFromLatestPeriod } from '../../lib/utils/customerUtils';
+import { isOfflineId } from '../../lib/utils/offlineUtils';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 
@@ -40,14 +44,18 @@ const styles = (theme: Theme) =>
     meterInfoGrid: {
       display: 'flex',
     },
-    meterInfoCol: {
+    leftMeterInfoCol: {
       width: '50%',
-      padding: '5px',
+      padding: '5px 5px 5px 0px',
+    },
+    rightMeterInfoCol: {
+      width: '50%',
+      padding: '5px 0px 5px 5px',
     },
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; headerWrapper: string; buttonPrimary: string; meterInfoGrid: string; meterInfoCol: string; };
+  classes: { content: string; headerWrapper: string; buttonPrimary: string; meterInfoGrid: string; leftMeterInfoCol: string; rightMeterInfoCol: string; };
   customer: CustomerRecord;
   location: any;
 }
@@ -58,6 +66,8 @@ function CustomerProfile(props: CustomerProps) {
   const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
   const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
   const payments: PaymentRecord[] = useSelector((state: RootState) => selectPaymentsByCustomerId(state, customer.id)) || [];
+  const history = useHistory();
+  const isOnline = useSelector(selectIsOnline);
 
   if (customer === EMPTY_CUSTOMER) {
     return <Redirect to={'/customers'} />;
@@ -79,7 +89,7 @@ function CustomerProfile(props: CustomerProps) {
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
-  const startingReading : number = customer.startingMeterReading;
+  const startingReading: number = customer.startingMeterReading;
   const periodUsage: number = currReading ? getPeriodUsage(currReading, startingReading) : 0;
   const amountBilled: number = currReading ? getAmountBilled(currReading) : 0;
 
@@ -91,8 +101,8 @@ function CustomerProfile(props: CustomerProps) {
     { number: currReading ? currReading.reading.toString() : '0', label: words.ending_meter, unit: words.kwh },
     { number: amountBilled.toString(), label: words.amount_billed, unit: words.ks },
   ];
-  let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: words.remaining_balance, unit: words.ks }];
-  let readingInfo: CardPropsInfo[] = [{ number: currReading? currReading.reading.toString() : '0', label: words.last_recorded_reading, unit: words.kwh }];
+  let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: 'Remaining Balance', unit: 'kS' }];
+  let readingInfo: CardPropsInfo[] = [{ number: currReading ? currReading.reading.toString() : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
 
   const getAddButton = (path: string) => {
     //TODO: separate into base component @wangannie
@@ -112,7 +122,7 @@ function CustomerProfile(props: CustomerProps) {
   };
 
   const getPaymentInfo = () => {
-    if (customer.meterType === MeterType.INACTIVE) {
+    if (!customer.isactive) {
       balanceInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.remaining_balance), unit: '' }];
       return (
         <OutlinedCardList info={balanceInfo} readOnly />
@@ -139,7 +149,7 @@ function CustomerProfile(props: CustomerProps) {
         { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
         { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
       ];
-    } else if (customer.meterType === MeterType.INACTIVE) {
+    } else if (!customer.isactive) {
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.last_recorded_reading), unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
@@ -158,26 +168,26 @@ function CustomerProfile(props: CustomerProps) {
           editPath={!meterReadOnly && customerMeteredForPeriod ? `${match.url}/meter-readings/create` : undefined}
         />
         <div className={classes.meterInfoGrid}>
-          <div className={classes.meterInfoCol}>
-            { /* Top Left */ }
+          <div className={classes.leftMeterInfoCol}>
+            { /* Top Left */}
             <OutlinedCardList
               info={[meterInfo[0]]}
               readOnly={topLeftReadOnly}
               editPath={topLeftReadOnly ? undefined : `${match.url}/starting-meter-reading/edit`}
             />
-            { /* Bottom Left */ }
+            { /* Bottom Left */}
             <OutlinedCardList
               info={[meterInfo[1]]}
               readOnly
             />
           </div>
-          <div className={classes.meterInfoCol}>
-            { /* Top Right */ }
+          <div className={classes.rightMeterInfoCol}>
+            { /* Top Right */}
             <OutlinedCardList
               info={[meterInfo[2]]}
               readOnly
             />
-            { /* Bottom Right */ }
+            { /* Bottom Right */}
             <OutlinedCardList
               info={[meterInfo[3]]}
               readOnly
@@ -190,7 +200,7 @@ function CustomerProfile(props: CustomerProps) {
 
   const getTariffInfo = () => {
     let tariffReadOnly;
-    if (customer.meterType === MeterType.INACTIVE) {
+    if (!customer.isactive) {
       tariffInfo = [
         { number: UNDEFINED_AMOUNT, label: intl(words.fixed_tariff), unit: '' },
         { number: UNDEFINED_AMOUNT, label: intl(words.per_unit_tariff), unit: '' },
@@ -236,6 +246,18 @@ function CustomerProfile(props: CustomerProps) {
           {getReadingInfo()}
         </div>
       </BaseScrollView>
+      {/* Show the snackbar whenever the user is offline regardless of what actions they took, if any. */}
+      {/* Exception: don't show the snackbar if showing OfflineDialog */}
+      <Snackbar
+        open={!isOfflineId(customer.id) && !isOnline}
+        message="You are not connected to a network. Customer updates will be recorded after you reconnect."
+      />
+      <OfflineDialog
+        open={isOfflineId(customer.id)}
+        closeAction={history.goBack}
+        headingText="New Customer Data Offline"
+        bodyText="Customer information cannot be edited until information has been uploaded. Connect to a network to add data."
+      />
     </BaseScreen>
   );
 }

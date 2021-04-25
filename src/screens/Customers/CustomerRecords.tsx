@@ -28,12 +28,13 @@ function CustomerRecords(props: CustomerRecordsProps) {
   const { classes } = props;
   const payments: PaymentRecord[] = props.location.state.payments;
   const invoices: MeterReadingRecord[] = props.location.state.invoices;
+  const defaultTab: string = props.location.state.defaultTab;
 
   return (
     <BaseScreen leftIcon="backNav">
       <div className={classes.content}>
         <Typography variant="h1">{intl(words.records)}</Typography>
-        <RecordsTabMenu invoices={invoices} payments={payments} />
+        <RecordsTabMenu invoices={invoices} payments={payments} defaultTab={defaultTab} />
       </div>
     </BaseScreen>
   );

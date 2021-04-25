@@ -6,6 +6,7 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
+import Snackbar from '../../components/Snackbar';
 import { InventoryRecord } from '../../lib/airtable/interface';
 import {
   selectPendingPurchaseRequestCount,
@@ -17,6 +18,8 @@ import { store } from '../../lib/redux/store';
 import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import InventoryCard from './components/InventoryCard';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -54,6 +57,7 @@ const InlineBadge = withStyles(() =>
 
 // TODO @wangannie: address empty state
 function InventoryMain(props: InventoryProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   const defaultSiteInventory = useSelector(selectAllCurrentSiteInventoryArray);
   const [siteInventory, setSiteInventory] = useState(defaultSiteInventory);
@@ -88,13 +92,13 @@ function InventoryMain(props: InventoryProps) {
   };
 
   return (
-    <BaseScreen searchAction={handleSearchChange} searchPlaceholder={"Search by inventory name"} searchExit={exitSearch}>
+    <BaseScreen searchAction={handleSearchChange} searchPlaceholder={intl(words.search_by_inventory_name)} searchExit={exitSearch}>
       <div className={classes.headerWrapper}>
-        <Typography variant="h1">Inventory</Typography>
+        <Typography variant="h1">{intl(words.inventory)}</Typography>
         <Link to={'/inventory/purchase-requests'}>
           {/* Hide the badge for non-admin users */}
           <InlineBadge color="error" badgeContent={!userIsAdmin ? 0 : pendingCount}>
-            <Button variant="text" label="All Purchases" />
+            <Button variant="text" label={intl(words.all_purchases)} />
           </InlineBadge>
         </Link>
       </div>
@@ -102,8 +106,9 @@ function InventoryMain(props: InventoryProps) {
         {siteInventory.map((inventory: InventoryRecord) => (
           <Link key={inventory.id} to={'/inventory/item'} onClick={() => setCurrentInventoryIdInRedux(inventory.id)}>
             <InventoryCard
-              currentQuantity={inventory.currentQuantity}
               key={inventory.id}
+              inventoryId={inventory.id}
+              currentQuantity={inventory.currentQuantity}
               productId={inventory.productId}
               lastUpdated={getInventoryLastUpdated(inventory.id)}
             />
@@ -115,6 +120,7 @@ function InventoryMain(props: InventoryProps) {
           <AddIcon fontSize="large" />
         </Fab>
       </Link>
+      <Snackbar withFab message="You are not connected to a network. Some logs may not be fully up to date." />
     </BaseScreen>
   );
 }
