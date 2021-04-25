@@ -32,7 +32,6 @@ function TariffPlanCard(props: TariffPlanProps) {
   const getTariffPlanDescription = (tariffPlan: TariffPlanRecord) => (
     <div className={classes.description}>
       <Typography variant='body2'>
-        {/* Right now just hardcoding. We need to add a lookup field to Tariff Plans for this */}
         {intl(words.customers)}: {tariffPlan.numberOfCustomers}
       </Typography>
       <Typography variant='body2'>

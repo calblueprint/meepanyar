@@ -81,7 +81,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                     onEditChange={handleNewFixedTariffInput}
                     editInputId={'edit-fixed-tariff'}
                     editUnit={intl(words.ks)}
-                    editType={intl(words.number)}
+                    editType='number'
                     editError={newFreeUnits !== ''}
                     editPlaceholder={intl(words.eg_x, '5')}
                 />
@@ -94,7 +94,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                     onEditChange={handleNewTariffByUnitInput}
                     editInputId={'edit-tariff-by-unit'}
                     editUnit={`${intl(words.ks)}/${intl(words.kwh)}`}
-                    editType={intl(words.number)}
+                    editType='number'
                     editError={newFreeUnits !== ''}
                     editPlaceholder={intl(words.eg_x, '5')}
                 />
@@ -107,7 +107,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                     onEditChange={handleNewFreeUnitsInput}
                     editInputId={'edit-free-units'}
                     editUnit={intl(words.kwh)}
-                    editType={intl(words.number)}
+                    editType='number'
                     editError={newFreeUnits !== ''}
                     editPlaceholder={intl(words.eg_x, '5')}
                 />
