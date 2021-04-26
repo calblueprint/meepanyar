@@ -5,8 +5,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import BuildIcon from '@material-ui/icons/Build';
 import WarningIcon from '@material-ui/icons/Warning';
-import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-
+import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 type sublabel = {
   label: string;
@@ -18,9 +17,11 @@ interface HomeMenuItemProps {
   amount: number;
   sublabels?: sublabel[];
   iconType?: string;
+  noMarginBottom?: boolean;
+  classes: { root: string; content: string; noAlert: string; badgeStyles: string; checked: string; leftContent: string; };
 }
 
-const styles = makeStyles((theme: Theme) =>
+const styles = (theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
@@ -57,13 +58,12 @@ const styles = makeStyles((theme: Theme) =>
       justifyContent: 'flex-start',
       alignItems: 'center',
     },
-  }));
+  });
 
 // This component could also be done using `Card`, `CardContent` and `CardActions`.
 // Might be cleaner in the future, but since the component is lean right now refactor isn't necessary
 function HomeMenuItem(props: HomeMenuItemProps) {
-  const { label, iconType, amount } = props;
-  const classes = styles(props);
+  const { label, iconType, classes, amount } = props;
   const renderIcons = () => {
     if (iconType === 'meter' || iconType === 'collect') {
       return (
@@ -106,4 +106,4 @@ function HomeMenuItem(props: HomeMenuItemProps) {
   );
 }
 
-export default HomeMenuItem;
+export default withStyles(styles)(HomeMenuItem);
