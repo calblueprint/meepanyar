@@ -9,15 +9,19 @@ import { useSelector } from 'react-redux';
 import { Redirect, RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
+import OfflineDialog from '../../components/OfflineDialog';
+import Snackbar from '../../components/Snackbar';
 import { PurchaseRequestRecord } from '../../lib/airtable/interface';
-import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
-import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
-import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
-import { getInventoryHistory, getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
-import InventoryInfo from './components/InventoryInfo';
-import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
+import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
+import { selectCurrentInventory, selectCurrentInventoryProduct, setCurrentPurchaseRequestIdInRedux } from '../../lib/redux/inventoryData';
+import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
+import { selectIsOnline } from '../../lib/redux/userData';
+import { getInventoryHistory, getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
+import { isOfflineId } from '../../lib/utils/offlineUtils';
+import InventoryInfo from './components/InventoryInfo';
+import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -34,12 +38,13 @@ interface InventoryProps extends RouteComponentProps {
 }
 
 function InventoryProfile(props: InventoryProps) {
-  const intl = useInternationalization(); 
+  const intl = useInternationalization();
   const { classes } = props;
   const inventory = useSelector(selectCurrentInventory) || EMPTY_INVENTORY;
   const product = useSelector(selectCurrentInventoryProduct);
   const inventoryHistory = getInventoryHistory(inventory.id);
   const history = useHistory();
+  const isOnline = useSelector(selectIsOnline);
 
   // Redirect to InventoryMain if either are undefined
   if (inventory === EMPTY_INVENTORY || !product) {
@@ -47,15 +52,15 @@ function InventoryProfile(props: InventoryProps) {
   }
 
   const navigateToPurchaseRequest = (purchaseRequest: PurchaseRequestRecord) => {
-    history.push('/inventory/purchase-requests/purchase-request', {
-      purchaseRequest,
-    });
+    setCurrentPurchaseRequestIdInRedux(purchaseRequest.id);
+    history.push('/inventory/purchase-requests/purchase-request');
   };
 
   return (
     <BaseScreen leftIcon="backNav">
       <BaseScrollView>
         <InventoryInfo
+          inventoryId={inventory.id}
           productId={inventory.productId}
           lastUpdated={getInventoryLastUpdated(inventory.id)}
           currentQuantity={inventory.currentQuantity}
@@ -82,7 +87,7 @@ function InventoryProfile(props: InventoryProps) {
                     )}
                   </ListItemIcon>
                   <ListItemText
-                    primaryTypographyProps={{variant: 'body2'}}
+                    primaryTypographyProps={{ variant: 'body2' }}
                     className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                     primary={formatDateStringToLocal(historyRecord.createdAt)}
                   />
@@ -96,9 +101,7 @@ function InventoryProfile(props: InventoryProps) {
                   <ListItemText
                     className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                     primaryTypographyProps={{ variant: 'body2', align: 'right' }}
-                    primary={`${historyRecord.updatedQuantity || 0} ${
-                      product.unit
-                    }(${intl(words.s)})`}
+                    primary={`${historyRecord.updatedQuantity || 0} ${product.unit}(${intl(words.s)})`}
                   />
                   <ListItemSecondaryAction>
                     {historyRecord.status && (
@@ -113,6 +116,18 @@ function InventoryProfile(props: InventoryProps) {
           </List>
         </div>
       </BaseScrollView>
+      {/* Show the snackbar whenever the user is offline regardless of what actions they took, if any. */}
+      {/* Exception: don't show the snackbar if showing OfflineDialog */}
+      <Snackbar
+        open={!isOfflineId(inventory.id) && !isOnline}
+        message="You are not connected to a network. Inventory updates and purchases will be recorded after you reconnect."
+      />
+      <OfflineDialog
+        open={isOfflineId(inventory.id)}
+        closeAction={history.goBack}
+        headingText="New Inventory Data Offline"
+        bodyText="Inventory cannot be edited until information has been uploaded. Connect to a network to add data."
+      />
     </BaseScreen>
   );
 }

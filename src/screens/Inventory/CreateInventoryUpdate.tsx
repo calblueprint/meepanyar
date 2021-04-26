@@ -68,6 +68,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
       <BaseScrollView>
         <div className={classes.headerContainer}>
           <InventoryInfo
+            inventoryId={inventory.id}
             productId={inventory.productId}
             lastUpdated={getInventoryLastUpdated(inventory.id)}
             currentQuantity={inventory.currentQuantity}

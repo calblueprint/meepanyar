@@ -8,14 +8,17 @@ import { selectCurrentSiteInformation, updateSiteInRedux } from '../../lib/redux
 import Button from '../../components/Button';
 import { updateSite } from '../../lib/airtable/request';
 import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 
 function EditSiteInformation() {
+    const intl = useInternationalization();
     const history = useHistory();
 
     const currentSite = useSelector(selectCurrentSiteInformation);
     const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
-    const currentSiteName = currentSite ? currentSite.name : 'No Site';
+    const currentSiteName = currentSite ? currentSite.name : intl(words.no_site);
 
     const [newSiteName, setNewSiteName] = useState(currentSiteName);
     const [loading, setLoading] = useState(false);
@@ -29,7 +32,7 @@ function EditSiteInformation() {
         event.preventDefault();
 
         if (newSiteName === '') {
-            setErrorMessage('All fields must be filled with numbers');
+            setErrorMessage(intl(words.all_fields_must_be_filled_with_numbers));
             return
         } else {
             setLoading(true);
@@ -54,20 +57,20 @@ function EditSiteInformation() {
     }
 
     return (
-        <BaseScreen title="Edit Site Information" leftIcon="backNav">
+        <BaseScreen title={intl(words.edit_site_information)} leftIcon="backNav">
             <List>
                 <ListItemWrapper
-                    leftText='Site Name'
+                    leftText={intl(words.site_name)}
                     rightText={currentSiteName}
                     dense
                     editValue={newSiteName}
                     editable={currentUserIsAdmin}
                     onEditChange={handleSiteNameInput}
                     editInputId={'edit-site-name'}
-                    editPlaceholder={'Input Site Name'}
+                    editPlaceholder={intl(words.input_site_name)}
                 />
             </List>
-            {currentUserIsAdmin && <Button fullWidth label={'Save'} onClick={handleSubmit} loading={loading} />}
+            {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} onClick={handleSubmit} loading={loading} />}
             {errorMessage ? <Typography color='error' align='center'> {errorMessage} </Typography> : null}
         </BaseScreen>
     );

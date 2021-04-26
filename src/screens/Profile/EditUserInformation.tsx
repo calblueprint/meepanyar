@@ -7,10 +7,13 @@ import Button from '../../components/Button';
 import { updateUser } from '../../lib/airtable/request';
 import { selectCurrentUserIsAdmin, updateUserInRedux } from '../../lib/redux/userData';
 import { useSelector } from 'react-redux';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 type EditTarifPlanInformationProps = RouteComponentProps<{}, {}, { user: UserRecord }>;
 
 function EditUserInformation(props: EditTarifPlanInformationProps) {
+    const intl = useInternationalization();
     const { user } = props.location.state;
 
     const history = useHistory();
@@ -42,7 +45,7 @@ function EditUserInformation(props: EditTarifPlanInformationProps) {
             <List>
                 <ListItem disableGutters>
                     <ListItemText
-                        primary='Admin Permission'
+                        primary={intl(words.admin_permission)}
                         primaryTypographyProps={{ color: 'textPrimary', variant: 'body1' }}
                     />
                     <ListItemSecondaryAction>
@@ -57,8 +60,7 @@ function EditUserInformation(props: EditTarifPlanInformationProps) {
                     </ListItemSecondaryAction>
                 </ListItem>
             </List>
-
-            {currentUserIsAdmin && <Button fullWidth label={'Save'} onClick={handleSubmit} loading={loading} />}
+            {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} onClick={handleSubmit} loading={loading} />}
         </BaseScreen>
     );
 }

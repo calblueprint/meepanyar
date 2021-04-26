@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 import { CustomerRecord } from '../../../lib/airtable/interface';
 import { setCurrentCustomerIdInRedux, CustomerStatus } from '../../../lib/redux/customerData';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import SyncIcon from '@material-ui/icons/Sync';
+import { isOfflineId } from '../../../lib/utils/offlineUtils';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,6 +52,12 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.primary.main,
       fontSize: '30px',
     },
+    headingRowContainer: {
+      display: 'inline-flex',
+    },
+    syncIcon: {
+      marginLeft: theme.spacing(1),
+    },
   }),
 );
 
@@ -61,7 +69,7 @@ interface CustomerCardProps {
 
 export default function CustomerCard(props: CustomerCardProps): JSX.Element {
   const classes = useStyles(props);
-  const customer = props.customer;
+  const { customer } = props;
 
   const getStatusIcon = () => {
     if (props.status === CustomerStatus.METER || props.status === CustomerStatus.PAYMENT) {
@@ -90,7 +98,10 @@ export default function CustomerCard(props: CustomerCardProps): JSX.Element {
             <FiberManualRecordIcon className={classes.indicator} />
           </div>
           <div>
-            <Typography variant="h2">{customer.customerNumber}, {customer.name}</Typography>
+            <div className={classes.headingRowContainer}>
+              <Typography variant="h2">{customer.customerNumber}, {customer.name}</Typography>
+              {isOfflineId(customer.id) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
+            </div>
             <Typography color="textSecondary">Total owed <span className={classes.numberText}>{customer.outstandingBalance} Ks</span></Typography>
           </div>
         </Link>
