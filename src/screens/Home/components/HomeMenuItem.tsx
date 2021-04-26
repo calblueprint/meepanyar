@@ -87,7 +87,8 @@ function HomeMenuItem(props: HomeMenuItemProps) {
       return <CheckCircleIcon color="primary" />
     }
 
-    // We cap at 99 so the circle spacing doesn't break
+    // We cap at 99 so the circle spacing doesn't break.
+    // This could possibly be done better using Material UI's badge component 
     return <div className={classes.badgeStyles}>
       <Typography variant="body2">{amount > 99 ? '99+' : amount}</Typography>
     </div>
