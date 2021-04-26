@@ -5,8 +5,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 import BuildIcon from '@material-ui/icons/Build';
 import WarningIcon from '@material-ui/icons/Warning';
-import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
-import { Avatar } from '@material-ui/core';
+import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 
 
 type sublabel = {
@@ -18,28 +17,24 @@ interface HomeMenuItemProps {
   label: string;
   amount: number;
   sublabels?: sublabel[];
-  noBadge?: boolean;
   iconType?: string;
-  classes: { root: string; content: string; noAlert: string; badgeStyles: string; checked: string; innerContent: string; };
 }
 
-const styles = (theme: Theme) =>
+const styles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       width: '100%',
       border: '1px solid',
       borderColor: theme.palette.primary.main,
       borderRadius: '6px',
-      padding: 15,
-      marginBottom: '12px',
+      padding: theme.spacing(2),
+      marginTop: theme.spacing(2),
     },
     content: {
       display: 'flex',
-      width: 'inherit',
+      flex: 1,
       alignItems: 'center',
       justifyContent: 'space-between',
-      textAlign: 'left',
-      color: '#6A6A6A',
     },
     noAlert: {
       opacity: '50%',
@@ -57,15 +52,18 @@ const styles = (theme: Theme) =>
     checked: {
       backgroundColor: theme.palette.primary.main,
     },
-    innerContent: {
+    leftContent: {
       display: 'flex',
       justifyContent: 'flex-start',
       alignItems: 'center',
     },
-  });
+  }));
 
+// This component could also be done using `Card`, `CardContent` and `CardActions`.
+// Might be cleaner in the future, but since the component is lean right now refactor isn't necessary
 function HomeMenuItem(props: HomeMenuItemProps) {
-  const { label, noBadge, classes, iconType, amount } = props;
+  const { label, iconType, amount } = props;
+  const classes = styles(props);
   const renderIcons = () => {
     if (iconType === 'meter' || iconType === 'collect') {
       return (
@@ -98,7 +96,7 @@ function HomeMenuItem(props: HomeMenuItemProps) {
   return (
     <ButtonBase className={classes.root}>
       <div className={classes.content}>
-        <div className={classes.innerContent}>
+        <div className={classes.leftContent}>
           {renderIcons()}
           <Typography color='secondary' style={{ marginLeft: 15 }}>{label}</Typography>
         </div>
@@ -108,4 +106,4 @@ function HomeMenuItem(props: HomeMenuItemProps) {
   );
 }
 
-export default withStyles(styles)(HomeMenuItem);
+export default HomeMenuItem;

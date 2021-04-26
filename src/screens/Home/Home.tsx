@@ -27,7 +27,9 @@ const styles = (theme: Theme) =>
     header: {
       display: 'flex',
       justifyContent: 'space-between',
-      marginBottom: '20px',
+    },
+    section: {
+      marginTop: theme.spacing(2)
     },
     network: {
       textAlign: 'right',
@@ -50,7 +52,7 @@ const styles = (theme: Theme) =>
   });
 
 interface HomeProps {
-  classes: { header: string; network: string, financialSums: string; buttonPrimary: string; };
+  classes: { header: string; network: string, financialSums: string; buttonPrimary: string; section: string; };
 }
 
 function Home(props: HomeProps) {
@@ -84,8 +86,7 @@ function Home(props: HomeProps) {
     </IconButton>
 
     return (
-      // Same margin bottom that Typography applies as gutterBottom
-      <div style={{ marginBottom: '.35em' }}>
+      <div className={classes.section}>
         <OutlinedCardList
           highlighted={amountOwed !== 0}
           info={amountOwedCardInfo}
@@ -120,50 +121,56 @@ function Home(props: HomeProps) {
 
         {user?.organization === 'Meepanyar' && getAmountOwedCard()}
 
-        <Typography variant='h2' gutterBottom>
-          Tasks
+        <div className={classes.section}>
+          <Typography variant='h2'>
+            Tasks
         </Typography>
-        <Link to={'/customers'}>
-          <HomeMenuItem
-            label="To Meter"
-            amount={numCustomersToMeter}
-            iconType="meter"
-          />
-        </Link>
-        <Link to={'/customers'}>
-          <HomeMenuItem
-            label="To Collect"
-            amount={numCustomersToCollect}
-            iconType="collect"
-          />
-        </Link>
-        <Link to={'/maintenance'}>
-          <HomeMenuItem
-            label="Maintenance"
-            amount={0}
-            iconType="maintenance"
-          />
-        </Link>
-        <Link to={'/incidents'}>
-          <HomeMenuItem
-            label="Incidents"
-            amount={0}
-            iconType="incident"
-          />
-        </Link>
-        <Typography variant='h2' gutterBottom>
-          Financial Reports
-        </Typography>
-        {/* TODO: These buttons should lead to the appropriate places */}
-        <div className={classes.financialSums}>
-          <div style={{ paddingRight: 10 }}>
+          <Link to={'/customers'}>
+            <HomeMenuItem
+              label="To Meter"
+              amount={numCustomersToMeter}
+              iconType="meter"
+            />
+          </Link>
+          <Link to={'/customers'}>
+            <HomeMenuItem
+              label="To Collect"
+              amount={numCustomersToCollect}
+              iconType="collect"
+            />
+          </Link>
+          {/* Screen and workflows not yet built out */}
+          <Link to={'/maintenance'}>
+            <HomeMenuItem
+              label="Maintenance"
+              amount={0}
+              iconType="maintenance"
+            />
+          </Link>
+          {/* Screen and workflows not yet built out */}
+          <Link to={'/incidents'}>
+            <HomeMenuItem
+              label="Incidents"
+              amount={0}
+              iconType="incident"
+            />
+          </Link>
+        </div>
+        <div className={classes.section}>
+          <Typography variant='h2'>
+            Financial Reports
+          </Typography>
+          {/* TODO: These buttons should lead to the appropriate places */}
+          <div className={classes.financialSums}>
+            <div style={{ paddingRight: 10 }}>
+              <Link to={'/financial-summary'}>
+                <Button label='Current Period' startIcon={<DescriptionIcon />} />
+              </Link>
+            </div>
             <Link to={'/financial-summary'}>
-              <Button label='Current Period' startIcon={<DescriptionIcon />} />
+              <Button label='Past Reports' variant='outlined' />
             </Link>
           </div>
-          <Link to={'/financial-summary'}>
-            <Button label='Past Reports' variant='outlined' />
-          </Link>
         </div>
       </BaseScrollView>
     </BaseScreen>
