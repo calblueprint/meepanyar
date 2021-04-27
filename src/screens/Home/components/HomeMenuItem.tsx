@@ -1,7 +1,10 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import CheckIcon from '@material-ui/icons/Check';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
+import BuildIcon from '@material-ui/icons/Build';
+import WarningIcon from '@material-ui/icons/Warning';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 type sublabel = {
@@ -11,10 +14,11 @@ type sublabel = {
 
 interface HomeMenuItemProps {
   label: string;
-  amount?: number;
+  amount: number;
   sublabels?: sublabel[];
-  noBadge?: boolean;
-  classes: { root: string; content: string; noAlert: string; sublabel: string; icon: string; grey: string };
+  iconType?: string;
+  noMarginBottom?: boolean;
+  classes: { root: string; content: string; noAlert: string; badgeStyles: string; checked: string; leftContent: string; };
 }
 
 const styles = (theme: Theme) =>
@@ -22,70 +26,84 @@ const styles = (theme: Theme) =>
     root: {
       width: '100%',
       border: '1px solid',
-      borderColor: theme.palette.divider,
+      borderColor: theme.palette.primary.main,
       borderRadius: '6px',
-      padding: '15px 15px',
-      marginBottom: '12px',
+      padding: theme.spacing(2),
+      marginTop: theme.spacing(2),
     },
     content: {
       display: 'flex',
-      width: 'inherit',
+      flex: 1,
       alignItems: 'center',
       justifyContent: 'space-between',
-      textAlign: 'left',
-      color: '#6A6A6A',
     },
     noAlert: {
       opacity: '50%',
     },
-    sublabel: {
-      color: '#BDBDBD',
-    },
-    icon: {
-      width: '20px',
-      height: '20px',
+    badgeStyles: {
+      height: 24,
+      width: 24,
       color: theme.palette.common.white,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: '50%',
-      backgroundColor: '#FF6142',
+      backgroundColor: theme.palette.error.main,
     },
-    grey: {
-      backgroundColor: '#BDBDBD',
+    checked: {
+      backgroundColor: theme.palette.primary.main,
+    },
+    leftContent: {
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'center',
     },
   });
 
+// This component could also be done using `Card`, `CardContent` and `CardActions`.
+// Might be cleaner in the future, but since the component is lean right now refactor isn't necessary
 function HomeMenuItem(props: HomeMenuItemProps) {
-  const { label, sublabels, noBadge, classes } = props;
-  const amount = props.amount
-    ? sublabels
-      ? sublabels.reduce(function (amt: number, curr: sublabel) {
-          return amt + curr.amount;
-        }, 0)
-      : props.amount
-    : null;
+  const { label, iconType, classes, amount } = props;
+  const renderIcons = () => {
+    if (iconType === 'meter' || iconType === 'collect') {
+      return (
+        <AccountBoxIcon fontSize='large' color="primary" />
+      );
+    }
+    if (iconType === 'maintenance') {
+      return (
+        <BuildIcon fontSize='large' color="primary" />
+      );
+    }
+    if (iconType === 'incident') {
+      return (
+        <WarningIcon fontSize='large' color="primary" />
+      );
+    }
+  }
+
+  const getRightBadge = () => {
+    if (amount === 0) {
+      return <CheckCircleIcon color="primary" />
+    }
+
+    // We cap at 99 so the circle spacing doesn't break.
+    // This could possibly be done better using Material UI's badge component 
+    return <div className={classes.badgeStyles}>
+      <Typography variant="body2">{amount > 99 ? '99+' : amount}</Typography>
+    </div>
+  }
 
   return (
     <ButtonBase className={classes.root}>
-      <div className={`${classes.content} ${noBadge ? null : amount ? null : classes.noAlert}`}>
-        <div>
-          <Typography variant="h2">{label}</Typography>
-          {sublabels
-            ? sublabels.map((sl: sublabel, index: number) => (
-                <Typography className={classes.sublabel} variant="body1" key={index}>
-                  {sl.amount} {sl.label}
-                </Typography>
-              ))
-            : null}
+      <div className={classes.content}>
+        <div className={classes.leftContent}>
+          {renderIcons()}
+          <Typography color='secondary' style={{ marginLeft: 15 }}>{label}</Typography>
         </div>
-        {noBadge ? null : (
-          <div className={`${classes.icon} ${amount ? null : classes.grey}`}>
-            {amount ? <Typography variant="body2">{amount}</Typography> : <CheckIcon fontSize="small" />}
-          </div>
-        )}
+        {getRightBadge()}
       </div>
-    </ButtonBase>
+    </ButtonBase >
   );
 }
 
