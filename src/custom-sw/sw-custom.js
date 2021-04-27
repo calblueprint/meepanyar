@@ -10,6 +10,11 @@ if ("function" === typeof importScripts) {
         console.log("Workbox loaded");
         workbox.setConfig({ debug: false });
 
+        // Set up broadcast channel between the client and service worker
+        // this channel is be used by the service worker to tell the client 
+        // to refresh site data once all requests have been sent.
+        const postQueueMonitorChannel = new BroadcastChannel('refresh-data-channel');
+
         // `generateSW` provides option to force
         // update an exiting service worker. Since we're
         // using `injectManifest` to build SW, manually overriding
@@ -19,7 +24,17 @@ if ("function" === typeof importScripts) {
         });
 
         const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('PostQueue', {
-            maxRetentionTime: 24 * 60 // Retry for max of 24 hours
+            maxRetentionTime: 48 * 60, // Retry for max of 48 hours
+            onSync: async (event) => {
+                try {
+                    await event.queue.replayRequests();
+                } finally {
+                    const numRequestsRemaining = (await event.queue.getAll()).length
+                    postQueueMonitorChannel.postMessage({
+                        replayQueueLength: numRequestsRemaining
+                    })
+                }
+            }
         });
 
         // Manual injection point for manifest files.
@@ -46,7 +61,6 @@ if ("function" === typeof importScripts) {
 
         // Route will catch all failed POST requests that satisfies regex.
         // Will add to bgSyncPlugin queue and will resend when network reconnect
-        // TODO: Change to know routes once we know the routes needed to catch
         workbox.routing.registerRoute(
             new RegExp(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/(.+)`),
             new workbox.strategies.NetworkOnly({
