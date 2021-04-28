@@ -15,7 +15,7 @@ export const selectCurrentSiteInformation = createSelector(
   (siteId, state) => state.siteData.sites[siteId].siteInformation)
 
 export const selectCurrentSiteGracePeriod = createSelector(
-  selectCurrentSiteInformation, 
+  selectCurrentSiteInformation,
   (currentSiteRecord : SiteRecord) => currentSiteRecord.gracePeriod)
 
 
