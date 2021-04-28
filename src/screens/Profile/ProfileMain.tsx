@@ -4,8 +4,11 @@ import { logoutUser } from '../../lib/airlock/airlock';
 import { useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import ListItemWrapper from '../../components/ListItemWrapper';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 function ProfileMain() {
+  const intl = useInternationalization(); 
   const history = useHistory();
 
   const handleLogoutClick = () => {
@@ -19,12 +22,12 @@ function ProfileMain() {
   };
 
   return (
-    <BaseScreen title="Profile" leftIcon="backNav">
+    <BaseScreen title={intl(words.profile)} leftIcon="backNav">
       <List>
-        <ListItemWrapper linkTo='/profile/user' leftText='My Information' divider />
-        <ListItemWrapper linkTo='/profile/site' leftText='Site Information' divider />
+        <ListItemWrapper linkTo='/profile/user' leftText={intl(words.my_information)} divider />
+        <ListItemWrapper linkTo='/profile/site' leftText={intl(words.site_information)} divider />
         <ListItem button onClick={handleLogoutClick} disableGutters >
-          <ListItemText primary='Log Out' primaryTypographyProps={{ color: 'primary' }} />
+          <ListItemText primary={intl(words.log_out)} primaryTypographyProps={{ color: 'primary' }} />
         </ListItem>
       </List>
     </BaseScreen>

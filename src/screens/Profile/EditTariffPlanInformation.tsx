@@ -7,14 +7,20 @@ import { TariffPlanRecord } from '../../lib/airtable/interface';
 import Button from '../../components/Button';
 import { updateTariffPlan } from '../../lib/airtable/request';
 import { updateTariffPlanInRedux } from '../../lib/redux/siteData';
+import { useSelector } from 'react-redux';
+import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import { roundToString } from '../../lib/utils/utils';
 
 type EditTarifPlanInformationProps = RouteComponentProps<{}, {}, { tariffPlan: TariffPlanRecord }>;
 
 function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
+    const intl = useInternationalization();
     const { tariffPlan } = props.location.state;
     const history = useHistory();
 
+    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
     const [newFixedTariff, setNewFixedTariff] = useState(roundToString(tariffPlan.fixedTariff) || '');
     const [newTariffByUnit, setNewTariffByUnit] = useState(roundToString(tariffPlan.tariffByUnit) || '');
     const [newFreeUnits, setNewFreeUnits] = useState(roundToString(tariffPlan.freeUnits) || '');
@@ -40,7 +46,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
         const freeUnits = parseFloat(newFreeUnits);
 
         if (isNaN(fixedTariff) || isNaN(tariffByUnit) || isNaN(freeUnits)) {
-            setErrorMessage('All fields must be filled with numbers');
+            setErrorMessage(intl(words.all_fields_must_be_filled_with_numbers));
             return
         } else {
             setLoading(true)
@@ -61,7 +67,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
         } finally {
             // We naively update the tariff plan in redux and do proper authentication on the backend
             // to make sure only admins can successfully change tariff plans
-            updateTariffPlanInRedux({id: tariffPlan.id, ...newTariffPlanProperties});
+            updateTariffPlanInRedux({ id: tariffPlan.id, ...newTariffPlanProperties });
             history.goBack()
         }
     }
@@ -70,46 +76,46 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
         <BaseScreen title={tariffPlan.name} leftIcon="backNav">
             <List>
                 <ListItemWrapper
-                    leftText='Fixed Payment'
+                    leftText={intl(words.fixed_payment)}
                     rightText={newFixedTariff}
-                    editable
+                    editable={currentUserIsAdmin}
                     dense
                     editValue={newFixedTariff}
                     onEditChange={handleNewFixedTariffInput}
                     editInputId={'edit-fixed-tariff'}
-                    editUnit={'Ks'}
+                    editUnit={intl(words.ks)}
                     editType='number'
                     editError={newFreeUnits !== ''}
-                    editPlaceholder={'e.g. 5'}
+                    editPlaceholder={intl(words.eg_x, '5')}
                 />
                 <ListItemWrapper
-                    leftText='Per Unit Payment'
+                    leftText={intl(words.per_unit_payment)}
                     rightText={newTariffByUnit}
-                    editable
+                    editable={currentUserIsAdmin}
                     dense
                     editValue={newTariffByUnit}
                     onEditChange={handleNewTariffByUnitInput}
                     editInputId={'edit-tariff-by-unit'}
-                    editUnit={'Ks/kWh'}
+                    editUnit={`${intl(words.ks)}/${intl(words.kwh)}`}
                     editType='number'
                     editError={newFreeUnits !== ''}
-                    editPlaceholder={'e.g. 5'}
+                    editPlaceholder={intl(words.eg_x, '5')}
                 />
                 <ListItemWrapper
-                    leftText='Free Units'
+                    leftText={intl(words.free_units)}
                     rightText={newFreeUnits}
-                    editable
+                    editable={currentUserIsAdmin}
                     dense
                     editValue={newFreeUnits}
                     onEditChange={handleNewFreeUnitsInput}
                     editInputId={'edit-free-units'}
-                    editUnit={'kWh'}
+                    editUnit={intl(words.kwh)}
                     editType='number'
                     editError={newFreeUnits !== ''}
-                    editPlaceholder={'e.g. 5'}
+                    editPlaceholder={intl(words.eg_x, '5')}
                 />
             </List>
-            <Button fullWidth label={'SAVE'} onClick={handleSubmit} loading={loading} />
+            {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} onClick={handleSubmit} loading={loading} />}
             {errorMessage ? <Typography color='error' align='center'> {errorMessage} </Typography> : null}
         </BaseScreen>
     );

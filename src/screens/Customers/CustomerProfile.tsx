@@ -43,14 +43,18 @@ const styles = (theme: Theme) =>
     meterInfoGrid: {
       display: 'flex',
     },
-    meterInfoCol: {
+    leftMeterInfoCol: {
       width: '50%',
-      padding: '5px',
+      padding: '5px 5px 5px 0px',
+    },
+    rightMeterInfoCol: {
+      width: '50%',
+      padding: '5px 0px 5px 5px',
     },
   });
 
 interface CustomerProps extends RouteComponentProps {
-  classes: { content: string; headerWrapper: string; buttonPrimary: string; meterInfoGrid: string; meterInfoCol: string; };
+  classes: { content: string; headerWrapper: string; buttonPrimary: string; meterInfoGrid: string; leftMeterInfoCol: string; rightMeterInfoCol: string; };
   customer: CustomerRecord;
   location: any;
 }
@@ -162,7 +166,7 @@ function CustomerProfile(props: CustomerProps) {
           editPath={!meterReadOnly && customerMeteredForPeriod ? `${match.url}/meter-readings/create` : undefined}
         />
         <div className={classes.meterInfoGrid}>
-          <div className={classes.meterInfoCol}>
+          <div className={classes.leftMeterInfoCol}>
             { /* Top Left */}
             <OutlinedCardList
               info={[meterInfo[0]]}
@@ -175,7 +179,7 @@ function CustomerProfile(props: CustomerProps) {
               readOnly
             />
           </div>
-          <div className={classes.meterInfoCol}>
+          <div className={classes.rightMeterInfoCol}>
             { /* Top Right */}
             <OutlinedCardList
               info={[meterInfo[2]]}
