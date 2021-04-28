@@ -13,14 +13,8 @@ import { InventoryRecord } from '../../lib/airtable/interface';
 import { createInventoryAndUpdate, createProductInventoryAndUpdate } from '../../lib/airtable/request';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
-import {
-  setCurrentInventoryIdInRedux
-} from '../../lib/redux/inventoryData';
-import {
-
-  selectAllCurrentSiteInventoryArray,
-  selectAllProducts
-} from '../../lib/redux/inventoryDataSlice';
+import { setCurrentInventoryIdInRedux } from '../../lib/redux/inventoryData';
+import { selectAllCurrentSiteInventoryArray, selectAllProducts } from '../../lib/redux/inventoryDataSlice';
 import { selectCurrentSiteId } from '../../lib/redux/siteData';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import { generateInventoryRecord, generateProductRecord } from '../../lib/utils/inventoryUtils';
@@ -112,7 +106,7 @@ function AddInventory(props: AddInventoryProps) {
       <form onSubmit={formik.handleSubmit} noValidate>
         <Autocomplete
           aria-required
-          style={{ marginBottom: 8 }}
+          style={{ marginTop: 8, marginBottom: 8 }}
           filterOptions={(options, params) => {
             const filtered = filter(options, params);
             filtered.push(NEW_PRODUCT_LABEL);
