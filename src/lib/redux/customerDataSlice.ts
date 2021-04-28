@@ -5,6 +5,7 @@ import { CustomerRecord, MeterReadingRecord, PaymentRecord, SiteId } from '../ai
 import { setCurrentSiteId } from './siteDataSlice';
 import { RootState } from './store';
 import moment from 'moment';
+import { isOfflineId } from '../utils/offlineUtils';
 
 const customersAdapter = createEntityAdapter<CustomerRecord>();
 const paymentsAdapter = createEntityAdapter<PaymentRecord>({
@@ -55,9 +56,9 @@ interface customerDataSliceState {
 }
 
 export enum MeterType {
-  ANALOG_METER = 'Analog Meter',
-  SMART_METER = 'Smart Meter',
-  NO_METER = 'No Meter',
+    ANALOG_METER = 'Analog Meter',
+    SMART_METER = 'Smart Meter',
+    NO_METER = 'No Meter',
 }
 
 export const EMPTY_CUSTOMER: CustomerRecord = {
@@ -139,7 +140,7 @@ const customerDataSlice = createSlice({
             meterReadingsAdapter.addOne(state.sitesCustomers[siteId].meterReadings, payload);
         },
         removeMeterReading(state, action) {
-            const { siteId, id} = action.payload;
+            const { siteId, id } = action.payload;
             meterReadingsAdapter.removeOne(state.sitesCustomers[siteId].meterReadings, id);
         },
         updateCustomer(state, action) {
@@ -153,6 +154,15 @@ const customerDataSlice = createSlice({
         addPayment(state, action) {
             const { siteId, ...payload } = action.payload;
             paymentsAdapter.addOne(state.sitesCustomers[siteId].payments, payload);
+        },
+        clearCustomerDataForSite(state, action) {
+            const siteId = action.payload;
+            state.sitesCustomers[siteId] = JSON.parse(JSON.stringify(EMPTY_SITE_CUSTOMER_DATA));
+
+            // We only reset the current customer ID if it's offline in case this clear data was for a refresh
+            if (isOfflineId(state.currentCustomerId)) {
+                state.currentCustomerId = initialState.currentCustomerId
+            }
         }
     },
     extraReducers: {
@@ -164,5 +174,5 @@ const customerDataSlice = createSlice({
     }
 });
 
-export const { saveCustomerData, setCurrentCustomerId, addCustomer, updateCustomer, addPayment, addMeterReading, removeMeterReading } = customerDataSlice.actions;
+export const { saveCustomerData, setCurrentCustomerId, addCustomer, updateCustomer, addPayment, addMeterReading, removeMeterReading, clearCustomerDataForSite } = customerDataSlice.actions;
 export default customerDataSlice.reducer;

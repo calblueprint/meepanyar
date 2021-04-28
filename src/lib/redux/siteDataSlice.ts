@@ -129,9 +129,14 @@ const siteDataSlice = createSlice({
       const { id } = action.payload;
       const newSiteInformation = { ...state.sites[id].siteInformation, ...action.payload };
       state.sites[id].siteInformation = newSiteInformation;
+    },
+
+    // Clear the main site data but leave the site ID in case this is called for a refresh
+    clearSiteData(state) {
+      return { ...initialState, currentSiteId: state.currentSiteId }
     }
   },
 });
 
-export const { setLoadingForSiteData, saveSiteData, setCurrentSiteId, updateTariffPlan, updateSite } = siteDataSlice.actions;
+export const { setLoadingForSiteData, saveSiteData, setCurrentSiteId, updateTariffPlan, updateSite, clearSiteData } = siteDataSlice.actions;
 export default siteDataSlice.reducer;

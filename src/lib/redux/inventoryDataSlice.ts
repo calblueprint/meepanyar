@@ -3,6 +3,7 @@
 import { createEntityAdapter, createSlice, EntityState } from '@reduxjs/toolkit';
 import moment from 'moment';
 import { InventoryRecord, InventoryUpdateRecord, ProductRecord, PurchaseRequestRecord } from '../airtable/interface';
+import { isOfflineId } from '../utils/offlineUtils';
 import { setCurrentSiteId } from './siteDataSlice';
 import { RootState } from './store';
 
@@ -190,6 +191,22 @@ const inventoryDataSlice = createSlice({
     addProduct(state, action) {
       productsAdapter.addOne(state.products, action.payload);
     },
+    clearInventoryData(state, action) {
+      const siteId = action.payload;
+      state.products = productsAdapter.getInitialState()
+      state.sitesInventory[siteId] = JSON.parse(JSON.stringify(EMPTY_SITE_INVENTORY_DATA));
+
+      // We only reset the currentInventoryId and currentPurchaseRequestId if they're offline IDs
+      // in case the clear will be followed up with a background refresh 
+      if (isOfflineId(state.currentInventoryId)) {
+        state.currentInventoryId = initialState.currentInventoryId
+      }
+
+      if (isOfflineId(state.currentPurchaseRequestId)) {
+        state.currentPurchaseRequestId = initialState.currentPurchaseRequestId
+      }
+
+    }
   },
   extraReducers: {
     // If the site changes, reset currentInventoryId
@@ -210,5 +227,6 @@ export const {
   setCurrInventoryId,
   setCurrPurchaseRequestId,
   addProduct,
+  clearInventoryData
 } = inventoryDataSlice.actions;
 export default inventoryDataSlice.reducer;

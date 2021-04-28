@@ -11,6 +11,7 @@ import {
     addPayment,
     addMeterReading,
     removeMeterReading,
+    clearCustomerDataForSite
 } from './customerDataSlice';
 import { isBeforeCurrentPeriod } from '../moment/momentUtils';
 import { selectCurrentSiteId } from './siteData';
@@ -34,6 +35,7 @@ export const refreshCustomerData = (site: SiteRecord): void => {
             payments,
             meterReadings
         };
+        store.dispatch(clearCustomerDataForSite(siteId));
         store.dispatch(saveCustomerData(customerData));
     }
 };
@@ -128,7 +130,7 @@ export const selectAmountOwedInCurrentPeriodByCustomerId = createSelector(
     getCustomerId,
     (state, customerId) => {
         const currentPeriodMeterReadings =
-        selectMeterReadingsByCustomerId(state, customerId)?.filter(meterReading => !isBeforeCurrentPeriod(meterReading.date));
+            selectMeterReadingsByCustomerId(state, customerId)?.filter(meterReading => !isBeforeCurrentPeriod(meterReading.date));
         if (currentPeriodMeterReadings) {
             return currentPeriodMeterReadings.reduce((totalAmountOwed, meterReading: MeterReadingRecord) => totalAmountOwed + meterReading.amountBilled, 0);
         }

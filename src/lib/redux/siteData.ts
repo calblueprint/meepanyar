@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { SiteRecord, TariffPlanRecord } from '../airtable/interface';
-import { setCurrentSiteId, updateTariffPlan, updateSite } from './siteDataSlice';
+import { setCurrentSiteId, updateTariffPlan, updateSite, clearSiteData } from './siteDataSlice';
 import { RootState, store } from './store';
 
 export const setCurrentSite = (newSite: any): void => {
@@ -15,8 +15,12 @@ export const selectCurrentSiteInformation = createSelector(
   (siteId, state) => state.siteData.sites[siteId].siteInformation)
 
 export const selectCurrentSiteGracePeriod = createSelector(
-  selectCurrentSiteInformation, 
-  (currentSiteRecord : SiteRecord) => currentSiteRecord.gracePeriod)
+  selectCurrentSiteInformation,
+  (currentSiteRecord: SiteRecord) => currentSiteRecord.gracePeriod)
+
+export const clearSiteDataInRedux = (): void => {
+  store.dispatch(clearSiteData());
+};
 
 
 // Returns all SiteRecord[] information
@@ -32,6 +36,6 @@ export const updateTariffPlanInRedux = (tariffPlan: Partial<TariffPlanRecord>) =
   store.dispatch(updateTariffPlan(tariffPlanUpdates));
 };
 
-export const updateSiteInRedux = (siteUpdates : Partial<SiteRecord>) => {
+export const updateSiteInRedux = (siteUpdates: Partial<SiteRecord>) => {
   store.dispatch(updateSite(siteUpdates))
 }

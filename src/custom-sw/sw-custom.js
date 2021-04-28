@@ -23,6 +23,11 @@ if ("function" === typeof importScripts) {
             self.skipWaiting();
         });
 
+        // Service worker doesn't wait for a page reload for it to activate
+        self.addEventListener("activate", event => {
+            event.waitUntil(clients.claim())
+        })
+
         const bgSyncPlugin = new workbox.backgroundSync.BackgroundSyncPlugin('PostQueue', {
             maxRetentionTime: 48 * 60, // Retry for max of 48 hours
             onSync: async (event) => {

@@ -22,7 +22,8 @@ import {
   setCurrInventoryId,
   setCurrPurchaseRequestId,
   updateInventoryQuantity,
-  updatePurchaseRequest
+  updatePurchaseRequest,
+  clearInventoryData
 } from './inventoryDataSlice';
 import { selectCurrentSiteId } from './siteData';
 import { RootState, store } from './store';
@@ -92,6 +93,7 @@ export const refreshInventoryData = (site: SiteRecord): void => {
       purchaseRequests,
       inventoryUpdates,
     };
+    store.dispatch(clearInventoryData(siteId));
     store.dispatch(saveInventoryData(inventoryData));
   }
 };
