@@ -35,9 +35,3 @@ export const updateTariffPlanInRedux = (tariffPlan: Partial<TariffPlanRecord>) =
 export const updateSiteInRedux = (siteUpdates : Partial<SiteRecord>) => {
   store.dispatch(updateSite(siteUpdates))
 }
-
-// Rounds number to at most 2 decimal points
-// And converts to string
-export const round = (number: number) => {
-  return (Math.round(number * 100) / 100).toString();
-}

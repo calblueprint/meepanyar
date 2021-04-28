@@ -17,7 +17,7 @@ import OutlinedCardList from '../../components/OutlinedCardList';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { round } from '../../lib/redux/siteData';
+import { roundToString } from '../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -87,7 +87,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
   }
 
   const cardInfo = [{
-    number: round(startingMeterAmount),
+    number: roundToString(startingMeterAmount),
     label: 'Starting Reading',
     unit: 'kWh',
     secondaryLabel: formatDateStringToLocal(startingMeterLastRecorded)

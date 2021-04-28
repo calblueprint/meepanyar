@@ -20,7 +20,7 @@ import InventoryInfo from './components/InventoryInfo';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
-import { round } from '../../lib/redux/siteData';
+import { roundToString } from '../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -116,9 +116,9 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           unit={product.unit}
           disabled
           id={'amount-purchased'}
-          value={round(purchaseRequest.amountPurchased)}
+          value={roundToString(purchaseRequest.amountPurchased)}
         />
-        <TextField label={intl(words.amount_spent_paid, ' ')} currency disabled id={'amount-spent'} value={round(purchaseRequest.amountSpent)} />
+        <TextField label={intl(words.amount_spent_paid, ' ')} currency disabled id={'amount-spent'} value={roundToString(purchaseRequest.amountSpent)} />
         <TextField label={intl(words.notes)} disabled id={'notes'} value={purchaseRequest.notes || intl(words.none)} />
         <TextField
           label={intl(words.submitted_by_person, ' ')}

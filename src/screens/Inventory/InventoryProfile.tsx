@@ -22,7 +22,7 @@ import { getInventoryHistory, getInventoryLastUpdated } from '../../lib/utils/in
 import { isOfflineId } from '../../lib/utils/offlineUtils';
 import InventoryInfo from './components/InventoryInfo';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
-import { round } from '../../lib/redux/siteData';
+import { roundToString } from '../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -97,13 +97,13 @@ function InventoryProfile(props: InventoryProps) {
                     <ListItemText
                       className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                       primaryTypographyProps={{ variant: 'body2', align: 'right' }}
-                      primary={`${round(historyRecord.amountSpent) || 0} ${intl(words.ks)}`}
+                      primary={`${roundToString(historyRecord.amountSpent) || 0} ${intl(words.ks)}`}
                     />
                   )}
                   <ListItemText
                     className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                     primaryTypographyProps={{ variant: 'body2', align: 'right' }}
-                    primary={`${round(historyRecord.updatedQuantity) || 0} ${product.unit}(${intl(words.s)})`}
+                    primary={`${roundToString(historyRecord.updatedQuantity) || 0} ${product.unit}(${intl(words.s)})`}
                   />
                   <ListItemSecondaryAction>
                     {historyRecord.status && (

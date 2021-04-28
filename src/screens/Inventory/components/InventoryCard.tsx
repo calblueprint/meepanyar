@@ -9,7 +9,7 @@ import words from '../../../lib/i18next/words';
 import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
-import { round } from '../../../lib/redux/siteData';
+import { roundToString } from '../../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -67,7 +67,7 @@ function InventoryCard(props: InventoryCardProps) {
             {`${intl(words.last_updated_date, ' ')}: ${lastUpdated}`}{' '}
           </Typography>
         </div>
-        <Typography variant="h2">{`${round(currentQuantity)} ${product.unit}(${intl(words.s)})`}</Typography>
+        <Typography variant="h2">{`${roundToString(currentQuantity)} ${product.unit}(${intl(words.s)})`}</Typography>
       </CardContent>
       <CardActions>
         <IconButton edge="end" size="small">

@@ -14,7 +14,7 @@ import moment from 'moment';
 import OutlinedCardList from '../../components/OutlinedCardList';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import { round } from '../../lib/redux/siteData';
+import { roundToString } from '../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -72,7 +72,7 @@ function AddPayment(props: AddPaymentProps) {
         createPaymentAndUpdateCustomerBalance(payment, currentCustomer).then(history.goBack);
     }
 
-    const cardInfo = [{ number: round(currentCustomer.outstandingBalance), label: 'Remaining Balance', unit: 'Ks' }]
+    const cardInfo = [{ number: roundToString(currentCustomer.outstandingBalance), label: 'Remaining Balance', unit: 'Ks' }]
 
     return (
         <BaseScreen title="Add Payment" leftIcon="backNav">

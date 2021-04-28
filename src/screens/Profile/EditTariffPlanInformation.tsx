@@ -7,7 +7,7 @@ import { TariffPlanRecord } from '../../lib/airtable/interface';
 import Button from '../../components/Button';
 import { updateTariffPlan } from '../../lib/airtable/request';
 import { updateTariffPlanInRedux } from '../../lib/redux/siteData';
-import { round } from '../../lib/redux/siteData';
+import { roundToString } from '../../lib/utils/utils';
 
 type EditTarifPlanInformationProps = RouteComponentProps<{}, {}, { tariffPlan: TariffPlanRecord }>;
 
@@ -15,9 +15,9 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
     const { tariffPlan } = props.location.state;
     const history = useHistory();
 
-    const [newFixedTariff, setNewFixedTariff] = useState(round(tariffPlan.fixedTariff) || '');
-    const [newTariffByUnit, setNewTariffByUnit] = useState(round(tariffPlan.tariffByUnit) || '');
-    const [newFreeUnits, setNewFreeUnits] = useState(round(tariffPlan.freeUnits) || '');
+    const [newFixedTariff, setNewFixedTariff] = useState(roundToString(tariffPlan.fixedTariff) || '');
+    const [newTariffByUnit, setNewTariffByUnit] = useState(roundToString(tariffPlan.tariffByUnit) || '');
+    const [newFreeUnits, setNewFreeUnits] = useState(roundToString(tariffPlan.freeUnits) || '');
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false);
 

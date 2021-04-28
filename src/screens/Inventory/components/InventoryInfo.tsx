@@ -10,7 +10,7 @@ import words from '../../../lib/i18next/words';
 import { EMPTY_PRODUCT, selectProductById } from '../../../lib/redux/inventoryDataSlice';
 import { RootState } from '../../../lib/redux/store';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
-import { round } from '../../../lib/redux/siteData';
+import { roundToString } from '../../../lib/utils/utils';
 
 interface InventoryInfoProps {
   productId: string;
@@ -88,7 +88,7 @@ function InventoryInfo(props: InventoryInfoProps) {
           <Typography variant="caption">{lastUpdated}</Typography>
         </div>
         {props.currentQuantity !== undefined && (
-          <Typography align="right" variant="body2">{`${round(props.currentQuantity)} ${product.unit}(${intl(
+          <Typography align="right" variant="body2">{`${roundToString(props.currentQuantity)} ${product.unit}(${intl(
             words.s,
           )})`}</Typography>
         )}

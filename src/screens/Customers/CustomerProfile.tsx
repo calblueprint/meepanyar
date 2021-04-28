@@ -14,7 +14,7 @@ import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardLi
 import Snackbar from '../../components/Snackbar';
 import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
-import { round } from '../../lib/redux/siteData';
+import { roundToString } from '../../lib/utils/utils';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { selectIsOnline } from '../../lib/redux/userData';
@@ -72,9 +72,9 @@ function CustomerProfile(props: CustomerProps) {
 
   const customerTariff = getTariffPlanByCustomer(customer);
 
-  const fixedTariff = customerTariff ? round(customerTariff?.fixedTariff) : UNDEFINED_AMOUNT;
-  const unitTariff = customerTariff ? round(customerTariff?.tariffByUnit) : UNDEFINED_AMOUNT;
-  const freeUnits = customerTariff ? round(customerTariff?.freeUnits) : UNDEFINED_AMOUNT;
+  const fixedTariff = customerTariff ? roundToString(customerTariff?.fixedTariff) : UNDEFINED_AMOUNT;
+  const unitTariff = customerTariff ? roundToString(customerTariff?.tariffByUnit) : UNDEFINED_AMOUNT;
+  const freeUnits = customerTariff ? roundToString(customerTariff?.freeUnits) : UNDEFINED_AMOUNT;
 
   let tariffInfo: CardPropsInfo[] = [
     { number: fixedTariff, label: 'Fixed Tariff', unit: 'Ks' },
@@ -90,13 +90,13 @@ function CustomerProfile(props: CustomerProps) {
   const customerMeteredForPeriod = isReadingFromLatestPeriod(currReading);
 
   let meterInfo: CardPropsInfo[] = [
-    { number: round(startingReading), label: 'Starting Meter', unit: 'kWh' },
-    { number: round(periodUsage), label: 'Period Usage', unit: 'kWh' },
-    { number: currReading ? round(currReading.reading) : '0', label: 'Ending Meter', unit: 'kWh' },
-    { number: round(amountBilled), label: 'Amount Billed', unit: 'kS' },
+    { number: roundToString(startingReading), label: 'Starting Meter', unit: 'kWh' },
+    { number: roundToString(periodUsage), label: 'Period Usage', unit: 'kWh' },
+    { number: currReading ? roundToString(currReading.reading) : '0', label: 'Ending Meter', unit: 'kWh' },
+    { number: roundToString(amountBilled), label: 'Amount Billed', unit: 'kS' },
   ];
-  let balanceInfo: CardPropsInfo[] = [{ number: round(customer.outstandingBalance), label: 'Remaining Balance', unit: 'kS' }];
-  let readingInfo: CardPropsInfo[] = [{ number: currReading ? round(currReading.reading) : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
+  let balanceInfo: CardPropsInfo[] = [{ number: roundToString(customer.outstandingBalance), label: 'Remaining Balance', unit: 'kS' }];
+  let readingInfo: CardPropsInfo[] = [{ number: currReading ? roundToString(currReading.reading) : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
 
   const getAddButton = (path: string) => {
     //TODO: separate into base component @wangannie
