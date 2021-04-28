@@ -2,14 +2,15 @@ import React from 'react';
 import { FinancialSummaryRecord } from '../../lib/airtable/interface';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
-import OutlinedCardList from '../../components/OutlinedCardList';
+import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { Typography, List, ListItem, ListItemText } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
 import { RouteComponentProps } from 'react-router-dom';
-import { selectCurrentSiteInformation, round } from '../../lib/redux/siteData';
+import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
 import { Person as PersonIcon, ShoppingCart as ShoppingCartIcon, Build as BuildIcon, Warning as WarningIcon } from '@material-ui/icons';
 import ListItemWrapper from '../../components/ListItemWrapper';
 import { useSelector } from 'react-redux';
+import { roundToString } from '../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -35,7 +36,7 @@ interface ReportProps extends RouteComponentProps {
   location: any;
 }
 
-interface Info {
+interface ListPropsInfo {
   label: string;
   value: string;
 }
@@ -45,46 +46,46 @@ function Report(props: ReportProps) {
   const report = props.location.state.report;
   const deadline = props.location.state.deadline;
   const currentSite = useSelector(selectCurrentSiteInformation);
+  const profit: CardPropsInfo[] = [{ number: roundToString(report.totalProfit), label: 'Profit', unit: 'Ks' }];
 
   // Customers
-  const collected = `${round(report.totalAmountCollected)} Ks`;
-  const billed = `${round(report.totalAmountBilled)} Ks`;
-  const outstanding = `${round(report.totalAmountBilled - report.totalAmountCollected)} Ks`;
-  const paymentRate = report.totalCustomersBilled ? `${round(report.totalCustomersPaid / report.totalCustomersBilled * 100)}%` : '--';
+  const collected = `${roundToString(report.totalAmountCollected)} Ks`;
+  const billed = `${roundToString(report.totalAmountBilled)} Ks`;
+  const outstanding = `${roundToString(report.totalAmountBilled - report.totalAmountCollected)} Ks`;
+  const paymentRate = report.totalCustomersBilled ? `${roundToString(report.totalCustomersPaid / report.totalCustomersBilled * 100)}%` : '--';
+  const customers = [
+    { label: 'Collected', value: collected},
+    { label: 'Billed', value: billed},
+    { label: 'Outstanding', value: outstanding },
+    { label: 'Payment Rate', value: paymentRate },
+  ];
 
   // Inventory
-  const approved = `${report.inventoryAmountApproved.toString()} Ks`;
-  const rejected = `${report.inventoryAmountDenied.toString()} Ks`;
+  const approved = `${roundToString(report.inventoryAmountApproved)} Ks`;
+  const rejected = `${roundToString(report.inventoryAmountDenied)} Ks`;
+  const inventory = [
+    { label: 'Collected', value: collected},
+    { label: 'Billed', value: billed},
+    { label: 'Outstanding', value: outstanding },
+    { label: 'Payment Rate', value: paymentRate },
+  ];
 
   // TODO: Add calculations for maintenance & incidents
-  const info = {
-    profit: [{ number: report.totalProfit, label: 'Profit', unit: 'Ks' }],
-    customers: [
-      { label: 'Collected', value: collected},
-      { label: 'Billed', value: billed},
-      { label: 'Outstanding', value: outstanding },
-      { label: 'Payment Rate', value: paymentRate },
-    ],
-    inventory: [
-      { label: 'Approved', value: approved },
-      { label: 'Rejected', value: rejected },
-    ],
-    maintenance: [
-      { label: 'Completed', value: '0' },
-      { label: 'Incomplete', value: '0' },
-    ],
-    incidents: [
-      { label: 'Solved', value: '0' },
-      { label: 'Unsolved', value: '0' },
-    ],
-  }
+  const maintenance = [
+    { label: 'Completed', value: '0' },
+    { label: 'Incomplete', value: '0' },
+  ];
+  const incidents = [
+    { label: 'Solved', value: '0' },
+    { label: 'Unsolved', value: '0' },
+  ];
 
-  const getListContent = (content: Info[]) => (
+  const getListContent = (content: ListPropsInfo[]) => (
     <div>
       <List className={classes.list}>
         {content.map((info, index) => (
           <div key={index}>
-            <ListItemWrapper leftText={info.label} rightText={info.value} rightTextBlack smallLineHeight />
+            <ListItemWrapper leftText={info.label} rightText={info.value} boldRightText smallLineHeight />
           </div>
         ))}
       </List>
@@ -101,7 +102,7 @@ function Report(props: ReportProps) {
           <Typography color="textSecondary">{currentSite.name}</Typography>
         </div>
         <div className={classes.section}>
-          <OutlinedCardList info={info.profit} highlightedBorder />
+          <OutlinedCardList info={profit} highlightedBorder />
         </div>
         <div className={classes.section}>
           <div className={classes.section}>
@@ -109,28 +110,28 @@ function Report(props: ReportProps) {
               <PersonIcon fontSize="small" className={classes.icon} />
               <Typography variant="h5">Customers</Typography>
             </div>
-            {getListContent(info.customers)}
+            {getListContent(customers)}
           </div>
           <div className={classes.section}>
             <div className={classes.header}>
               <ShoppingCartIcon fontSize="small" className={classes.icon} />
               <Typography variant="h5">Inventory</Typography>
             </div>
-            {getListContent(info.inventory)}
+            {getListContent(inventory)}
           </div>
           <div className={classes.section}>
             <div className={classes.header}>
               <BuildIcon fontSize="small" className={classes.icon} />
               <Typography variant="h5">Maintenance</Typography>
             </div>
-            {getListContent(info.maintenance)}
+            {getListContent(maintenance)}
           </div>
           <div className={classes.section}>
             <div className={classes.header}>
               <WarningIcon fontSize="small" className={classes.icon} />
               <Typography variant="h5">Incidents</Typography>
             </div>
-            {getListContent(info.incidents)}
+            {getListContent(incidents)}
           </div>
         </div>
       </BaseScrollView>

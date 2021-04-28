@@ -6,7 +6,7 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import { RouteComponentProps } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { createStyles, Theme, withStyles } from '@material-ui/core/styles';
-import { selectCurrentSiteInformation, selectCurrentFinancialSummary } from '../../lib/redux/siteData';
+import { selectCurrentSiteInformation, selectCurrentPeriodFinancialSummary } from '../../lib/redux/siteData';
 import { selectAllFinancialSummariesArray } from '../../lib/redux/siteDataSlice';
 import { getCurrentMonthGracePeriodDeadline, formatDateStringToLocal, getGracePeriodDeadline } from '../../lib/moment/momentUtils';
 import { useSelector } from 'react-redux';
@@ -19,18 +19,30 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface ReportsMainProps extends RouteComponentProps {
+interface FinancialSummariesProps extends RouteComponentProps {
   classes: { section: string; };
   location: any;
 }
 
-function ReportsMain(props: ReportsMainProps) {
+function FinancialSummaries(props: FinancialSummariesProps) {
   const { classes, match } = props;
   const currentSite = useSelector(selectCurrentSiteInformation);
   const currentDeadline = formatDateStringToLocal(getCurrentMonthGracePeriodDeadline().toString());
 
-  const currentReport = selectCurrentFinancialSummary();
+  const currentReport = selectCurrentPeriodFinancialSummary();
   const reports: FinancialSummaryRecord[] = useSelector(selectAllFinancialSummariesArray) || [];
+  console.log("normal");
+  console.log(reports);
+
+  reports.sort((a: FinancialSummaryRecord, b: FinancialSummaryRecord) => {
+    const bDate = moment(b.lastUpdated);
+    const aDate = moment(a.lastUpdated);
+    const difference = bDate.diff(aDate, 'minutes')
+    return difference;
+  });
+
+  console.log("reverse");
+  console.log(reports);
 
   return (
     <BaseScreen leftIcon="backNav" title="Reports" rightIcon="profile" match={match}>
@@ -40,7 +52,6 @@ function ReportsMain(props: ReportsMainProps) {
           <ReportCard
             report={currentReport}
             deadline={currentDeadline}
-            match={match}
             current
           />
         </div>
@@ -52,8 +63,7 @@ function ReportsMain(props: ReportsMainProps) {
                 <div key={index}>
                   <ReportCard
                     report={report}
-                    deadline={getGracePeriodDeadline(report, currentSite)}
-                    match={match}
+                    deadline={getGracePeriodDeadline(report.period, currentSite)}
                   />
                 </div>
               )
@@ -65,4 +75,4 @@ function ReportsMain(props: ReportsMainProps) {
   );
 }
 
-export default withStyles(styles)(ReportsMain);
+export default withStyles(styles)(FinancialSummaries);

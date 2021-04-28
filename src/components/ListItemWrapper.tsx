@@ -7,7 +7,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 interface ListItemWrapperProps {
   leftText: string;
   rightText?: string;
-  rightTextBlack?: boolean;
+  boldRightText?: boolean;
   linkTo?: string;
   editable?: boolean;
   onEditChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
@@ -32,7 +32,7 @@ const styles = makeStyles((theme: Theme) =>
       paddingRight: 0
     },
     rightTextStyles: (props: ListItemWrapperProps) => ({
-      color: props.rightTextBlack ? theme.palette.text.primary : theme.palette.text.disabled,
+      color: props.boldRightText ? theme.palette.text.primary : theme.palette.text.disabled,
     }),
     inputStyles: {
       textAlign: 'right',
@@ -53,7 +53,7 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
     editType,
     editError,
     editPlaceholder,
-    rightTextBlack,
+    boldRightText,
     smallLineHeight,
     ...listItemProps } = props;
   const classes = styles(props);
@@ -74,7 +74,7 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
   const getRightText = () =>
   (<ListItemText
     className={classes.rightTextStyles}
-    primaryTypographyProps={{ align: 'right', variant: props.rightTextBlack ? "h4" : "body1" }}
+    primaryTypographyProps={{ align: 'right', variant: props.boldRightText ? "h4" : "body1" }}
     primary={editable ?
       <InputBase
         id={editInputId}

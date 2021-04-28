@@ -9,7 +9,6 @@ import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
 interface ReportCardProps {
   report: FinancialSummaryRecord;
   deadline: string;
-  match: any;
   current?: boolean;
 }
 
@@ -38,21 +37,20 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function ReportCard(props: ReportCardProps): JSX.Element {
-  const { report, deadline, match } = props;
+  const { report, deadline } = props;
   const classes = useStyles(props);
 
   return (
     <Card className={classes.root} variant="outlined">
       <CardContent className={classes.content}>
-        {!props.current ?
-          <Typography color="textSecondary">{formatDateStringToLocal(report.lastUpdated)}</Typography>
-        : null}
+        {!props.current &&
+          <Typography color="textSecondary">{formatDateStringToLocal(report.lastUpdated)}</Typography>}
         <Typography variant="h2">{report.period}</Typography>
       </CardContent>
       <CardActions className={classes.actions}>
         <Link
           to={{
-            pathname: `${match.url}/report`,
+            pathname: `/financial-summaries/report`,
             state: { report: report, deadline: deadline }
           }}
         >
