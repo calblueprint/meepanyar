@@ -21,10 +21,9 @@ import EditCustomerMeter from './screens/Customers/EditCustomerMeter';
 import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
 import EditCustomer from './screens/Customers/EditCustomer';
-import FinancialSummariesMain from './screens/FinancialSummary/FinancialSummariesMain';
 import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummaryPayment';
-import ReportsMain from './screens/Reports/ReportsMain';
+import FinancialSummaries from './screens/Reports/FinancialSummaries';
 import Report from './screens/Reports/Report';
 import Home from './screens/Home/Home';
 import Incidents from './screens/Incidents';
@@ -39,6 +38,7 @@ import EditTariffPlanInformation from './screens/Profile/EditTariffPlanInformati
 import AddInventory from './screens/Inventory/AddInventory';
 import CreateInventoryUpdate from './screens/Inventory/CreateInventoryUpdate';
 import CreatePurchaseRequest from './screens/Inventory/CreatePurchaseRequest';
+import EditPurchaseRequest from './screens/Inventory/EditPurchaseRequest';
 import InventoryMain from './screens/Inventory/InventoryMain';
 import InventoryProfile from './screens/Inventory/InventoryProfile';
 import PurchaseRequest from './screens/Inventory/PurchaseRequest';
@@ -74,9 +74,8 @@ function App() {
       <AuthenticatedRoute path="/customers/customer/payments/create" component={AddPayment} exact />
       <AuthenticatedRoute path={'/customers/customer/starting-meter-reading/edit'} component={EditStartingMeter} exact />
       <AuthenticatedRoute path={'/customers/customer/records'} component={CustomerRecords} exact />
-      <AuthenticatedRoute path="/financial-summaries" component={FinancialSummariesMain} />
-      <AuthenticatedRoute path="/reports" component={ReportsMain} exact />
-      <AuthenticatedRoute path="/reports/report" component={Report} exact />
+      <AuthenticatedRoute path="/financial-summaries" component={FinancialSummaries} exact />
+      <AuthenticatedRoute path="/financial-summaries/report" component={Report} exact />
       {
         //TODO: change path to ~"/financial-summaries/financial-summary/payment/create" once other screens are built out
       }
@@ -87,7 +86,8 @@ function App() {
       <AuthenticatedRoute path="/inventory/item" component={InventoryProfile} />
       <AuthenticatedRoute path="/inventory/purchase-requests" component={PurchaseRequestsMain} exact/>
       <AuthenticatedRoute path="/inventory/purchase-requests/create" component={CreatePurchaseRequest} />
-      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} />
+      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} exact />
+      <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request/edit" component={EditPurchaseRequest} />
       <AuthenticatedRoute path="/inventory/updates/create" component={CreateInventoryUpdate} />
 
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />

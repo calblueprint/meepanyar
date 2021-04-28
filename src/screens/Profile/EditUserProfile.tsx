@@ -5,8 +5,11 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCurrentUser } from '../../lib/redux/userData';
 import ListItemWrapper from '../../components/ListItemWrapper';
 import { List } from '@material-ui/core';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 function UserProfile() {
+  const intl = useInternationalization(); 
   const user = useSelector(selectCurrentUser);
 
   if (!user) {
@@ -14,11 +17,11 @@ function UserProfile() {
   }
 
   return (
-    <BaseScreen title="My Information" leftIcon="backNav">
+    <BaseScreen title={intl(words.my_information)} leftIcon="backNav">
       <List>
-        <ListItemWrapper leftText={'Name'} rightText={user.name} dense />
-        <ListItemWrapper leftText={'Email'} rightText={user.email} dense />
-        <ListItemWrapper leftText={'Admin?'} rightText={user.admin ? 'Yes' : 'No'} dense />
+        <ListItemWrapper leftText={intl(words.name)} rightText={user.name} dense />
+        <ListItemWrapper leftText={intl(words.email)} rightText={user.email} dense />
+        <ListItemWrapper leftText={`${intl(words.admin)}?`} rightText={user.admin ? intl(words.yes) : intl(words.no)} dense />
       </List>
     </BaseScreen>
   );

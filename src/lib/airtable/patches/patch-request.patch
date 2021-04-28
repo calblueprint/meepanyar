@@ -1,8 +1,8 @@
 diff --git a/src/lib/airtable/request.js b/src/lib/airtable/request.js
-index ae23270..e590f43 100644
+index ae23270..751f79d 100644
 --- a/src/lib/airtable/request.js
 +++ b/src/lib/airtable/request.js
-@@ -24,6 +24,18 @@ import {
+@@ -24,6 +24,17 @@ import {
    deleteRecord,
  } from './airtable';
  
@@ -16,12 +16,11 @@ index ae23270..e590f43 100644
 +  addPurchaseRequestToRedux,
 +  updateInventoryQuantityInRedux,
 +} from '../redux/inventoryData';
-+import moment from 'moment';
-+import { EMPTY_INVENTORY_UPDATE } from '../redux/inventoryDataSlice';
++import { generateInventoryRecord, generateInventoryUpdateRecord } from '../utils/inventoryUtils';
  /*
   ******* CREATE RECORDS *******
   */
-@@ -73,20 +85,29 @@ export const createManyTariffPlans = async (records) => {
+@@ -73,20 +84,29 @@ export const createManyTariffPlans = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -64,7 +63,7 @@ index ae23270..e590f43 100644
  
  export const createCustomerUpdate = async (record) => {
    return createRecord(Tables.CustomerUpdates, record);
-@@ -103,37 +124,77 @@ export const createManyCustomerUpdates = async (records) => {
+@@ -103,37 +123,77 @@ export const createManyCustomerUpdates = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -168,64 +167,94 @@ index ae23270..e590f43 100644
    return createRecord(Tables.FinancialSummaries, record);
  };
  
-@@ -148,9 +209,20 @@ export const createManyFinancialSummaries = async (records) => {
+@@ -148,8 +208,42 @@ export const createManyFinancialSummaries = async (records) => {
    return Promise.all(createPromises);
  };
  
 -export const createProduct = async (record) => {
 -  return createRecord(Tables.Products, record);
--};
-+// NONGENERATED: Create a product (inventory type) and add it to Redux
-+export const createProduct = async (product) => {
-+  let productId = "";
++// NONGENERATED: Create a product (inventory type), inventory record, and inventory update, then add them to 
++// Redux. Returns the ids of each new record.
++export const createProductInventoryAndUpdate = async (product, startingAmount, siteId, userId) => {
++  let productId = '';
++  let inventoryId = '';
++  let inventoryUpdateId = '';
 +  try {
 +    delete product.id; // Remove the id field to add to Airtable
-+    productId = await createRecord(Tables.Products, product);
++    // Product, inventory, and inventoryUpdate creation is done on this single endpoint to account for offline functionality
++    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/products/create`, {
++
++      method: 'POST',
++      headers: {
++        'Content-Type': 'application/json',
++      },
++      body: JSON.stringify({ ...product, startingAmount, siteId, userId }),
++    });
++    console.log('Response for createProductInventoryAndUpdate: ', resp);
++    await resp.json().then((data) => ({ productId, inventoryId, inventoryUpdateId } = data));
 +  } catch (error) {
-+    console.log('(createProduct) Airtable Error: ', error);
++    console.log('(createProductInventoryAndUpdate) Airtable Error: ', error);
 +    productId = generateOfflineId();
++    inventoryId = generateOfflineId();
++    inventoryUpdateId = generateOfflineId();
 +  }
 +  product.id = productId;
 +  addProductToRedux(product);
-+  return product.id;
-+}
++
++  const inventory = generateInventoryRecord(siteId, startingAmount, productId);
++  inventory.id = inventoryId;
++  const inventoryUpdate = generateInventoryUpdateRecord(inventoryId, startingAmount, userId);
++  inventoryUpdate.id = inventoryUpdateId;
++  addInventoryToRedux(inventory);
++  addInventoryUpdateToRedux(inventoryUpdate);
++
++  return { productId, inventoryId, inventoryUpdateId };
+ };
  
  export const createManyProducts = async (records) => {
-   const createPromises = [];
-@@ -163,9 +235,29 @@ export const createManyProducts = async (records) => {
+@@ -163,9 +257,38 @@ export const createManyProducts = async (records) => {
    return Promise.all(createPromises);
  };
  
 -export const createInventory = async (record) => {
 -  return createRecord(Tables.Inventory, record);
 -};
-+// NONGENERATED: Create an inventory record (add product to site)
-+export const createInventory = async (inventory) => {
-+  // Site and product must already exist in Airtable.
-+  // Make a standard request to create an inventory item.
++// NONGENERATED: Create an inventory record (add product to site) and inventory update, then add both to Redux.
++// Returns the ids for the new records.
++// NOTE: this requires that the site and product already exist in Airtable. If the product doesn't exist,
++// use createProductInventoryAndUpdate.
++export const createInventoryAndUpdate = async (inventory, userId ) => {
 +  let inventoryId = "";
++  let inventoryUpdateId = "";
++
 +  try {
-+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
++    delete inventory.id; // Remove the id field to add to Airtable
++     // Inventory and inventoryUpdate creation is done on this single endpoint to account for offline functionalitys
++     const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
 +      method: 'POST',
 +      headers: {
 +        'Content-Type': 'application/json'
 +      },
-+      body: JSON.stringify(inventory)
++      body: JSON.stringify({...inventory, userId})
 +    })
-+    console.log('Response for inventory: ', resp);
-+    await resp.json().then(data => inventoryId = data.id);
++    console.log('Response for createInventoryAndUpdate: ', resp);
++    await resp.json().then((data) => ({inventoryId, inventoryUpdateId} = data));
 +  } catch (err) {
 +    inventoryId = generateOfflineId();
-+    console.log('Error with create inventory request: ', err);
++    inventoryUpdateId = generateOfflineId();
++    console.log('(createInventoryAndUpdate) Airtable Error: ', err);
 +  }
 +  inventory.id = inventoryId;
 +  addInventoryToRedux(inventory);
-+  return inventory;
++  const inventoryUpdate = generateInventoryUpdateRecord(inventoryId, inventory.currentQuantity, userId);
++  inventoryUpdate.id = inventoryUpdateId;
++  addInventoryUpdateToRedux(inventoryUpdate);
++  return {inventoryId, inventoryUpdateId};
 +}
  
  export const createManyInventorys = async (records) => {
    const createPromises = [];
-@@ -178,6 +270,25 @@ export const createManyInventorys = async (records) => {
+@@ -178,6 +301,25 @@ export const createManyInventorys = async (records) => {
    return Promise.all(createPromises);
  };
  
@@ -251,7 +280,7 @@ index ae23270..e590f43 100644
  export const createPurchaseRequest = async (record) => {
    return createRecord(Tables.PurchaseRequests, record);
  };
-@@ -197,6 +308,32 @@ export const createInventoryUpdate = async (record) => {
+@@ -197,6 +339,27 @@ export const createInventoryUpdate = async (record) => {
    return createRecord(Tables.InventoryUpdates, record);
  };
  
@@ -259,12 +288,7 @@ index ae23270..e590f43 100644
 +// TODO: handle offline workflow of creating inventory updates for inventory
 +// that was created offline (no Airtable id).
 +export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount) => {
-+  const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE));
-+  inventoryUpdate.userId = userId;
-+  inventoryUpdate.previousQuantity = inventory.currentQuantity;
-+  inventoryUpdate.updatedQuantity = updatedAmount;
-+  inventoryUpdate.inventoryId = inventory.id;
-+  inventoryUpdate.createdAt = moment().toISOString();
++  const inventoryUpdate = generateInventoryUpdateRecord(inventory.id, updatedAmount, userId);
 +
 +  let inventoryUpdateId = "";
 +  try {
@@ -284,7 +308,7 @@ index ae23270..e590f43 100644
  export const createManyInventoryUpdates = async (records) => {
    const createPromises = [];
    const numCalls = Math.ceil(records.length / 10);
-@@ -216,7 +353,7 @@ export const getUserById = async (id) => {
+@@ -216,7 +379,7 @@ export const getUserById = async (id) => {
    return getRecordById(Tables.Users, id);
  };
  
@@ -293,7 +317,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -234,7 +371,7 @@ export const getSiteById = async (id) => {
+@@ -234,7 +397,7 @@ export const getSiteById = async (id) => {
    return getRecordById(Tables.Sites, id);
  };
  
@@ -302,7 +326,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -252,7 +389,7 @@ export const getTariffPlanById = async (id) => {
+@@ -252,7 +415,7 @@ export const getTariffPlanById = async (id) => {
    return getRecordById(Tables.TariffPlans, id);
  };
  
@@ -311,7 +335,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -270,7 +407,7 @@ export const getCustomerById = async (id) => {
+@@ -270,7 +433,7 @@ export const getCustomerById = async (id) => {
    return getRecordById(Tables.Customers, id);
  };
  
@@ -320,7 +344,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -288,7 +425,7 @@ export const getCustomerUpdateById = async (id) => {
+@@ -288,7 +451,7 @@ export const getCustomerUpdateById = async (id) => {
    return getRecordById(Tables.CustomerUpdates, id);
  };
  
@@ -329,7 +353,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -302,11 +439,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
+@@ -302,11 +465,11 @@ export const getAllCustomerUpdates = async (filterByFormula = '', sort = []) =>
    return getAllRecords(Tables.CustomerUpdates, filterByFormula, sort);
  };
  
@@ -343,7 +367,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -324,7 +461,7 @@ export const getPaymentById = async (id) => {
+@@ -324,7 +487,7 @@ export const getPaymentById = async (id) => {
    return getRecordById(Tables.Payments, id);
  };
  
@@ -352,7 +376,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -338,11 +475,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
+@@ -338,11 +501,11 @@ export const getAllPayments = async (filterByFormula = '', sort = []) => {
    return getAllRecords(Tables.Payments, filterByFormula, sort);
  };
  
@@ -366,7 +390,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -360,7 +497,7 @@ export const getProductById = async (id) => {
+@@ -360,7 +523,7 @@ export const getProductById = async (id) => {
    return getRecordById(Tables.Products, id);
  };
  
@@ -375,7 +399,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -378,7 +515,7 @@ export const getInventoryById = async (id) => {
+@@ -378,7 +541,7 @@ export const getInventoryById = async (id) => {
    return getRecordById(Tables.Inventory, id);
  };
  
@@ -384,7 +408,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -396,7 +533,7 @@ export const getPurchaseRequestById = async (id) => {
+@@ -396,7 +559,7 @@ export const getPurchaseRequestById = async (id) => {
    return getRecordById(Tables.PurchaseRequests, id);
  };
  
@@ -393,7 +417,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -414,7 +551,7 @@ export const getInventoryUpdateById = async (id) => {
+@@ -414,7 +577,7 @@ export const getInventoryUpdateById = async (id) => {
    return getRecordById(Tables.InventoryUpdates, id);
  };
  
@@ -402,7 +426,7 @@ index ae23270..e590f43 100644
  ) => {
    let formula = `OR(${ids.reduce(
      (f, id) => `${f} {ID}='${id}',`,
-@@ -477,9 +614,27 @@ export const updateManyTariffPlans = async (recordUpdates) => {
+@@ -477,9 +640,27 @@ export const updateManyTariffPlans = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -433,7 +457,7 @@ index ae23270..e590f43 100644
  
  export const updateManyCustomers = async (recordUpdates) => {
    const updatePromises = [];
-@@ -507,7 +662,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
+@@ -507,7 +688,7 @@ export const updateManyCustomerUpdates = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -442,7 +466,7 @@ index ae23270..e590f43 100644
    return updateRecord(Tables.MeterReadingsandInvoices, id, recordUpdates);
  };
  
-@@ -537,7 +692,7 @@ export const updateManyPayments = async (recordUpdates) => {
+@@ -537,7 +718,7 @@ export const updateManyPayments = async (recordUpdates) => {
    return Promise.all(updatePromises);
  };
  
@@ -451,7 +475,7 @@ index ae23270..e590f43 100644
    return updateRecord(Tables.FinancialSummaries, id, recordUpdates);
  };
  
-@@ -637,7 +792,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
+@@ -637,7 +818,7 @@ export const deleteMeterReadingsandInvoice = async (id) => {
  export const deletePayment = async (id) => {
    return deleteRecord(Tables.Payments, id);
  };

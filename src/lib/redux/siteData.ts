@@ -44,7 +44,8 @@ export const selectCurrentSiteProfit = (state: RootState) => {
   return selectCurrentPeriodTotalAmountCollected(state) - selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent(state);
 }
 
-export const selectCurrentFinancialSummary = () => {
+// Can't use "createSelector" because selectors aren't initialized before file is read
+export const selectCurrentPeriodFinancialSummary  = () => {
   const state = store.getState();
   const customers = selectAllCustomersArray(state);
   const customersBilled = selectCustomersToCollect(state);
@@ -75,10 +76,4 @@ export const selectCurrentFinancialSummary = () => {
   }
 
   return currentReport;
-}
-
-// Rounds number to at most 2 decimal points
-// And converts to string
-export const round = (number: number) => {
-  return (Math.round(number * 100) / 100).toString();
 }

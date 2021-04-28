@@ -15,13 +15,14 @@ import { PurchaseRequestRecord } from '../../lib/airtable/interface';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
-import { selectCurrentInventory, selectCurrentInventoryProduct } from '../../lib/redux/inventoryData';
+import { selectCurrentInventory, selectCurrentInventoryProduct, setCurrentPurchaseRequestIdInRedux } from '../../lib/redux/inventoryData';
 import { EMPTY_INVENTORY } from '../../lib/redux/inventoryDataSlice';
 import { selectIsOnline } from '../../lib/redux/userData';
 import { getInventoryHistory, getInventoryLastUpdated } from '../../lib/utils/inventoryUtils';
 import { isOfflineId } from '../../lib/utils/offlineUtils';
 import InventoryInfo from './components/InventoryInfo';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
+import { roundToString } from '../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -52,9 +53,8 @@ function InventoryProfile(props: InventoryProps) {
   }
 
   const navigateToPurchaseRequest = (purchaseRequest: PurchaseRequestRecord) => {
-    history.push('/inventory/purchase-requests/purchase-request', {
-      purchaseRequest,
-    });
+    setCurrentPurchaseRequestIdInRedux(purchaseRequest.id);
+    history.push('/inventory/purchase-requests/purchase-request');
   };
 
   return (
@@ -96,13 +96,13 @@ function InventoryProfile(props: InventoryProps) {
                     <ListItemText
                       className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                       primaryTypographyProps={{ variant: 'body2', align: 'right' }}
-                      primary={`${historyRecord.amountSpent || 0} ${intl(words.ks)}`}
+                      primary={`${roundToString(historyRecord.amountSpent) || 0} ${intl(words.ks)}`}
                     />
                   )}
                   <ListItemText
                     className={isPurchaseRequest ? classes.purchaseRequestText : undefined}
                     primaryTypographyProps={{ variant: 'body2', align: 'right' }}
-                    primary={`${historyRecord.updatedQuantity || 0} ${product.unit}(${intl(words.s)})`}
+                    primary={`${roundToString(historyRecord.updatedQuantity) || 0} ${product.unit}(${intl(words.s)})`}
                   />
                   <ListItemSecondaryAction>
                     {historyRecord.status && (

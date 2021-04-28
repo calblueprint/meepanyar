@@ -9,6 +9,7 @@ const styles = () =>
       bottom: '56px',
       width: '100%',
       height: 'auto',
+      overflow: 'hidden',
       position: 'absolute',
       padding: '0 25px',
     },

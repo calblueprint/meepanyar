@@ -5,14 +5,19 @@ import { RouteComponentProps, useHistory } from 'react-router';
 import { UserRecord } from '../../lib/airtable/interface';
 import Button from '../../components/Button';
 import { updateUser } from '../../lib/airtable/request';
-import { updateUserInRedux } from '../../lib/redux/userData';
+import { selectCurrentUserIsAdmin, updateUserInRedux } from '../../lib/redux/userData';
+import { useSelector } from 'react-redux';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 type EditTarifPlanInformationProps = RouteComponentProps<{}, {}, { user: UserRecord }>;
 
 function EditUserInformation(props: EditTarifPlanInformationProps) {
+    const intl = useInternationalization();
     const { user } = props.location.state;
 
     const history = useHistory();
+    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
     const [newIsAdmin, setNewIsAdmin] = useState(user.admin || false);
     const [loading, setLoading] = useState(false);
 
@@ -30,7 +35,7 @@ function EditUserInformation(props: EditTarifPlanInformationProps) {
         } finally {
             // We naively update the user in redux and do proper authentication on the backend
             // to make sure only admins can successfully make other users admins
-            updateUserInRedux({id: user.id, admin: newIsAdmin});
+            updateUserInRedux({ id: user.id, admin: newIsAdmin });
             history.goBack()
         }
     }
@@ -40,15 +45,22 @@ function EditUserInformation(props: EditTarifPlanInformationProps) {
             <List>
                 <ListItem disableGutters>
                     <ListItemText
-                        primary='Admin Permission'
+                        primary={intl(words.admin_permission)}
                         primaryTypographyProps={{ color: 'textPrimary', variant: 'body1' }}
                     />
                     <ListItemSecondaryAction>
-                        <Switch color='primary' edge='end' id='edit-active-status' checked={newIsAdmin} onChange={() => setNewIsAdmin(!newIsAdmin)} />
+                        <Switch
+                            color='primary'
+                            edge='end'
+                            id='edit-active-status'
+                            checked={newIsAdmin}
+                            onChange={() => setNewIsAdmin(!newIsAdmin)}
+                            disabled={!currentUserIsAdmin}
+                        />
                     </ListItemSecondaryAction>
                 </ListItem>
             </List>
-            <Button fullWidth label={'SAVE'} onClick={handleSubmit} loading={loading} />
+            {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} onClick={handleSubmit} loading={loading} />}
         </BaseScreen>
     );
 }
