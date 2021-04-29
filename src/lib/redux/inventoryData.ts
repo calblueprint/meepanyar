@@ -25,9 +25,12 @@ import {
   updatePurchaseRequest
 } from './inventoryDataSlice';
 import { selectCurrentSiteId } from './siteData';
+import { isBeforeCurrentPeriod } from '../moment/momentUtils';
 import { RootState, store } from './store';
 
 const getInventoryId = (_: RootState, inventoryId: string) => inventoryId;
+
+const getPurchaseRequestId = (_: RootState, purchaseRequestId: string) => purchaseRequestId;
 
 export const selectPurchaseRequestsArrayByInventoryId = createSelector(
   selectAllCurrentSitePurchaseRequestsArray,
@@ -150,3 +153,29 @@ export const setCurrentPurchaseRequestIdInRedux = (purchaseRequestId: string): v
 export const addProductToRedux = (product: ProductRecord): void => {
   store.dispatch(addProduct(product));
 };
+
+export const selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent = createSelector(
+    selectAllCurrentSitePurchaseRequestsArray,
+    (purchaseRequests) => {
+      let amount = 0;
+      purchaseRequests.forEach((pr: PurchaseRequestRecord) => {
+        if (!isBeforeCurrentPeriod(pr.createdAt) && pr.status === PurchaseRequestStatus.APPROVED) {
+          amount += pr.amountSpent;
+        }
+      });
+      return amount;
+    }
+)
+
+export const selectCurrentPeriodPurchaseRequestsDeniedTotalAmountSpent = createSelector(
+  selectAllCurrentSitePurchaseRequestsArray,
+  (purchaseRequests) => {
+    let amount = 0;
+    purchaseRequests.forEach((pr: PurchaseRequestRecord) => {
+      if (!isBeforeCurrentPeriod(pr.createdAt) && pr.status === PurchaseRequestStatus.DENIED) {
+        amount += pr.amountSpent;
+      }
+    });
+    return amount;
+  }
+)

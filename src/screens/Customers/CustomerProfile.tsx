@@ -127,7 +127,7 @@ function CustomerProfile(props: CustomerProps) {
       );
     } else {
       return (
-        <OutlinedCardList info={balanceInfo} highlighted rightIcon={getAddButton('payments/create')} />
+        <OutlinedCardList info={balanceInfo} highlightedText rightIcon={getAddButton('payments/create')} />
       );
     }
   }

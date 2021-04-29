@@ -14,7 +14,8 @@ export interface CardPropsInfo {
 
 interface CardProps {
   info: CardPropsInfo[];
-  highlighted?: boolean;
+  highlightedText?: boolean;
+  highlightedBorder?: boolean;
   rightIcon?: JSX.Element;
   columns?: boolean;
   readOnly?: boolean;
@@ -27,7 +28,7 @@ const useStyles = makeStyles((theme: Theme) =>
     root: (props: CardProps) => ({
       marginTop: '10px',
       border: '1px solid',
-      borderColor: props.readOnly ? theme.palette.background.default : theme.palette.text.disabled,
+      borderColor: props.highlightedBorder ? theme.palette.primary.main : (props.readOnly ? theme.palette.background.default : theme.palette.text.disabled),
       borderRadius: '6px',
       backgroundColor: props.readOnly ? theme.palette.background.default : 'white'
     }),
@@ -91,7 +92,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
     unit: string,
     secondaryLabel?: string,
   ) => {
-    const { columns, rightIcon, editPath, highlighted } = props;
+    const { columns, rightIcon, editPath, highlightedText } = props;
     const getFormattedLabel = () => (
       <div className={classes.headerContainer}>
         <div style={{ display: 'flex' }}>
@@ -108,7 +109,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
       </div>
     );
     const getFormattedNumber = () => (
-      <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={highlighted ? 'error' : 'inherit'}>
+      <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={highlightedText ? 'error' : 'inherit'}>
         {number} {unit}
       </Typography>
     );
@@ -119,7 +120,7 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
           {props.reverse ? getFormattedLabel() : getFormattedNumber()}
           {/* Split unit to new line if in column layout */}
           {!props.reverse && columns &&
-            <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={highlighted ? 'primary' : 'inherit'}>
+            <Typography variant="h3" align={columns ? 'center' : 'inherit'} color={highlightedText ? 'primary' : 'inherit'}>
               {unit}
             </Typography>
           }
@@ -143,5 +144,6 @@ export default function OutlinedCardList(props: CardProps): JSX.Element {
 OutlinedCardList.defaultProps = {
   rightIcon: null,
   columns: false,
-  highlighted: false,
+  highlightedText: false,
+  highlightedBorder: false,
 };

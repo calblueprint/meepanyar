@@ -88,7 +88,7 @@ function Home(props: HomeProps) {
     return (
       <div className={classes.section}>
         <OutlinedCardList
-          highlighted={amountOwed !== 0}
+          highlightedText={amountOwed !== 0}
           info={amountOwedCardInfo}
           rightIcon={amountOwed === 0 ? <CheckCircleOutlineIcon /> : addButton}
         />
@@ -118,7 +118,6 @@ function Home(props: HomeProps) {
             </Typography>
           </div>
         </div>
-
         {user?.organization === 'Meepanyar' && getAmountOwedCard()}
 
         <div className={classes.section}>
@@ -160,14 +159,14 @@ function Home(props: HomeProps) {
           <Typography variant='h2'>
             Financial Reports
           </Typography>
-          {/* TODO: These buttons should lead to the appropriate places */}
           <div className={classes.financialSums}>
             <div style={{ paddingRight: 10 }}>
-              <Link to={'/financial-summary'}>
+              {/** TODO: Make current period button navigate to current financial summary */}
+              <Link to={'/financial-summaries'}>
                 <Button label='Current Period' startIcon={<DescriptionIcon />} />
               </Link>
             </div>
-            <Link to={'/financial-summary'}>
+            <Link to={'/financial-summaries'}>
               <Button label='Past Reports' variant='outlined' />
             </Link>
           </div>

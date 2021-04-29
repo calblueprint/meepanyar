@@ -43,6 +43,11 @@ export const theme = createMuiTheme({
       fontSize: '22px',
       fontWeight: 700,
     },
+    //bolded version of body1
+    h4: {
+      fontSize: '14px',
+      fontWeight: 700,
+    },
     //caption
     body1: {
       fontSize: '14px',

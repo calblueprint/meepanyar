@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { FinancialSummaryRecord, SiteRecord } from '../airtable/interface';
 import { selectCurrentSiteGracePeriod } from '../redux/siteData';
 import { store } from '../redux/store';
 
@@ -81,4 +82,14 @@ export const getDiffinPeriods = (x: string, y: string) => {
 export const getCurrentMonthGracePeriodDeadline = () => {
   const gracePeriodDays: number = selectCurrentSiteGracePeriod(store.getState()) || 0;
   return moment().startOf('month').add(gracePeriodDays, 'days');
+}
+
+
+// Returns end of period plus number of days in grace period
+// Formats & converts to string
+export const getGracePeriodDeadline = (periodDate: string, site: SiteRecord) => {
+  const m = moment(new Date(periodDate)).endOf('month');
+  const d = moment.duration({'days' : site.gracePeriod});
+  m.add(d);
+  return formatDateStringToLocal(m.toString());
 }
