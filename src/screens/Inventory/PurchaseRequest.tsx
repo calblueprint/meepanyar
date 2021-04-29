@@ -20,6 +20,7 @@ import { getInventoryLastUpdated, reviewPurchaseRequest } from '../../lib/utils/
 import { isOfflineId } from '../../lib/utils/offlineUtils';
 import InventoryInfo from './components/InventoryInfo';
 import { getPurchaseRequestStatusIcon } from './components/PurchaseRequestCard';
+import { roundToString } from '../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -120,7 +121,7 @@ function PurchaseRequest(props: PurchaseRequestsProps) {
           unit={product.unit}
           disabled
           id={'amount-purchased'}
-          value={purchaseRequest.amountPurchased}
+          value={roundToString(purchaseRequest.amountPurchased)}
         />
         <TextField
           label={intl(words.amount_spent_paid, ' ')}

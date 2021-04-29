@@ -27,6 +27,7 @@ export interface UserRecord {
   admin: boolean;
   name: string;
   inactive: boolean;
+  organization?: string;
   email?: string;
   siteIds?: string[];
   photo?: Airtable.Attachment[];

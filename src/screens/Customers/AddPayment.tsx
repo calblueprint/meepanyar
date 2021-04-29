@@ -16,6 +16,7 @@ import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
+import { roundToString } from '../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -74,7 +75,7 @@ function AddPayment(props: AddPaymentProps) {
         createPaymentAndUpdateCustomerBalance(payment, currentCustomer).then(history.goBack);
     }
 
-    const cardInfo = [{ number: currentCustomer.outstandingBalance.toString(), label: intl(words.remaining_balance), unit: intl(words.ks) }]
+    const cardInfo = [{ number: roundToString(currentCustomer.outstandingBalance), label: intl(words.remaining_balance), unit: intl(words.ks) }]
 
     return (
         <BaseScreen title={intl(words.add_x, words.payment)} leftIcon="backNav">

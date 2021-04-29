@@ -4,6 +4,7 @@ import { Typography } from '@material-ui/core';
 import { useInternationalization } from '../../../lib/i18next/translator';
 import words from '../../../lib/i18next/words';
 import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
+import { roundToString } from '../../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -30,7 +31,7 @@ function Record(props: RecordProps) {
         {formatDateStringToLocal(props.date)}
       </Typography>
       <Typography variant="h1">
-        {props.used ? props.used + ` ${intl(words.kwh)} |` : null} {props.amount} {intl(words.ks)}
+        {props.used ? roundToString(props.used) + ` ${intl(words.kwh)} |` : null} {roundToString(props.amount)} {intl(words.ks)}
       </Typography>
     </div>
   );

@@ -19,7 +19,7 @@ import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-
+import { roundToString } from '../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -76,7 +76,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
 
     const currentReadingAmount = parseFloat(meterReadingAmount);
 
-    // WARNING: Client-side Amount Billed is treated as a source of truth in order to 
+    // WARNING: Client-side Amount Billed is treated as a source of truth in order to
     // accomodate for offline functionality when a user adjusts a Customer's startingMeterAmount when offline
     const meterReading = JSON.parse(JSON.stringify(EMPTY_METER_READING));
     meterReading.reading = currentReadingAmount;
@@ -90,7 +90,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
   }
 
   const cardInfo = [{
-    number: startingMeterAmount.toString(),
+    number: roundToString(startingMeterAmount),
     label: intl(words.starting_x, words.reading),
     unit: intl(words.kwh),
     secondaryLabel: formatDateStringToLocal(startingMeterLastRecorded)

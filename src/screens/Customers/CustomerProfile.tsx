@@ -14,6 +14,7 @@ import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardLi
 import Snackbar from '../../components/Snackbar';
 import { CustomerRecord, MeterReadingRecord, PaymentRecord } from '../../lib/airtable/interface';
 import { selectCurrentCustomer, selectMeterReadingsByCustomerId, selectPaymentsByCustomerId } from '../../lib/redux/customerData';
+import { roundToString } from '../../lib/utils/utils';
 import { EMPTY_CUSTOMER, MeterType } from '../../lib/redux/customerDataSlice';
 import { RootState } from '../../lib/redux/store';
 import { selectIsOnline } from '../../lib/redux/userData';
@@ -78,14 +79,14 @@ function CustomerProfile(props: CustomerProps) {
 
   const customerTariff = getTariffPlanByCustomer(customer);
 
-  const fixedTariff = customerTariff ? customerTariff?.fixedTariff : UNDEFINED_AMOUNT;
-  const unitTariff = customerTariff ? customerTariff?.tariffByUnit : UNDEFINED_AMOUNT;
-  const freeUnits = customerTariff ? customerTariff?.freeUnits : UNDEFINED_AMOUNT;
+  const fixedTariff = customerTariff ? roundToString(customerTariff?.fixedTariff) : UNDEFINED_AMOUNT;
+  const unitTariff = customerTariff ? roundToString(customerTariff?.tariffByUnit) : UNDEFINED_AMOUNT;
+  const freeUnits = customerTariff ? roundToString(customerTariff?.freeUnits) : UNDEFINED_AMOUNT;
 
   let tariffInfo: CardPropsInfo[] = [
-    { number: fixedTariff.toString(), label: intl(words.fixed_tariff), unit: intl(words.ks) },
-    { number: unitTariff.toString(), label: intl(words.per_unit_tariff), unit: intl(words.ks) },
-    { number: freeUnits.toString(), label: intl(words.kwh), unit: intl(words.kwh) },
+    { number: fixedTariff, label: intl(words.fixed_tariff), unit: intl(words.ks) },
+    { number: unitTariff, label: intl(words.per_unit_tariff), unit: intl(words.ks) },
+    { number: freeUnits, label: intl(words.kwh), unit: intl(words.kwh) },
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
@@ -96,13 +97,13 @@ function CustomerProfile(props: CustomerProps) {
   const customerMeteredForPeriod = isReadingFromLatestPeriod(currReading);
 
   let meterInfo: CardPropsInfo[] = [
-    { number: startingReading.toString(), label: intl(words.starting_meter), unit: intl(words.kwh) },
-    { number: periodUsage.toString(), label: intl(words.period_usage), unit: intl(words.kwh) },
-    { number: currReading ? currReading.reading.toString() : '0', label: intl(words.ending_meter), unit: intl(words.kwh) },
-    { number: amountBilled.toString(), label: intl(words.amount_billed), unit: intl(words.ks) },
+    { number: roundToString(startingReading), label: intl(words.starting_meter), unit: intl(words.kwh) },
+    { number: roundToString(periodUsage), label: intl(words.period_usage), unit: intl(words.kwh) },
+    { number: currReading ? roundToString(currReading.reading) : '0', label: intl(words.ending_meter), unit: intl(words.kwh) },
+    { number: roundToString(amountBilled), label: intl(words.amount_billed), unit: intl(words.ks) },
   ];
-  let balanceInfo: CardPropsInfo[] = [{ number: customer.outstandingBalance.toString(), label: intl(words.remaining_balance), unit: intl(words.ks) }];
-  let readingInfo: CardPropsInfo[] = [{ number: currReading ? currReading.reading.toString() : '0', label: intl(words.last_recorded_reading), unit: intl(words.kwh) }];
+  let balanceInfo: CardPropsInfo[] = [{ number: roundToString(customer.outstandingBalance), label: intl(words.remaining_balance), unit: intl(words.ks) }];
+  let readingInfo: CardPropsInfo[] = [{ number: currReading ? roundToString(currReading.reading) : '0', label: intl(words.last_recorded_reading), unit: intl(words.kwh) }];
 
   const getAddButton = (path: string) => {
     //TODO: separate into base component @wangannie
@@ -129,7 +130,7 @@ function CustomerProfile(props: CustomerProps) {
       );
     } else {
       return (
-        <OutlinedCardList info={balanceInfo} highlighted rightIcon={getAddButton('payments/create')} />
+        <OutlinedCardList info={balanceInfo} highlightedText rightIcon={getAddButton('payments/create')} />
       );
     }
   }

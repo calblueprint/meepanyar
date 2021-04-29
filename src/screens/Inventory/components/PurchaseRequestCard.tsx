@@ -23,6 +23,7 @@ import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../../lib/redu
 import { reviewPurchaseRequest } from '../../../lib/utils/inventoryUtils';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
 import { getPurchaseRequestReviewButtons } from '../PurchaseRequest';
+import { roundToString } from '../../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -82,7 +83,7 @@ export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size
 };
 
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
-  const intl = useInternationalization(); 
+  const intl = useInternationalization();
   const { classes, purchaseRequest, showSnackbarCallback } = props;
   const [status, setStatus] = useState(purchaseRequest.status);
   const product =
@@ -122,9 +123,9 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
             <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(
               purchaseRequest.createdAt,
             )}`}</Typography>
-            <Typography variant="body1" color="textSecondary">{`${purchaseRequest.amountPurchased} ${product.unit}(${intl(words.s)})`}</Typography>
+            <Typography variant="body1" color="textSecondary">{`${roundToString(purchaseRequest.amountPurchased)} ${product.unit}(${intl(words.s)})`}</Typography>
           </div>
-          <Typography color="textPrimary" variant="h2">{`${purchaseRequest.amountSpent} ${intl(words.ks)}`}</Typography>
+          <Typography color="textPrimary" variant="h2">{`${roundToString(purchaseRequest.amountSpent)} ${intl(words.ks)}`}</Typography>
         </CardContent>
       </Link>
       <CardActions className={classes.cardActions}>

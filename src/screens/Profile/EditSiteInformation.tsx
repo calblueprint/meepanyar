@@ -7,6 +7,7 @@ import { useHistory } from 'react-router';
 import { selectCurrentSiteInformation, updateSiteInRedux } from '../../lib/redux/siteData';
 import Button from '../../components/Button';
 import { updateSite } from '../../lib/airtable/request';
+import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 
@@ -16,6 +17,7 @@ function EditSiteInformation() {
     const history = useHistory();
 
     const currentSite = useSelector(selectCurrentSiteInformation);
+    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
     const currentSiteName = currentSite ? currentSite.name : intl(words.no_site);
 
     const [newSiteName, setNewSiteName] = useState(currentSiteName);
@@ -60,15 +62,15 @@ function EditSiteInformation() {
                 <ListItemWrapper
                     leftText={intl(words.site_name)}
                     rightText={currentSiteName}
-                    editable
                     dense
                     editValue={newSiteName}
+                    editable={currentUserIsAdmin}
                     onEditChange={handleSiteNameInput}
                     editInputId={'edit-site-name'}
                     editPlaceholder={intl(words.input_site_name)}
                 />
             </List>
-            <Button fullWidth label={intl(words.save)} onClick={handleSubmit} loading={loading} />
+            {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} onClick={handleSubmit} loading={loading} />}
             {errorMessage ? <Typography color='error' align='center'> {errorMessage} </Typography> : null}
         </BaseScreen>
     );
