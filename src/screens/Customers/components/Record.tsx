@@ -2,6 +2,7 @@ import React from 'react';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
+import { roundToString } from '../../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -27,7 +28,7 @@ function Record(props: RecordProps) {
         {formatDateStringToLocal(props.date)}
       </Typography>
       <Typography variant="h1">
-        {props.used ? props.used + ' kWh |' : null} {props.amount} Ks
+        {props.used ? roundToString(props.used) + ' kWh |' : null} {roundToString(props.amount)} Ks
       </Typography>
     </div>
   );

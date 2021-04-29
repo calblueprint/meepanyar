@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
-
+import { roundToString } from '../../lib/utils/utils';
 
 type EditTarifPlanInformationProps = RouteComponentProps<{}, {}, { tariffPlan: TariffPlanRecord }>;
 
@@ -21,9 +21,9 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
     const history = useHistory();
 
     const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
-    const [newFixedTariff, setNewFixedTariff] = useState(tariffPlan.fixedTariff.toString() || '');
-    const [newTariffByUnit, setNewTariffByUnit] = useState(tariffPlan.tariffByUnit.toString() || '');
-    const [newFreeUnits, setNewFreeUnits] = useState(tariffPlan.freeUnits.toString() || '');
+    const [newFixedTariff, setNewFixedTariff] = useState(roundToString(tariffPlan.fixedTariff) || '');
+    const [newTariffByUnit, setNewTariffByUnit] = useState(roundToString(tariffPlan.tariffByUnit) || '');
+    const [newFreeUnits, setNewFreeUnits] = useState(roundToString(tariffPlan.freeUnits) || '');
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false);
 
