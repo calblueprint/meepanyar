@@ -5,6 +5,9 @@ import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import Button from '../../components/Button';
 import { PreservedCameraState } from './Camera';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
+
 
 interface CameraPreviewState extends PreservedCameraState {
     photoUri: string;
@@ -21,6 +24,7 @@ const styles = () => createStyles({
 })
 
 function CameraPreview(props: CameraPreviewProps) {
+    const intl = useInternationalization();
     const history = useHistory();
     const { preservedState, returnLink, photoUri, goBack } = props.location.state;
 
@@ -36,11 +40,11 @@ function CameraPreview(props: CameraPreviewProps) {
     }
 
     return (
-        <BaseScreen title="Preview" leftIcon="backNav">
+        <BaseScreen title={intl(words.preview)} leftIcon="backNav">
             <img src={props.location.state.photoUri} className={props.classes.photo} />
             <Button
                 fullWidth
-                label={'Next'}
+                label={intl(words.next)}
                 onClick={handleConfirm}
             />
         </BaseScreen>
