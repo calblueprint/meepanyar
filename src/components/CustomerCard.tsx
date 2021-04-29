@@ -108,7 +108,7 @@ function CustomerCard(props: CardProps) {
         {props.active ? <div className={classes.active} /> : <div className={classes.notActive} />}
         <div>
           <Typography className={classes.titleText}>{props.name}</Typography>
-          <Typography className={classes.updatedText}>{intl(words.last_updated_date, props.date)}</Typography>
+          <Typography className={classes.updatedText}>{`${intl(words.last_updated)} ${intl(words.date)}: ${props.date}`}</Typography>
         </div>
         <div className={classes.divSpacing}>
           <Typography className={classes.totalText}>{intl(words.total_owed)}</Typography>

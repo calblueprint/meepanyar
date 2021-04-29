@@ -10,8 +10,8 @@ import { setCurrentCustomerIdInRedux, CustomerStatus } from '../../../lib/redux/
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import SyncIcon from '@material-ui/icons/Sync';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
-import { useInternationalization } from '../../lib/i18next/translator';
-import words from '../../lib/i18next/words';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 import { roundToString } from '../../../lib/utils/utils';
 
 const useStyles = makeStyles((theme: Theme) =>

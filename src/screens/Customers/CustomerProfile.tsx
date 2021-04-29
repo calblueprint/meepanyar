@@ -146,7 +146,7 @@ function CustomerProfile(props: CustomerProps) {
       readingInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.last_recorded_reading), unit: '' }];
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
-        { number: periodUsage.toString(), label: intl(words.period_usage), unit: intl(words.kwh },
+        { number: periodUsage.toString(), label: intl(words.period_usage), unit: intl(words.kwh) },
         { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
         { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
       ];
