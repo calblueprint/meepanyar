@@ -84,7 +84,7 @@ function InventoryInfo(props: InventoryInfoProps) {
             <Typography variant="h2">{product.name}</Typography>
             {isOfflineId(inventoryId) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
           </div>
-          <Typography variant="caption">{intl(words.last_updated_date, ' ')}</Typography>
+          <Typography variant="caption">{`${intl(words.last_updated)} ${intl(words.date)}`}</Typography>
           <Typography variant="caption">{lastUpdated}</Typography>
         </div>
         {props.currentQuantity !== undefined && (
