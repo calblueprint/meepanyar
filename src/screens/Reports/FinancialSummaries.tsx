@@ -31,18 +31,13 @@ function FinancialSummaries(props: FinancialSummariesProps) {
 
   const currentReport = selectCurrentPeriodFinancialSummary();
   const reports: FinancialSummaryRecord[] = useSelector(selectAllFinancialSummariesArray) || [];
-  console.log("normal");
-  console.log(reports);
-
+  
   reports.sort((a: FinancialSummaryRecord, b: FinancialSummaryRecord) => {
     const bDate = moment(b.lastUpdated);
     const aDate = moment(a.lastUpdated);
     const difference = bDate.diff(aDate, 'minutes')
     return difference;
   });
-
-  console.log("reverse");
-  console.log(reports);
 
   return (
     <BaseScreen leftIcon="backNav" title="Reports" rightIcon="profile" match={match}>

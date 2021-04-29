@@ -21,7 +21,6 @@ import EditCustomerMeter from './screens/Customers/EditCustomerMeter';
 import CustomerProfile from './screens/Customers/CustomerProfile';
 import CustomerRecords from './screens/Customers/CustomerRecords';
 import EditCustomer from './screens/Customers/EditCustomer';
-import FinancialSummary from './screens/FinancialSummary/FinancialSummary';
 import FinancialSummaryPayment from './screens/FinancialSummary/FinancialSummaryPayment';
 import FinancialSummaries from './screens/Reports/FinancialSummaries';
 import Report from './screens/Reports/Report';
@@ -89,11 +88,9 @@ function App() {
       <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request" component={PurchaseRequest} exact />
       <AuthenticatedRoute path="/inventory/purchase-requests/purchase-request/edit" component={EditPurchaseRequest} />
       <AuthenticatedRoute path="/inventory/updates/create" component={CreateInventoryUpdate} />
-
       <AuthenticatedRoute path="/maintenance" component={Maintenance} />
       <AuthenticatedRoute path="/incidents" component={Incidents} />
 
-      <AuthenticatedRoute path="/financial-summary" component={FinancialSummary} exact />
       <AuthenticatedRoute path="/base-components" component={BaseComponentsDemo} exact />
       <BaseNavigation />
     </>

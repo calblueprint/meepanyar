@@ -159,10 +159,10 @@ function Home(props: HomeProps) {
           <Typography variant='h2'>
             Financial Reports
           </Typography>
-          {/* TODO: These buttons should lead to the appropriate places */}
           <div className={classes.financialSums}>
             <div style={{ paddingRight: 10 }}>
-              <Link to={'/financial-summary'}>
+              {/** TODO: Make current period button navigate to current financial summary */}
+              <Link to={'/financial-summaries'}>
                 <Button label='Current Period' startIcon={<DescriptionIcon />} />
               </Link>
             </div>

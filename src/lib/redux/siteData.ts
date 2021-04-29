@@ -3,9 +3,10 @@ import { SiteRecord, TariffPlanRecord, FinancialSummaryRecord } from '../airtabl
 import { setCurrentSiteId, updateTariffPlan, updateSite } from './siteDataSlice';
 import { selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent, selectCurrentPeriodPurchaseRequestsDeniedTotalAmountSpent } from './inventoryData';
 import { selectCustomersToCollect, selectCustomersDone, selectCurrentPeriodTotalAmountBilled, selectCurrentPeriodTotalAmountCollected } from './customerData';
-import { getCurrentPeriod } from '../moment/momentUtils';
+import { getCurrentPeriod, formatDateStringToLocal } from '../moment/momentUtils';
 import { selectAllCustomersArray } from './customerDataSlice';
 import { RootState, store } from './store';
+import moment from 'moment';
 
 export const setCurrentSite = (newSite: any): void => {
   store.dispatch(setCurrentSiteId(newSite.id))
@@ -55,6 +56,7 @@ export const selectCurrentPeriodFinancialSummary  = () => {
   const totalProfit = selectCurrentSiteProfit(state);
   const inventoryAmountApproved = selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent(state);
   const inventoryAmountDenied = selectCurrentPeriodPurchaseRequestsDeniedTotalAmountSpent(state);
+  const lastUpdated = formatDateStringToLocal(moment().toString());
 
   const currentReport: FinancialSummaryRecord = {
     id: '',
@@ -71,7 +73,7 @@ export const selectCurrentPeriodFinancialSummary  = () => {
     inventoryAmountDenied,
     period: getCurrentPeriod(),
     isapproved: false,
-    lastUpdated: '0',
+    lastUpdated,
     issubmitted: false,
   }
 
