@@ -234,6 +234,7 @@ export default {
   "period_usage": "Period Usage",
   "phone_number": "Phone number",
   "photo": "Photo",
+  "photo_of_payslip": "Photo of Payslip",
   "photos": "Photos",
   "please_x": "Please [X]",
   "please_enter_a_customer_number": "Please enter a customer number",

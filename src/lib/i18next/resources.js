@@ -237,6 +237,7 @@ module.exports = {
       "Period Usage": "ယူသုံးကာလ",
       "Phone number": "ဖုန်းနံပါတ်",
       "Photo": "ဓာတ်ပုံ",
+      "Photo of Payslip": "Photo of Payslip",
       "Photos": "ဓာတ်ပုံများ",
       "Please [X]": "Please [X]",
       "Please enter a customer number": "Please enter a customer number",
