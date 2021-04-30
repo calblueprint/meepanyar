@@ -4,8 +4,6 @@ import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import { useInternationalization } from '../../lib/i18next/translator';
-import words from '../../lib/i18next/words';
 
 export interface PreservedCameraState {
     preservedState: object;
@@ -25,7 +23,6 @@ export interface PreservedCameraState {
 type CameraProps = RouteComponentProps<{}, {}, PreservedCameraState>;
 
 function CameraScreen(props: CameraProps) {
-    const intl = useInternationalization(); 
     const history = useHistory();
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -45,10 +42,10 @@ function CameraScreen(props: CameraProps) {
     const onCameraError = (error: Error) => {
         let exposedErrorMessage = '';
         if (error.name === 'NotFoundError') {
-            exposedErrorMessage = intl(words.camera_not_found);
+            exposedErrorMessage = 'Camera Not found';
             // Camera only works on secure contexts (https or localhost). Unsecure contexts are caught here
         } else if (error.name === 'TypeError' && !navigator.mediaDevices) {
-            exposedErrorMessage = intl(words.mediadevices_returned_undefined_ensure_the_connection_to_site_is_secure);
+            exposedErrorMessage = 'MediaDevices returned undefined. Ensure the connection to site is secure';
         } else {
             exposedErrorMessage = error.message;
         }
@@ -59,7 +56,7 @@ function CameraScreen(props: CameraProps) {
     const renderErrorMessage = () => {
         return (
             <div>
-                {intl(words.the_following_error_occurred_with_camera_x, errorMessage)}
+                {`The following error occurred with camera: ${errorMessage}`}
             </div>
         )
     }

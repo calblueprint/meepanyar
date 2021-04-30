@@ -5,6 +5,8 @@ import Button from '../../../components/Button';
 import { Link } from 'react-router-dom';
 import { FinancialSummaryRecord } from '../../../lib/airtable/interface';
 import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 
 interface ReportCardProps {
   report: FinancialSummaryRecord;
@@ -37,6 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function ReportCard(props: ReportCardProps): JSX.Element {
+  const intl = useInternationalization(); 
   const { report, deadline } = props;
   const classes = useStyles(props);
 
@@ -54,7 +57,7 @@ export default function ReportCard(props: ReportCardProps): JSX.Element {
             state: { report: report, deadline: deadline }
           }}
         >
-          <Button label={'View'} variant="outlined" />
+          <Button label={intl(words.view)} variant="outlined" />
         </Link>
       </CardActions>
     </Card>

@@ -10,13 +10,9 @@ import Snackbar from '../components/Snackbar';
 import TextField from '../components/TextField';
 import { loginUser, signupUser } from '../lib/airlock/airlock';
 import { selectIsOnline } from '../lib/redux/userData';
+import { useInternationalization } from '../lib/i18next/translator';
+import words from '../lib/i18next/words';
 
-const validationSchema = yup.object({
-  username: yup.string().required('Must enter a username'),
-  // TODO: set more reasonable minimum number of characters + other constraints
-  password: yup.string().min(4, 'Password should be of minimum 4 characters length').required('Must enter a password'),
-  submitAction: yup.string(),
-});
 
 enum LoginAction {
   LOGIN = 'login',
@@ -24,11 +20,19 @@ enum LoginAction {
 }
 
 function Login() {
+  const intl = useInternationalization(); 
   const [errorMessage, setErrorMessage] = useState('');
   // Indicates which button (login or create) should be loading
   const [loadingButton, setLoadingButton] = useState('');
   const isOnline = useSelector(selectIsOnline);
   const history = useHistory();
+
+  const validationSchema = yup.object({
+    username: yup.string().required(intl(words.must_enter_an_x, words.username)),
+    // TODO: set more reasonable minimum number of characters + other constraints
+    password: yup.string().min(4, intl(words.password_should_be_of_minimum_x_characters_length, '4')).required(intl(words.must_enter_a_x, words.password)),
+    submitAction: yup.string(),
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -48,7 +52,7 @@ function Login() {
       setLoadingButton(LoginAction.CREATE);
       const { success, message } = await signupUser(username, password);
       if (!success) {
-        setErrorMessage('Register unsuccessful.' + message);
+        setErrorMessage(`${intl(words.x_unsuccessful, words.register)}.` + message);
         console.error(message);
         setLoadingButton('');
         return;
@@ -62,7 +66,7 @@ function Login() {
       history.push('/home');
     } else {
       setLoadingButton('');
-      setErrorMessage('Login unsuccessful. Incorrect username or password.');
+      setErrorMessage(`${intl(words.x_unsuccessful, words.login)}. ${intl(words.incorrect_username_or_password)}.`);
     }
   };
 
@@ -74,7 +78,7 @@ function Login() {
           <div style={{ marginBottom: 24 }}>
             <TextField
               id="username"
-              label="Username"
+              label={intl(words.username)}
               value={formik.values.username}
               onChange={formik.handleChange}
               error={formik.touched.username && Boolean(formik.errors.username)}
@@ -83,7 +87,7 @@ function Login() {
             />
             <TextField
               id="password"
-              label="Password"
+              label={intl(words.password)}
               required
               value={formik.values.password}
               onChange={formik.handleChange}
@@ -95,7 +99,7 @@ function Login() {
           <Typography color="error">{errorMessage}</Typography>
           <Button
             loading={loadingButton === LoginAction.LOGIN}
-            label="Login"
+            label={intl(words.login)}
             fullWidth
             onClick={() => {
               formik.setFieldValue('submitAction', LoginAction.LOGIN);
@@ -103,7 +107,7 @@ function Login() {
           />
           <Button
             loading={loadingButton === LoginAction.CREATE}
-            label="Create Account"
+            label={intl(words.create_x, words.account)}
             onClick={() => {
               formik.setFieldValue('submitAction', LoginAction.CREATE);
             }}
@@ -118,7 +122,8 @@ function Login() {
         open={!isOnline}
         disableAutoHide
         noBottomMargin
-        message="You are not connected to a network. Please reconnect to log in."
+        message={`${intl(words.you_are_not_connected_to_a_network)}. ${intl(words.please_x, words.reconnect_to_log_in)}.`}
+        // You are not connected to a network. Please reconnect to log in. words
       />
     </Container>
   );
