@@ -66,7 +66,7 @@ function AddCustomer(props: AddCustomerProps) {
   const validationSchema = yup.object({
     customerName: yup.string().required(intl(words.name_can_not_be_blank)),
     selectedMeterType:
-      yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], intl(words.meter)),
+      yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], intl(words.meter_type_must_be_one_of_smart_analog_or_no_meter)),
     selectedTariffPlanId: yup.string().required(intl(words.must_select_a_tariff_plan)),
     meterNumber: yup.mixed().when('selectedMeterType', {
       is: (MeterType.SMART_METER || MeterType.ANALOG_METER),
@@ -133,7 +133,7 @@ function AddCustomer(props: AddCustomerProps) {
     return (
       <Select
         id='selectedTariffPlanId'
-        onChange={(event) => formik.setFieldValue('selectedTariffPlanId', event.target.value)} label={'Tariff Plan'}
+        onChange={(event) => formik.setFieldValue('selectedTariffPlanId', event.target.value)} label={intl(words.tariff_plan)}
         value={formik.values.selectedTariffPlanId}
         error={formik.touched.selectedTariffPlanId && Boolean(formik.errors.selectedTariffPlanId)}
       >
@@ -187,7 +187,7 @@ function AddCustomer(props: AddCustomerProps) {
               <Select
                 onChange={(event) => {
                   const meterType = event.target.value as string;
-                  formik.setFieldValue('selectedMeterType', meterType)
+                  formik.setFieldValue('selectedMeterType', intl(meterType))
 
                   // Clear the meterNumber if NO_METER is selected
                   if (meterType === MeterType.NO_METER) {

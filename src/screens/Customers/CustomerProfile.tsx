@@ -85,7 +85,7 @@ function CustomerProfile(props: CustomerProps) {
 
   let tariffInfo: CardPropsInfo[] = [
     { number: fixedTariff, label: intl(words.fixed_tariff), unit: intl(words.ks) },
-    { number: unitTariff, label: intl(words.per_unit_tariff), unit: intl(words.ks) },
+    { number: unitTariff, label: intl(words.unit_tariff), unit: intl(words.ks) },
     { number: freeUnits, label: intl(words.kwh), unit: intl(words.kwh) },
   ]
 

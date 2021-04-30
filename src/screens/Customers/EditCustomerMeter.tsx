@@ -63,7 +63,7 @@ function EditCustomerMeter() {
                     <Select
                         onChange={(event) => {
                             const meterType = event.target.value as string;
-                            formik.setFieldValue('meterType', meterType)
+                            formik.setFieldValue('meterType', intl(meterType))
 
                             // Clear the meterNumber if NO_METER is selected
                             if (meterType === MeterType.NO_METER) {

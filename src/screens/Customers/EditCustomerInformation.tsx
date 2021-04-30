@@ -64,7 +64,7 @@ function EditCustomerInformation() {
   }
 
   return (
-    <BaseScreen title="Customer Information" leftIcon="backNav">
+    <BaseScreen title={intl(words.customer_information)} leftIcon="backNav">
       <form onSubmit={formik.handleSubmit} noValidate>
         <TextField
           label={intl(words.name)}

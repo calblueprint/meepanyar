@@ -197,7 +197,7 @@ function CustomerMain(props: CustomerMainProps) {
   );
 
   return (
-    <BaseScreen rightIcon="user" title="Customers" searchAction={handleSearchChange} searchExit={exitSearch}>
+    <BaseScreen rightIcon="user" title={intl(words.customers)} searchAction={handleSearchChange} searchExit={exitSearch}>
       <Tabs
         textColor="primary"
         indicatorColor="primary"
@@ -212,7 +212,7 @@ function CustomerMain(props: CustomerMainProps) {
       </Tabs>
       <div className={classes.indicatorContainer}>
         <FiberManualRecordIcon className={classes.indicator}/>
-        <Typography>{intl(words.active_user)}</Typography>
+        <Typography>{`${intl(words.status)}: ${intl(words.active)}`}</Typography>
       </div>
       <BaseScrollView>
         {getTabContent()}
