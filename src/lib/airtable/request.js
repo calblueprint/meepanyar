@@ -34,8 +34,7 @@ import {
   addPurchaseRequestToRedux,
   updateInventoryQuantityInRedux,
 } from '../redux/inventoryData';
-import moment from 'moment';
-import { EMPTY_INVENTORY_UPDATE } from '../redux/inventoryDataSlice';
+import { generateInventoryRecord, generateInventoryUpdateRecord } from '../utils/inventoryUtils';
 /*
  ******* CREATE RECORDS *******
  */
@@ -209,20 +208,43 @@ export const createManyFinancialSummaries = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: Create a product (inventory type) and add it to Redux
-export const createProduct = async (product) => {
-  let productId = "";
+// NONGENERATED: Create a product (inventory type), inventory record, and inventory update, then add them to 
+// Redux. Returns the ids of each new record.
+export const createProductInventoryAndUpdate = async (product, startingAmount, siteId, userId) => {
+  let productId = '';
+  let inventoryId = '';
+  let inventoryUpdateId = '';
   try {
     delete product.id; // Remove the id field to add to Airtable
-    productId = await createRecord(Tables.Products, product);
+    // Product, inventory, and inventoryUpdate creation is done on this single endpoint to account for offline functionality
+    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/products/create`, {
+
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...product, startingAmount, siteId, userId }),
+    });
+    console.log('Response for createProductInventoryAndUpdate: ', resp);
+    await resp.json().then((data) => ({ productId, inventoryId, inventoryUpdateId } = data));
   } catch (error) {
-    console.log('(createProduct) Airtable Error: ', error);
+    console.log('(createProductInventoryAndUpdate) Airtable Error: ', error);
     productId = generateOfflineId();
+    inventoryId = generateOfflineId();
+    inventoryUpdateId = generateOfflineId();
   }
   product.id = productId;
   addProductToRedux(product);
-  return product.id;
-}
+
+  const inventory = generateInventoryRecord(siteId, startingAmount, productId);
+  inventory.id = inventoryId;
+  const inventoryUpdate = generateInventoryUpdateRecord(inventoryId, startingAmount, userId);
+  inventoryUpdate.id = inventoryUpdateId;
+  addInventoryToRedux(inventory);
+  addInventoryUpdateToRedux(inventoryUpdate);
+
+  return { productId, inventoryId, inventoryUpdateId };
+};
 
 export const createManyProducts = async (records) => {
   const createPromises = [];
@@ -235,28 +257,37 @@ export const createManyProducts = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: Create an inventory record (add product to site)
-export const createInventory = async (inventory) => {
-  // Site and product must already exist in Airtable.
-  // Make a standard request to create an inventory item.
+// NONGENERATED: Create an inventory record (add product to site) and inventory update, then add both to Redux.
+// Returns the ids for the new records.
+// NOTE: this requires that the site and product already exist in Airtable. If the product doesn't exist,
+// use createProductInventoryAndUpdate.
+export const createInventoryAndUpdate = async (inventory, userId ) => {
   let inventoryId = "";
+  let inventoryUpdateId = "";
+
   try {
-    const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
+    delete inventory.id; // Remove the id field to add to Airtable
+     // Inventory and inventoryUpdate creation is done on this single endpoint to account for offline functionalitys
+     const resp = await fetch(`${process.env.REACT_APP_AIRTABLE_ENDPOINT_URL}/inventory/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(inventory)
+      body: JSON.stringify({...inventory, userId})
     })
-    console.log('Response for inventory: ', resp);
-    await resp.json().then(data => inventoryId = data.id);
+    console.log('Response for createInventoryAndUpdate: ', resp);
+    await resp.json().then((data) => ({inventoryId, inventoryUpdateId} = data));
   } catch (err) {
     inventoryId = generateOfflineId();
-    console.log('Error with create inventory request: ', err);
+    inventoryUpdateId = generateOfflineId();
+    console.log('(createInventoryAndUpdate) Airtable Error: ', err);
   }
   inventory.id = inventoryId;
   addInventoryToRedux(inventory);
-  return inventory;
+  const inventoryUpdate = generateInventoryUpdateRecord(inventoryId, inventory.currentQuantity, userId);
+  inventoryUpdate.id = inventoryUpdateId;
+  addInventoryUpdateToRedux(inventoryUpdate);
+  return {inventoryId, inventoryUpdateId};
 }
 
 export const createManyInventorys = async (records) => {
@@ -312,12 +343,7 @@ export const createInventoryUpdate = async (record) => {
 // TODO: handle offline workflow of creating inventory updates for inventory
 // that was created offline (no Airtable id).
 export const createInventoryUpdateAndUpdateInventory = async (userId, inventory, updatedAmount) => {
-  const inventoryUpdate = JSON.parse(JSON.stringify(EMPTY_INVENTORY_UPDATE));
-  inventoryUpdate.userId = userId;
-  inventoryUpdate.previousQuantity = inventory.currentQuantity;
-  inventoryUpdate.updatedQuantity = updatedAmount;
-  inventoryUpdate.inventoryId = inventory.id;
-  inventoryUpdate.createdAt = moment().toISOString();
+  const inventoryUpdate = generateInventoryUpdateRecord(inventory.id, updatedAmount, userId);
 
   let inventoryUpdateId = "";
   try {

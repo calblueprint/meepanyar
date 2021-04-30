@@ -17,15 +17,20 @@ import {
   selectAllCurrentSitePurchaseRequestsArray,
   selectAllInventoryUpdatesArray,
   selectCurrentSiteInventoryById,
+  selectCurrentSitePurchaseRequestById,
   selectProductById,
   setCurrInventoryId,
+  setCurrPurchaseRequestId,
   updateInventoryQuantity,
   updatePurchaseRequest
 } from './inventoryDataSlice';
 import { selectCurrentSiteId } from './siteData';
+import { isBeforeCurrentPeriod } from '../moment/momentUtils';
 import { RootState, store } from './store';
 
 const getInventoryId = (_: RootState, inventoryId: string) => inventoryId;
+
+const getPurchaseRequestId = (_: RootState, purchaseRequestId: string) => purchaseRequestId;
 
 export const selectPurchaseRequestsArrayByInventoryId = createSelector(
   selectAllCurrentSitePurchaseRequestsArray,
@@ -52,6 +57,8 @@ export const selectProductByInventoryId = createSelector(getInventoryId, store.g
 
 // Custom selectors for current inventory and product
 export const selectCurrentInventoryId = (state: RootState): string => state.inventoryData.currentInventoryId;
+export const selectCurrentPurchaseRequestId = (state: RootState): string =>
+  state.inventoryData.currentPurchaseRequestId;
 
 export const selectCurrentInventory = createSelector(
   selectCurrentInventoryId,
@@ -63,6 +70,12 @@ export const selectCurrentInventoryProduct = createSelector(
   selectCurrentInventoryId,
   store.getState,
   (inventoryId, state) => selectProductByInventoryId(state, inventoryId),
+);
+
+export const selectCurrentPurchaseRequest = createSelector(
+  selectCurrentPurchaseRequestId,
+  store.getState,
+  (currentPurchaseRequestId, state) => selectCurrentSitePurchaseRequestById(state, currentPurchaseRequestId),
 );
 
 export const selectPendingPurchaseRequestCount = createSelector(
@@ -133,6 +146,36 @@ export const setCurrentInventoryIdInRedux = (inventoryId: string): void => {
   store.dispatch(setCurrInventoryId(inventoryId));
 };
 
+export const setCurrentPurchaseRequestIdInRedux = (purchaseRequestId: string): void => {
+  store.dispatch(setCurrPurchaseRequestId(purchaseRequestId));
+};
+
 export const addProductToRedux = (product: ProductRecord): void => {
   store.dispatch(addProduct(product));
 };
+
+export const selectCurrentPeriodPurchaseRequestsApprovedTotalAmountSpent = createSelector(
+    selectAllCurrentSitePurchaseRequestsArray,
+    (purchaseRequests) => {
+      let amount = 0;
+      purchaseRequests.forEach((pr: PurchaseRequestRecord) => {
+        if (!isBeforeCurrentPeriod(pr.createdAt) && pr.status === PurchaseRequestStatus.APPROVED) {
+          amount += pr.amountSpent;
+        }
+      });
+      return amount;
+    }
+)
+
+export const selectCurrentPeriodPurchaseRequestsDeniedTotalAmountSpent = createSelector(
+  selectAllCurrentSitePurchaseRequestsArray,
+  (purchaseRequests) => {
+    let amount = 0;
+    purchaseRequests.forEach((pr: PurchaseRequestRecord) => {
+      if (!isBeforeCurrentPeriod(pr.createdAt) && pr.status === PurchaseRequestStatus.DENIED) {
+        amount += pr.amountSpent;
+      }
+    });
+    return amount;
+  }
+)

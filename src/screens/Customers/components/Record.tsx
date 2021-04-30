@@ -1,6 +1,8 @@
 import React from 'react';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
+import { roundToString } from '../../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -9,13 +11,10 @@ const styles = (theme: Theme) =>
       marginBottom: '15px',
       borderBottom: `1px solid ${theme.palette.text.secondary}`,
     },
-    unbolded: {
-      fontWeight: 500,
-    },
   });
 
 interface RecordProps {
-  classes: { root: string; unbolded: string };
+  classes: { root: string; };
   date: string;
   used?: number | null;
   amount: number;
@@ -25,11 +24,11 @@ function Record(props: RecordProps) {
   const { classes } = props;
   return (
     <div className={classes.root}>
-      <Typography variant="h2" className={classes.unbolded}>
-        {props.date}
+      <Typography variant="body2">
+        {formatDateStringToLocal(props.date)}
       </Typography>
       <Typography variant="h1">
-        {props.used ? props.used + ' kWh |' : null} {props.amount} Ks
+        {props.used ? roundToString(props.used) + ' kWh |' : null} {roundToString(props.amount)} Ks
       </Typography>
     </div>
   );

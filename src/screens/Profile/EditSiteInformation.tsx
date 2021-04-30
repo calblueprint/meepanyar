@@ -9,13 +9,19 @@ import Button from '../../components/Button';
 import { updateSite } from '../../lib/airtable/request';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 
 function EditSiteInformation() {
+    const intl = useInternationalization();
     const history = useHistory();
 
     const currentSite = useSelector(selectCurrentSiteInformation);
-    const currentSiteName = currentSite ? currentSite.name : 'No Site';
+    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
+    const currentSiteName = currentSite ? currentSite.name : intl(words.no_site);
+
     const [loading, setLoading] = useState(false);
 
     const validationSchema = yup.object({
@@ -55,12 +61,12 @@ function EditSiteInformation() {
     }
 
     return (
-        <BaseScreen title="Edit Site Information" leftIcon="backNav">
+        <BaseScreen title={intl(words.edit_site_information)} leftIcon="backNav">
             <form noValidate onSubmit={formik.handleSubmit}>
                 <List>
                     <ListItemWrapper
-                        leftText='Site Name'
-                        editable
+                        leftText={intl(words.site_name)}
+                        editable={currentUserIsAdmin}
                         dense
                         editValue={formik.values.siteName}
                         error={formik.touched.siteName && Boolean(formik.errors.siteName)}
@@ -70,7 +76,7 @@ function EditSiteInformation() {
                         editPlaceholder={'Input Site Name'}
                     />
                 </List>
-                <Button fullWidth label={'Save'} loading={loading} />
+                {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} loading={loading} />}
             </form>
         </BaseScreen>
     );

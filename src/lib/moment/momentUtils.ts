@@ -1,17 +1,30 @@
 import moment from 'moment';
+import { FinancialSummaryRecord, SiteRecord } from '../airtable/interface';
 import { selectCurrentSiteGracePeriod } from '../redux/siteData';
 import { store } from '../redux/store';
 
 // Returns a string of the local date & time in a language- and timezone-sensitive format
 // given a DateTime string.
-export const formatDateStringToLocal = (dateString: string): string => {
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-  };
+export const formatDateStringToLocal = (dateString: string, excludeTime?: boolean): string => {
+
+  let options: Intl.DateTimeFormatOptions;
+
+  if (excludeTime) {
+    options = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+    };
+  } else {
+    options = {
+      year: 'numeric',
+      month: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    };
+  }
+
   return moment(dateString).local().toDate().toLocaleString(undefined, options);
 };
 
@@ -30,6 +43,18 @@ export const getPeriodFromDate = (date: string) => {
 export const getCurrentPeriod = () => {
   const year = moment().year();
   const month = moment().month() + 1;
+  return year + "-" + month.toString().padStart(2, "0");
+}
+
+export const getNextPeriod = () => {
+  let year = moment().year();
+  let month = moment().month();
+  if (month == 11) {
+    month = 1;
+    year += 1;
+  } else {
+    month += 2;
+  }
   return year + "-" + month.toString().padStart(2, "0");
 }
 
@@ -55,6 +80,16 @@ export const getDiffinPeriods = (x: string, y: string) => {
 // Returns the grace period applied to the current month.
 // All meter readings logged after this date are for the current month's period
 export const getCurrentMonthGracePeriodDeadline = () => {
-  const gracePeriodDays : number = selectCurrentSiteGracePeriod(store.getState()) || 0;
+  const gracePeriodDays: number = selectCurrentSiteGracePeriod(store.getState()) || 0;
   return moment().startOf('month').add(gracePeriodDays, 'days');
+}
+
+
+// Returns end of period plus number of days in grace period
+// Formats & converts to string
+export const getGracePeriodDeadline = (periodDate: string, site: SiteRecord) => {
+  const m = moment(new Date(periodDate)).endOf('month');
+  const d = moment.duration({'days' : site.gracePeriod});
+  m.add(d);
+  return formatDateStringToLocal(m.toString());
 }

@@ -11,6 +11,7 @@ import { PurchaseRequestRecord } from '../../../lib/airtable/interface';
 import { useInternationalization } from '../../../lib/i18next/translator';
 import words from '../../../lib/i18next/words';
 import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
+import { setCurrentPurchaseRequestIdInRedux } from '../../../lib/redux/inventoryData';
 import {
   EMPTY_PRODUCT,
   PurchaseRequestStatus,
@@ -22,6 +23,7 @@ import { selectCurrentUserId, selectCurrentUserIsAdmin } from '../../../lib/redu
 import { reviewPurchaseRequest } from '../../../lib/utils/inventoryUtils';
 import { isOfflineId } from '../../../lib/utils/offlineUtils';
 import { getPurchaseRequestReviewButtons } from '../PurchaseRequest';
+import { roundToString } from '../../../lib/utils/utils';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -69,19 +71,19 @@ interface PurchaseRequestCardProps {
   showSnackbarCallback: () => void;
 }
 
-export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size?: 'small' | 'large') => {
+export const getPurchaseRequestStatusIcon = (status: PurchaseRequestStatus, size?: 'small' | 'large', grey?: boolean ) => {
   switch (status) {
     case PurchaseRequestStatus.APPROVED:
-      return <CheckCircleOutlineIcon color={'primary'} fontSize={size || 'default'} />;
+      return <CheckCircleOutlineIcon color={grey ? 'secondary': 'primary'} fontSize={size || 'default'} />;
     case PurchaseRequestStatus.DENIED:
-      return <CancelOutlinedIcon color={'error'} fontSize={size || 'default'} />;
+      return <CancelOutlinedIcon color={grey ? 'secondary': 'error'} fontSize={size || 'default'} />;
     default:
       return <HourglassEmptyIcon fontSize={size || 'default'} />;
   }
 };
 
 function PurchaseRequestCard(props: PurchaseRequestCardProps) {
-  const intl = useInternationalization(); 
+  const intl = useInternationalization();
   const { classes, purchaseRequest, showSnackbarCallback } = props;
   const [status, setStatus] = useState(purchaseRequest.status);
   const product =
@@ -98,7 +100,6 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
     } else {
       const newStatus = approved ? PurchaseRequestStatus.APPROVED : PurchaseRequestStatus.DENIED;
       setStatus(newStatus);
-      purchaseRequest.status = newStatus;
       reviewPurchaseRequest(purchaseRequest, approved, userId);
     }
   };
@@ -107,8 +108,9 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
     <Card variant="outlined" className={classes.cardContainer}>
       <Link
         key={purchaseRequest.id}
-        to={{ pathname: `/inventory/purchase-requests/purchase-request`, state: { purchaseRequest } }}
+        to={{ pathname: `/inventory/purchase-requests/purchase-request` }}
         style={{ flex: 1 }}
+        onClick={() => setCurrentPurchaseRequestIdInRedux(purchaseRequest.id)}
       >
         <CardContent className={classes.cardContent}>
           <div className={classes.leftContent}>
@@ -121,9 +123,9 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
             <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(
               purchaseRequest.createdAt,
             )}`}</Typography>
-            <Typography variant="body1" color="textSecondary">{`${purchaseRequest.amountPurchased} ${product.unit}(${intl(words.s)})`}</Typography>
+            <Typography variant="body1" color="textSecondary">{`${roundToString(purchaseRequest.amountPurchased)} ${product.unit}(${intl(words.s)})`}</Typography>
           </div>
-          <Typography color="textPrimary" variant="h2">{`${purchaseRequest.amountSpent} ${intl(words.ks)}`}</Typography>
+          <Typography color="textPrimary" variant="h2">{`${roundToString(purchaseRequest.amountSpent)} ${intl(words.ks)}`}</Typography>
         </CardContent>
       </Link>
       <CardActions className={classes.cardActions}>

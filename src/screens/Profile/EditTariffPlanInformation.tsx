@@ -10,12 +10,19 @@ import { updateTariffPlanInRedux } from '../../lib/redux/siteData';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
+import { useSelector } from 'react-redux';
+import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
+import { roundToString } from '../../lib/utils/utils';
 
 type EditTarifPlanInformationProps = RouteComponentProps<{}, {}, { tariffPlan: TariffPlanRecord }>;
 
 function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
+    const intl = useInternationalization();
     const { tariffPlan } = props.location.state;
     const history = useHistory();
+    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin)
     const [loading, setLoading] = useState(false);
 
     const validationSchema = yup.object({
@@ -26,9 +33,9 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
 
     const formik = useFormik({
         initialValues: {
-            newFixedTariff: tariffPlan.fixedTariff.toString() || '',
-            newTariffByUnit: tariffPlan.tariffByUnit.toString() || '',
-            newFreeUnits: tariffPlan.freeUnits.toString() || '',
+            newFixedTariff: roundToString(tariffPlan.fixedTariff) || '',
+            newTariffByUnit: roundToString(tariffPlan.tariffByUnit) || '',
+            newFreeUnits: roundToString(tariffPlan.freeUnits) || '',
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
@@ -69,46 +76,46 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
             <form noValidate onSubmit={formik.handleSubmit}>
                 <List>
                     <ListItemWrapper
-                        leftText='Fixed Payment'
-                        editable
+                        leftText={intl(words.fixed_payment)}
+                        editable={currentUserIsAdmin}
                         dense
                         editValue={formik.values.newFixedTariff}
                         onEditChange={formik.handleChange}
                         editInputId={'newFixedTariff'}
-                        editUnit={'Ks'}
+                        editUnit={intl(words.ks)}
                         editType='number'
                         error={formik.touched.newFixedTariff && Boolean(formik.errors.newFixedTariff)}
                         helperText={formik.touched.newFixedTariff && formik.errors.newFixedTariff}
-                        editPlaceholder={'e.g. 5'}
+                        editPlaceholder={intl(words.eg_x, '5')}
                     />
                     <ListItemWrapper
-                        leftText='Per Unit Payment'
-                        editable
+                        leftText={intl(words.per_unit_payment)}
+                        editable={currentUserIsAdmin}
                         dense
                         editValue={formik.values.newTariffByUnit}
                         onEditChange={formik.handleChange}
                         editInputId={'newTariffByUnit'}
-                        editUnit={'Ks/kWh'}
+                        editUnit={`${intl(words.ks)}/${intl(words.kwh)}`}
                         editType='number'
                         error={formik.touched.newTariffByUnit && Boolean(formik.errors.newTariffByUnit)}
                         helperText={formik.touched.newTariffByUnit && formik.errors.newTariffByUnit}
-                        editPlaceholder={'e.g. 5'}
+                        editPlaceholder={intl(words.eg_x, '5')}
                     />
                     <ListItemWrapper
-                        leftText='Free Units'
-                        editable
+                        leftText={intl(words.free_units)}
+                        editable={currentUserIsAdmin}
                         dense
                         editValue={formik.values.newFreeUnits}
                         onEditChange={formik.handleChange}
                         editInputId={'newFreeUnits'}
-                        editUnit={'kWh'}
+                        editUnit={intl(words.kwh)}
                         editType='number'
                         error={formik.touched.newFreeUnits && Boolean(formik.errors.newFreeUnits)}
                         helperText={formik.touched.newFreeUnits && formik.errors.newFreeUnits}
-                        editPlaceholder={'e.g. 5'}
+                        editPlaceholder={intl(words.eg_x, '5')}
                     />
                 </List>
-                <Button fullWidth label={'Save'} loading={loading} />
+                {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} loading={loading} />}
             </form>
         </BaseScreen>
     );

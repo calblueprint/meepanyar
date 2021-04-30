@@ -9,16 +9,16 @@ export const detectLanguage = (): string => {
 /**
  * Supported encodings for Mee Panyar. 
  */
-export enum LanguageEncoding { 
+export enum LanguageEncoding {
     UNICODE,
-    ZAWGYI 
+    ZAWGYI
 }
 
 /**
  * Detect and return user device encoding.
  */
 export const detectEncoding = (): LanguageEncoding => {
-    const context = document.createElement('canvas').getContext('2d'); 
+    const context = document.createElement('canvas').getContext('2d');
     const kaWidth = context?.measureText('က').width;
     const patSintWidth = context?.measureText('က္က').width;
     if (kaWidth == patSintWidth) {

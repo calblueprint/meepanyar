@@ -7,6 +7,7 @@ import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 interface ListItemWrapperProps {
   leftText: string;
   rightText?: string;
+  boldRightText?: boolean;
   linkTo?: string;
   editable?: boolean;
   onEditChange?: (event: React.ChangeEvent<{ value: unknown }>) => void;
@@ -19,16 +20,21 @@ interface ListItemWrapperProps {
   helperText?: string | false;
   dense?: boolean;
   divider?: boolean;
+  smallLineHeight?: boolean;
 }
 
 const styles = makeStyles((theme: Theme) =>
   createStyles({
+    content: (props: ListItemWrapperProps) => ({
+      padding: props.smallLineHeight ? 0 : undefined,
+      margin: props.smallLineHeight ? '-8px 0px' : undefined,
+    }),
     iconStyles: {
       paddingRight: 0
     },
-    rightTextStyles: {
-      color: theme.palette.text.disabled
-    },
+    rightTextStyles: (props: ListItemWrapperProps) => ({
+      color: props.boldRightText ? theme.palette.text.primary : theme.palette.text.disabled,
+    }),
     inputStyles: {
       textAlign: 'right',
       color: theme.palette.text.disabled
@@ -49,6 +55,8 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
     error,
     helperText,
     editPlaceholder,
+    boldRightText,
+    smallLineHeight,
     ...listItemProps } = props;
   const classes = styles(props);
 
@@ -68,7 +76,7 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
   const getRightText = () =>
   (<ListItemText
     className={classes.rightTextStyles}
-    primaryTypographyProps={{ align: 'right' }}
+    primaryTypographyProps={{ align: 'right', variant: props.boldRightText ? "h4" : "body1" }}
     primary={editable ?
       <div>
         <InputBase
@@ -88,7 +96,7 @@ const ListItemWrapper = (props: ListItemWrapperProps) => {
 
   return (
     // Need to case as any here because of https://github.com/mui-org/material-ui/issues/14971
-    <ListItem disableGutters button={(linkTo !== undefined) as any} onClick={navigateToLink} {...listItemProps} >
+    <ListItem disableGutters button={(linkTo !== undefined) as any} onClick={navigateToLink} {...listItemProps} className={classes.content}>
       <ListItemText
         primary={leftText}
         primaryTypographyProps={{ color: 'textPrimary', variant: 'body1' }}

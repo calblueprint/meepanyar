@@ -6,16 +6,21 @@ import { RouteComponentProps, useHistory } from 'react-router';
 import { UserRecord } from '../../lib/airtable/interface';
 import Button from '../../components/Button';
 import { updateUser } from '../../lib/airtable/request';
-import { updateUserInRedux } from '../../lib/redux/userData';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
+import { selectCurrentUserIsAdmin, updateUserInRedux } from '../../lib/redux/userData';
+import { useSelector } from 'react-redux';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 type EditTarifPlanInformationProps = RouteComponentProps<{}, {}, { user: UserRecord }>;
 
 function EditUserInformation(props: EditTarifPlanInformationProps) {
+    const intl = useInternationalization();
     const { user } = props.location.state;
 
     const history = useHistory();
+    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
     const [loading, setLoading] = useState(false);
 
     const validationSchema = yup.object({
@@ -56,20 +61,22 @@ function EditUserInformation(props: EditTarifPlanInformationProps) {
                 <List>
                     <ListItemSwitchWrapper
                         id='isAdmin'
-                        leftText='Admin Permission'
+                        leftText={intl(words.admin_permission)}
                         checked={formik.values.isAdmin}
                         handleChange={formik.handleChange}
+                        disabled={!currentUserIsAdmin}
                     />
                     <ListItemSwitchWrapper
                         id='isActive'
-                        leftText='Active Status'
+                        leftText={intl(words.active_status)}
                         checked={formik.values.isActive}
                         handleChange={formik.handleChange}
+                        disabled={!currentUserIsAdmin}
                     />
                 </List>
-                <Button fullWidth label={'Save'} loading={loading} />
+                {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} loading={loading} />}
             </form>
-        </BaseScreen>
+        </BaseScreen >
     );
 }
 
