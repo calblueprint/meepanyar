@@ -1,13 +1,9 @@
 import Typography from '@material-ui/core/Typography';
 import CloudOutlinedIcon from '@material-ui/icons/CloudOutlined';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
-import AddIcon from '@material-ui/icons/Add';
 import DescriptionIcon from '@material-ui/icons/Description';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import { IconButton } from '@material-ui/core';
 import React from 'react';
 import { formatDateStringToLocal, getCurrentPeriod, getNextPeriod } from '../../lib/moment/momentUtils';
-import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -61,39 +57,8 @@ function Home(props: HomeProps) {
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
   const allSites: SiteRecord[] = useSelector(selectAllSitesInformation) || [];
   const currentSite: SiteRecord = useSelector(selectCurrentSiteInformation) || EMPTY_SITE;
-  const user = useSelector(selectCurrentUser);
   const isOnline = useSelector(selectIsOnline) || false;
   const lastUpdated = formatDateStringToLocal(useSelector(selectLastUpdated));
-
-  // This'll eventually be calculated via a selector that sums the profit of Mee Panyar over all periods
-  // Tiffany will have the profit calculation done on her Financial Summary PR, so we can add it after that
-  const amountOwed = isOnline ? 6000 : 0;
-
-  const getAmountOwedCard = () => {
-    const amountOwedCardInfo: CardPropsInfo[] = [{
-      number: amountOwed.toString(),
-      label: 'Owed to MP',
-      unit: 'Ks'
-    }]
-
-    const addButton = <IconButton
-      component={Link}
-      to='/home'
-      size="small"
-      className={classes.buttonPrimary}
-    >
-      <AddIcon />
-    </IconButton>
-
-    return (
-      <div className={classes.section}>
-        <OutlinedCardList
-          highlightedText={amountOwed !== 0}
-          info={amountOwedCardInfo}
-          rightIcon={amountOwed === 0 ? <CheckCircleOutlineIcon /> : addButton}
-        />
-      </div>)
-  }
 
   return (
     <BaseScreen rightIcon="user">
@@ -118,7 +83,6 @@ function Home(props: HomeProps) {
             </Typography>
           </div>
         </div>
-        {user?.organization === 'Meepanyar' && getAmountOwedCard()}
 
         <div className={classes.section}>
           <Typography variant='h2'>
