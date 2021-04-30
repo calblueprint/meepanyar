@@ -75,8 +75,8 @@ function Home(props: HomeProps) {
   const getAmountOwedCard = () => {
     const amountOwedCardInfo: CardPropsInfo[] = [{
       number: amountOwed.toString(),
-      label: 'Owed to MP',
-      unit: 'Ks'
+      label: intl(words.total_owed_to_mpy),
+      unit: intl(words.ks)
     }]
 
     const addButton = <IconButton
