@@ -1,4 +1,4 @@
-import { List, Typography } from '@material-ui/core';
+import { List } from '@material-ui/core';
 import React, { useState } from 'react';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import ListItemWrapper from '../../components/ListItemWrapper';
@@ -7,6 +7,9 @@ import { TariffPlanRecord } from '../../lib/airtable/interface';
 import Button from '../../components/Button';
 import { updateTariffPlan } from '../../lib/airtable/request';
 import { updateTariffPlanInRedux } from '../../lib/redux/siteData';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+
 import { useSelector } from 'react-redux';
 import { selectCurrentUserIsAdmin } from '../../lib/redux/userData';
 import { useInternationalization } from '../../lib/i18next/translator';
@@ -19,38 +22,34 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
     const intl = useInternationalization();
     const { tariffPlan } = props.location.state;
     const history = useHistory();
-
-    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin);
-    const [newFixedTariff, setNewFixedTariff] = useState(roundToString(tariffPlan.fixedTariff) || '');
-    const [newTariffByUnit, setNewTariffByUnit] = useState(roundToString(tariffPlan.tariffByUnit) || '');
-    const [newFreeUnits, setNewFreeUnits] = useState(roundToString(tariffPlan.freeUnits) || '');
-    const [errorMessage, setErrorMessage] = useState('');
+    const currentUserIsAdmin = useSelector(selectCurrentUserIsAdmin)
     const [loading, setLoading] = useState(false);
 
-    const handleNewFixedTariffInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setNewFixedTariff(event.target.value as string || '');
-    }
+    const validationSchema = yup.object({
+        newFixedTariff: yup.number().min(0, 'Number can not be negative').required('Field is required'),
+        newTariffByUnit: yup.number().min(0, 'Number can not be negative').required('Field is required'),
+        newFreeUnits: yup.number().min(0, 'Number can not be negative').required('Field is required'),
+    });
 
-    const handleNewTariffByUnitInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setNewTariffByUnit(event.target.value as string || '');
-    }
+    const formik = useFormik({
+        initialValues: {
+            newFixedTariff: roundToString(tariffPlan.fixedTariff) || '',
+            newTariffByUnit: roundToString(tariffPlan.tariffByUnit) || '',
+            newFreeUnits: roundToString(tariffPlan.freeUnits) || '',
+        },
+        validationSchema: validationSchema,
+        onSubmit: (values) => {
+            handleSubmit(values)
+        }
+    })
 
-    const handleNewFreeUnitsInput = (event: React.ChangeEvent<{ value: unknown }>) => {
-        setNewFreeUnits(event.target.value as string || '');
-    }
-
-    const handleSubmit = async (event: React.MouseEvent) => {
+    const handleSubmit = async (values: any) => {
+        const { newFixedTariff, newTariffByUnit, newFreeUnits } = values;
+        setLoading(true);
 
         const fixedTariff = parseFloat(newFixedTariff);
         const tariffByUnit = parseFloat(newTariffByUnit);
         const freeUnits = parseFloat(newFreeUnits);
-
-        if (isNaN(fixedTariff) || isNaN(tariffByUnit) || isNaN(freeUnits)) {
-            setErrorMessage(intl(words.all_fields_must_be_filled_with_numbers));
-            return
-        } else {
-            setLoading(true)
-        }
 
         const newTariffPlanProperties = {
             fixedTariff,
@@ -74,49 +73,50 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
 
     return (
         <BaseScreen title={tariffPlan.name} leftIcon="backNav">
-            <List>
-                <ListItemWrapper
-                    leftText={intl(words.fixed_payment)}
-                    rightText={newFixedTariff}
-                    editable={currentUserIsAdmin}
-                    dense
-                    editValue={newFixedTariff}
-                    onEditChange={handleNewFixedTariffInput}
-                    editInputId={'edit-fixed-tariff'}
-                    editUnit={intl(words.ks)}
-                    editType='number'
-                    editError={newFreeUnits !== ''}
-                    editPlaceholder={intl(words.eg_x, '5')}
-                />
-                <ListItemWrapper
-                    leftText={intl(words.per_unit_payment)}
-                    rightText={newTariffByUnit}
-                    editable={currentUserIsAdmin}
-                    dense
-                    editValue={newTariffByUnit}
-                    onEditChange={handleNewTariffByUnitInput}
-                    editInputId={'edit-tariff-by-unit'}
-                    editUnit={`${intl(words.ks)}/${intl(words.kwh)}`}
-                    editType='number'
-                    editError={newFreeUnits !== ''}
-                    editPlaceholder={intl(words.eg_x, '5')}
-                />
-                <ListItemWrapper
-                    leftText={intl(words.free_units)}
-                    rightText={newFreeUnits}
-                    editable={currentUserIsAdmin}
-                    dense
-                    editValue={newFreeUnits}
-                    onEditChange={handleNewFreeUnitsInput}
-                    editInputId={'edit-free-units'}
-                    editUnit={intl(words.kwh)}
-                    editType='number'
-                    editError={newFreeUnits !== ''}
-                    editPlaceholder={intl(words.eg_x, '5')}
-                />
-            </List>
-            {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} onClick={handleSubmit} loading={loading} />}
-            {errorMessage ? <Typography color='error' align='center'> {errorMessage} </Typography> : null}
+            <form noValidate onSubmit={formik.handleSubmit}>
+                <List>
+                    <ListItemWrapper
+                        leftText={intl(words.fixed_payment)}
+                        editable={currentUserIsAdmin}
+                        dense
+                        editValue={formik.values.newFixedTariff}
+                        onEditChange={formik.handleChange}
+                        editInputId={'newFixedTariff'}
+                        editUnit={intl(words.ks)}
+                        editType='number'
+                        error={formik.touched.newFixedTariff && Boolean(formik.errors.newFixedTariff)}
+                        helperText={formik.touched.newFixedTariff && formik.errors.newFixedTariff}
+                        editPlaceholder={intl(words.eg_x, '5')}
+                    />
+                    <ListItemWrapper
+                        leftText={intl(words.per_unit_payment)}
+                        editable={currentUserIsAdmin}
+                        dense
+                        editValue={formik.values.newTariffByUnit}
+                        onEditChange={formik.handleChange}
+                        editInputId={'newTariffByUnit'}
+                        editUnit={`${intl(words.ks)}/${intl(words.kwh)}`}
+                        editType='number'
+                        error={formik.touched.newTariffByUnit && Boolean(formik.errors.newTariffByUnit)}
+                        helperText={formik.touched.newTariffByUnit && formik.errors.newTariffByUnit}
+                        editPlaceholder={intl(words.eg_x, '5')}
+                    />
+                    <ListItemWrapper
+                        leftText={intl(words.free_units)}
+                        editable={currentUserIsAdmin}
+                        dense
+                        editValue={formik.values.newFreeUnits}
+                        onEditChange={formik.handleChange}
+                        editInputId={'newFreeUnits'}
+                        editUnit={intl(words.kwh)}
+                        editType='number'
+                        error={formik.touched.newFreeUnits && Boolean(formik.errors.newFreeUnits)}
+                        helperText={formik.touched.newFreeUnits && formik.errors.newFreeUnits}
+                        editPlaceholder={intl(words.eg_x, '5')}
+                    />
+                </List>
+                {currentUserIsAdmin && <Button fullWidth label={intl(words.save)} loading={loading} />}
+            </form>
         </BaseScreen>
     );
 }
