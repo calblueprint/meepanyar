@@ -3,6 +3,8 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import TextWrapper from '../../../components/TextWrapper';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -56,10 +58,11 @@ interface ConfirmDialogContentsProps {
 }
 
 export default function ConfirmDialogContents(props: ConfirmDialogContentsProps): JSX.Element {
+  const intl = useInternationalization(); 
   const classes = useStyles();
 
-  const profitLabels = ['Total Profit', 'Your Profit', "Mee Panyar's Profit"];
-  const currencyUnits = [' Ks', ' Ks', ' Ks'];
+  const profitLabels = [intl(words.total_x, words.profit), intl(words.your_x, words.profit), intl(words.mee_panyar_profit)];
+  const currencyUnits = [` ${intl(words.ks)}`, ` ${intl(words.ks)}`, ` ${intl(words.ks)}`];
   const zeroes = [0, 0];
 
   return (
@@ -81,14 +84,14 @@ export default function ConfirmDialogContents(props: ConfirmDialogContentsProps)
         />
       </div>
       <Typography variant="body1" className={classes.confirmText}>
-        Please make sure that you want to close the current period before clicking "Confirm"
+        {intl(words.please_x, words.make_sure_that_you_want_to_close_the_current_period_before_clicking_confirm)}
       </Typography>
       <div className={classes.buttons}>
         <Button className={classes.cancelButton} size="medium" onClick={props.onClick} variant="contained">
-          <Typography variant="body2">Cancel</Typography>
+          <Typography variant="body2">{intl(words.cancel)}</Typography>
         </Button>
         <Button className={classes.confirmButton} size="medium" variant="contained">
-          <Typography variant="body2">Confirm</Typography>
+          <Typography variant="body2">{intl(words.confirm_x, ' ')}</Typography>
         </Button>
       </div>
     </div>
