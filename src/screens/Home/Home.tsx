@@ -17,7 +17,7 @@ import SiteMenu from './components/SiteMenu';
 import { useInternationalization } from '../../lib/i18next/translator';
 import words from '../../lib/i18next/words';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
-import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
+import { selectCustomersToMeter, selectCustomersToCollect, CustomerStatus } from '../../lib/redux/customerData';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
@@ -126,15 +126,23 @@ function Home(props: HomeProps) {
         <div className={classes.section}>
           <Typography variant='h2'>
             {intl(words.tasks)}
-        </Typography>
-          <Link to={'/customers'}>
+          </Typography>
+          <Link
+            to={{
+              pathname: `/customers`,
+              state: { tabValue: CustomerStatus.METER }
+            }}>
             <HomeMenuItem
               label={intl(words.to_meter)}
               amount={numCustomersToMeter}
               iconType="meter"
             />
           </Link>
-          <Link to={'/customers'}>
+          <Link
+            to={{
+              pathname: `/customers`,
+              state: { tabValue: CustomerStatus.PAYMENT }
+            }}>
             <HomeMenuItem
               label={intl(words.to_collect)}
               amount={numCustomersToCollect}
