@@ -11,6 +11,8 @@ import { createStyles, makeStyles } from '@material-ui/core/styles';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import React, { useState } from 'react';
 import Button from './Button';
+import { useInternationalization } from '../lib/i18next/translator';
+import words from '../lib/i18next/words';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,6 +36,7 @@ interface OfflineDialogProps {
 }
 
 export default function OfflineDialog(props: OfflineDialogProps): JSX.Element {
+  const intl = useInternationalization();
   const classes = useStyles();
   const { headingText, bodyText, closeAction } = props;
   const [open, setOpen] = useState(props.open);
@@ -57,7 +60,7 @@ export default function OfflineDialog(props: OfflineDialogProps): JSX.Element {
         <DialogContentText align="center">{bodyText}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button fullWidth label="Go Back" onClick={() => handleClose()} />
+        <Button fullWidth label={intl(words.go_back)} onClick={() => handleClose()} />
       </DialogActions>
     </Dialog>
   );

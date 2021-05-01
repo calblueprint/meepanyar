@@ -124,6 +124,7 @@ export default {
   "general_information": "General Information",
   "get_started": "Get started",
   "give_access_to_user": "Give access [to user]",
+  "go_back": "Go Back",
   "go_to_my_site": "Go to my site",
   "go_to_settings_to_change_this": "Go to settings to change this.",
   "has_meter": "Has meter",

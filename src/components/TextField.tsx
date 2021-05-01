@@ -2,6 +2,8 @@ import { InputAdornment, InputLabel, makeStyles, TextField } from '@material-ui/
 import { createStyles, Theme } from '@material-ui/core/styles';
 import ErrorIcon from '@material-ui/icons/Error';
 import React, { useState } from 'react';
+import { useInternationalization } from '../lib/i18next/translator';
+import words from '../lib/i18next/words';
 
 // TODO: @wangannie: make onChange not optional
 interface TextFieldProps {
@@ -37,6 +39,7 @@ const styles = makeStyles((theme: Theme) =>
 
 // TODO: Rename component
 function Field(props: TextFieldProps) {
+  const intl = useInternationalization();
   const classes = styles(props);
   const [focused, setFocused] = useState(false);
 
@@ -63,7 +66,7 @@ function Field(props: TextFieldProps) {
         InputProps={{
           endAdornment:
           props.unit || props.currency ? (
-            <InputAdornment position="end">{props.currency ? 'Ks' : `${props.unit}(s)`}</InputAdornment>
+            <InputAdornment position="end">{props.currency ? intl(words.ks) : `${props.unit}(${intl(words.s)})`}</InputAdornment>
           ) : props.error ? (
             <ErrorIcon color="error" />
           ) : undefined,

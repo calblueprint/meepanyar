@@ -127,6 +127,7 @@ module.exports = {
       "General Information": "အထွေထွေအချတ်အလတ်များ",
       "Get started": "စလိုက်ကြစို့",
       "Give access [to user]": "ဝင်ခွင့်ပေးမည်",
+      "Go Back": "Go Back",
       "Go to my site": "ကိုယ့်ဆိုက်သို့သွားမည်",
       "Go to settings to change this.": "၎င်းကိုပြောင်းလဲရန် Settings သို့သွားပါ။",
       "Has meter": "Has meter",
