@@ -21,7 +21,7 @@ function EditCustomer() {
   }
 
   return (
-    <BaseScreen title="Edit Customer" leftIcon="backNav">
+    <BaseScreen title={intl(words.edit_customer)} leftIcon="backNav">
       <List>
         <ListItemWrapper linkTo={`${history.location.pathname}/information`} leftText={intl(words.customer_information)} divider />
         <ListItemWrapper linkTo={`${history.location.pathname}/tariff-plans`} leftText={intl(words.tariff_plan)} rightText={tariffPlan?.name} divider />

@@ -20,12 +20,18 @@ export interface EditCustomerMeterState {
 function EditCustomerMeter() {
     const intl = useInternationalization(); 
     const currentCustomer = useSelector(selectCurrentCustomer);
+    const meterTypeMap = new Map<string, string>(); // English keys
+    const revMeterTypeMap = new Map<string, string>(); // Native device language as keys
+    Object.values(MeterType).forEach(meter => {
+        meterTypeMap.set(meter, intl(meter));
+        revMeterTypeMap.set(intl(meter), meter);
+    });
 
     const validationSchema = yup.object({
-        meterType: yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], intl(words.meter_type_must_be_one_of_smart_analog_or_no_meter)),
+        meterType: yup.string().oneOf([meterTypeMap.get(MeterType.NO_METER), meterTypeMap.get(MeterType.SMART_METER), meterTypeMap.get(MeterType.ANALOG_METER)], intl(words.meter_type_must_be_one_of_smart_analog_or_no_meter)),
         meterNumber: yup.mixed() // Can be number or empty string
             .when('meterType', {
-                is: (MeterType.ANALOG_METER || MeterType.SMART_METER),
+                is: (meterTypeMap.get(MeterType.ANALOG_METER) || meterTypeMap.get(MeterType.SMART_METER)),
                 then: yup.mixed().required(intl(words.please_enter_a_meter_number)),
             })
     });
@@ -47,7 +53,8 @@ function EditCustomerMeter() {
 
     const handleSubmit = (values: any) => {
         const { meterNumber, meterType } = values;
-        history.push('tariff-plans', { meterNumber, meterType, goBack: -2 })
+        const meterTypeKey: string = revMeterTypeMap.get(meterType) as string;
+        history.push('tariff-plans', { meterNumber, meterTypeKey, goBack: -2 })
     }
 
     return (
@@ -63,10 +70,10 @@ function EditCustomerMeter() {
                     <Select
                         onChange={(event) => {
                             const meterType = event.target.value as string;
-                            formik.setFieldValue('meterType', intl(meterType))
+                            formik.setFieldValue('meterType', meterType);
 
                             // Clear the meterNumber if NO_METER is selected
-                            if (meterType === MeterType.NO_METER) {
+                            if (meterType === meterTypeMap.get(MeterType.NO_METER)) {
                                 formik.setFieldValue('meterNumber', '')
                             }
                         }}
@@ -75,9 +82,9 @@ function EditCustomerMeter() {
                         required
                         value={formik.values.meterType}
                     >
-                        <MenuItem value={MeterType.ANALOG_METER}>{intl(words.analog_meter)}</MenuItem>
-                        <MenuItem value={MeterType.SMART_METER}>{intl(words.smart_meter)}</MenuItem>
-                        <MenuItem value={MeterType.NO_METER}>{intl(words.no_meter)}</MenuItem>
+                        <MenuItem value={meterTypeMap.get(MeterType.ANALOG_METER)}>{intl(words.analog_meter)}</MenuItem>
+                        <MenuItem value={meterTypeMap.get(MeterType.SMART_METER)}>{intl(words.smart_meter)}</MenuItem>
+                        <MenuItem value={meterTypeMap.get(MeterType.NO_METER)}>{intl(words.no_meter)}</MenuItem>
                     </Select>
                 </FormControl>
 
@@ -86,8 +93,8 @@ function EditCustomerMeter() {
                     id={'meterNumber'}
                     placeholder='Input'
                     value={formik.values.meterNumber}
-                    disabled={formik.values.meterType === MeterType.NO_METER}
-                    required={formik.values.meterType !== MeterType.NO_METER}
+                    disabled={formik.values.meterType === meterTypeMap.get(MeterType.NO_METER)}
+                    required={formik.values.meterType !== meterTypeMap.get(MeterType.NO_METER)}
                     error={formik.touched.meterNumber && Boolean(formik.errors.meterNumber)}
                     helperText={formik.touched.meterNumber && formik.errors.meterNumber}
                     onChange={formik.handleChange}

@@ -313,7 +313,7 @@ module.exports = {
       "Site info": "ဆိုက်",
       "Site Information": "ဆိုက်အချတ်အလက်များ",
       "Site name": "ဆိုက်နာမည်",
-      "Smart Meter": "Smart Meter",
+      "Smart Meter": "Smart Metersssss",
       "Solved": "Solved",
       "Something went wrong in setting up your site. You can try to set up the site again or contact our support team if this is a recurring issue.": "သင့်ဆိုဒ်ကိုတည်ဆောက်ရာ၌တစ်ခုခုမှားယွင်းနေသည်။ တစ်ဖန်ကြိုးစား၍မရသေးပါကကျွန်ုပ်တို့၏အထောက်အကူပြုအဖွဲ့နှင့်ဆက်သွယ်ပါ။",
       "Sort and Filter": "Sort and Filter",
