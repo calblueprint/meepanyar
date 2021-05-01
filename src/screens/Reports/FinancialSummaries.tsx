@@ -11,6 +11,8 @@ import { selectAllFinancialSummariesArray } from '../../lib/redux/siteDataSlice'
 import { getCurrentMonthGracePeriodDeadline, formatDateStringToLocal, getGracePeriodDeadline } from '../../lib/moment/momentUtils';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -25,6 +27,7 @@ interface FinancialSummariesProps extends RouteComponentProps {
 }
 
 function FinancialSummaries(props: FinancialSummariesProps) {
+  const intl = useInternationalization(); 
   const { classes, match } = props;
   const currentSite = useSelector(selectCurrentSiteInformation);
   const currentDeadline = formatDateStringToLocal(getCurrentMonthGracePeriodDeadline().toString());
@@ -40,10 +43,10 @@ function FinancialSummaries(props: FinancialSummariesProps) {
   });
 
   return (
-    <BaseScreen leftIcon="backNav" title="Reports" rightIcon="profile" match={match}>
+    <BaseScreen leftIcon="backNav" title={intl(words.reports)} rightIcon="profile" match={match}>
       <BaseScrollView>
         <div className={classes.section}>
-          <Typography variant="h1">Current Period</Typography>
+          <Typography variant="h1">{intl(words.current_x, words.period)}</Typography>
           <ReportCard
             report={currentReport}
             deadline={currentDeadline}
@@ -51,7 +54,7 @@ function FinancialSummaries(props: FinancialSummariesProps) {
           />
         </div>
         <div className={classes.section}>
-          <Typography variant="h1">All Reports</Typography>
+          <Typography variant="h1">{intl(words.all_x, words.reports)}</Typography>
           {reports.map((report: FinancialSummaryRecord, index) => {
             if (report.period !== currentReport.period) {
               return (
