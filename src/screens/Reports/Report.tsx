@@ -49,7 +49,7 @@ function Report(props: ReportProps) {
   const report = props.location.state.report;
   const deadline = props.location.state.deadline;
   const currentSite = useSelector(selectCurrentSiteInformation);
-  const profit: CardPropsInfo[] = [{ number: roundToString(report.totalProfit), label: 'Profit', unit: 'Ks' }];
+  const profit: CardPropsInfo[] = [{ number: roundToString(report.totalProfit), label: intl(words.profit), unit: intl(words.ks) }];
 
   // Customers
   const collected = `${roundToString(report.totalAmountCollected)} ${intl(words.ks)}`;
