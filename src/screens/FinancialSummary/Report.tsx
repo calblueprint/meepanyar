@@ -64,10 +64,8 @@ function Report(props: ReportProps) {
   const approved = `${roundToString(report.inventoryAmountApproved)} Ks`;
   const rejected = `${roundToString(report.inventoryAmountDenied)} Ks`;
   const inventory = [
-    { label: 'Collected', value: collected},
-    { label: 'Billed', value: billed},
-    { label: 'Outstanding', value: outstanding },
-    { label: 'Payment Rate', value: paymentRate },
+    { label: 'Approved', value: approved},
+    { label: 'Rejected', value: rejected},
   ];
 
   // TODO: Add calculations for maintenance & incidents

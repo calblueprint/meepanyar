@@ -6,7 +6,7 @@ import DescriptionIcon from '@material-ui/icons/Description';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { IconButton } from '@material-ui/core';
 import React from 'react';
-import { formatDateStringToLocal, getCurrentPeriod, getNextPeriod } from '../../lib/moment/momentUtils';
+import { formatDateStringToLocal, getCurrentPeriod, getNextPeriod, getCurrentMonthGracePeriodDeadline } from '../../lib/moment/momentUtils';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
 import { withStyles, createStyles, Theme } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
@@ -18,7 +18,7 @@ import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
-import { selectAllSitesInformation, selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { selectAllSitesInformation, selectCurrentSiteInformation, selectCurrentPeriodFinancialSummary } from '../../lib/redux/siteData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
 import { selectCurrentUser, selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
 
@@ -161,8 +161,15 @@ function Home(props: HomeProps) {
           </Typography>
           <div className={classes.financialSums}>
             <div style={{ paddingRight: 10 }}>
-              {/** TODO: Make current period button navigate to current financial summary */}
-              <Link to={'/financial-summaries'}>
+              <Link
+                to={{
+                  pathname: '/financial-summaries/report',
+                  state: {
+                    report: selectCurrentPeriodFinancialSummary(),
+                    deadline: formatDateStringToLocal(getCurrentMonthGracePeriodDeadline().toString()),
+                  }
+                }}
+              >
                 <Button label='Current Period' startIcon={<DescriptionIcon />} />
               </Link>
             </div>
