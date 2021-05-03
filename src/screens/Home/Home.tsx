@@ -14,6 +14,8 @@ import { Link } from 'react-router-dom';
 import { SiteRecord } from '../../lib/airtable/interface';
 import HomeMenuItem from './components/HomeMenuItem';
 import SiteMenu from './components/SiteMenu';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import { selectCustomersToMeter, selectCustomersToCollect } from '../../lib/redux/customerData';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
@@ -56,6 +58,7 @@ interface HomeProps {
 }
 
 function Home(props: HomeProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   const numCustomersToMeter = useSelector(selectCustomersToMeter)?.length || 0;
   const numCustomersToCollect = useSelector(selectCustomersToCollect)?.length || 0;
@@ -72,8 +75,8 @@ function Home(props: HomeProps) {
   const getAmountOwedCard = () => {
     const amountOwedCardInfo: CardPropsInfo[] = [{
       number: amountOwed.toString(),
-      label: 'Owed to MP',
-      unit: 'Ks'
+      label: intl(words.total_owed_to_mpy),
+      unit: intl(words.ks)
     }]
 
     const addButton = <IconButton
@@ -102,16 +105,16 @@ function Home(props: HomeProps) {
           <div style={{ flex: 2 }}>
             <SiteMenu currentSite={currentSite} sites={allSites} />
             <Typography color='secondary'>
-              Current Period: {formatDateStringToLocal(getCurrentPeriod(), true)}
+              {intl(words.current_x, words.period)}: {formatDateStringToLocal(getCurrentPeriod(), true)}
             </Typography>
             <Typography color='secondary'>
-              Deadline: {formatDateStringToLocal(getNextPeriod(), true)}
+              {intl(words.next_deadline)}: {formatDateStringToLocal(getNextPeriod(), true)}
             </Typography>
           </div>
           <div className={classes.network}>
             {isOnline ? <CloudOutlinedIcon /> : <CloudOffIcon color="disabled" />}
             <Typography variant="caption" color='secondary'>
-              Last Connected to Network
+              {intl(words.last_connected_to_network)}
             </Typography>
             <Typography variant="caption" color='secondary'>
               {lastUpdated}
@@ -122,18 +125,18 @@ function Home(props: HomeProps) {
 
         <div className={classes.section}>
           <Typography variant='h2'>
-            Tasks
-        </Typography>
+            {intl(words.tasks)}
+          </Typography>
           <Link to={'/customers'}>
             <HomeMenuItem
-              label="To Meter"
+              label={intl(words.to_meter)}
               amount={numCustomersToMeter}
               iconType="meter"
             />
           </Link>
           <Link to={'/customers'}>
             <HomeMenuItem
-              label="To Collect"
+              label={intl(words.to_collect)}
               amount={numCustomersToCollect}
               iconType="collect"
             />
@@ -141,7 +144,7 @@ function Home(props: HomeProps) {
           {/* Screen and workflows not yet built out */}
           <Link to={'/maintenance'}>
             <HomeMenuItem
-              label="Maintenance"
+              label={intl(words.maintenance)}
               amount={0}
               iconType="maintenance"
             />
@@ -149,7 +152,7 @@ function Home(props: HomeProps) {
           {/* Screen and workflows not yet built out */}
           <Link to={'/incidents'}>
             <HomeMenuItem
-              label="Incidents"
+              label={intl(words.incidents)}
               amount={0}
               iconType="incident"
             />
@@ -157,7 +160,7 @@ function Home(props: HomeProps) {
         </div>
         <div className={classes.section}>
           <Typography variant='h2'>
-            Financial Reports
+            {intl(words.financial_reports)}
           </Typography>
           <div className={classes.financialSums}>
             <div style={{ paddingRight: 10 }}>
@@ -170,11 +173,11 @@ function Home(props: HomeProps) {
                   }
                 }}
               >
-                <Button label='Current Period' startIcon={<DescriptionIcon />} />
+                <Button label={intl(words.current_x, words.period)} startIcon={<DescriptionIcon />} />
               </Link>
             </div>
             <Link to={'/financial-summaries'}>
-              <Button label='Past Reports' variant='outlined' />
+              <Button label={intl(words.past_x, words.reports)} variant='outlined' />
             </Link>
           </div>
         </div>
