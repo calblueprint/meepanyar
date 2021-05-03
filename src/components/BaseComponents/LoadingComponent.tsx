@@ -22,12 +22,11 @@ const LoadingComponent = (props: LoadingComponentProps) => {
   const { classes } = props;
   const history = useHistory();
 
-  // If a user is stuck on the loading screen for more than 15 seconds, we send them back to the login screen
+  // If a user is stuck on the loading screen for more than 20 seconds, we send them back to the login screen
   useEffect(() => {
-    const timeoutId = setTimeout(() => history.push('/login'), 15000)
+    const timeoutId = setTimeout(() => history.push('/login'), 20000)
     return () => {
       clearTimeout(timeoutId)
-      console.log("Timeout cleared")
     }
   })
 
