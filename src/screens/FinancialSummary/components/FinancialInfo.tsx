@@ -2,6 +2,8 @@ import React from 'react';
 import { Typography, Divider } from '@material-ui/core';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import TextField from '../../../components/TextField';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,6 +47,7 @@ interface FinancialInfoProps {
 }
 
 export default function FinancialInfo(props: FinancialInfoProps) {
+  const intl = useInternationalization();
   const classes = useStyles();
 
   return (
@@ -53,13 +56,13 @@ export default function FinancialInfo(props: FinancialInfoProps) {
         <div className={classes.itemWrapper}>
           <div>
             <Typography className={classes.bolded} variant="body1">
-              Bank
+              {intl(words.bank)}
             </Typography>
             <Typography className={classes.bolded} variant="body1">
-              Account Number
+              {intl(words.account_x, words.number)}
             </Typography>
             <Typography className={classes.bolded} variant="body1">
-              Account Name
+              {intl(words.account_x, words.name)}
             </Typography>
           </div>
           <div className={classes.right}>
@@ -71,15 +74,15 @@ export default function FinancialInfo(props: FinancialInfoProps) {
         <Divider className={classes.divider} />
         <div className={classes.itemWrapper}>
           <Typography className={classes.bolded} variant="body1">
-            Remaining Balance
+            {intl(words.remaining_balance)}
           </Typography>
           <Typography variant="body1" className={classes.balanceText}>
-            {props.balance} Ks
+            {props.balance} {intl(words.ks)}
           </Typography>
         </div>
       </div>
       <div className={classes.fieldContainer}>
-        <TextField label="Payment Amount" id="payment-amount" />
+        <TextField label={intl(words.payment_amount)} id="payment-amount" />
       </div>
     </div>
   );
