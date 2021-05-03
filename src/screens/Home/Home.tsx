@@ -18,7 +18,7 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import Button from '../../components/Button';
 import { selectAllSitesInformation, selectCurrentSiteInformation, selectCurrentPeriodFinancialSummary } from '../../lib/redux/siteData';
 import { EMPTY_SITE } from '../../lib/redux/siteDataSlice';
-import { selectCurrentUser, selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
+import { selectIsOnline, selectLastUpdated } from '../../lib/redux/userData';
 
 const styles = (theme: Theme) =>
   createStyles({
