@@ -9,10 +9,13 @@ import TextField from '../../components/TextField';
 import Button from '../../components/Button';
 import { Switch, Typography } from '@material-ui/core';
 import { updateCustomer } from '../../lib/airtable/request';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 function EditCustomerInformation() {
+  const intl = useInternationalization(); 
   const currentCustomer = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
   const allCustomerNumbers =
     useSelector(selectAllCustomersArray)
@@ -23,11 +26,11 @@ function EditCustomerInformation() {
 
 
   const validationSchema = yup.object({
-    customerName: yup.string().required('Please enter a name'),
+    customerName: yup.string().required(intl(words.please_enter_a_x, words.name)),
     customerNumber: yup.number()
-      .min(0, 'Please enter a positive number')
-      .notOneOf(allCustomerNumbers, 'That customer number is used by another customer')
-      .required('Please enter a customer number'),
+      .min(0, intl(words.please_enter_a_x, words.positive_number))
+      .notOneOf(allCustomerNumbers, intl(words.that_customer_number_is_used_by_another_customer))
+      .required(intl(words.please_enter_a_x, words.customer_number)),
     activeStatus: yup.bool(),
   });
 
@@ -61,10 +64,10 @@ function EditCustomerInformation() {
   }
 
   return (
-    <BaseScreen title="Customer Information" leftIcon="backNav">
+    <BaseScreen title={intl(words.customer_information)} leftIcon="backNav">
       <form onSubmit={formik.handleSubmit} noValidate>
         <TextField
-          label={'Name'}
+          label={intl(words.name)}
           id={'customerName'}
           value={formik.values.customerName}
           required
@@ -73,7 +76,7 @@ function EditCustomerInformation() {
           onChange={formik.handleChange}
         />
         <TextField
-          label={'Customer Number'}
+          label={intl(words.customer_number)}
           id={'customerNumber'}
           value={formik.values.customerNumber}
           required
@@ -83,7 +86,7 @@ function EditCustomerInformation() {
           onChange={formik.handleChange}
         />
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Typography style={{ flex: 1 }}> Active Status </Typography>
+          <Typography style={{ flex: 1 }}> {intl(words.active_status)} </Typography>
           <Switch
             edge='end'
             onChange={formik.handleChange}
@@ -92,7 +95,7 @@ function EditCustomerInformation() {
             color='primary'
           />
         </div>
-        <Button label={'Save'} loading={loading} fullWidth />
+        <Button label={intl(words.save)} loading={loading} fullWidth />
       </form>
     </BaseScreen>
   );

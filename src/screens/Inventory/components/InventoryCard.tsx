@@ -64,7 +64,7 @@ function InventoryCard(props: InventoryCardProps) {
             {isOfflineId(inventoryId) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
           </div>
           <Typography variant="body1" color="textSecondary">
-            {`${intl(words.last_updated)} ${intl(words.date)}: ${lastUpdated}`}{' '}
+            {`${intl(words.last_updated)} ${intl(words.date)}: ${lastUpdated}`}
           </Typography>
         </div>
         <Typography variant="h2">{`${roundToString(currentQuantity)} ${product.unit}(${intl(words.s)})`}</Typography>

@@ -5,6 +5,8 @@ import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import Record from './Record';
 import { PaymentRecord, MeterReadingRecord } from '../../../lib/airtable/interface';
 import BaseScrollView from '../../../components/BaseComponents/BaseScrollView';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -28,6 +30,7 @@ interface RecordsTabMenuProps {
 }
 
 function RecordsTabMenu(props: RecordsTabMenuProps) {
+  const intl = useInternationalization(); 
   const { classes, invoices, payments, defaultTab } = props;
   const [value, setValue] = React.useState(defaultTab ? defaultTab : "0");
   const changeTab = (event: React.ChangeEvent<{}>, newValue: string) => {
@@ -37,8 +40,8 @@ function RecordsTabMenu(props: RecordsTabMenuProps) {
   return (
     <TabContext value={value}>
       <Tabs textColor="primary" indicatorColor="primary" value={value} onChange={changeTab}>
-        <Tab className={classes.tab} label="Invoices" value="0" />
-        <Tab className={classes.tab} label="Payment" value="1" />
+        <Tab className={classes.tab} label={intl(words.invoices)}value="0" />
+        <Tab className={classes.tab} label={intl(words.payment)} value="1" />
       </Tabs>
       <BaseScrollView>
         <TabPanel className={classes.tabPanel} value="0" id="invoices">

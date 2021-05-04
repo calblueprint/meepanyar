@@ -11,6 +11,8 @@ import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import CheckIcon from '@material-ui/icons/Check';
 import Button from '../../components/Button';
 import { updateCustomer } from '../../lib/airtable/request';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 
 interface EditCustomerTariffPlansProps extends RouteComponentProps {
@@ -20,7 +22,7 @@ interface EditCustomerTariffPlansProps extends RouteComponentProps {
 // The User can navigate to this screen directly from EditCustomer, or from EditCustomerMeter.
 // If the user comes from EditCustomerMeter, they pass the meterType and meterNumber selected from the previous screen.
 function EditCustomerTariffPlans(props: EditCustomerTariffPlansProps) {
-
+  const intl = useInternationalization(); 
   const customer = useSelector(selectCurrentCustomer);
   const history = useHistory();
   const [tariffPlanId, setTariffPlanId] = useState(customer?.tariffPlanId);
@@ -66,7 +68,7 @@ function EditCustomerTariffPlans(props: EditCustomerTariffPlansProps) {
   }
 
   return (
-    <BaseScreen title="Tariff Plans" leftIcon="backNav">
+    <BaseScreen title={intl(words.tariff_plan)} leftIcon="backNav">
       <BaseScrollView>
         <List>
           {availableTariffPlans.map((tariffPlan: TariffPlanRecord) =>
@@ -78,7 +80,7 @@ function EditCustomerTariffPlans(props: EditCustomerTariffPlansProps) {
               divider
             />)}
         </List>
-        <Button onClick={handleSubmit} label='Save' loading={loading} fullWidth/>
+        <Button onClick={handleSubmit} label={intl(words.save)} loading={loading} fullWidth/>
       </BaseScrollView>
     </BaseScreen>
   );

@@ -15,6 +15,8 @@ import { getTariffPlanByCustomer, calculateAmountBilled } from '../../lib/utils/
 import { createMeterReadingAndUpdateCustomerBalance } from '../../lib/airtable/request';
 import OutlinedCardList from '../../components/OutlinedCardList';
 import { formatDateStringToLocal } from '../../lib/moment/momentUtils';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { roundToString } from '../../lib/utils/utils';
@@ -31,6 +33,7 @@ interface AddMeterReadingProps extends RouteComponentProps {
 }
 
 function AddMeterReading(props: AddMeterReadingProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   const history = useHistory();
   const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
@@ -40,8 +43,8 @@ function AddMeterReading(props: AddMeterReadingProps) {
   const validationSchema = yup.object({
     meterReadingAmount:
       yup.number()
-        .min(currentCustomer?.startingMeterReading || 0, 'New reading must be larger than previous reading')
-        .required('Please enter a number')
+        .min(currentCustomer?.startingMeterReading || 0, intl(words.new_reading_must_be_larger_than_previous_reading))
+        .required(intl(words.please_enter_a_x, words.positive_number))
   });
 
   const formik = useFormik({
@@ -88,22 +91,22 @@ function AddMeterReading(props: AddMeterReadingProps) {
 
   const cardInfo = [{
     number: roundToString(startingMeterAmount),
-    label: 'Starting Reading',
-    unit: 'kWh',
+    label: intl(words.starting_x, words.reading),
+    unit: intl(words.kwh),
     secondaryLabel: formatDateStringToLocal(startingMeterLastRecorded)
   }]
 
   return (
-    <BaseScreen title="Add Meter Reading" leftIcon="backNav">
+    <BaseScreen title={intl(words.add_x, words.meter_reading)} leftIcon="backNav">
       <div className={classes.amountOwedContainer}>
         <OutlinedCardList info={cardInfo} />
       </div>
       <form noValidate onSubmit={formik.handleSubmit}>
         <TextField
-          label='New Meter Reading (kWh)'
-          unit='kWh'
+          label={intl(words.new_meter_reading)}
+          unit={intl(words.kwh)}
           id={'meterReadingAmount'}
-          placeholder='e.g. 100'
+          placeholder={intl(words.eg_x, '100')}
           type='number'
           onChange={formik.handleChange}
           required
@@ -111,7 +114,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
           error={formik.touched.meterReadingAmount && Boolean(formik.errors.meterReadingAmount)}
           helperText={formik.touched.meterReadingAmount && formik.errors.meterReadingAmount}
         />
-        <Button label={'Add'} loading={loading} fullWidth />
+        <Button label={intl(words.add)} loading={loading} fullWidth />
       </form>
     </BaseScreen>
   );
