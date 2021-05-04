@@ -33,7 +33,7 @@ function CustomerRecords(props: CustomerRecordsProps) {
   return (
     <BaseScreen leftIcon="backNav">
       <div className={classes.content}>
-        <Typography variant="h1">{intl(words.records)}</Typography>
+        <Typography variant="h1">{intl(words.history)}</Typography>
         <RecordsTabMenu invoices={invoices} payments={payments} defaultTab={defaultTab} />
       </div>
     </BaseScreen>

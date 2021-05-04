@@ -26,11 +26,11 @@ function EditCustomerInformation() {
 
 
   const validationSchema = yup.object({
-    customerName: yup.string().required(intl(words.please_enter_a_name)),
+    customerName: yup.string().required(intl(words.please_enter_a_x, words.name)),
     customerNumber: yup.number()
-      .min(0, intl(words.please_enter_a_positive_number))
+      .min(0, intl(words.please_enter_a_x, words.positive_number))
       .notOneOf(allCustomerNumbers, intl(words.that_customer_number_is_used_by_another_customer))
-      .required(intl(words.please_enter_a_customer_number)),
+      .required(intl(words.please_enter_a_x, words.customer_number)),
     activeStatus: yup.bool(),
   });
 

@@ -38,7 +38,7 @@ function CreateInventoryUpdate(props: CreateInventoryUpdateProps) {
   const [loading, setLoading] = useState(false);
 
   const validationSchema = yup.object({
-    updatedAmount: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.please_enter_an_amount)),
+    updatedAmount: yup.number().min(0, intl(words.please_enter_a_x, words.valid_amount)).required(intl(words.please_enter_a_x, words.valid_amount)),
   });
   const formik = useFormik({
     initialValues: {

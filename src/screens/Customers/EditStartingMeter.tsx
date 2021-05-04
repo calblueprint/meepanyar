@@ -39,9 +39,9 @@ function EditStartingMeter(props: EditStartingMeterProps) {
 
     const validationSchema = yup.object({
         startingMeterAmount: yup.number()
-            .min(0, intl(words.please_enter_a_positive_number))
+            .min(0, intl(words.please_enter_a_x, words.positive_number))
             .not([currentCustomer?.startingMeterReading], intl(words.starting_meter_is_currently_that_value))
-            .required(intl(words.please_enter_a_new_starting_meter_number)),
+            .required(intl(words.please_enter_a_x, words.new_starting_meter_number)),
         explanation: yup.string().required(intl(words.please_provide_a_reason_for_the_change))
     });
 

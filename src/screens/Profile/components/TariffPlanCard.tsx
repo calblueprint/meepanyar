@@ -35,10 +35,10 @@ function TariffPlanCard(props: TariffPlanProps) {
         {intl(words.customers)}: {tariffPlan.numberOfCustomers}
       </Typography>
       <Typography variant='body2'>
-        {intl(words.fixed_payment)}: {tariffPlan.fixedTariff} {intl(words.ks)}
+        {intl(words.fixed_tariff)}: {tariffPlan.fixedTariff} {intl(words.ks)}
       </Typography>
       <Typography variant='body2'>
-        {intl(words.per_unit_payment)}: {tariffPlan.tariffByUnit} {intl(words.ks)}
+        {intl(words.per_unit_tariff)}: {tariffPlan.tariffByUnit} {intl(words.ks)}
       </Typography>
       <Typography variant='body2'>
         {intl(words.free_units)}:  {tariffPlan.freeUnits} {intl(words.kwh)}

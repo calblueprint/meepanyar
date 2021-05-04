@@ -33,7 +33,7 @@ function EditCustomerMeter() {
         meterNumber: yup.mixed() // Can be number or empty string
             .when('meterType', {
                 is: (meterTypeMap.get(MeterType.ANALOG_METER) || meterTypeMap.get(MeterType.SMART_METER)),
-                then: yup.mixed().required(intl(words.please_enter_a_meter_number)),
+                then: yup.mixed().required(intl(words.please_enter_a_x, words.meter_number)),
             })
     });
     const formik = useFormik({

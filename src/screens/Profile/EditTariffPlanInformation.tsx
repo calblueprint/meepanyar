@@ -76,7 +76,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
             <form noValidate onSubmit={formik.handleSubmit}>
                 <List>
                     <ListItemWrapper
-                        leftText={intl(words.fixed_payment)}
+                        leftText={intl(words.fixed_tariff)}
                         editable={currentUserIsAdmin}
                         dense
                         editValue={formik.values.newFixedTariff}
@@ -89,7 +89,7 @@ function EditTariffPlanInformation(props: EditTarifPlanInformationProps) {
                         editPlaceholder={intl(words.eg_x, '5')}
                     />
                     <ListItemWrapper
-                        leftText={intl(words.per_unit_payment)}
+                        leftText={intl(words.per_unit_tariff)}
                         editable={currentUserIsAdmin}
                         dense
                         editValue={formik.values.newTariffByUnit}

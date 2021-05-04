@@ -41,9 +41,9 @@ function AddPayment(props: AddPaymentProps) {
 
     const validationSchema = yup.object({
         amountPaid: yup.number()
-            .min(0, intl(words.please_enter_a_positive_number))
+            .min(0, intl(words.please_enter_a_x, words.positive_number))
             .max(currentCustomer?.outstandingBalance || 0, intl(words.you_may_not_pay_greater_than_the_remaining_balance))
-            .required(intl(words.please_enter_a_valid_amount))
+            .required(intl(words.please_enter_a_x, words.valid_amount))
     });
 
     const formik = useFormik({

@@ -44,7 +44,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
     meterReadingAmount:
       yup.number()
         .min(currentCustomer?.startingMeterReading || 0, intl(words.new_reading_must_be_larger_than_previous_reading))
-        .required(intl(words.please_enter_a_positive_number))
+        .required(intl(words.please_enter_a_x, words.positive_number))
   });
 
   const formik = useFormik({
@@ -97,7 +97,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
   }]
 
   return (
-    <BaseScreen title={intl(words.add_meter_reading)} leftIcon="backNav">
+    <BaseScreen title={intl(words.add_x, words.meter_reading)} leftIcon="backNav">
       <div className={classes.amountOwedContainer}>
         <OutlinedCardList info={cardInfo} />
       </div>

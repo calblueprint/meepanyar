@@ -49,8 +49,8 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
   const photoUri = props.location.state?.photo;
 
   const validationSchema = yup.object({
-    amountPurchased: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.please_enter_an_amount)),
-    amountSpent: yup.number().min(0, intl(words.please_enter_a_valid_amount)).required(intl(words.please_enter_an_amount)),
+    amountPurchased: yup.number().min(0, intl(words.please_enter_a_x, words.valid_amount)).required(intl(words.please_enter_a_x, words.valid_amount)),
+    amountSpent: yup.number().min(0, intl(words.please_enter_a_x, words.valid_amount)).required(intl(words.please_enter_a_x, words.valid_amount)),
     notes: yup.string(),
     receipt: yup.string().required(intl(words.please_upload_a_receipt_image)),
   });

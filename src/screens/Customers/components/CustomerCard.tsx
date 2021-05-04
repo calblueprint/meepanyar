@@ -106,7 +106,7 @@ export default function CustomerCard(props: CustomerCardProps): JSX.Element {
               <Typography variant="h2">{customer.customerNumber}, {customer.name}</Typography>
               {isOfflineId(customer.id) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
             </div>
-            <Typography color="textSecondary">{intl(words.total_owed)} <span className={classes.numberText}>{roundToString(customer.outstandingBalance)} {intl(words.ks)}</span></Typography>
+            <Typography color="textSecondary">{intl(words.total_x, words.owed)} <span className={classes.numberText}>{roundToString(customer.outstandingBalance)} {intl(words.ks)}</span></Typography>
           </div>
         </Link>
         <CardActions>

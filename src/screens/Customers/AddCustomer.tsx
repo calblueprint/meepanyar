@@ -77,10 +77,10 @@ function AddCustomer(props: AddCustomerProps) {
     selectedTariffPlanId: yup.string().required(intl(words.must_select_a_tariff_plan)),
     meterNumber: yup.mixed().when('selectedMeterType', {
       is: (meterTypeMap.get(MeterType.SMART_METER) || meterTypeMap.get(MeterType.ANALOG_METER)),
-      then: yup.mixed().required(intl(words.please_enter_an_amount))
+      then: yup.mixed().required(intl(words.please_enter_a_x, words.valid_amount))
     }),
     customerNumber: yup.number()
-      .min(0, intl(words.please_enter_a_positive_number))
+      .min(0, intl(words.please_enter_a_x, words.positive_number))
       .notOneOf(allCustomerNumbers, intl(words.that_customer_number_is_used_by_another_customer))
       .required(intl(words.customer_number_is_required))
   });
@@ -156,7 +156,7 @@ function AddCustomer(props: AddCustomerProps) {
   }
 
   return (
-    <BaseScreen title={intl(words.add_new_customer)} leftIcon="backNav">
+    <BaseScreen title={intl(words.add_x, words.new_customer)} leftIcon="backNav">
       <BaseScrollView>
         <form noValidate onSubmit={formik.handleSubmit}>
           <div className={classes.twoColumnContainer}>
