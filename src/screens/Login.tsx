@@ -104,6 +104,7 @@ function Login() {
             onClick={() => {
               formik.setFieldValue('submitAction', LoginAction.LOGIN);
             }}
+            disabled={!isOnline}
           />
           <Button
             loading={loadingButton === LoginAction.CREATE}
@@ -111,6 +112,7 @@ function Login() {
             onClick={() => {
               formik.setFieldValue('submitAction', LoginAction.CREATE);
             }}
+            disabled={!isOnline}
             fullWidth
             variant="outlined"
           />

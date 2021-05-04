@@ -1,5 +1,4 @@
 import React from 'react';
-import { FinancialSummaryRecord } from '../../lib/airtable/interface';
 import BaseScreen from '../../components/BaseComponents/BaseScreen';
 import BaseScrollView from '../../components/BaseComponents/BaseScrollView';
 import OutlinedCardList, { CardPropsInfo } from '../../components/OutlinedCardList';
@@ -67,10 +66,9 @@ function Report(props: ReportProps) {
   const approved = `${roundToString(report.inventoryAmountApproved)} ${intl(words.ks)}`;
   const rejected = `${roundToString(report.inventoryAmountDenied)} ${intl(words.ks)}`;
   const inventory = [
-    { label: intl(words.collected), value: collected},
-    { label: intl(words.billed), value: billed},
-    { label: intl(words.outstanding), value: outstanding },
-    { label: intl(words.payment_rate), value: paymentRate },
+    // TODO: Translate (using words.ts. Right now words.approved maps to "Approved?")
+    { label: intl('Approved'), value: approved},
+    { label: intl('Rejected'), value: rejected},
   ];
 
   // TODO: Add calculations for maintenance & incidents
