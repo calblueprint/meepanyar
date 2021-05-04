@@ -62,7 +62,8 @@ function AddCustomer(props: AddCustomerProps) {
   const { classes } = props;
   const history = useHistory();
   const allCustomerNumbers = useSelector(selectAllCustomersArray).map(customer => customer.customerNumber);
-  const meterTypeMap = new Map<string, string>(); // English keys
+  // Two-way map for developers in order to ensure English keys in the AirTable while still providing frontend translations.
+  const meterTypeMap = new Map<string, string>(); // English as keys
   const revMeterTypeMap = new Map<string, string>(); // Native device language as keys
   Object.values(MeterType).forEach(meter => {
     meterTypeMap.set(meter, intl(meter));
@@ -115,6 +116,7 @@ function AddCustomer(props: AddCustomerProps) {
 
     // Make a deep copy of an empty customer record
     const customer = JSON.parse(JSON.stringify(EMPTY_CUSTOMER));
+    customer.isactive = true
     customer.name = customerName;
     customer.customerNumber = parseInt(customerNumber);
     customer.meterType = revMeterTypeMap.get(selectedMeterType); // Map back to English

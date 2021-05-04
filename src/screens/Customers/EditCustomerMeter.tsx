@@ -20,6 +20,7 @@ export interface EditCustomerMeterState {
 function EditCustomerMeter() {
     const intl = useInternationalization(); 
     const currentCustomer = useSelector(selectCurrentCustomer);
+    // Two-way map for developers in order to ensure English keys in the AirTable while still providing frontend translations.
     const meterTypeMap = new Map<string, string>(); // English keys
     const revMeterTypeMap = new Map<string, string>(); // Native device language as keys
     Object.values(MeterType).forEach(meter => {
@@ -37,7 +38,7 @@ function EditCustomerMeter() {
     });
     const formik = useFormik({
         initialValues: {
-            meterType: currentCustomer?.meterType,
+            meterType: currentCustomer?.meterType ? meterTypeMap.get(currentCustomer?.meterType) : '',
             meterNumber: currentCustomer?.meterNumber ? currentCustomer.meterNumber.toString() : ''
         },
         validationSchema: validationSchema,
@@ -53,8 +54,7 @@ function EditCustomerMeter() {
 
     const handleSubmit = (values: any) => {
         const { meterNumber, meterType } = values;
-        const meterTypeKey: string = revMeterTypeMap.get(meterType) as string;
-        history.push('tariff-plans', { meterNumber, meterTypeKey, goBack: -2 })
+        history.push('tariff-plans', { meterNumber, meterType, goBack: -2 })
     }
 
     return (
@@ -64,7 +64,7 @@ function EditCustomerMeter() {
                 <FormControl
                     required
                     variant="outlined"
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', marginTop: 8, marginBottom: 8 }}
                 >
                     <InputLabel>{intl(words.x_type, words.meter)}</InputLabel>
                     <Select
