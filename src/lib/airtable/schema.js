@@ -27,7 +27,7 @@ export const Columns = {
 		password: {name:`Password`, type:`text`},
 		name: {name:`Name`, type:`text`},
 		paymentIds: {name:`Payments`, type:`foreignKey-many`},
-		meterReadingsAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
+		meterReadingAndInvoiceIds: {name:`Meter Readings and Invoices`, type:`foreignKey-many`},
 		customerUpdateIds: {name:`Customer Updates`, type:`foreignKey-many`},
 		id: {name:`ID`, type:`formula`},
 		purchaseRequestsCreatedIds: {name:`Purchase Requests Created`, type:`foreignKey-many`},
@@ -38,10 +38,24 @@ export const Columns = {
 		inactive: {name:`Inactive`, type:`checkbox`},
 	},
 	"Sites": {
+		// Custom objects added to the top of sites object to reduce
+		// likelihood of patch conflicts when new columns are added.
+		// These names should match the objects passed in the Site's "write"
+		// resolver in `meepanyar-node/resolvers/index.js`
+		users: {name: `SiteUsers`, type: `custom-object`},
+		products: {name: `Products`, type: `custom-object`},
+		inventory: {name: `SiteInventory`, type: `custom-object`},
+		purchaseRequests: {name: `PurchaseRequests`, type: `custom-object`},
+		inventoryUpdates: {name: `InventoryUpdates`, type: `custom-object`},
+		customers: {name:`CustomerData`, type:`custom-object`},
+		financialSummaries: {name: `FinancialSummaries`, type:`custom-object`},
+		tariffPlans: {name:`TariffPlans`, type:`custom-object`},
+		payments: {name:`Payments`, type:`custom-object`},
+		meterReadings: {name:`MeterReadings`, type:`custom-object`},
 		name: {name:`Name`, type:`text`},
 		userIds: {name:`Users`, type:`foreignKey-many`},
 		customerIds: {name:`Customers`, type:`foreignKey-many`},
-		financialSummarieIds: {name:`Financial Summaries`, type:`foreignKey-many`},
+		financialSummaryIds: {name:`Financial Summaries`, type:`foreignKey-many`},
 		tariffPlanIds: {name:`Tariff Plans`, type:`foreignKey-many`},
 		id: {name:`ID`, type:`formula`},
 		inventoryIds: {name:`Inventory`, type:`foreignKey-many`},

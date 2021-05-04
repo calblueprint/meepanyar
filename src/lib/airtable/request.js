@@ -208,7 +208,7 @@ export const createManyFinancialSummaries = async (records) => {
   return Promise.all(createPromises);
 };
 
-// NONGENERATED: Create a product (inventory type), inventory record, and inventory update, then add them to 
+// NONGENERATED: Create a product (inventory type), inventory record, and inventory update, then add them to
 // Redux. Returns the ids of each new record.
 export const createProductInventoryAndUpdate = async (product, startingAmount, siteId, userId) => {
   let productId = '';
