@@ -56,6 +56,10 @@ function Login() {
         console.error(message);
         setLoadingButton('');
         return;
+      } else {
+        // We refresh to indicate a successful account creation
+        history.go(0);
+        return
       }
     } else {
       setLoadingButton(LoginAction.LOGIN);
