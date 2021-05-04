@@ -39,7 +39,9 @@ export const Columns = {
 	},
 	"Sites": {
 		// Custom objects added to the top of sites object to reduce
-		// likelihood of patch conflicts when new columns are added
+		// likelihood of patch conflicts when new columns are added.
+		// These names should match the objects passed in the Site's "write"
+		// resolver in `meepanyar-node/resolvers/index.js`
 		users: {name: `SiteUsers`, type: `custom-object`},
 		products: {name: `Products`, type: `custom-object`},
 		inventory: {name: `SiteInventory`, type: `custom-object`},
