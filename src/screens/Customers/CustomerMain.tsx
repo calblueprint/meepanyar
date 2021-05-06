@@ -61,15 +61,18 @@ interface CustomerMenu {
 
 interface CustomerMainProps extends RouteComponentProps {
   customers: CustomerRecord[];
+  tabValue?: CustomerStatus;
   match: any;
+  location: any;
 }
 
 function CustomerMain(props: CustomerMainProps) {
   const intl = useInternationalization();
   const classes = styles(props);
   const { match } = props;
+  const initialTabValue = props.location.state?.tabValue;
   const [searchValue, setSearchValue] = useState<string>("");
-  const [tabValue, setTabValue] = useState<CustomerStatus>(CustomerStatus.ALL);
+  const [tabValue, setTabValue] = useState<CustomerStatus>(initialTabValue || CustomerStatus.ALL);
   const changeTab = (event: React.ChangeEvent<{}>, newValue: CustomerStatus) => {
     setTabValue(newValue);
   };
