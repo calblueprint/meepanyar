@@ -56,6 +56,10 @@ function Login() {
         console.error(message);
         setLoadingButton('');
         return;
+      } else {
+        // We refresh to indicate a successful account creation
+        history.go(0);
+        return
       }
     } else {
       setLoadingButton(LoginAction.LOGIN);
@@ -104,6 +108,7 @@ function Login() {
             onClick={() => {
               formik.setFieldValue('submitAction', LoginAction.LOGIN);
             }}
+            disabled={!isOnline}
           />
           <Button
             loading={loadingButton === LoginAction.CREATE}
@@ -111,6 +116,7 @@ function Login() {
             onClick={() => {
               formik.setFieldValue('submitAction', LoginAction.CREATE);
             }}
+            disabled={!isOnline}
             fullWidth
             variant="outlined"
           />

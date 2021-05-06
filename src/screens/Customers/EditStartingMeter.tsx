@@ -12,6 +12,9 @@ import moment from 'moment';
 import { selectCurrentUserId } from '../../lib/redux/userData';
 import OutlinedCardList from '../../components/OutlinedCardList';
 import { updateCustomer } from '../../lib/airtable/request';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
+
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 
@@ -27,6 +30,7 @@ interface EditStartingMeterProps extends RouteComponentProps {
 }
 
 function EditStartingMeter(props: EditStartingMeterProps) {
+    const intl = useInternationalization(); 
     const { classes } = props;
     const history = useHistory();
     const currentCustomer: CustomerRecord | undefined = useSelector(selectCurrentCustomer);
@@ -35,10 +39,10 @@ function EditStartingMeter(props: EditStartingMeterProps) {
 
     const validationSchema = yup.object({
         startingMeterAmount: yup.number()
-            .min(0, 'Please enter a positive number or 0')
-            .not([currentCustomer?.startingMeterReading], 'Starting Meter is currently that value')
-            .required('Please enter a new starting meter number'),
-        explanation: yup.string().required('Please provide a reason for the change')
+            .min(0, intl(words.please_enter_a_x, words.positive_number))
+            .not([currentCustomer?.startingMeterReading], intl(words.starting_meter_is_currently_that_value))
+            .required(intl(words.please_enter_a_x, words.new_starting_meter_number)),
+        explanation: yup.string().required(intl(words.please_provide_a_reason_for_the_change))
     });
 
     const formik = useFormik({
@@ -81,21 +85,21 @@ function EditStartingMeter(props: EditStartingMeterProps) {
 
     const cardInfo = [{
         number: currentStartingMeterAmount.toString(),
-        label: 'Current Starting Meter',
-        unit: 'kWh',
+        label: intl(words.current_x, words.starting_meter),
+        unit: words.kwh,
     }]
 
     return (
-        <BaseScreen title="Edit Starting Meter" leftIcon="backNav">
+        <BaseScreen title={intl(words.edit_x, words.starting_meter)} leftIcon="backNav">
             <div className={classes.amountOwedContainer}>
                 <OutlinedCardList info={cardInfo} />
             </div>
             <form noValidate onSubmit={formik.handleSubmit}>
                 <TextField
-                    label='Updated Starting Meter'
-                    unit='kWh'
+                    label={intl(words.updated_x, words.starting_meter)}
+                    unit={intl(words.kwh)}
                     id={'startingMeterAmount'}
-                    placeholder='e.g. 100'
+                    placeholder={intl(words.eg_x, '100')}
                     type='number'
                     required
                     value={formik.values.startingMeterAmount}
@@ -104,16 +108,16 @@ function EditStartingMeter(props: EditStartingMeterProps) {
                     onChange={formik.handleChange}
                 />
                 <TextField
-                    label='Reason for change'
+                    label={intl(words.reason_for_change)}
                     id={'explanation'}
-                    placeholder='e.g. reset broken meter'
+                    placeholder={intl(words.eg_x, words.reset_broken_meter)}
                     required
                     value={formik.values.explanation}
                     error={formik.touched.explanation && Boolean(formik.errors.explanation)}
                     helperText={formik.touched.explanation && formik.errors.explanation}
                     onChange={formik.handleChange}
                 />
-                <Button label={'Update'} loading={loading} fullWidth />
+                <Button label={intl(words.update)} loading={loading} fullWidth />
             </form>
         </BaseScreen>
     );

@@ -61,7 +61,7 @@ function EditSiteInformation() {
     }
 
     return (
-        <BaseScreen title={intl(words.edit_site_information)} leftIcon="backNav">
+        <BaseScreen title={intl(words.edit_x, words.site_information)} leftIcon="backNav">
             <form noValidate onSubmit={formik.handleSubmit}>
                 <List>
                     <ListItemWrapper

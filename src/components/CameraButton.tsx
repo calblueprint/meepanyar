@@ -2,6 +2,8 @@ import { Button as MaterialButton, FormHelperText, InputLabel, makeStyles, Theme
 import { createStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { navigateToCamera } from '../lib/utils/cameraUtils';
+import { useInternationalization } from '../lib/i18next/translator';
+import words from '../lib/i18next/words';
 
 interface CameraButtonProps {
   id: string;
@@ -42,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 function CameraButton(props: CameraButtonProps) {
+  const intl = useInternationalization(); 
   const classes = useStyles(props);
   const { photoUri, preservedState, goBack, staticPreview } = props;
 
@@ -69,7 +72,7 @@ function CameraButton(props: CameraButtonProps) {
           <img width="100%" src={photoUri} alt="user-uploaded image" />
         ) : (
           <Typography variant="button" color={props.error ? 'error' : 'primary'}>
-            + Add Photo
+            + {intl(words.add_x, words.photo)}
           </Typography>
         )}
       </MaterialButton>

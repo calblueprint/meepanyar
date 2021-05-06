@@ -7,6 +7,8 @@ import TextField from '../../components/TextField';
 import { MeterType } from '../../lib/redux/customerDataSlice';
 import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import Button from '../../components/Button';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
@@ -15,22 +17,28 @@ export interface EditCustomerMeterState {
     meterNumber: string | undefined;
 }
 
-const validationSchema = yup.object({
-    meterType: yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], 'Meter Type must be one of Smart, Analog, or No Meter'),
-    meterNumber: yup.mixed() // Can be number or empty string
-        .when('meterType', {
-            is: (MeterType.ANALOG_METER || MeterType.SMART_METER),
-            then: yup.mixed().required('Please enter a meter number'),
-        })
-});
-
 function EditCustomerMeter() {
-
+    const intl = useInternationalization(); 
     const currentCustomer = useSelector(selectCurrentCustomer);
+    // Two-way map for developers in order to ensure English keys in the AirTable while still providing frontend translations.
+    const meterTypeMap = new Map<string, string>(); // English keys
+    const revMeterTypeMap = new Map<string, string>(); // Native device language as keys
+    Object.values(MeterType).forEach(meter => {
+        meterTypeMap.set(meter, intl(meter));
+        revMeterTypeMap.set(intl(meter), meter);
+    });
 
+    const validationSchema = yup.object({
+        meterType: yup.string().oneOf([meterTypeMap.get(MeterType.NO_METER), meterTypeMap.get(MeterType.SMART_METER), meterTypeMap.get(MeterType.ANALOG_METER)], intl(words.meter_type_must_be_one_of_smart_analog_or_no_meter)),
+        meterNumber: yup.mixed() // Can be number or empty string
+            .when('meterType', {
+                is: (meterTypeMap.get(MeterType.ANALOG_METER) || meterTypeMap.get(MeterType.SMART_METER)),
+                then: yup.mixed().required(intl(words.please_enter_a_x, words.meter_number)),
+            })
+    });
     const formik = useFormik({
         initialValues: {
-            meterType: currentCustomer?.meterType,
+            meterType: currentCustomer?.meterType ? meterTypeMap.get(currentCustomer?.meterType) : '',
             meterNumber: currentCustomer?.meterNumber ? currentCustomer.meterNumber.toString() : ''
         },
         validationSchema: validationSchema,
@@ -50,49 +58,49 @@ function EditCustomerMeter() {
     }
 
     return (
-        <BaseScreen title="Edit Customer" leftIcon="backNav">
+        <BaseScreen title={intl(words.edit_customer)} leftIcon="backNav">
             <form noValidate onSubmit={formik.handleSubmit}>
 
                 <FormControl
                     required
                     variant="outlined"
-                    style={{ width: '100%' }}
+                    style={{ width: '100%', marginTop: 8, marginBottom: 8 }}
                 >
-                    <InputLabel>Meter Type</InputLabel>
+                    <InputLabel>{intl(words.x_type, words.meter)}</InputLabel>
                     <Select
                         onChange={(event) => {
                             const meterType = event.target.value as string;
-                            formik.setFieldValue('meterType', meterType)
+                            formik.setFieldValue('meterType', meterType);
 
                             // Clear the meterNumber if NO_METER is selected
-                            if (meterType === MeterType.NO_METER) {
+                            if (meterType === meterTypeMap.get(MeterType.NO_METER)) {
                                 formik.setFieldValue('meterNumber', '')
                             }
                         }}
-                        label={'Meter Type'}
+                        label={intl(words.x_type, words.meter)}
                         id='meterType'
                         required
                         value={formik.values.meterType}
                     >
-                        <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
-                        <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
-                        <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
+                        <MenuItem value={meterTypeMap.get(MeterType.ANALOG_METER)}>{intl(words.analog_meter)}</MenuItem>
+                        <MenuItem value={meterTypeMap.get(MeterType.SMART_METER)}>{intl(words.smart_meter)}</MenuItem>
+                        <MenuItem value={meterTypeMap.get(MeterType.NO_METER)}>{intl(words.no_meter)}</MenuItem>
                     </Select>
                 </FormControl>
 
                 <TextField
-                    label='Meter Number'
+                    label={intl(words.meter_number)}
                     id={'meterNumber'}
                     placeholder='Input'
                     value={formik.values.meterNumber}
-                    disabled={formik.values.meterType === MeterType.NO_METER}
-                    required={formik.values.meterType !== MeterType.NO_METER}
+                    disabled={formik.values.meterType === meterTypeMap.get(MeterType.NO_METER)}
+                    required={formik.values.meterType !== meterTypeMap.get(MeterType.NO_METER)}
                     error={formik.touched.meterNumber && Boolean(formik.errors.meterNumber)}
                     helperText={formik.touched.meterNumber && formik.errors.meterNumber}
                     onChange={formik.handleChange}
                 />
 
-                <Button label='Next' fullWidth />
+                <Button label={intl(words.next)} fullWidth />
             </form>
         </BaseScreen>
     );

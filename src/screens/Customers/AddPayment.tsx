@@ -12,6 +12,8 @@ import { selectCurrentUserId } from '../../lib/redux/userData';
 import { createPaymentAndUpdateCustomerBalance } from '../../lib/airtable/request';
 import moment from 'moment';
 import OutlinedCardList from '../../components/OutlinedCardList';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { roundToString } from '../../lib/utils/utils';
@@ -29,6 +31,7 @@ interface AddPaymentProps extends RouteComponentProps {
 
 
 function AddPayment(props: AddPaymentProps) {
+    const intl = useInternationalization(); 
     const { classes } = props;
     const history = useHistory();
 
@@ -38,9 +41,9 @@ function AddPayment(props: AddPaymentProps) {
 
     const validationSchema = yup.object({
         amountPaid: yup.number()
-            .min(0, 'Please enter a positive number')
-            .max(currentCustomer?.outstandingBalance || 0, 'You may not pay greater than the remaining balance')
-            .required('Please enter a payment amount')
+            .min(0, intl(words.please_enter_a_x, words.positive_number))
+            .max(currentCustomer?.outstandingBalance || 0, intl(words.you_may_not_pay_greater_than_the_remaining_balance))
+            .required(intl(words.please_enter_a_x, words.valid_amount))
     });
 
     const formik = useFormik({
@@ -72,16 +75,16 @@ function AddPayment(props: AddPaymentProps) {
         createPaymentAndUpdateCustomerBalance(payment, currentCustomer).then(history.goBack);
     }
 
-    const cardInfo = [{ number: roundToString(currentCustomer.outstandingBalance), label: 'Remaining Balance', unit: 'Ks' }]
+    const cardInfo = [{ number: roundToString(currentCustomer.outstandingBalance), label: intl(words.remaining_balance), unit: intl(words.ks) }]
 
     return (
-        <BaseScreen title="Add Payment" leftIcon="backNav">
+        <BaseScreen title={intl(words.add_x, words.payment)} leftIcon="backNav">
             <div className={classes.amountOwedContainer}>
                 <OutlinedCardList info={cardInfo} />
             </div>
             <form noValidate onSubmit={formik.handleSubmit}>
                 <TextField
-                    label={'Amount Paid (Ks)'}
+                    label={`${intl(words.amount_spent)} (${intl(words.ks)})`}
                     id={'amountPaid'}
                     onChange={formik.handleChange}
                     value={formik.values.amountPaid}
@@ -90,7 +93,7 @@ function AddPayment(props: AddPaymentProps) {
                     required
                     helperText={formik.touched.amountPaid && formik.errors.amountPaid}
                 />
-                <Button label={'+ Add Payment'} loading={loading} fullWidth />
+                <Button label={`+ ${intl(words.add_x, words.payment)}`} loading={loading} fullWidth />
             </form>
         </BaseScreen>
     );

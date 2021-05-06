@@ -54,7 +54,7 @@ function AddInventory(props: AddInventoryProps) {
     selectedProductId: yup.string().required(intl(words.must_select_a_product)),
     startingAmount: yup
       .number()
-      .min(0, intl(words.please_enter_a_valid_amount))
+      .min(0, intl(words.please_enter_a_x, words.valid_amount))
       .required(intl(words.must_enter_an_amount)),
     newProductName: yup.string().when('selectedProductId', {
       is: NEW_PRODUCT_LABEL,
@@ -102,7 +102,7 @@ function AddInventory(props: AddInventoryProps) {
   const filter = createFilterOptions<string>();
 
   return (
-    <BaseScreen title={intl(words.new_inventory)} leftIcon="backNav">
+    <BaseScreen title={intl(words.new_x, words.inventory)} leftIcon="backNav">
       <form onSubmit={formik.handleSubmit} noValidate>
         <Autocomplete
           aria-required

@@ -11,10 +11,12 @@ This folder contains patches that should be run after regenerating the airtable 
 - Add additional patches by creating a patch file
   - This can be done via `git format-patch ... -o location/to/save`, `git diff > location/to/save`, etc...
   - Patches can also be created from commits via `git format-patch -1 <SHA-1> -o location/to/save`
+  - Patches can also be created from git diffs via `git diff ... > location/to/save`
 - Patch files should follow the naming convention `patch-<filename>.patch` where `filename` is the file the patch mutates. There should only be 1 patch produced per file, this avoids having to fix multiple patch conflicts when if they're introduced.
+- Patches should contain the diff between the **originally generated base file** and the most updated version of the file.
 
 ## Fixing Patch Conflicts
-- Some changes to the schema generator may result in merge conflicts when applying a patch. Fix these conflicts as if they were merge conflicts and create an updated patch for the file so that the patch is cleanly applied on future schema generations
+- Some changes to the schema generator may result in merge conflicts when applying a patch. Fix these conflicts as if they were merge conflicts and create an updated patch for the file so that the patch is cleanly applied on future schema generations. Remember that patches should contain the diff between the **originally generated base file** and the most updated version of the file.
 
 ## Resources about patches
 - For more information about patches, you can view the following resources: 

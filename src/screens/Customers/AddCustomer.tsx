@@ -13,6 +13,8 @@ import { setCurrentCustomerIdInRedux } from '../../lib/redux/customerData';
 import { selectAllTariffPlansArray } from '../../lib/redux/siteDataSlice';
 import { EMPTY_CUSTOMER, MeterType, selectAllCustomersArray } from '../../lib/redux/customerDataSlice';
 import { selectCurrentSiteInformation } from '../../lib/redux/siteData';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 import TariffPlanCard from '../Profile/components/TariffPlanCard';
 import moment from 'moment';
 import * as yup from 'yup';
@@ -56,30 +58,38 @@ interface AddCustomerProps extends RouteComponentProps {
 }
 
 function AddCustomer(props: AddCustomerProps) {
+  const intl = useInternationalization(); 
   const { classes } = props;
   const history = useHistory();
   const allCustomerNumbers = useSelector(selectAllCustomersArray).map(customer => customer.customerNumber);
+  // Two-way map for developers in order to ensure English keys in the AirTable while still providing frontend translations.
+  const meterTypeMap = new Map<string, string>(); // English as keys
+  const revMeterTypeMap = new Map<string, string>(); // Native device language as keys
+  Object.values(MeterType).forEach(meter => {
+    meterTypeMap.set(meter, intl(meter));
+    revMeterTypeMap.set(intl(meter), meter);
+  });
 
   const validationSchema = yup.object({
-    customerName: yup.string().required('Name can not be blank'),
+    customerName: yup.string().required(intl(words.name_can_not_be_blank)),
     selectedMeterType:
-      yup.string().oneOf([MeterType.NO_METER, MeterType.SMART_METER, MeterType.ANALOG_METER], 'Meter Type must be one of Smart, Analog, or No Meter'),
-    selectedTariffPlanId: yup.string().required('Must select a tariff plan'),
+      yup.string().oneOf([meterTypeMap.get(MeterType.NO_METER), meterTypeMap.get(MeterType.SMART_METER), meterTypeMap.get(MeterType.ANALOG_METER)], intl(words.meter_type_must_be_one_of_smart_analog_or_no_meter)),
+    selectedTariffPlanId: yup.string().required(intl(words.must_select_a_tariff_plan)),
     meterNumber: yup.mixed().when('selectedMeterType', {
-      is: (MeterType.SMART_METER || MeterType.ANALOG_METER),
-      then: yup.mixed().required('Please enter a meter number')
+      is: (meterTypeMap.get(MeterType.SMART_METER) || meterTypeMap.get(MeterType.ANALOG_METER)),
+      then: yup.mixed().required(intl(words.please_enter_a_x, words.valid_amount))
     }),
     customerNumber: yup.number()
-      .min(0, 'Please enter a positive number')
-      .notOneOf(allCustomerNumbers, 'That customer number is used by another customer')
-      .required('Customer number is required')
+      .min(0, intl(words.please_enter_a_x, words.positive_number))
+      .notOneOf(allCustomerNumbers, intl(words.that_customer_number_is_used_by_another_customer))
+      .required(intl(words.customer_number_is_required))
   });
 
   const formik = useFormik({
     initialValues: {
       customerName: '',
       customerNumber: '',
-      selectedMeterType: MeterType.NO_METER,
+      selectedMeterType: meterTypeMap.get(MeterType.NO_METER) as string,
       meterNumber: '',
       selectedTariffPlanId: '',
     },
@@ -106,9 +116,10 @@ function AddCustomer(props: AddCustomerProps) {
 
     // Make a deep copy of an empty customer record
     const customer = JSON.parse(JSON.stringify(EMPTY_CUSTOMER));
+    customer.isactive = true
     customer.name = customerName;
     customer.customerNumber = parseInt(customerNumber);
-    customer.meterType = selectedMeterType;
+    customer.meterType = revMeterTypeMap.get(selectedMeterType); // Map back to English
     customer.meterNumber = isNaN(parseInt(meterNumber)) ? null : parseInt(meterNumber);
     customer.tariffPlanId = selectedTariffPlanId;
     customer.startingMeterReading = 0;
@@ -126,11 +137,12 @@ function AddCustomer(props: AddCustomerProps) {
 
   const getTariffPlans = () => {
     let availableTariffPlans = tariffPlans;
-    availableTariffPlans = availableTariffPlans.filter((plan) => plan.meterTypes && plan.meterTypes.includes(formik.values.selectedMeterType));
+    const meterTypeKey: string = revMeterTypeMap.get(formik.values.selectedMeterType) as string;
+    availableTariffPlans = availableTariffPlans.filter((plan) => plan.meterTypes && plan.meterTypes.includes(meterTypeKey));
     return (
       <Select
         id='selectedTariffPlanId'
-        onChange={(event) => formik.setFieldValue('selectedTariffPlanId', event.target.value)} label={'Tariff Plan'}
+        onChange={(event) => formik.setFieldValue('selectedTariffPlanId', event.target.value)} label={intl(words.tariff_plan)}
         value={formik.values.selectedTariffPlanId}
         error={formik.touched.selectedTariffPlanId && Boolean(formik.errors.selectedTariffPlanId)}
       >
@@ -144,15 +156,15 @@ function AddCustomer(props: AddCustomerProps) {
   }
 
   return (
-    <BaseScreen title="Add New Customer" leftIcon="backNav">
+    <BaseScreen title={intl(words.add_x, words.new_customer)} leftIcon="backNav">
       <BaseScrollView>
         <form noValidate onSubmit={formik.handleSubmit}>
           <div className={classes.twoColumnContainer}>
             <div style={{ marginRight: 10, flex: 2 }}>
               <TextField
-                label={'Name'}
+                label={intl(words.name)}
                 id={'customerName'}
-                placeholder={'e.g. Tom'}
+                placeholder={intl(words.eg_x, 'Tom')}
                 onChange={formik.handleChange}
                 value={formik.values.customerName}
                 error={formik.touched.customerName && Boolean(formik.errors.customerName)}
@@ -162,9 +174,9 @@ function AddCustomer(props: AddCustomerProps) {
             </div>
             <div style={{ flex: 1 }}>
               <TextField
-                label={'Number'}
+                label={intl(words.number)}
                 id={'customerNumber'}
-                placeholder={'e.g. 12'}
+                placeholder={intl(words.eg_x, '12')}
                 type="number"
                 onChange={formik.handleChange}
                 value={formik.values.customerNumber}
@@ -180,39 +192,39 @@ function AddCustomer(props: AddCustomerProps) {
               variant="outlined"
               className={classes.formControl}
             >
-              <InputLabel>Meter Type</InputLabel>
+              <InputLabel>{intl(words.x_type, words.meter)}</InputLabel>
               <Select
                 onChange={(event) => {
                   const meterType = event.target.value as string;
-                  formik.setFieldValue('selectedMeterType', meterType)
+                  formik.setFieldValue('selectedMeterType', meterType);
 
                   // Clear the meterNumber if NO_METER is selected
-                  if (meterType === MeterType.NO_METER) {
+                  if (meterType === meterTypeMap.get(MeterType.NO_METER)) {
                     formik.setFieldValue('meterNumber', '')
                   }
                 }}
-                label={'Meter Type'}
+                label={intl(words.x_type, words.meter)}
                 id='selectedMeterType'
                 value={formik.values.selectedMeterType}
               >
-                <MenuItem value={MeterType.ANALOG_METER}>Analog Meter</MenuItem>
-                <MenuItem value={MeterType.SMART_METER}>Smart Meter</MenuItem>
-                <MenuItem value={MeterType.NO_METER}>No Meter</MenuItem>
+                <MenuItem value={meterTypeMap.get(MeterType.ANALOG_METER)}>{intl(words.analog_meter)}</MenuItem>
+                <MenuItem value={meterTypeMap.get(MeterType.SMART_METER)}>{intl(words.smart_meter)}</MenuItem>
+                <MenuItem value={meterTypeMap.get(MeterType.NO_METER)}>{intl(words.no_meter)}</MenuItem>
               </Select>
             </FormControl>
           </div>
           <div className={classes.textContainer}>
             <TextField
-              label={'Meter Number'}
+              label={intl(words.meter_number)}
               id={'meterNumber'}
-              placeholder={'e.g. 15'}
+              placeholder={intl(words.eg_x, '15')}
               type="number"
               value={formik.values.meterNumber}
               onChange={formik.handleChange}
               error={formik.touched.meterNumber && Boolean(formik.errors.meterNumber)}
               helperText={formik.touched.meterNumber && formik.errors.meterNumber}
-              disabled={formik.values.selectedMeterType === MeterType.NO_METER}
-              required={formik.values.selectedMeterType !== MeterType.NO_METER}
+              disabled={formik.values.selectedMeterType === meterTypeMap.get(MeterType.NO_METER)}
+              required={formik.values.selectedMeterType !== meterTypeMap.get(MeterType.NO_METER)}
             />
           </div>
           <div className={classes.selectContainer}>
@@ -221,7 +233,7 @@ function AddCustomer(props: AddCustomerProps) {
               required
               className={classes.formControl}
             >
-              <InputLabel>Tariff Plan</InputLabel>
+              <InputLabel>{intl(words.tariff_plan)}</InputLabel>
               {getTariffPlans()}
               <FormHelperText error>{formik.touched.selectedTariffPlanId && formik.errors.selectedTariffPlanId}</FormHelperText>
             </FormControl>
@@ -229,7 +241,7 @@ function AddCustomer(props: AddCustomerProps) {
           <div className={classes.buttonContainer}>
             <div className={classes.button}>
               <Button
-                label={'Add'}
+                label={intl(words.add)}
                 fullWidth
                 loading={loading}
               />

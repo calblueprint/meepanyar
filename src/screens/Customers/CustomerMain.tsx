@@ -13,6 +13,9 @@ import CustomerCard from './components/CustomerCard';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FlashOnIcon from '@material-ui/icons/FlashOn';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
+
 
 const styles = makeStyles((theme: Theme) =>
   createStyles({
@@ -64,6 +67,7 @@ interface CustomerMainProps extends RouteComponentProps {
 }
 
 function CustomerMain(props: CustomerMainProps) {
+  const intl = useInternationalization();
   const classes = styles(props);
   const { match } = props;
   const initialTabValue = props.location.state?.tabValue;
@@ -184,19 +188,19 @@ function CustomerMain(props: CustomerMainProps) {
   const getMeterTabLabel = () => (
     <div>
       <FlashOnIcon className={classes.tabIcon} />
-      <Typography className={classes.tabLabel}>Meter</Typography>
+      <Typography className={classes.tabLabel}>{intl(words.meter)}</Typography>
     </div>
   );
 
   const getPaymentTabLabel = () => (
     <div>
       <AttachMoneyIcon className={classes.tabIcon} />
-      <Typography className={classes.tabLabel}>Payment</Typography>
+      <Typography className={classes.tabLabel}>{intl(words.payment)}</Typography>
     </div>
   );
 
   return (
-    <BaseScreen rightIcon="user" title="Customers" searchAction={handleSearchChange} searchExit={exitSearch}>
+    <BaseScreen rightIcon="user" title={intl(words.customers)} searchAction={handleSearchChange} searchExit={exitSearch}>
       <Tabs
         textColor="primary"
         indicatorColor="primary"
@@ -204,14 +208,14 @@ function CustomerMain(props: CustomerMainProps) {
         onChange={changeTab}
         variant="scrollable"
       >
-        <Tab className={classes.tab} label="All" value={CustomerStatus.ALL} />
+        <Tab className={classes.tab} label={intl(words.all)} value={CustomerStatus.ALL} />
         <Tab className={classes.tab} label={getMeterTabLabel()} value={CustomerStatus.METER} />
         <Tab className={classes.tab} label={getPaymentTabLabel()} value={CustomerStatus.PAYMENT} />
-        <Tab className={classes.tab} label="Done" value={CustomerStatus.DONE} />
+        <Tab className={classes.tab} label={intl(words.done)} value={CustomerStatus.DONE} />
       </Tabs>
       <div className={classes.indicatorContainer}>
         <FiberManualRecordIcon className={classes.indicator}/>
-        <Typography>Status: Active</Typography>
+        <Typography>{`${intl(words.status)}: ${intl(words.active)}`}</Typography>
       </div>
       <BaseScrollView>
         {getTabContent()}

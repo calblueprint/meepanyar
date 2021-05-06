@@ -1,6 +1,8 @@
 import React from 'react';
 import { createStyles, withStyles, Theme } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
+import { useInternationalization } from '../../../lib/i18next/translator';
+import words from '../../../lib/i18next/words';
 import { formatDateStringToLocal } from '../../../lib/moment/momentUtils';
 import { roundToString } from '../../../lib/utils/utils';
 
@@ -21,6 +23,7 @@ interface RecordProps {
 }
 
 function Record(props: RecordProps) {
+  const intl = useInternationalization();
   const { classes } = props;
   return (
     <div className={classes.root}>
@@ -28,7 +31,7 @@ function Record(props: RecordProps) {
         {formatDateStringToLocal(props.date)}
       </Typography>
       <Typography variant="h1">
-        {props.used ? roundToString(props.used) + ' kWh |' : null} {roundToString(props.amount)} Ks
+        {props.used ? roundToString(props.used) + ` ${intl(words.kwh)} |` : null} {roundToString(props.amount)} {intl(words.ks)}
       </Typography>
     </div>
   );

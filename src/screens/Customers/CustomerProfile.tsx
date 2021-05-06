@@ -20,6 +20,8 @@ import { RootState } from '../../lib/redux/store';
 import { selectIsOnline } from '../../lib/redux/userData';
 import { getAmountBilled, getCurrentReading, getPeriodUsage, getTariffPlanByCustomer, isReadingFromLatestPeriod } from '../../lib/utils/customerUtils';
 import { isOfflineId } from '../../lib/utils/offlineUtils';
+import { useInternationalization } from '../../lib/i18next/translator';
+import words from '../../lib/i18next/words';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -60,6 +62,7 @@ interface CustomerProps extends RouteComponentProps {
 }
 
 function CustomerProfile(props: CustomerProps) {
+  const intl = useInternationalization();
   const { classes, match } = props;
   const customer: CustomerRecord = useSelector(selectCurrentCustomer) || EMPTY_CUSTOMER;
   const meterReadings: MeterReadingRecord[] = useSelector((state: RootState) => selectMeterReadingsByCustomerId(state, customer.id)) || [];
@@ -81,9 +84,9 @@ function CustomerProfile(props: CustomerProps) {
   const freeUnits = customerTariff ? roundToString(customerTariff?.freeUnits) : UNDEFINED_AMOUNT;
 
   let tariffInfo: CardPropsInfo[] = [
-    { number: fixedTariff, label: 'Fixed Tariff', unit: 'Ks' },
-    { number: unitTariff, label: 'Unit Tariff', unit: 'Ks' },
-    { number: freeUnits, label: 'Free Units', unit: 'kWh' },
+    { number: fixedTariff, label: intl(words.fixed_tariff), unit: intl(words.ks) },
+    { number: unitTariff, label: intl(words.unit_tariff), unit: intl(words.ks) },
+    { number: freeUnits, label: intl(words.kwh), unit: intl(words.kwh) },
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
@@ -94,13 +97,13 @@ function CustomerProfile(props: CustomerProps) {
   const customerMeteredForPeriod = isReadingFromLatestPeriod(currReading);
 
   let meterInfo: CardPropsInfo[] = [
-    { number: roundToString(startingReading), label: 'Starting Meter', unit: 'kWh' },
-    { number: roundToString(periodUsage), label: 'Period Usage', unit: 'kWh' },
-    { number: currReading ? roundToString(currReading.reading) : '0', label: 'Ending Meter', unit: 'kWh' },
-    { number: roundToString(amountBilled), label: 'Amount Billed', unit: 'kS' },
+    { number: roundToString(startingReading), label: intl(words.starting_meter), unit: intl(words.kwh) },
+    { number: roundToString(periodUsage), label: intl(words.period_usage), unit: intl(words.kwh) },
+    { number: currReading ? roundToString(currReading.reading) : '0', label: intl(words.ending_meter), unit: intl(words.kwh) },
+    { number: roundToString(amountBilled), label: intl(words.amount_billed), unit: intl(words.ks) },
   ];
-  let balanceInfo: CardPropsInfo[] = [{ number: roundToString(customer.outstandingBalance), label: 'Remaining Balance', unit: 'kS' }];
-  let readingInfo: CardPropsInfo[] = [{ number: currReading ? roundToString(currReading.reading) : '0', label: 'Last Recorded Reading', unit: 'kWh' }];
+  let balanceInfo: CardPropsInfo[] = [{ number: roundToString(customer.outstandingBalance), label: intl(words.remaining_balance), unit: intl(words.ks) }];
+  let readingInfo: CardPropsInfo[] = [{ number: currReading ? roundToString(currReading.reading) : '0', label: intl(words.last_recorded_reading), unit: intl(words.kwh) }];
 
   const getAddButton = (path: string) => {
     //TODO: separate into base component @wangannie
@@ -121,7 +124,7 @@ function CustomerProfile(props: CustomerProps) {
 
   const getPaymentInfo = () => {
     if (!customer.isactive) {
-      balanceInfo = [{ number: UNDEFINED_AMOUNT, label: 'Remaining Balance', unit: '' }];
+      balanceInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.remaining_balance), unit: '' }];
       return (
         <OutlinedCardList info={balanceInfo} readOnly />
       );
@@ -140,20 +143,20 @@ function CustomerProfile(props: CustomerProps) {
       meterReadOnly = false;
       topLeftReadOnly = false;
     } else if (customer.meterType === MeterType.NO_METER) {
-      readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
+      readingInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.last_recorded_reading), unit: '' }];
       meterInfo = [
-        { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
-        { number: periodUsage.toString(), label: 'Period Usage', unit: 'kWh' },
-        { number: UNDEFINED_AMOUNT, label: 'Ending Meter', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Amount Billed', unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
+        { number: periodUsage.toString(), label: intl(words.period_usage), unit: intl(words.kwh) },
+        { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
       ];
     } else if (!customer.isactive) {
-      readingInfo = [{ number: UNDEFINED_AMOUNT, label: 'Last Recorded Reading', unit: '' }];
+      readingInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.last_recorded_reading), unit: '' }];
       meterInfo = [
-        { number: UNDEFINED_AMOUNT, label: 'Starting Meter', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Period Usage', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Ending Meter', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Amount Billed', unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.period_usage), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
       ];
     }
 
@@ -200,9 +203,9 @@ function CustomerProfile(props: CustomerProps) {
     let tariffReadOnly;
     if (!customer.isactive) {
       tariffInfo = [
-        { number: UNDEFINED_AMOUNT, label: 'Fixed\nTariff', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Unit\nTariff', unit: '' },
-        { number: UNDEFINED_AMOUNT, label: 'Free\nUnits', unit: '' }
+        { number: UNDEFINED_AMOUNT, label: intl(words.fixed_tariff), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.per_unit_tariff), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.free_units), unit: '' }
       ];
       tariffReadOnly = true;
     }
@@ -217,20 +220,20 @@ function CustomerProfile(props: CustomerProps) {
         <div className={classes.content}>
           {getTariffInfo()}
           <div className={classes.headerWrapper}>
-            <Typography variant="h2">Payment</Typography>
+            <Typography variant="h2">{intl(words.payment)}</Typography>
             <Link
               to={{
                 pathname: `${match.url}/records`,
                 state: { invoices: meterReadings, payments: payments, defaultTab: "1" }
               }}
             >
-              <Button label={'View All'} variant="text" />
+              <Button label={intl(words.view_all)} variant="text" />
             </Link>
           </div>
           {getPaymentInfo()}
           <div className={classes.headerWrapper}>
             <Typography variant="h2">
-              Meter Reading
+              {`${intl(words.meter)} ${intl(words.reading)}`}
             </Typography>
             <Link
               to={{
@@ -238,7 +241,7 @@ function CustomerProfile(props: CustomerProps) {
                 state: { invoices: meterReadings, payments: payments, defaultTab: "0" }
               }}
             >
-              <Button label={'View All'} variant="text" />
+              <Button label={intl(words.view_all)} variant="text" />
             </Link>
           </div>
           {getReadingInfo()}
@@ -248,13 +251,13 @@ function CustomerProfile(props: CustomerProps) {
       {/* Exception: don't show the snackbar if showing OfflineDialog */}
       <Snackbar
         open={!isOfflineId(customer.id) && !isOnline}
-        message="You are not connected to a network. Customer updates will be recorded after you reconnect."
+        message={intl(words.you_are_not_connected_to_a_network_customer_updates_will_be_recorded_after_you_reconnect)}
       />
       <OfflineDialog
         open={isOfflineId(customer.id)}
         closeAction={history.goBack}
-        headingText="New Customer Data Offline"
-        bodyText="Customer information cannot be edited until information has been uploaded. Connect to a network to add data."
+        headingText={intl(words.new_customer_data_offline)}
+        bodyText={intl(words.customer_information_cannot_be_edited_until_information_has_been_uploaded_connect_to_a_network_to_add_data)}
       />
     </BaseScreen>
   );
