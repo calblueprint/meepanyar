@@ -60,14 +60,14 @@ function InventoryCard(props: InventoryCardProps) {
       <CardContent className={classes.cardContent}>
         <div className={classes.leftContent}>
           <div className={classes.headingRowContainer}>
-            <Typography variant="h2">{product.name}</Typography>
+            <Typography variant="h2">{intl(product.name)}</Typography>
             {isOfflineId(inventoryId) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
           </div>
           <Typography variant="body1" color="textSecondary">
             {`${intl(words.last_updated)} ${intl(words.date)}: ${lastUpdated}`}
           </Typography>
         </div>
-        <Typography variant="h2">{`${roundToString(currentQuantity)} ${product.unit}(${intl(words.s)})`}</Typography>
+        <Typography variant="h2">{`${roundToString(currentQuantity)} ${intl(product.unit)}(${intl(words.s)})`}</Typography>
       </CardContent>
       <CardActions>
         <IconButton edge="end" size="small">

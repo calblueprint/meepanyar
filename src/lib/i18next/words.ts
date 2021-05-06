@@ -1,5 +1,4 @@
 export default {
-  "_photo_of_payslip": " Photo of Payslip",
   "x_information": "[x] Information",
   "x_per_month": "[x] per month",
   "x_type": "[X] Type",
