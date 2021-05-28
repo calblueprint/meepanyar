@@ -18,7 +18,7 @@ const fs = require('fs');
 /** 
  * Fetch all records in translation database.
  */
-const getAllRecords = (table, filterByFormula = '', sort = []) => {
+const getAllRecords = (table, language='MM', filterByFormula = '', sort = []) => {
     return base(table)
       .select({
         view: VIEW,
@@ -32,7 +32,7 @@ const getAllRecords = (table, filterByFormula = '', sort = []) => {
         }
         const translations = {}; 
         for (const record of records) {
-            translations[record.get('EN')] = record.get('MM')
+            translations[record.get('EN')] = record.get(language)
         }
         return translations; 
       })
@@ -47,8 +47,12 @@ const getAllRecords = (table, filterByFormula = '', sort = []) => {
  */
 const getAndSetTranslationMap = async () => {
     try {
-        const resultData = await getAllRecords('Translation'); 
-        const resources = { my: { translation: resultData } }; 
+        const resultData = [
+          await getAllRecords('Translation', language='MM'),
+          await getAllRecords('Translation', language='IDN')
+        ];
+        let resources = { my: { translation: resultData[0] } };
+        resources['id'] = {translation: resultData[1]};
         const jsonResponse = JSON.stringify(resources, null, 2);
         fs.writeFileSync('./src/lib/i18next/resources.js', "module.exports = " + jsonResponse, 'utf8');
         console.log('Successfully pulled in translations'); 
