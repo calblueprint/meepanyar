@@ -233,7 +233,7 @@ function CustomerProfile(props: CustomerProps) {
           {getPaymentInfo()}
           <div className={classes.headerWrapper}>
             <Typography variant="h2">
-              {`${intl(words.meter)} ${intl(words.reading)}`}
+              {`${intl(words.meter_reading)}`}
             </Typography>
             <Link
               to={{

@@ -84,7 +84,7 @@ function AddPayment(props: AddPaymentProps) {
             </div>
             <form noValidate onSubmit={formik.handleSubmit}>
                 <TextField
-                    label={`${intl(words.amount_spent)} (${intl(words.ks)})`}
+                    label={`${intl(words.amount_paid)} (${intl(words.ks)})`}
                     id={'amountPaid'}
                     onChange={formik.handleChange}
                     value={formik.values.amountPaid}

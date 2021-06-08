@@ -91,7 +91,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
 
   const cardInfo = [{
     number: roundToString(startingMeterAmount),
-    label: intl(words.starting_x, words.reading),
+    label: intl(words.starting_meter),
     unit: intl(words.kwh),
     secondaryLabel: formatDateStringToLocal(startingMeterLastRecorded)
   }]
