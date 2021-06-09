@@ -103,7 +103,7 @@ function AddMeterReading(props: AddMeterReadingProps) {
       </div>
       <form noValidate onSubmit={formik.handleSubmit}>
         <TextField
-          label={intl(words.new_meter_reading)}
+          label={intl(words.new_x, words.meter_reading)}
           unit={intl(words.kwh)}
           id={'meterReadingAmount'}
           placeholder={intl(words.eg_x, '100')}
