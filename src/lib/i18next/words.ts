@@ -29,6 +29,7 @@ export default {
   "already_have_an_account": "Already have an account",
   "aluminimum_wire": "Aluminimum wire",
   "amount_billed": "Amount Billed",
+  "amount_paid": "Amount Paid",
   "amount_purchased": "Amount Purchased",
   "amount_spent": "Amount Spent",
   "an_inactive_user_can_not_make_any_changes_in_the_app_nor_access_any_information": "An inactive user can not make any changes in the app nor access any information.",
