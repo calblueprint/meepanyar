@@ -660,7 +660,7 @@ module.exports = {
       "Profile": "Profil ",
       "Profile picture": "Foto profil",
       "Profit": "Keuntungan",
-      "Purchase": "Pembelian",
+      "Purchase": "Beli",
       "Reason for change": "Alasan perubahan",
       "Receipt": "Tanda Terima",
       "Reconnect to log in": "Sambungkan kembali  untuk masuk",
