@@ -81,14 +81,14 @@ function InventoryInfo(props: InventoryInfoProps) {
       <CardContent className={classes.cardContent}>
         <div className={classes.leftContentColumnContainer}>
           <div className={classes.headingRowContainer}>
-            <Typography variant="h2">{product.name}</Typography>
+            <Typography variant="h2">{intl(product.name)}</Typography>
             {isOfflineId(inventoryId) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
           </div>
           <Typography variant="caption">{`${intl(words.last_updated)} ${intl(words.date)}`}</Typography>
           <Typography variant="caption">{lastUpdated}</Typography>
         </div>
         {props.currentQuantity !== undefined && (
-          <Typography align="right" variant="body2">{`${roundToString(props.currentQuantity)} ${product.unit}(${intl(
+          <Typography align="right" variant="body2">{`${roundToString(props.currentQuantity)} ${intl(product.unit)}(${intl(
             words.s,
           )})`}</Typography>
         )}

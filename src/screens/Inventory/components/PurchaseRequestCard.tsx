@@ -116,14 +116,14 @@ function PurchaseRequestCard(props: PurchaseRequestCardProps) {
           <div className={classes.leftContent}>
             <div className={classes.headingRowContainer}>
               <Typography color="textPrimary" variant="h2">
-                {product.name}
+                {intl(product.name)}
               </Typography>
               {isOfflineId(purchaseRequest.id) && <SyncIcon fontSize="small" className={classes.syncIcon} />}
             </div>
             <Typography variant="body1" color="textSecondary">{`${formatDateStringToLocal(
               purchaseRequest.createdAt,
             )}`}</Typography>
-            <Typography variant="body1" color="textSecondary">{`${roundToString(purchaseRequest.amountPurchased)} ${product.unit}(${intl(words.s)})`}</Typography>
+            <Typography variant="body1" color="textSecondary">{`${roundToString(purchaseRequest.amountPurchased)} ${intl(product.unit)}(${intl(words.s)})`}</Typography>
           </div>
           <Typography color="textPrimary" variant="h2">{`${roundToString(purchaseRequest.amountSpent)} ${intl(words.ks)}`}</Typography>
         </CardContent>
