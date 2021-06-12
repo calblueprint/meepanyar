@@ -86,7 +86,7 @@ function CustomerProfile(props: CustomerProps) {
   let tariffInfo: CardPropsInfo[] = [
     { number: fixedTariff, label: intl(words.fixed_tariff), unit: intl(words.ks) },
     { number: unitTariff, label: intl(words.unit_tariff), unit: intl(words.ks) },
-    { number: freeUnits, label: intl(words.kwh), unit: intl(words.kwh) },
+    { number: freeUnits, label: intl(words.free_units), unit: intl(words.kwh) },
   ]
 
   const currReading: MeterReadingRecord | undefined = getCurrentReading(customer);
