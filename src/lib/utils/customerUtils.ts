@@ -45,7 +45,7 @@ export const calculateAmountBilled = (reading: number, tariffPlan: TariffPlanRec
   let amountCharged = tariffPlan.fixedTariff;
 
   if (reading >= tariffPlan.freeUnits) {
-    amountCharged += tariffPlan.tariffByUnit * (reading - tariffPlan.freeUnits)
+    amountCharged += tariffPlan.tariffByUnit * (reading - tariffPlan.freeUnits) + tariffPlan.fixedTariff
   }
 
   return amountCharged
