@@ -123,11 +123,9 @@ function CustomerProfile(props: CustomerProps) {
   };
 
   const getPaymentInfo = () => {
-    if (!customer.isactive) {
       return (
         <OutlinedCardList info={balanceInfo} highlightedText rightIcon={getAddButton('payments/create')} />
       );
-    }
   }
 
   const getReadingInfo = () => {
