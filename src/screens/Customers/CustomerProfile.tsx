@@ -124,11 +124,6 @@ function CustomerProfile(props: CustomerProps) {
 
   const getPaymentInfo = () => {
     if (!customer.isactive) {
-      balanceInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.remaining_balance), unit: '' }];
-      return (
-        <OutlinedCardList info={balanceInfo} readOnly />
-      );
-    } else {
       return (
         <OutlinedCardList info={balanceInfo} highlightedText rightIcon={getAddButton('payments/create')} />
       );
@@ -139,7 +134,15 @@ function CustomerProfile(props: CustomerProps) {
     let meterReadOnly = true;
     let topLeftReadOnly = true;
 
-    if (customer.meterType === MeterType.ANALOG_METER) {
+    if (!customer.isactive) {
+      readingInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.last_recorded_reading), unit: '' }];
+      meterInfo = [
+        { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.period_usage), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
+        { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
+      ];
+    } else if (customer.meterType === MeterType.ANALOG_METER) {
       meterReadOnly = false;
       topLeftReadOnly = false;
     } else if (customer.meterType === MeterType.NO_METER) {
@@ -147,14 +150,6 @@ function CustomerProfile(props: CustomerProps) {
       meterInfo = [
         { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
         { number: periodUsage.toString(), label: intl(words.period_usage), unit: intl(words.kwh) },
-        { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
-        { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
-      ];
-    } else if (!customer.isactive) {
-      readingInfo = [{ number: UNDEFINED_AMOUNT, label: intl(words.last_recorded_reading), unit: '' }];
-      meterInfo = [
-        { number: UNDEFINED_AMOUNT, label: intl(words.starting_meter), unit: '' },
-        { number: UNDEFINED_AMOUNT, label: intl(words.period_usage), unit: '' },
         { number: UNDEFINED_AMOUNT, label: intl(words.ending_meter), unit: '' },
         { number: UNDEFINED_AMOUNT, label: intl(words.amount_billed), unit: '' },
       ];

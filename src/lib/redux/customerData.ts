@@ -114,9 +114,14 @@ export const selectPaymentsInCurrentPeriod = createSelector(
     (payments) => payments.filter(payment => !isBeforeCurrentPeriod(payment.date))
 )
 
+export const selectCustomersActive = createSelector(
+    selectAllCustomersArray,
+    (allCustomers) => {return allCustomers.filter(customer => customer.isactive === true)}
+)
+
 export const selectCustomersToMeter = createSelector(
     selectMeterReadingsInCurrentPeriod,
-    selectAllCustomersArray,
+    selectCustomersActive,
     (allMeterReadingsInCurrentPeriod, allCustomers) => {
         const meteredCustomerIds = new Set(allMeterReadingsInCurrentPeriod.map(meterReading => meterReading.customerId));
         return allCustomers.filter(customer => !meteredCustomerIds.has(customer.id))
