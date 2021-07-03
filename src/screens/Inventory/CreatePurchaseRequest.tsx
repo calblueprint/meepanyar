@@ -52,7 +52,7 @@ function CreatePurchaseRequest(props: CreatePurchaseRequestProps) {
     amountPurchased: yup.number().min(0, intl(words.please_enter_a_x, words.valid_amount)).required(intl(words.please_enter_a_x, words.valid_amount)),
     amountSpent: yup.number().min(0, intl(words.please_enter_a_x, words.valid_amount)).required(intl(words.please_enter_a_x, words.valid_amount)),
     notes: yup.string(),
-    receipt: yup.string().required(intl(words.please_upload_a_receipt_image)),
+    receipt: yup.string(),
   });
   const formik = useFormik({
     initialValues: {
